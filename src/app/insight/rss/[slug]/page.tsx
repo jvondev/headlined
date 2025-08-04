@@ -1,4 +1,5 @@
 
+import { Suspense } from "react";
 import { getInsightBySlug } from "@/lib/insights";
 import { InsightPageClient } from "../../[slug]/client";
 import { notFound } from "next/navigation";
@@ -49,11 +50,13 @@ export default async function RssInsightPage({ params, searchParams }: InsightPa
   }
   
   return (
-    <InsightPageClient 
-      initialInsights={[initialInsight]} // Pass only the current insight for static generation
-      slug={fullSlug} 
-      initialDeepDiveIndex={initialDeepDiveIndex}
-      initialHasMore={false} // No more insights to load on a static page
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <InsightPageClient 
+        initialInsights={[initialInsight]} // Pass only the current insight for static generation
+        slug={fullSlug} 
+        initialDeepDiveIndex={initialDeepDiveIndex}
+        initialHasMore={false} // No more insights to load on a static page
+      />
+    </Suspense>
   );
 }

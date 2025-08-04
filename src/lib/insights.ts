@@ -32,7 +32,7 @@ const mapSupabaseInsightToInsightType = (supabaseData: any): Insight => {
     summary: supabaseData.summary,
     deepDives: supabaseData.deep_dives || [],
     blogContent: supabaseData.blog_content || '',
-    thumbnailUrl: supabaseData.thumbnailUrl, // Assuming this column exists if used
+    // thumbnailUrl: supabaseData.thumbnailUrl, // Assuming this column exists if used
     author: supabaseData.author, // Assuming this column exists if used
   };
 };
@@ -42,7 +42,7 @@ export const getAllInsights = unstable_cache(
   async (): Promise<Insight[]> => {
     const { data, error } = await supabase
       .from('insights')
-      .select('id, slug, seo_title, seo_description, category, title, headline, summary, thumbnailUrl, author, created_at, updated_at');
+      .select('id, slug, seo_title, seo_description, category, title, headline, summary, author, created_at, updated_at');
 
     if (error) {
       console.error('Error fetching all insights:', error);
@@ -135,7 +135,7 @@ export const getAdjacentInsights = unstable_cache(
     // Fetch previous insight (older created_at)
     const { data: prevInsightData, error: prevError } = await supabase
       .from('insights')
-      .select('id, slug, seo_title, seo_description, category, title, headline, summary, thumbnailUrl, author, created_at, updated_at')
+      .select('id, slug, seo_title, seo_description, category, title, headline, summary, author, created_at, updated_at')
       .lt('created_at', currentCreatedAt) // Less than current created_at
       .order('created_at', { ascending: false }) // Get the closest older one
       .limit(1);

@@ -19,12 +19,6 @@
     "sourceName": "techcrunch"
   },
   {
-    "name": "Harvard Business Review",
-    "url": "https://hbr.org/rss/topic/latest",
-    "category": "Business",
-    "sourceName": "hbr"
-  },
-  {
     "name": "Awwwards",
     "url": "https://www.awwwards.com/blog/feed/",
     "category": "Design",
