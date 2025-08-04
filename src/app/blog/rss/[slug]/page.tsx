@@ -1,4 +1,5 @@
 
+import { Suspense } from "react";
 import { BlogPageClient } from "../../[slug]/client";
 import type { Metadata } from "next";
 import { getRssFeeds } from "@/data/rss-feeds";
@@ -46,5 +47,9 @@ export default async function RssBlogPostPage({
     notFound();
   }
 
-  return <BlogPageClient slug={fullSlug} initialInsight={initialInsight} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BlogPageClient slug={fullSlug} initialInsight={initialInsight} />
+    </Suspense>
+  );
 }
