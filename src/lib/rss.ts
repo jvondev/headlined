@@ -7,6 +7,7 @@ import { JSDOM } from 'jsdom';
 import { Readability } from '@mozilla/readability';
 import TurndownService from 'turndown';
 import { getFeedInfoFromUrl, getRssFeeds } from '@/data/rss-feeds';
+import { unstable_cache } from 'next/cache';
 
 const parser = new Parser({
     customFields: {
@@ -40,14 +41,10 @@ turndownService.addRule('removeByline', {
 turndownService.addRule('figcaption', {
     filter: 'figcaption',
     replacement: (content) => {
-        return `
-_${content.trim()}_
-`; 
+        return `\n_${content.trim()}_\n`; 
     }
 });
 
-const feedCache = new Map<string, { timestamp: number; data: RssArticle[] }>();
-const articleCache = new Map<string, { timestamp: number; data: RssArticle }>();
 const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes for cache
 
 async function extractFullContent(item: any, existingArticleData: Omit<RssArticle, 'blogContent' | 'deepDives'>): Promise<{ blogContent: string, deepDives: DeepDive<'metadata'>[], byline: string }> {
@@ -135,57 +132,51 @@ async function generateSlug(title: string, feedUrl: string): Promise<string> {
     return `rss-${source}-${sanitizedTitle}`;
 }
 
-export async function getRssFeed(feedUrl: string): Promise<RssArticle[]> {
-  const cached = feedCache.get(feedUrl);
-  if (cached && (Date.now() - cached.timestamp < CACHE_DURATION)) {
-      return cached.data;
-  }
+export const getRssFeed = unstable_cache(
+  async (feedUrl: string): Promise<RssArticle[]> => {
+    try {
+      const feed = await parser.parseURL(feedUrl);
+      
+      const articles = (await Promise.all(
+          (feed.items || []).map(async (item) => {
+            if (!item.link || !item.title) return null;
 
-  try {
-    const feed = await parser.parseURL(feedUrl);
-    
-    const articles = (await Promise.all(
-        (feed.items || []).map(async (item) => {
-          if (!item.link || !item.title) return null;
+            const summary = item.contentSnippet?.slice(0, 200) || item.content?.slice(0, 200) || '';
+            let thumbnailUrl;
+            if (item.mediaContent && item.mediaContent.$ && item.mediaContent.$.url) {
+                thumbnailUrl = item.mediaContent.$.url;
+            } else if (item.enclosure && item.enclosure.url && item.enclosure.type?.startsWith('image')) {
+                thumbnailUrl = item.enclosure.url;
+            }
 
-          const summary = item.contentSnippet?.slice(0, 200) || item.content?.slice(0, 200) || '';
-          let thumbnailUrl;
-          if (item.mediaContent && item.mediaContent.$ && item.mediaContent.$.url) {
-              thumbnailUrl = item.mediaContent.$.url;
-          } else if (item.enclosure && item.enclosure.url && item.enclosure.type?.startsWith('image')) {
-              thumbnailUrl = item.enclosure.url;
-          }
+            return {
+              slug: await generateSlug(item.title, feedUrl),
+              feedUrl: feedUrl,
+              title: item.title,
+              headline: item.title,
+              summary: summary,
+              blogContent: '', 
+              deepDives: [], 
+              link: item.link || '',
+              pubDate: item.pubDate,
+              author: item.creator || '',
+              thumbnailUrl: thumbnailUrl,
+            };
+          })
+      )).filter((article) => article !== null) as RssArticle[];
 
-          return {
-            slug: await generateSlug(item.title, feedUrl),
-            feedUrl: feedUrl,
-            title: item.title,
-            headline: item.title,
-            summary: summary,
-            blogContent: '', 
-            deepDives: [], 
-            link: item.link || '',
-            pubDate: item.pubDate,
-            author: item.creator || item.author || '',
-            thumbnailUrl: thumbnailUrl,
-          };
-        })
-    )).filter((article) => article !== null) as RssArticle[];
-
-    feedCache.set(feedUrl, { timestamp: Date.now(), data: articles });
-    return articles;
-  } catch (error) {
-    console.error(`Failed to fetch or parse RSS feed from ${feedUrl}:`, error);
-    return [];
-  }
-}
-
-export async function getRssArticleBySlug(slug: string): Promise<RssArticle | undefined> {
-    const cached = articleCache.get(slug);
-    if (cached && (Date.now() - cached.timestamp < CACHE_DURATION)) {
-        return cached.data;
+      return articles;
+    } catch (error) {
+      console.error(`Failed to fetch or parse RSS feed from ${feedUrl}:`, error);
+      return [];
     }
-    
+  },
+  ['rss-feed'],
+  { revalidate: 1800 }
+);
+
+export const getRssArticleBySlug = unstable_cache(
+  async (slug: string): Promise<RssArticle | undefined> => {
     const allFeeds = await getRssFeeds();
     const sourceName = slug.startsWith('rss-') ? slug.split('-')[1] : slug.split('-')[0];
     
@@ -219,7 +210,7 @@ export async function getRssArticleBySlug(slug: string): Promise<RssArticle | un
         summary: summary,
         link: matchedItem.link,
         pubDate: matchedItem.pubDate,
-        author: matchedItem.creator || matchedItem.author || '',
+        author: matchedItem.creator || '',
         thumbnailUrl: thumbnailUrl,
     };
     
@@ -234,9 +225,11 @@ export async function getRssArticleBySlug(slug: string): Promise<RssArticle | un
         deepDives,
     };
     
-    articleCache.set(slug, { timestamp: Date.now(), data: finalArticle });
     return finalArticle;
-}
+  },
+  ['rss-article-by-slug'],
+  { revalidate: 1800 }
+);
 
 export async function getAdjacentRssArticle(currentSlug: string): Promise<{ prev: RssArticle | null, next: RssArticle | null }> {
     const allFeeds = await getRssFeeds();

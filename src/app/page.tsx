@@ -1,13 +1,12 @@
 
-import { getPaginatedInsights } from '@/lib/actions';
+import { getRandomInsightSlug } from '@/lib/insights';
 import { redirect } from 'next/navigation';
 
 export default async function HomePage() {
-  const { insights } = await getPaginatedInsights({ page: 1 });
+  const randomSlug = await getRandomInsightSlug();
   
-  if (insights.length > 0) {
-    const randomIndex = Math.floor(Math.random() * insights.length);
-    redirect(`/insight/${insights[randomIndex].slug}`);
+  if (randomSlug) {
+    redirect(`/insight/${randomSlug}`);
   }
 
   return (

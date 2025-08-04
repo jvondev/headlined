@@ -61,32 +61,36 @@ interface PaginatedInsightsOptions {
   preferences?: any; // TODO: Define a proper type for preferences
 }
 
-export const getPaginatedInsights = async ({ page, category }: PaginatedInsightsOptions): Promise<{ insights: Insight[], hasMore: boolean }> => {
-  const startIndex = (page - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE - 1; // Supabase range is inclusive
+export const getPaginatedInsights = unstable_cache(
+  async ({ page, category }: PaginatedInsightsOptions): Promise<{ insights: Insight[], hasMore: boolean }> => {
+    const startIndex = (page - 1) * PAGE_SIZE;
+    const endIndex = startIndex + PAGE_SIZE - 1; // Supabase range is inclusive
 
-  let query = supabase
-    .from('insights')
-    .select('*')
-    .order('created_at', { ascending: false }); // Order by creation date, newest first
+    let query = supabase
+      .from('insights')
+      .select('*')
+      .order('created_at', { ascending: false }); // Order by creation date, newest first
 
-  if (category) {
-    // Assuming category is stored as TEXT[] and we want to check if the array contains the category
-    query = query.filter('category', 'cs', `{${category}}`);
-  }
+    if (category) {
+      // Assuming category is stored as TEXT[] and we want to check if the array contains the category
+      query = query.filter('category', 'cs', `{${category}}`);
+    }
 
-  const { data, error } = await query.range(startIndex, endIndex + 1); // Fetch one extra to check hasMore
+    const { data, error } = await query.range(startIndex, endIndex + 1); // Fetch one extra to check hasMore
 
-  if (error) {
-    console.error('Error fetching paginated insights:', error);
-    return { insights: [], hasMore: false };
-  }
+    if (error) {
+      console.error('Error fetching paginated insights:', error);
+      return { insights: [], hasMore: false };
+    }
 
-  const insights = data.slice(0, PAGE_SIZE).map(mapSupabaseInsightToInsightType) as Insight[];
-  const hasMore = data.length > PAGE_SIZE;
+    const insights = data.slice(0, PAGE_SIZE).map(mapSupabaseInsightToInsightType) as Insight[];
+    const hasMore = data.length > PAGE_SIZE;
 
-  return { insights, hasMore };
-};
+    return { insights, hasMore };
+  },
+  ['paginated-insights'],
+  { revalidate: 3600 }
+);
 
 export const getInsightBySlug = unstable_cache(
   async (slug: string): Promise<Insight | undefined> => {
@@ -161,4 +165,42 @@ export const getAdjacentInsights = unstable_cache(
   },
   ['adjacent-insights'], // Cache key
   { revalidate: 3600 } // Revalidate every hour
+);
+
+export const getRandomInsightSlug = unstable_cache(
+  async (): Promise<string | null> => {
+    const { data, error } = await supabase.from('insights').select('slug');
+
+    if (error || !data || data.length === 0) {
+      console.error('Error fetching slugs for random selection:', error);
+      return null;
+    }
+
+    const randomIndex = Math.floor(Math.random() * data.length);
+    return data[randomIndex].slug;
+  },
+  ['random-insight-slug'],
+  { revalidate: 3600 } // Cache for an hour
+);
+
+export const getInsightsBySlugs = unstable_cache(
+  async (slugs: string[]): Promise<Insight[]> => {
+    if (!slugs || slugs.length === 0) {
+      return [];
+    }
+
+    const { data, error } = await supabase
+      .from('insights')
+      .select('*')
+      .in('slug', slugs);
+
+    if (error) {
+      console.error('Error fetching insights by slugs:', error);
+      return [];
+    }
+
+    return data.map(mapSupabaseInsightToInsightType) as Insight[];
+  },
+  ['insights-by-slugs'],
+  { revalidate: 3600 }
 );
