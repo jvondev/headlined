@@ -7,7 +7,7 @@ import { BottomAdPlaceholder } from '@/components/bottom-ad-placeholder';
 import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
-  title: 'InsightScroll',
+  title: 'ReadMore',
   description: 'A new way to discover and consume content.',
 };
 

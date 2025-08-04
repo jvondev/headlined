@@ -6,8 +6,8 @@ import type { Metadata } from "next";
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const title = params.slug.split('-').slice(1).join(' ').replace(/\b\w/g, l => l.toUpperCase());
   return {
-    title: `${title} | InsightScroll`,
-    description: "Loading article from InsightScroll...",
+    title: `${title} | ReadMore`,
+    description: "Loading article from ReadMore...",
   };
 }
 

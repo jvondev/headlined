@@ -22,7 +22,7 @@ type BlogPageProps = {
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   // Only pre-generate metadata for non-RSS articles for performance
   if(params.slug.startsWith('rss-')) {
-    return { title: "InsightScroll" };
+    return { title: "ReadMore" };
   }
   const { insight } = await getArticleData(params.slug);
 
