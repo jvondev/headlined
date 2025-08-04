@@ -7,17 +7,9 @@ import { getRssFeed } from "@/lib/rss";
 import { getInsightBySlug } from "@/lib/insights";
 import { notFound } from "next/navigation";
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 86400; // Revalidate every 24 hours
 
-export async function generateStaticParams() {
-  const allFeeds = await getRssFeeds();
-  const allArticlesPromises = allFeeds.map(feed => getRssFeed(feed.url));
-  const allArticles = (await Promise.all(allArticlesPromises)).flat();
 
-  return allArticles.map(article => ({
-    slug: article.slug.replace(/^rss-/, ''), // Remove 'rss-' prefix for the param
-  }));
-}
 
 // This function is for metadata generation only.
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {

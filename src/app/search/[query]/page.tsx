@@ -9,8 +9,7 @@ type SearchPageProps = {
     };
 };
 
-// Make sure the page is dynamically rendered
-export const dynamic = 'force-dynamic';
+
 
 export default function SearchPage({ params }: SearchPageProps) {
     const currentQuery = params.query;

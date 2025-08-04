@@ -2,8 +2,6 @@
 import { getFeedCategories } from "@/data/rss-feeds";
 import { InsightPageClient } from "@/app/insight/[slug]/client";
 
-export const dynamic = 'force-dynamic';
-
 type RssPageProps = {
     searchParams: { [key: string]: string | string[] | undefined };
 };

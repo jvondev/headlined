@@ -7,5 +7,4 @@ export default async function SearchPage() {
     redirect('/');
 }
 
-// Make sure the page is dynamically rendered
-export const dynamic = 'force-dynamic';
+
