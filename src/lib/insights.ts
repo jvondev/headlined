@@ -168,15 +168,36 @@ export const getAdjacentInsights = unstable_cache(
 
 export const getRandomInsightSlug = unstable_cache(
   async (): Promise<string | null> => {
-    const { data, error } = await supabase.from('insights').select('slug');
+    // First, get the total count of insights
+    const { count, error: countError } = await supabase
+      .from('insights')
+      .select('count', { count: 'exact' });
 
-    if (error || !data || data.length === 0) {
-      console.error('Error fetching slugs for random selection:', error);
+    if (countError) {
+      console.error('Error fetching insight count:', countError);
       return null;
     }
 
-    const randomIndex = Math.floor(Math.random() * data.length);
-    return data[randomIndex].slug;
+    if (count === null || count === 0) {
+      return null; // No insights available
+    }
+
+    // Generate a random offset
+    const randomIndex = Math.floor(Math.random() * count);
+
+    // Fetch a single random insight using the offset
+    const { data, error } = await supabase
+      .from('insights')
+      .select('slug')
+      .range(randomIndex, randomIndex) // Fetch only one record at the random index
+      .single();
+
+    if (error || !data) {
+      console.error('Error fetching random insight slug:', error);
+      return null;
+    }
+
+    return data.slug;
   },
   ['random-insight-slug'],
   { revalidate: 3600 } // Cache for an hour
