@@ -35,7 +35,6 @@ export default function RootLayout({
           <Toaster />
           <BottomAdPlaceholder />
         </ThemeProvider>
-        <Analytics />
       </body>
     </html>
   );
