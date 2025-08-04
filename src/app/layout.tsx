@@ -4,6 +4,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
 import { BottomAdPlaceholder } from '@/components/bottom-ad-placeholder';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: 'InsightScroll',
@@ -33,6 +34,7 @@ export default function RootLayout({
           <Toaster />
           <BottomAdPlaceholder />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
