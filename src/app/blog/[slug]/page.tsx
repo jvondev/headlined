@@ -1,8 +1,18 @@
 
-import { getInsightBySlug, getAdjacentInsights } from "@/lib/insights";
+import { getInsightBySlug, getAllInsights } from "@/lib/insights";
 import { notFound } from "next/navigation";
 import { BlogPageClient } from "./client";
 import type { Metadata } from "next";
+
+export const revalidate = 3600; // Revalidate every hour
+
+export async function generateStaticParams() {
+  const insights = await getAllInsights();
+  // Filter out RSS slugs as this page only handles non-RSS blog posts
+  return insights.filter(insight => !insight.slug.startsWith('rss-')).map((insight) => ({
+    slug: insight.slug,
+  }));
+}
 
 async function getArticleData(slug: string) {
     const insight = await getInsightBySlug(slug);
