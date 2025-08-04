@@ -13,6 +13,16 @@ type InsightPageProps = {
     searchParams: { [key: string]: string | string[] | undefined }
 }
 
+export const revalidate = 3600; // Revalidate every hour
+
+export async function generateStaticParams() {
+  const insights = await getAllInsights();
+  // Filter out RSS slugs as this page only handles non-RSS insights
+  return insights.filter(insight => !insight.slug.startsWith('rss-')).map((insight) => ({
+    slug: insight.slug,
+  }));
+}
+
 function getDynamicParams(params: { slug: string }, searchParams: { [key: string]: string | string[] | undefined }) {
   return {
     slug: params.slug,
@@ -22,7 +32,7 @@ function getDynamicParams(params: { slug: string }, searchParams: { [key: string
 }
 
 export async function generateMetadata({ params, searchParams }: InsightPageProps): Promise<Metadata> {
-  const { slug } = await getDynamicParams(params, searchParams);
+  const { slug } = getDynamicParams(params, searchParams);
   const insight = await getInsightBySlug(slug);
   if (!insight) return {};
 
@@ -42,7 +52,7 @@ export default async function InsightPage({ params, searchParams }: InsightPageP
   }
 
   // Get preferences from cookies to perform initial sort
-  const cookieStore = await cookies();
+  const cookieStore = await cookies(); // Ensure correct type inference
   const preferencesCookie = cookieStore.get('insightPreferences');
   const preferences = preferencesCookie ? JSON.parse(preferencesCookie.value) : {};
 

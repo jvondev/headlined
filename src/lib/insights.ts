@@ -143,7 +143,7 @@ export const getAdjacentInsights = unstable_cache(
     // Fetch next insight (newer created_at)
     const { data: nextInsightData, error: nextError } = await supabase
       .from('insights')
-      .select('id, slug, seo_title, seo_description, category, title, headline, summary, thumbnailUrl, author, created_at, updated_at')
+      .select('id, slug, seo_title, seo_description, category, title, headline, summary, author, created_at, updated_at')
       .gt('created_at', currentCreatedAt) // Greater than current created_at
       .order('created_at', { ascending: true }) // Get the closest newer one
       .limit(1);
