@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from 'react';
-import type { FC } from 'react';
+import { useState, type FC } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -20,47 +20,79 @@ interface MarkdownRendererProps {
 }
 
 interface MarkdownSection {
+    id: string;
     heading: string;
     level: number;
     content: string;
+    children: MarkdownSection[]; // Added for nesting
 }
 
 // This function parses the markdown and splits it into sections based on headings
 function parseMarkdownIntoSections(markdown: string): MarkdownSection[] {
     if (!markdown) return [];
-    
+
     const lines = markdown.split('\n');
     const sections: MarkdownSection[] = [];
-    let currentSection: MarkdownSection | null = null;
+    const stack: MarkdownSection[] = []; // To keep track of parent sections
+    let sectionCounter = 0; // Unique ID counter
+
+    let currentContent = ''; // Accumulate content before a heading
 
     for (const line of lines) {
         const match = line.match(/^(#{1,4})\s+(.*)/); // Match h1, h2, h3, h4
+
         if (match) {
-            // If there's an existing section, push it before starting a new one
-            if (currentSection) {
-                sections.push(currentSection);
+            // If there's accumulated content, add it to the current section's content
+            if (currentContent.trim() !== '') {
+                if (stack.length > 0) {
+                    stack[stack.length - 1].content += currentContent;
+                } else {
+                    // This handles content before the very first heading
+                    // For now, we'll assume initialContent handles this.
+                    // If not, we might need a special "intro" section.
+                }
+                currentContent = ''; // Reset content
             }
-            currentSection = {
+
+            const newSection: MarkdownSection = {
+                id: `section-${sectionCounter++}`,
                 heading: match[2],
                 level: match[1].length,
                 content: '',
+                children: [],
             };
-        } else if (currentSection) {
-            currentSection.content += line + '\n';
+
+            // Adjust the stack based on the new section's level
+            while (stack.length > 0 && stack[stack.length - 1].level >= newSection.level) {
+                stack.pop();
+            }
+
+            if (stack.length > 0) {
+                stack[stack.length - 1].children.push(newSection);
+            } else {
+                sections.push(newSection);
+            }
+            stack.push(newSection);
+        } else {
+            // Accumulate content for the current section
+            currentContent += line + '\n';
         }
     }
 
-    // Push the last section
-    if (currentSection) {
-        sections.push(currentSection);
+    // Add any remaining content to the last section
+    if (currentContent.trim() !== '' && stack.length > 0) {
+        stack[stack.length - 1].content += currentContent;
     }
-    
+
     return sections;
 }
 
 
+
 const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, showAds = true }) => {
     const { theme } = useTheme();
+    const [openSections, setOpenSections] = React.useState<Map<string, boolean>>(new Map());
+    const sectionRefs = React.useRef<Map<string, HTMLElement>>(new Map());
 
     // Check if there are any headings. If not, inject a default "Summary" h2 heading.
     const hasHeadings = /^#+\s/m.test(children);
@@ -68,6 +100,19 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
     
     const sections = parseMarkdownIntoSections(markdownContent);
     const initialContent = markdownContent.split(/^(?:#{1,4}\s+.*)/m)[0];
+
+    const flattenSections = (sections: MarkdownSection[]): MarkdownSection[] => {
+        let flat: MarkdownSection[] = [];
+        sections.forEach(section => {
+            flat.push(section);
+            if (section.children.length > 0) {
+                flat = flat.concat(flattenSections(section.children));
+            }
+        });
+        return flat;
+    };
+
+    const allSections = flattenSections(sections);
 
     const components = {
         code({ node, inline, className, children, ...props }: any) {
@@ -105,17 +150,122 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
                     </div>
                 );
             }
+            // New logic for sentence-per-line
+            if (typeof paragraph.children === 'string') {
+                const sentences = paragraph.children.split(/(?<=[.!?])\s+/);
+                return (
+                    <p>
+                        {sentences.map((sentence, index) => (
+                            <span key={index} className="block mb-2">
+                                {sentence}
+                            </span>
+                        ))}
+                    </p>
+                );
+            }
             return <p>{paragraph.children}</p>;
         },
     };
 
-    const h1Sections = sections.filter(s => s.level === 1);
-    const otherSections = sections.filter(s => s.level > 1);
-    const shouldCollapseH1 = h1Sections.length > 1;
-
     // Ad is placed after initial content if there is any, otherwise it won't be shown
     // unless there are sections.
     const shouldShowAd = (initialContent.trim().length > 0 || sections.length > 0) && showAds;
+
+    const handleOpenChange = (sectionToChange: MarkdownSection, isOpen: boolean) => {
+        setOpenSections(prevOpenSections => {
+            const newOpenSections = new Map(prevOpenSections);
+
+            if (isOpen) {
+                // Open all children recursively
+                const openChildren = (section: MarkdownSection) => {
+                    section.children.forEach(child => {
+                        newOpenSections.set(child.id, true);
+                        openChildren(child);
+                    });
+                };
+                openChildren(sectionToChange);
+
+                newOpenSections.set(sectionToChange.id, true);
+
+                // Scroll to the newly opened heading
+                const currentSectionElement = sectionRefs.current.get(sectionToChange.id);
+                if (currentSectionElement) {
+                    setTimeout(() => {
+                        currentSectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 300); // Keep the timeout to allow animations to settle
+                }
+            } else {
+                // Close the section and all its children recursively
+                const closeChildren = (section: MarkdownSection) => {
+                    section.children.forEach(child => {
+                        newOpenSections.set(child.id, false);
+                        closeChildren(child);
+                    });
+                };
+                closeChildren(sectionToChange);
+                newOpenSections.set(sectionToChange.id, false);
+            }
+            return newOpenSections;
+        });
+    };
+
+    const renderSection = (section: MarkdownSection, index: number) => {
+        const HeadingTag = `h${section.level}` as keyof JSX.IntrinsicElements;
+        const isH1 = section.level === 1;
+        const sectionKey = section.id;
+        const triggerRef = React.useCallback((node: HTMLButtonElement) => {
+            if (node) {
+                sectionRefs.current.set(sectionKey, node);
+            } else {
+                sectionRefs.current.delete(sectionKey);
+            }
+        }, [sectionKey]);
+
+        const contentRef = React.useRef<HTMLDivElement>(null);
+
+        const handleSectionOpenChange = (isOpen: boolean) => {
+            handleOpenChange(section, isOpen);
+            if (isOpen) {
+                // Use a timeout to allow the collapsible to start opening before scrolling
+                setTimeout(() => {
+                    const currentSectionElement = sectionRefs.current.get(sectionKey);
+                    if (currentSectionElement) {
+                        currentSectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 300); // Keep the timeout to allow animations to settle
+            }
+        };
+
+        return (
+            <div key={sectionKey} className="mb-4 rounded-lg border bg-card shadow-sm overflow-hidden">
+                <Collapsible
+                    open={openSections.get(sectionKey) || false}
+                    onOpenChange={handleSectionOpenChange}
+                    className="group"
+                >
+                <CollapsibleTrigger ref={triggerRef} className="flex items-center gap-2 w-full text-left p-4 bg-card-foreground/5 hover:bg-card-foreground/10 transition-colors duration-300">
+                    <ChevronRight className="h-5 w-5 transition-transform duration-300 flex-shrink-0 group-data-[state=open]:rotate-90" />
+                    {isH1 ? (
+                        <HeadingTag className="text-4xl md:text-5xl font-extrabold text-primary-foreground">{section.heading}</HeadingTag>
+                    ) : (
+                        <span className={cn(
+                            "font-bold",
+                            section.level === 2 && "text-3xl md:text-4xl text-foreground",
+                            section.level === 3 && "text-2xl md:text-3xl text-muted-foreground",
+                            section.level === 4 && "text-xl md:text-2xl text-muted-foreground",
+                        )}>
+                            {section.heading}
+                        </span>
+                    )}
+                </CollapsibleTrigger>
+                <CollapsibleContent ref={contentRef} className="px-4 pb-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden text-sm transition-all duration-300 ease-in-out opacity-0 data-[state=open]:opacity-100 data-[state=closed]:opacity-0">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{section.content}</ReactMarkdown>
+                    {section.children.map((childSection, childIndex) => renderSection(childSection, childIndex))}
+                </CollapsibleContent>
+            </Collapsible>
+            </div>
+        );
+    };
 
     return (
       <div className={className}>
@@ -131,45 +281,8 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
             </div>
         )}
 
-        {/* Handle H1 sections */}
-        {h1Sections.map((section, index) => (
-            shouldCollapseH1 ? (
-                <Collapsible key={`h1-${index}`} defaultOpen={false} className="group border-b last:border-b-0">
-                    <CollapsibleTrigger className="flex items-center gap-2 w-full text-left py-4">
-                        <ChevronRight className="h-5 w-5 transition-transform duration-200 flex-shrink-0 group-data-[state=open]:rotate-90" />
-                        <h1 className="text-4xl font-bold">{section.heading}</h1>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="prose-p:ml-7 prose-ul:ml-7 prose-ol:ml-7 prose-blockquote:ml-7 pb-4">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{section.content}</ReactMarkdown>
-                    </CollapsibleContent>
-                </Collapsible>
-            ) : (
-                <div key={`h1-${index}`}>
-                    <h1 className="text-4xl font-bold mt-8 mb-4">{section.heading}</h1>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{section.content}</ReactMarkdown>
-                </div>
-            )
-        ))}
-
-        {/* Render other collapsible sections (h2, h3, h4) */}
-        {otherSections.map((section, index) => (
-            <Collapsible key={`h-other-${index}`} defaultOpen={false} className="group border-b last:border-b-0">
-                <CollapsibleTrigger className="flex items-center gap-2 w-full text-left py-4">
-                    <ChevronRight className="h-5 w-5 transition-transform duration-200 flex-shrink-0 group-data-[state=open]:rotate-90" />
-                     <span className={cn(
-                        "font-bold",
-                        section.level === 2 && "text-3xl",
-                        section.level === 3 && "text-2xl",
-                        section.level === 4 && "text-xl",
-                    )}>
-                        {section.heading}
-                    </span>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="prose-p:ml-7 prose-ul:ml-7 prose-ol:ml-7 prose-blockquote:ml-7 pb-4">
-                     <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{section.content}</ReactMarkdown>
-                </CollapsibleContent>
-            </Collapsible>
-        ))}
+        {/* Render all sections recursively */}
+        {sections.map(renderSection)}
       </div>
     );
 };
