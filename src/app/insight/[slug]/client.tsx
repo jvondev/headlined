@@ -95,8 +95,9 @@ export function InsightPageClient({
         rssCategories={rssCategories}
         rssSelectedCategory={rssSelectedCategory}
         initialHasMore={hasMore}
-        hasSeenOnboarding={hasSeenOnboarding} // Pass hasSeenOnboarding
-        markOnboardingComplete={markOnboardingComplete} // Pass markOnboardingComplete
+        hasSeenOnboarding={hasSeenOnboarding}
+        markOnboardingComplete={markOnboardingComplete}
       />
     </main>
   );
+}

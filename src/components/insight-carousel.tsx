@@ -35,6 +35,8 @@ type InsightCarouselProps = {
   rssCategories?: string[],
   rssSelectedCategory?: string,
   initialHasMore: boolean,
+  hasSeenOnboarding: boolean,
+  markOnboardingComplete: () => void,
 }
 
 // Function to inject ads into the insight list
