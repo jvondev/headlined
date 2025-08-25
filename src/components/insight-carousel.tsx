@@ -5,9 +5,12 @@ import type { Insight, SavedItem } from "@/types";
 import { useState, useEffect, useCallback, type FC, useRef, useMemo, useTransition } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, ArrowRight, Pencil } from "lucide-react";
+import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, ArrowRight, Pencil, HelpCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { CarouselContext } from "@/context/carousel-context";
+import { useOnboardingStatus } from "@/hooks/use-onboarding-status";
+import { OnboardingContext } from "@/context/onboarding-context";
+import { OnboardingFlow } from "@/components/onboarding/onboarding-flow";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { PageHeader } from "./shared/page-header";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
@@ -135,7 +138,20 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   const currentInsight = insights[activeSlideIndex];
 
   const { toast } = useToast();
+  const [isEmblaApiReady, setIsEmblaApiReady] = useState(false);
+  const [onboardingActive, setOnboardingActive] = useState(false); // State for setOnboardingActive
+
+  useEffect(() => {
+    if (emblaApi) {
+      setIsEmblaApiReady(true);
+    }
+  }, [emblaApi]);
+
+  const setOnboardingActiveCallback = useCallback((active: boolean) => {
+    setOnboardingActive(active);
+  }, []);
   const { isSaved, getSavedItem, addSavedItem, removeSavedItem, hasSaved, setHasSaved } = useSavedItems();
+  const { resetOnboarding, hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus(); // Add this line
   
   const scrollUp = useCallback(() => {
     if (emblaApi?.canScrollPrev()) {
@@ -459,7 +475,18 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
 
 
   return (
-    <CarouselContext.Provider value={{ setHorizontalEmblaApi, currentInsightSlug: currentInsight?.slug }}>
+    <OnboardingContext.Provider
+      value={{
+        triggerScrollDown: scrollDown,
+        triggerScrollRight: scrollRight,
+        setOnboardingActive: setOnboardingActiveCallback,
+        isEmblaApiReady: isEmblaApiReady,
+      }}
+    >
+      {!hasSeenOnboarding && (
+        <OnboardingFlow onComplete={markOnboardingComplete} />
+      )}
+      <CarouselContext.Provider value={{ setHorizontalEmblaApi, currentInsightSlug: currentInsight?.slug }}>
       <div className="relative flex h-screen w-full flex-col items-center justify-center">
         <PageHeader 
             rssCategories={isRssPage ? rssCategories : undefined}
@@ -500,6 +527,18 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
               disabled={!currentInsight || currentInsight.isAd}
             >
               <MoreVertical className="h-4 w-4" />
+            </Button>
+            {/* New Replay Onboarding Button */}
+            <Button
+              onClick={() => {
+                resetOnboarding();
+              }}
+              variant="outline"
+              size="icon"
+              aria-label="Replay Onboarding"
+              className="bg-background/50 backdrop-blur-sm rounded-full"
+            >
+              <HelpCircle className="h-4 w-4" />
             </Button>
             <div className="relative">
                 <Button
@@ -573,5 +612,6 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
         )}
       </div>
     </CarouselContext.Provider>
+    </OnboardingContext.Provider>
   );
 };

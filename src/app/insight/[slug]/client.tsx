@@ -1,4 +1,3 @@
-
 "use client";
 
 import { InsightCarousel } from "@/components/insight-carousel";
@@ -6,6 +5,8 @@ import { InsightPageLoadingSkeleton } from "@/components/insight-page-loading-sk
 import { getPaginatedInsights } from "@/lib/actions";
 import { useEffect, useState, useTransition } from "react";
 import type { Insight } from "@/types";
+import { useOnboardingStatus } from "@/hooks/use-onboarding-status"; // Added import
+import { OnboardingFlow } from "@/components/onboarding/onboarding-flow"; // Added import
 
 export function InsightPageClient({ 
   initialInsights, 
@@ -25,6 +26,7 @@ export function InsightPageClient({
   const [insights, setInsights] = useState<Insight[]>(initialInsights);
   const [currentSlug, setCurrentSlug] = useState<string>(slug);
   const [hasMore, setHasMore] = useState(initialHasMore);
+  const { hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus(); // Added hook usage
   const [isLoading, setIsLoading] = useState(initialInsights.length === 0);
   
   useEffect(() => {
@@ -93,7 +95,8 @@ export function InsightPageClient({
         rssCategories={rssCategories}
         rssSelectedCategory={rssSelectedCategory}
         initialHasMore={hasMore}
+        hasSeenOnboarding={hasSeenOnboarding} // Pass hasSeenOnboarding
+        markOnboardingComplete={markOnboardingComplete} // Pass markOnboardingComplete
       />
     </main>
   );
-}

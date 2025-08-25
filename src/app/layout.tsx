@@ -1,21 +1,27 @@
 
+"use client"; // Add this line if not already present, as useOnboardingStatus is a client hook
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
-
 import { Analytics } from '@vercel/analytics/next';
+import { useOnboardingStatus } from '@/hooks/use-onboarding-status'; // Import the hook
+import { OnboardingFlow } from '@/components/onboarding/onboarding-flow'; // Import the OnboardingFlow component
 
-export const metadata: Metadata = {
-  title: 'ReadMore',
-  description: 'A new way to discover and consume content.',
-};
+// Metadata can't be client-side, so keep it outside the client component
+// export const metadata: Metadata = {
+//   title: 'ReadMore',
+//   description: 'A new way to discover and consume content.',
+// };
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -33,7 +39,6 @@ export default function RootLayout({
           {children}
           <Analytics />
           <Toaster />
-          
         </ThemeProvider>
       </body>
     </html>
