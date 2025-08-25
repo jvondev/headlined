@@ -23,7 +23,7 @@ export const CaseStudyView: FC<CaseStudyViewProps> = ({ problem, solution, resul
   ];
 
   return (
-    <Accordion type="single" collapsible className="w-full pr-4">
+    <Accordion type="single" collapsible defaultValue="item-0" className="w-full pr-4">
       {sections.map((section, index) => (
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger className="text-left font-semibold text-lg hover:no-underline">

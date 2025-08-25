@@ -16,7 +16,7 @@ export function ArticleContent({ insight }: { insight: Insight }) {
   return (
     <article className="prose prose-lg dark:prose-invert mx-auto max-w-3xl">
       <div className="text-center mb-12">
-        <div className="not-prose flex justify-center gap-2 mb-4">
+        <div className="not-prose flex flex-wrap justify-center gap-2 mb-4">
           {insight.category.map((cat) => (
             <Badge key={cat} variant="secondary">{cat}</Badge>
           ))}
@@ -58,7 +58,7 @@ export function ArticleContentLoadingSkeleton() {
     <div className="container mx-auto px-4 py-8">
         <article className="prose prose-lg dark:prose-invert mx-auto max-w-3xl">
           <div className="text-center mb-12 space-y-4">
-            <div className="flex justify-center gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
                 <Skeleton className="h-6 w-20" />
                 <Skeleton className="h-6 w-24" />
             </div>

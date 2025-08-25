@@ -16,7 +16,6 @@ import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
 import { SaveDialog } from "@/components/save-dialog";
 
-
 const BlogFooter = ({ onVisible }: { onVisible: () => void }) => {
     const { ref, inView } = useInView({ threshold: 0.1 }); 
     
