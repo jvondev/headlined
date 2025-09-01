@@ -4,12 +4,24 @@ import { extractFullContent, generateSlug } from '@/lib/rss';
 import fs from 'fs';
 import path from 'path';
 import Parser from 'rss-parser';
+import { RssArticle } from '@/types';
 
 const parser = new Parser({
     customFields: {
         item: [['media:content', 'mediaContent', { keepArray: false }]],
     }
 });
+
+// Helper to slugify category names for file paths
+const slugify = (text: string) => {
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '')
+        .replace(/--+/g, '-');
+};
 
 export async function GET(request: Request) {
     try {
@@ -19,19 +31,13 @@ export async function GET(request: Request) {
             return NextResponse.json({ message: 'No RSS feeds configured.' }, { status: 200 });
         }
 
-        const outputDir = path.join(process.cwd(), 'public', 'generated-articles');
-        if (fs.existsSync(outputDir)) {
-            fs.rmSync(outputDir, { recursive: true, force: true });
-        }
-        fs.mkdirSync(outputDir, { recursive: true });
-
-        const processedArticles = [];
+        const allProcessedArticles: RssArticle[] = []; // New array to collect all processed articles
 
         for (const rssFeed of rssFeeds) {
             try {
                 const feed = await parser.parseURL(rssFeed.url);
                 let articlesToProcess = feed.items;
-                articlesToProcess = articlesToProcess.slice(0, 20);
+                articlesToProcess = articlesToProcess.slice(0, 20); // Limit to 20 articles per feed
 
                 for (const item of articlesToProcess) {
                     if (!item.link || !item.title) {
@@ -48,34 +54,31 @@ export async function GET(request: Request) {
                     }
 
                     const basicArticleData = {
-                        slug: await generateSlug(item.title, rssFeed.url),
-                        feedUrl: rssFeed.url,
+                        slug: (await generateSlug(item.title, rssFeed.url)).replace('rss-', ''), // Remove 'rss-' prefix
                         title: item.title,
-                        headline: item.title,
                         summary: summary,
                         link: item.link,
                         pubDate: item.pubDate,
                         author: item.creator || '',
-                        thumbnailUrl: thumbnailUrl,
+                        thumbnail: thumbnailUrl, // Renamed from thumbnailUrl
                     };
 
                     try {
-                        const { blogContent, deepDives, byline } = await extractFullContent(item, basicArticleData);
+                        const { blogContent, byline } = await extractFullContent(item, basicArticleData); // Removed deepDives
                         const finalAuthor = byline || basicArticleData.author;
 
                         const finalArticle = {
                             ...basicArticleData,
                             author: finalAuthor,
                             blogContent,
-                            deepDives,
+                            originalFeedUrl: rssFeed.url, // Add originalFeedUrl
+                            // deepDives removed
                         };
 
-                        const filePath = path.join(outputDir, `${finalArticle.slug}.json`);
-                        fs.writeFileSync(filePath, JSON.stringify(finalArticle, null, 2));
-                        processedArticles.push(finalArticle.slug);
+                        allProcessedArticles.push(finalArticle); // Collect the processed article
 
                     } catch (error: unknown) {
-                        console.error(`Failed to process and save article ${item.title} (${item.link}):`, error);
+                        console.error(`Failed to process article ${item.title} (${item.link}):`, error);
                     }
                 }
             } catch (error: unknown) {
@@ -83,7 +86,60 @@ export async function GET(request: Request) {
             }
         }
 
-        return NextResponse.json({ message: 'RSS feeds processed and saved successfully.', processedCount: processedArticles.length }, { status: 200 });
+        // --- Logic to group and save articles by category and source locally ---
+        const groupedArticles: {
+            [category: string]: {
+                [sourceName: string]: RssArticle[];
+            };
+        } = {};
+
+        for (const article of allProcessedArticles) {
+            const feedInfo = rssFeeds.find(feed => feed.url === article.originalFeedUrl); // Use originalFeedUrl
+            if (feedInfo) {
+                const category = feedInfo.category;
+                const sourceName = feedInfo.sourceName;
+
+                if (!groupedArticles[category]) {
+                    groupedArticles[category] = {};
+                }
+                if (!groupedArticles[category][sourceName]) {
+                    groupedArticles[category][sourceName] = [];
+                }
+                groupedArticles[category][sourceName].push(article);
+            } else {
+                console.warn(`Could not find feed info for article: ${article.slug}`);
+            }
+        }
+
+        const categoryOutputDir = path.join(process.cwd(), 'public', 'generated-categories');
+        if (fs.existsSync(categoryOutputDir)) {
+            fs.rmSync(categoryOutputDir, { recursive: true, force: true });
+        }
+        fs.mkdirSync(categoryOutputDir, { recursive: true });
+
+        const savedCategoryFiles: string[] = [];
+        for (const category in groupedArticles) {
+            if (Object.prototype.hasOwnProperty.call(groupedArticles, category)) {
+                const categorySlug = slugify(category);
+                const filePath = path.join(categoryOutputDir, `${categorySlug}.json`);
+                const fileContent = JSON.stringify(groupedArticles[category], null, 2);
+
+                try {
+                    fs.writeFileSync(filePath, fileContent);
+                    savedCategoryFiles.push(filePath);
+                    console.log(`Successfully saved ${filePath} locally.`);
+                } catch (saveError) {
+                    console.error(`Failed to save ${filePath} locally:`, saveError);
+                }
+            }
+        }
+
+        return NextResponse.json({
+            message: 'RSS feeds processed and categorized JSONs saved locally successfully.',
+            processedArticlesCount: allProcessedArticles.length,
+            savedCategoryFilesCount: savedCategoryFiles.length,
+            savedCategoryFiles: savedCategoryFiles,
+        }, { status: 200 });
 
     } catch (error: unknown) {
         console.error('Error processing RSS feeds:', error);

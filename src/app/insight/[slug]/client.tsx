@@ -14,14 +14,16 @@ export function InsightPageClient({
   initialDeepDiveIndex,
   rssCategories,
   rssSelectedCategory,
-  initialHasMore
+  initialHasMore,
+  shouldFetchPaginatedInsights = false
 }: { 
   initialInsights: Insight[], 
   slug: string, 
   initialDeepDiveIndex?: number,
   rssCategories?: string[],
   rssSelectedCategory?: string,
-  initialHasMore: boolean
+  initialHasMore: boolean,
+  shouldFetchPaginatedInsights?: boolean
 }) {
   const [insights, setInsights] = useState<Insight[]>(initialInsights);
   const [currentSlug, setCurrentSlug] = useState<string>(slug);
@@ -32,7 +34,9 @@ export function InsightPageClient({
   useEffect(() => {
     // If we start with no insights (e.g., the main RSS page), fetch them now.
     const fetchInitialData = async () => {
-      if (initialInsights.length === 0 && rssSelectedCategory) {
+      // Only fetch if initialInsights are empty AND we are in the RSS context
+      // AND the insights state is also empty (meaning it hasn't been populated yet)
+      if (shouldFetchPaginatedInsights && initialInsights.length === 0 && rssSelectedCategory && insights.length === 0) {
         setIsLoading(true);
         const { insights: fetchedInsights, hasMore: fetchedHasMore } = await getPaginatedInsights({
           page: 1,
@@ -49,7 +53,7 @@ export function InsightPageClient({
       }
     };
     fetchInitialData();
-  }, [initialInsights.length, rssSelectedCategory]);
+  }, [initialInsights.length, rssSelectedCategory, insights.length]);
 
 
   useEffect(() => {

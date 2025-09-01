@@ -111,16 +111,14 @@ export interface SavedItem {
 // RSS-related types
 export interface RssArticle {
     slug: string;
-    feedUrl: string;
     title: string;
-    headline: string;
     summary: string;
     blogContent: string;
-    deepDives: DeepDive<DeepDiveType>[];
     link: string;
     pubDate?: string;
     author?: string;
-    thumbnailUrl?: string;
+    thumbnail?: string;
+    originalFeedUrl?: string; // Added originalFeedUrl
 }
 
 export interface RssFeed {

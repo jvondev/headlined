@@ -43,6 +43,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.6.0",
     "embla-carousel-wheel-gestures": "^8.0.0",
+    "feed": "^5.1.0",
     "flexsearch": "^0.7.31",
     "framer-motion": "^12.23.12",
     "genkit": "^1.14.1",

@@ -1,107 +1,69 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getFeedCategories, getRssFeeds } from "@/data/rss-feeds";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { RssFeed } from "@/types";
-import Image from "next/image";
-import { TopicSelector } from "@/components/topic-selector";
-
-
-// Helper function to construct the favicon URL
-const getFaviconUrl = (feedUrl: string) => {
-    try {
-        const domain = new URL(feedUrl).hostname;
-        return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-    } catch (error) {
-        console.error("Invalid URL for favicon:", feedUrl);
-        return "/favicon.ico"; // Fallback icon
-    }
-};
-
-// A new component to handle image fallbacks gracefully
-const FaviconImage = ({ fallbackIconUrl, alt }: { fallbackIconUrl?: string, alt: string }) => {
-    const [src, setSrc] = useState(fallbackIconUrl || "/favicon.ico");
-
-    return (
-        <Image
-            src={src}
-            alt={alt}
-            fill
-            className="object-contain w-full h-full"
-            onError={() => setSrc("/favicon.ico")} // Set fallback to final default
-        />
-    );
-};
-
+import { useEffect, useState } from 'react';
+import { getRssFeeds } from '@/data/rss-feeds';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
+import RssFeedSelectionModalContent from '@/components/rss-feed-selection-modal-content';
+import { useRouter } from 'next/navigation';
 
 export default function RssSelectionPage() {
-    const [categories, setCategories] = useState<string[]>([]);
-    const [feeds, setFeeds] = useState<RssFeed[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    
     const router = useRouter();
+    
+
+    
+    
+    
+    
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(true); // Always open modal on this page
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        async function fetchData() {
-            const [fetchedCategories, fetchedFeeds] = await Promise.all([
-                getFeedCategories(),
-                getRssFeeds()
-            ]);
-            setCategories(fetchedCategories);
-            setFeeds(fetchedFeeds);
-            // Set a default category
-            if (fetchedCategories.length > 0) {
-                setSelectedCategory(fetchedCategories[0]);
-            }
+        if (!isModalOpen) {
+            // Redirect to BBC News if modal closes
+            router.push(`/rss/feed`);
         }
-        fetchData();
-    }, []); // Removed isMobile from dependency array
+    }, [isModalOpen, router]);
 
-    const handleSourceSelection = (feedUrl: string) => {
-        router.push(`/rss/feed?source=${encodeURIComponent(feedUrl)}`);
+    
+
+    const handleFeedSelect = async (selection: string) => {
+        setIsModalOpen(false);
+        setIsLoading(true);
+
+        if (selection.startsWith('category:')) {
+            const category = selection.replace('category:', '');
+            const allFeeds = await getRssFeeds();
+            const feedsForCategory = allFeeds.filter(feed => feed.category === category);
+            
+            if (feedsForCategory.length > 0) {
+                const firstFeedUrl = feedsForCategory[0].url;
+                router.push(`/rss/feed?source=${encodeURIComponent(firstFeedUrl)}`);
+            } else {
+                router.push(`/rss`); // Go back to modal page
+            }
+        } else {
+            // This is a direct feed URL
+            router.push(`/rss/feed?source=${encodeURIComponent(selection)}`);
+        }
+        setIsLoading(false);
     };
 
-    const filteredFeeds = selectedCategory
-        ? feeds.filter(feed => feed.category === selectedCategory)
-        : [];
-
     return (
-        <div className="container mx-auto px-4">
-            <h1 className="text-3xl font-bold my-8 text-center">RSS Feed Explorer</h1>
+        <>
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogTrigger asChild>
+                    {/* You can add a button here to re-open the modal if needed */}
+                    { !isModalOpen && <button className="hidden">Open RSS Feed Selector</button>}
+                </DialogTrigger>
+                <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto">
+                    <DialogTitle className="sr-only">Select RSS Feed</DialogTitle>
+                    <RssFeedSelectionModalContent onFeedSelect={handleFeedSelect} />
+                </DialogContent>
+            </Dialog>
 
-            {/* Top Floating Category Selector */}
-            <div className="flex justify-center mb-8">
-                <TopicSelector
-                    onTopicSelect={(selectedTopics) => {
-                        setSelectedCategory(selectedTopics.length > 0 ? selectedTopics[0] : null);
-                    }}
-                    initialSelectedTopics={selectedCategory ? [selectedCategory] : []}
-                />
-            </div>
-
-            {/* Main Content Area */}
-            <h2 className="text-xl font-semibold mb-4">Sources in {selectedCategory}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                {filteredFeeds.map((feed) => (
-                        <Card
-                            key={feed.url}
-                            className="cursor-pointer overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 active:scale-95 aspect-[4/3]"
-                            onClick={() => handleSourceSelection(feed.url)}
-                            style={{ backgroundColor: feed.cardBackgroundColor || undefined }}
-                        >
-                            <CardContent className="p-0 flex flex-col h-full">
-                                <div className="relative flex-grow grid place-items-center p-6">
-                                    <FaviconImage fallbackIconUrl={feed.fallbackIconUrl} alt={`${feed.name} logo`} />
-                                </div>
-                                <div className="p-3 border-t">
-                                    <CardTitle className="text-center text-sm font-medium truncate" style={{ color: feed.labelFontColor || undefined }}>{feed.name}</CardTitle>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-            </div>
-        </div>
+            {/* This page only shows the modal, not the insights directly */}
+            {/* The insights will be shown on /rss/feed */}
+        </>
     );
 }

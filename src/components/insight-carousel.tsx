@@ -37,6 +37,7 @@ type InsightCarouselProps = {
   initialHasMore: boolean,
   hasSeenOnboarding: boolean,
   markOnboardingComplete: () => void,
+  shouldFetchPaginatedInsights?: boolean,
 }
 
 // Function to inject ads into the insight list
@@ -83,6 +84,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   rssCategories,
   rssSelectedCategory,
   initialHasMore,
+  shouldFetchPaginatedInsights = false,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -227,6 +229,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
 
 
   const loadMoreInsights = useCallback(async () => {
+    console.log('loadMoreInsights called');
     if (isLoading || !hasMore || !isPreferencesLoaded) return;
     
     setIsLoading(true);
@@ -308,7 +311,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
    }, []);
 
   const handleCategoryChange = (category: string) => {
-    router.push(`/rss?category=${encodeURIComponent(category)}`);
+    
   };
 
   const currentItemId = useMemo(() => {

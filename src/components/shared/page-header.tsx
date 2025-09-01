@@ -67,7 +67,7 @@ export function PageHeader({
                         )}
                         {showRss && (
                             <Button asChild variant="ghost" size="icon" className="bg-background/50 backdrop-blur-sm rounded-full">
-                                <Link href={`/rss`} aria-label="RSS Feeds">
+                                <Link href={`/rss/feed`} aria-label="RSS Feeds">
                                     <Rss className="h-5 w-5" />
                                 </Link>
                             </Button>
