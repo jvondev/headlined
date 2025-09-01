@@ -46,9 +46,13 @@ export async function getPaginatedInsights({
 
   if (isRss) {
     let allItems: RssArticle[] = [];
-    const categories = await getFeedCategories();
-    const selectedCategory = category || categories[0];
-    const feedsToFetch = await getFeedsByCategory(selectedCategory);
+
+    let feedsToFetch;
+    if (category) {
+        feedsToFetch = await getFeedsByCategory(category);
+    } else {
+        feedsToFetch = await getAllFeeds();
+    }
 
     let articles: RssArticle[] = [];
     const feedPromises = feedsToFetch.map(feed => getRssFeed(feed.url));

@@ -42,11 +42,13 @@ turndownService.addRule('figcaption', {
 const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes for cache
 
 export async function extractFullContent(item: any, existingArticleData: Omit<RssArticle, 'blogContent' | 'deepDives'>): Promise<{ blogContent: string, deepDives: DeepDive<'metadata'>[], byline: string }> {
+    console.log('Extracting content for link:', item.link);
     let finalHtmlContent = '';
 
     if (item.link) {
         try {
             const res = await fetch(item.link, { headers: { 'User-Agent': 'Mozilla/5.0' }, next: { revalidate: CACHE_DURATION / 1000 } });
+            console.log('Fetch response OK:', res.ok);
             if (res.ok) {
                 const html = await res.text();
                 const doc = new JSDOM(html, { url: item.link });
@@ -141,7 +143,7 @@ export async function getRssFeed(feedUrl: string): Promise<RssArticle[]> {
           const filePath = path.join(articlesDir, file);
           const fileContent = fs.readFileSync(filePath, 'utf-8');
           const article = JSON.parse(fileContent) as RssArticle;
-          if (article.feedUrl === feedUrl) {
+          if (!feedUrl || article.feedUrl === feedUrl) {
             allArticles.push(article);
           }
         }
