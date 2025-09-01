@@ -128,4 +128,7 @@ export interface RssFeed {
     url: string;
     category: string;
     sourceName: string; // e.g., 'bbc', 'verge'
+    fallbackIconUrl?: string; // URL for a high-quality fallback logo
+    cardBackgroundColor?: string;
+    labelFontColor?: string;
 }

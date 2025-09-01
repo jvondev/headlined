@@ -1,27 +1,38 @@
-
 [
   {
     "name": "BBC News",
     "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
     "category": "News",
-    "sourceName": "bbc"
+    "sourceName": "bbc",
+    "fallbackIconUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f4/BBC_News_%282008%29.svg",
+    "cardBackgroundColor": "#a71011",
+    "labelFontColor": "#FFFFFF"
   },
   {
     "name": "The Verge",
     "url": "https://www.theverge.com/rss/index.xml",
     "category": "Tech",
-    "sourceName": "verge"
+    "sourceName": "verge",
+    "fallbackIconUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWes1GhQqANs8XC4BX-CgSe4o7WJajZ_Fi8U5mNyOH1BSQcqmuO5W7M8v7&s",
+    "cardBackgroundColor": "#5200ff",
+    "labelFontColor": "#FFFFFF"
   },
   {
     "name": "TechCrunch",
     "url": "https://techcrunch.com/feed/",
     "category": "Tech",
-    "sourceName": "techcrunch"
+    "sourceName": "techcrunch",
+    "fallbackIconUrl": "https://www.openx.com/wp-content/uploads/2022/03/logo-techcrunch.png",
+    "cardBackgroundColor": "#0a9e01",
+    "labelFontColor": "#FFFFFF"
   },
   {
     "name": "Awwwards",
     "url": "https://www.awwwards.com/blog/feed/",
     "category": "Design",
-    "sourceName": "awwwards"
+    "sourceName": "awwwards",
+    "fallbackIconUrl": "https://destrukt.co.uk/wp-content/uploads/2023/08/awwwards-nomination.jpg",
+    "cardBackgroundColor": "#000000",
+    "labelFontColor": "#FFFFFF"
   }
 ]
