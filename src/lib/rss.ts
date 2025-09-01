@@ -1,19 +1,12 @@
-
 'use server';
 
-import Parser from 'rss-parser';
 import { RssArticle, DeepDive, MetadataItem, Insight, RssFeed } from '@/types';
+import { getFeedInfoFromUrl, getRssFeeds } from '@/data/rss-feeds';
+import fs from 'fs';
+import path from 'path';
 import { JSDOM } from 'jsdom';
 import { Readability } from '@mozilla/readability';
 import TurndownService from 'turndown';
-import { getFeedInfoFromUrl, getRssFeeds } from '@/data/rss-feeds';
-import { unstable_cache } from 'next/cache';
-
-const parser = new Parser({
-    customFields: {
-        item: [['media:content', 'mediaContent', { keepArray: false }]],
-    }
-});
 
 const turndownService = new TurndownService({
     headingStyle: 'atx',
@@ -45,9 +38,10 @@ turndownService.addRule('figcaption', {
     }
 });
 
+
 const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes for cache
 
-async function extractFullContent(item: any, existingArticleData: Omit<RssArticle, 'blogContent' | 'deepDives'>): Promise<{ blogContent: string, deepDives: DeepDive<'metadata'>[], byline: string }> {
+export async function extractFullContent(item: any, existingArticleData: Omit<RssArticle, 'blogContent' | 'deepDives'>): Promise<{ blogContent: string, deepDives: DeepDive<'metadata'>[], byline: string }> {
     let finalHtmlContent = '';
 
     if (item.link) {
@@ -118,7 +112,7 @@ async function extractFullContent(item: any, existingArticleData: Omit<RssArticl
     return { blogContent: markdownContent, deepDives: [metadataDeepDive], byline: finalByline };
 }
 
-async function generateSlug(title: string, feedUrl: string): Promise<string> {
+export async function generateSlug(title: string, feedUrl: string): Promise<string> {
     const feedInfo = await getFeedInfoFromUrl(feedUrl);
     const source = feedInfo?.sourceName || 'source';
     
@@ -132,104 +126,47 @@ async function generateSlug(title: string, feedUrl: string): Promise<string> {
     return `rss-${source}-${sanitizedTitle}`;
 }
 
-export const getRssFeed = unstable_cache(
-  async (feedUrl: string): Promise<RssArticle[]> => {
+export async function getRssFeed(feedUrl: string): Promise<RssArticle[]> {
     try {
-      const feed = await parser.parseURL(feedUrl);
-      
-      const articles = (await Promise.all(
-          (feed.items || []).map(async (item) => {
-            if (!item.link || !item.title) return null;
+      const articlesDir = path.join(process.cwd(), 'public', 'generated-articles');
+      if (!fs.existsSync(articlesDir)) {
+        return [];
+      }
 
-            const summary = item.contentSnippet?.slice(0, 200) || item.content?.slice(0, 200) || '';
-            let thumbnailUrl;
-            if (item.mediaContent && item.mediaContent.$ && item.mediaContent.$.url) {
-                thumbnailUrl = item.mediaContent.$.url;
-            } else if (item.enclosure && item.enclosure.url && item.enclosure.type?.startsWith('image')) {
-                thumbnailUrl = item.enclosure.url;
-            }
+      const files = fs.readdirSync(articlesDir);
+      const allArticles: RssArticle[] = [];
 
-            return {
-              slug: await generateSlug(item.title, feedUrl),
-              feedUrl: feedUrl,
-              title: item.title,
-              headline: item.title,
-              summary: summary,
-              blogContent: '', 
-              deepDives: [], 
-              link: item.link || '',
-              pubDate: item.pubDate,
-              author: item.creator || '',
-              thumbnailUrl: thumbnailUrl,
-            };
-          })
-      )).filter((article) => article !== null) as RssArticle[];
-
-      return articles;
+      for (const file of files) {
+        if (file.endsWith('.json')) {
+          const filePath = path.join(articlesDir, file);
+          const fileContent = fs.readFileSync(filePath, 'utf-8');
+          const article = JSON.parse(fileContent) as RssArticle;
+          if (article.feedUrl === feedUrl) {
+            allArticles.push(article);
+          }
+        }
+      }
+      return allArticles;
     } catch (error) {
-      console.error(`Failed to fetch or parse RSS feed from ${feedUrl}:`, error);
+      console.error(`Failed to read generated RSS feed from ${feedUrl}:`, error);
       return [];
     }
-  },
-  ['rss-feed'],
-  { revalidate: 1800 }
-);
+  }
 
-export const getRssArticleBySlug = unstable_cache(
-  async (slug: string): Promise<RssArticle | undefined> => {
-    const allFeeds = await getRssFeeds();
-    const sourceName = slug.startsWith('rss-') ? slug.split('-')[1] : slug.split('-')[0];
-    
-    const feed = allFeeds.find(f => f.sourceName === sourceName);
-    if (!feed) {
-        console.error("No feed found for source:", sourceName);
+export async function getRssArticleBySlug(slug: string): Promise<RssArticle | undefined> {
+    try {
+      const filePath = path.join(process.cwd(), 'public', 'generated-articles', `${slug}.json`);
+      if (!fs.existsSync(filePath)) {
         return undefined;
+      }
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const article = JSON.parse(fileContent) as RssArticle;
+      return article;
+    } catch (error) {
+      console.error(`Failed to read generated article for slug ${slug}:`, error);
+      return undefined;
     }
-    
-    const liveFeed = await parser.parseURL(feed.url);
-    const matchedItem = (await Promise.all(liveFeed.items.map(async item => ({ item, slug: item.title ? await generateSlug(item.title, feed.url) : ''}))))
-                          .find(x => x.slug === slug)?.item;
-    
-    if (!matchedItem || !matchedItem.link || !matchedItem.title) {
-        return undefined;
-    }
-
-    const summary = matchedItem.contentSnippet?.slice(0, 200) || matchedItem.content?.slice(0, 200) || '';
-    let thumbnailUrl;
-    if (matchedItem.mediaContent && matchedItem.mediaContent.$ && matchedItem.mediaContent.$.url) {
-        thumbnailUrl = matchedItem.mediaContent.$.url;
-    } else if (matchedItem.enclosure && matchedItem.enclosure.url && matchedItem.enclosure.type?.startsWith('image')) {
-        thumbnailUrl = matchedItem.enclosure.url;
-    }
-
-    const basicArticleData = {
-        slug: slug,
-        feedUrl: feed.url,
-        title: matchedItem.title,
-        headline: matchedItem.title,
-        summary: summary,
-        link: matchedItem.link,
-        pubDate: matchedItem.pubDate,
-        author: matchedItem.creator || '',
-        thumbnailUrl: thumbnailUrl,
-    };
-    
-    const { blogContent, deepDives, byline } = await extractFullContent(matchedItem, basicArticleData);
-    
-    const finalAuthor = byline || basicArticleData.author;
-    
-    const finalArticle: RssArticle = {
-        ...basicArticleData,
-        author: finalAuthor,
-        blogContent,
-        deepDives,
-    };
-    
-    return finalArticle;
-  },
-  ['rss-article-by-slug'],
-  { revalidate: 1800 }
-);
+  }
 
 export async function getAdjacentRssArticle(currentSlug: string): Promise<{ prev: RssArticle | null, next: RssArticle | null }> {
     const allFeeds = await getRssFeeds();
