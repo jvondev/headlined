@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { RssFeed } from "@/types";
 import Image from "next/image";
 import { TopicSelector } from "@/components/topic-selector";
+import { Plus, Check } from "lucide-react"; // Import icons
 
 // Helper function to construct the favicon URL
 const getFaviconUrl = (feedUrl: string) => {
@@ -37,13 +38,16 @@ const FaviconImage = ({ fallbackIconUrl, alt }: { fallbackIconUrl?: string, alt:
 
 interface RssFeedSelectionModalContentProps {
     onFeedSelect: (feedUrl: string) => void;
+    onSubscribeToggle: (feed: RssFeed) => void; // New prop for subscribe/unsubscribe
+    subscribedFeedIds: string[]; // New prop to pass subscribed feed IDs
 }
 
-export default function RssFeedSelectionModalContent({ onFeedSelect }: RssFeedSelectionModalContentProps) {
+export default function RssFeedSelectionModalContent({ onFeedSelect, onSubscribeToggle, subscribedFeedIds }: RssFeedSelectionModalContentProps) {
     const [categories, setCategories] = useState<string[]>([]);
     const [feeds, setFeeds] = useState<RssFeed[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const hasFetched = useRef(false);
+    const [displayLimit, setDisplayLimit] = useState(20); // Initial display limit
 
     useEffect(() => {
         if (hasFetched.current) return;
@@ -54,12 +58,12 @@ export default function RssFeedSelectionModalContent({ onFeedSelect }: RssFeedSe
                 getFeedCategories(),
                 getRssFeeds()
             ]);
-            setCategories(fetchedCategories);
+            
+            const allCategories = ["All", ...fetchedCategories];
+            setCategories(allCategories);
             setFeeds(fetchedFeeds);
-            // Set a default category
-            if (fetchedCategories.length > 0) {
-                setSelectedCategory(fetchedCategories[0]);
-            }
+            // Set "All" as the default selected category
+            setSelectedCategory("All");
         }
         fetchData();
     }, []);
@@ -72,9 +76,15 @@ export default function RssFeedSelectionModalContent({ onFeedSelect }: RssFeedSe
         onFeedSelect(`category:${category}`); // Special string to indicate category selection
     };
 
-    const filteredFeeds = selectedCategory
-        ? feeds.filter(feed => feed.category === selectedCategory)
-        : [];
+    const filteredFeeds = selectedCategory === "All"
+        ? feeds
+        : feeds.filter(feed => feed.category === selectedCategory);
+
+    const feedsToDisplay = filteredFeeds.slice(0, displayLimit);
+
+    const handleLoadMore = () => {
+        setDisplayLimit(prevLimit => prevLimit + 20); // Load 20 more feeds
+    };
 
     return (
         <div className="container mx-auto px-4">
@@ -85,6 +95,7 @@ export default function RssFeedSelectionModalContent({ onFeedSelect }: RssFeedSe
                 <TopicSelector
                     onTopicSelect={(selectedTopics) => {
                         setSelectedCategory(selectedTopics.length > 0 ? selectedTopics[0] : null);
+                        setDisplayLimit(20); // Reset limit on category change
                     }}
                     initialSelectedTopics={selectedCategory ? [selectedCategory] : []}
                 />
@@ -103,13 +114,30 @@ export default function RssFeedSelectionModalContent({ onFeedSelect }: RssFeedSe
                         </CardContent>
                     </Card>
                 )}
-                {filteredFeeds.map((feed) => (
+                {feedsToDisplay.map((feed) => {
+                    const isSubscribed = subscribedFeedIds.includes(feed.url);
+                    return (
                         <Card
                             key={feed.url}
-                            className="cursor-pointer overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 active:scale-95 aspect-[4/3]"
+                            className="relative cursor-pointer overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 active:scale-95 aspect-[4/3]"
                             onClick={() => handleSourceSelection(feed.url)}
                             style={{ backgroundColor: feed.cardBackgroundColor || undefined }}
                         >
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="absolute top-2 right-2 rounded-full bg-background shadow-md z-10"
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Prevent card click
+                                    onSubscribeToggle(feed);
+                                }}
+                            >
+                                {isSubscribed ? (
+                                    <Check className="h-4 w-4 text-green-500" />
+                                ) : (
+                                    <Plus className="h-4 w-4 text-primary" />
+                                )}
+                            </Button>
                             <CardContent className="p-0 flex flex-col h-full">
                                 <div className="relative flex-grow grid place-items-center p-6">
                                     <FaviconImage fallbackIconUrl={feed.fallbackIconUrl} alt={`${feed.name} logo`} />
@@ -119,8 +147,16 @@ export default function RssFeedSelectionModalContent({ onFeedSelect }: RssFeedSe
                                 </div>
                             </CardContent>
                         </Card>
-                    ))}
+                    );
+                })}
             </div>
+            {displayLimit < filteredFeeds.length && (
+                <div className="flex justify-center mt-8">
+                    <Button onClick={handleLoadMore} variant="outline">
+                        Load More
+                    </Button>
+                </div>
+            )}
         </div>
     );
 }

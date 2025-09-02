@@ -152,7 +152,22 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                         </div>
                         <div className="absolute bottom-16 right-8 flex flex-col items-center gap-1 text-muted-foreground animate-bounce">
                            <span className={cn("text-xs", insight.thumbnailUrl && "text-white/70")}>Deep Dive</span>
-                           <ChevronRight className={cn("size-5", insight.thumbnailUrl && "text-white/70")} />
+                           <div className="flex items-center gap-2">
+                               <ChevronRight className={cn("size-5", insight.thumbnailUrl && "text-white/70")} />
+                               <button
+                                   onClick={() => {
+                                       const currentSubscribed = JSON.parse(localStorage.getItem("subscribedFeeds") || "[]");
+                                       const isAlreadySubscribed = currentSubscribed.some((feed: any) => feed.id === insight.slug);
+                                       if (!isAlreadySubscribed) {
+                                           const newSubscribed = [...currentSubscribed, { id: insight.slug, name: insight.headline }];
+                                           localStorage.setItem("subscribedFeeds", JSON.stringify(newSubscribed));
+                                       }
+                                   }}
+                                   className={cn("p-2 rounded-full bg-white/20 text-white/70 hover:bg-white/30", insight.thumbnailUrl ? "" : "bg-gray-200 text-gray-700 hover:bg-gray-300")}
+                               >
+                                   <Rss className="size-5" />
+                               </button>
+                           </div>
                         </div>
                     </div>
                 </div>

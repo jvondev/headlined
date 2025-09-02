@@ -7,6 +7,10 @@ import { ChevronDown } from "lucide-react"; // Import the icon
 
 const topics = [
   {
+    name: "All",
+    description: "View all available feeds.",
+  },
+  {
     name: "News",
     description: "Stay informed with the latest headlines and current events.",
   },
@@ -82,10 +86,15 @@ export function TopicSelector({ onTopicSelect, initialSelectedTopics = [] }: Top
   const handleTopicClick = (topicName: string) => {
     setSelectedTopics((prevSelectedTopics) => {
       let newSelectedTopics: string[];
-      if (prevSelectedTopics.includes(topicName)) {
-        newSelectedTopics = [];
+      if (topicName === "All") {
+        newSelectedTopics = ["All"];
+      } else if (prevSelectedTopics.includes(topicName)) {
+        newSelectedTopics = prevSelectedTopics.filter((t) => t !== topicName && t !== "All");
+        if (newSelectedTopics.length === 0) {
+            newSelectedTopics = ["All"]; // If no topics selected, default to All
+        }
       } else {
-        newSelectedTopics = [topicName];
+        newSelectedTopics = [...prevSelectedTopics.filter((t) => t !== "All"), topicName];
       }
       setTimeout(() => {
         onTopicSelect(newSelectedTopics);

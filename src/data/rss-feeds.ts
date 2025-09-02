@@ -1,18 +1,15 @@
-'use server';
-
 import type { RssFeed } from '@/types';
-import { promises as fs } from 'fs';
-import path from 'path';
 
-const rssFeedsPath = path.join(process.cwd(), 'src/data/rss-feeds.json');
-
-// This function now reads from the JSON file, making it dynamic.
+// This function now fetches from the public JSON file.
 async function getAllRssFeeds(): Promise<RssFeed[]> {
     try {
-        const fileContents = await fs.readFile(rssFeedsPath, 'utf8');
-        return JSON.parse(fileContents);
+        const response = await fetch('/rss-feeds.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
     } catch (error) {
-         console.error('Could not read rss-feeds.json:', error);
+         console.error('Could not fetch rss-feeds.json:', error);
         return [];
     }
 }
@@ -32,7 +29,7 @@ export const getFeedInfoFromUrl = async (url: string): Promise<RssFeed | undefin
     return feeds.find(feed => feed.url === url);
 }
 
-// A new function to get all feeds for other server components
+// A new function to get all feeds for other components
 export const getRssFeeds = async (): Promise<RssFeed[]> => {
     return getAllRssFeeds();
 };

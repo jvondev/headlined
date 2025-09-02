@@ -8,6 +8,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Analytics } from '@vercel/analytics/next';
 import { useOnboardingStatus } from '@/hooks/use-onboarding-status'; // Import the hook
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow'; // Import the OnboardingFlow component
+import { BottomNavigationBar } from '@/components/bottom-nav'; // Import the BottomNavigationBar component
 
 // Metadata can't be client-side, so keep it outside the client component
 // export const metadata: Metadata = {
@@ -29,7 +30,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="font-body antialiased" suppressHydrationWarning={true}>
+      <body className="font-body antialiased pb-16" suppressHydrationWarning={true}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -39,6 +40,7 @@ export default function RootLayout({
           {children}
           <Analytics />
           <Toaster />
+          <BottomNavigationBar />
         </ThemeProvider>
       </body>
     </html>
