@@ -1,25 +1,81 @@
-
-import { getInsightBySlug, getAllInsights } from "@/lib/insights";
 import { notFound } from "next/navigation";
 import { BlogPageClient } from "./client";
 import type { Metadata } from "next";
+import { promises as fs } from 'fs';
+import path from 'path';
+
+interface Article {
+  slug: string;
+  title: string;
+  summary: string;
+  link: string;
+  pubDate: string;
+  author: string;
+  blogContent: string;
+  originalFeedUrl: string;
+}
 
 export const revalidate = 3600; // Revalidate every hour
 
-export async function generateStaticParams() {
-  const insights = await getAllInsights();
-  // Filter out RSS slugs as this page only handles non-RSS blog posts
-  return insights.filter(insight => !insight.slug.startsWith('rss-')).map((insight) => ({
-    slug: insight.slug,
-  }));
+async function getArticleData(slug: string) {
+    const categories = ["design", "news", "tech"]; // Example categories
+
+    for (const category of categories) {
+        try {
+            const filePath = path.join(process.cwd(), 'public', 'generated-categories', `${category}.json`);
+            const fileContent = await fs.readFile(filePath, 'utf8');
+            const data = JSON.parse(fileContent);
+            
+            for (const sourceName in data) {
+                if (Object.prototype.hasOwnProperty.call(data, sourceName)) {
+                    const sourceArticles: Article[] = data[sourceName];
+                    const foundArticle = sourceArticles.find(art => art.slug === slug);
+                    if (foundArticle) {
+                        // Map Article to a basic Insight structure for BlogPageClient
+                        return {
+                            insight: {
+                                slug: foundArticle.slug,
+                                title: foundArticle.title,
+                                headline: foundArticle.title,
+                                summary: foundArticle.summary,
+                                blogContent: foundArticle.blogContent,
+                                thumbnailUrl: undefined,
+                                category: [], // Can be populated if needed
+                                deepDives: [],
+                                seo: { title: foundArticle.title, description: foundArticle.summary },
+                            }
+                        };
+                    }
+                }
+            }
+        } catch (error) {
+            console.error(`Error reading or parsing ${category}.json:`, error);
+        }
+    }
+    return { insight: undefined };
 }
 
-async function getArticleData(slug: string) {
-    const insight = await getInsightBySlug(slug);
-    if (!insight) {
-        return { insight: undefined };
+export async function generateStaticParams() {
+  const categories = ["design", "news", "tech"]; // Example categories
+  let allSlugs: { slug: string }[] = [];
+
+  for (const category of categories) {
+    try {
+      const filePath = path.join(process.cwd(), 'public', 'generated-categories', `${category}.json`);
+      const fileContent = await fs.readFile(filePath, 'utf8');
+      const data = JSON.parse(fileContent);
+
+      for (const sourceName in data) {
+        if (Object.prototype.hasOwnProperty.call(data, sourceName)) {
+          const sourceArticles: Article[] = data[sourceName];
+          allSlugs = [...allSlugs, ...sourceArticles.map(art => ({ slug: art.slug }))];
+        }
+      }
+    } catch (error) {
+      console.error(`Error reading or parsing ${category}.json for static params:`, error);
     }
-    return { insight };
+  }
+  return allSlugs;
 }
 
 type BlogPageProps = {

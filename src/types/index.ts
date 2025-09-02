@@ -1,9 +1,9 @@
 
 import { type LucideIcon } from "lucide-react";
 
-export type DeepDiveType = 'quote' | 'qna' | 'checklist' | 'comparison' | 'howto' | 'case-study' | 'data' | 'myth' | 'alternatives' | 'metadata';
+export type DeepDiveType = 'quote' | 'qna' | 'checklist' | 'comparison' | 'howto' | 'case-study' | 'data' | 'myth' | 'alternatives' | 'metadata' | 'article-summary';
 
-export type IconName = "Quote" | "HelpCircle" | "ListChecks" | "Columns" | "ListOrdered" | "BookText" | "BarChart3" | "ShieldAlert" | "Shuffle" | "Info" | "Rss" | "Bookmark" | "MoreVertical" | "ThumbsUp" | "ThumbsDown" | "Pencil";
+export type IconName = "Quote" | "HelpCircle" | "ListChecks" | "Columns" | "ListOrdered" | "BookText" | "BarChart3" | "ShieldAlert" | "Shuffle" | "Info" | "Rss" | "Bookmark" | "MoreVertical" | "ThumbsUp" | "ThumbsDown" | "Pencil" | "ExternalLink" | "ChevronRight";
 
 export interface QnaItem {
   q: string;
@@ -41,6 +41,12 @@ export interface MetadataItem {
     value: string;
 }
 
+export interface ArticleSummaryContent {
+    snippet: string;
+    originalArticleUrl: string;
+    slug: string;
+}
+
 export type DeepDiveContent = {
   quote: { text: string; author: string; };
   qna: { questions: QnaItem[]; };
@@ -51,7 +57,8 @@ export type DeepDiveContent = {
   data: { points: DataPoint[]; };
   myth: { myth: string; fact: string; };
   alternatives: { points: AlternativeItem[]; };
-  metadata: { items: MetadataItem[] }
+  metadata: { items: MetadataItem[] };
+  'article-summary': ArticleSummaryContent;
 };
 
 export interface DeepDive<T extends DeepDiveType> {

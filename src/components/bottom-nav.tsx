@@ -13,10 +13,10 @@ export function BottomNavigationBar() {
     <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50">
       <div className="flex h-16 items-center justify-around px-4">
         <Link
-          href="/me"
+          href="/"
           className={cn(
             "flex flex-col items-center gap-1 text-sm font-medium transition-colors hover:text-primary",
-            pathname === "/me" ? "text-primary" : "text-muted-foreground"
+            pathname === "/" ? "text-primary" : "text-muted-foreground"
           )}
         >
           <Home className="h-5 w-5" />

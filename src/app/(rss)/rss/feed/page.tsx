@@ -13,7 +13,7 @@ const slugify = (text: string) => {
         .trim()
         .replace(/\s+/g, '-')
         .replace(/[^\w-]+/g, '')
-        .replace(/--+/g, '-');
+        .replace(/--+/g, '');
 };
 
 export async function GET(request: Request) {

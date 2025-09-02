@@ -104,21 +104,14 @@ export function BlogPageClient({
   const handleOpenChange = useCallback((open: boolean) => {
     if (!open) {
       setIsOpen(false);
+      // Store the current slug before navigating back
+      localStorage.setItem('lastViewedArticleSlug', slug);
       // Delay navigation to allow the modal's closing animation to complete.
       setTimeout(() => {
-        if (insight) {
-            const isRss = insight.slug.startsWith('rss-');
-            if (isRss) {
-                router.push(`/insight/rss/${insight.slug.replace('rss-', '')}?action=next`);
-            } else {
-                router.push(`/insight/${insight.slug}?action=next`);
-            }
-        } else {
-             router.back();
-        }
+        router.push("/"); // Navigate back to the homepage
       }, 300);
     }
-  }, [insight, router]);
+  }, [router, slug]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

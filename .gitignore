@@ -38,4 +38,4 @@ next-env.d.ts
 .vercel
 
 # Generated RSS Articles
-public/generated-categories/
+# public/generated-categories/

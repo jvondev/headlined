@@ -16,6 +16,7 @@ import { DataView } from "./deep-dive/data-view";
 import { MythView } from "./deep-dive/myth-view";
 import { AlternativesView } from "./deep-dive/alternatives-view";
 import { MetadataView } from "./deep-dive/metadata-view";
+import { ArticleSummaryView } from "./deep-dive/article-summary-view"; // Import new view
 import { DynamicIcon } from "./dynamic-icon";
 import { CarouselContext } from "@/context/carousel-context";
 import { Card } from "./ui/card";
@@ -33,28 +34,31 @@ interface InsightViewProps {
 }
 
 
-const DeepDiveContent: FC<{ deepDive: DeepDive<DeepDiveType> }> = ({ deepDive }) => {
+const DeepDiveContent: FC<{ deepDive: DeepDive<DeepDiveType>, emblaApi: any }> = ({ deepDive, emblaApi }) => {
     switch (deepDive.type) {
-        case 'checklist':
-            return <ChecklistView items={(deepDive.content as DeepDiveContent['checklist']).items} />;
-        case 'comparison':
-            return <ComparisonView {...(deepDive.content as DeepDiveContent['comparison'])} />;
-        case 'qna':
-            return <QnaView questions={(deepDive.content as DeepDiveContent['qna']).questions} />;
-        case 'quote':
-            return <QuoteView {...(deepDive.content as DeepDiveContent['quote'])} />;
-        case 'howto':
-            return <HowToView steps={(deepDive.content as DeepDiveContent['howto']).steps} />;
-        case 'case-study':
-            return <CaseStudyView {...(deepDive.content as DeepDiveContent['case-study'])} />;
-        case 'data':
-            return <DataView points={(deepDive.content as DeepDiveContent['data']).points} />;
-        case 'myth':
-            return <MythView {...(deepDive.content as DeepDiveContent['myth'])} />;
-        case 'alternatives':
-            return <AlternativesView points={(deepDive.content as DeepDiveContent['alternatives']).points} />;
-        case 'metadata':
-            return <MetadataView items={(deepDive.content as DeepDiveContent['metadata']).items} />;
+        // DONT REMOVE IT
+        // case 'checklist':
+        //     return <ChecklistView items={(deepDive.content as DeepDiveContent['checklist']).items} />;
+        // case 'comparison':
+        //     return <ComparisonView {...(deepDive.content as DeepDiveContent['comparison'])} />;
+        // case 'qna':
+        //     return <QnaView questions={(deepDive.content as DeepDiveContent['qna']).questions} />;
+        // case 'quote':
+        //     return <QuoteView {...(deepDive.content as DeepDiveContent['quote'])} />;
+        // case 'howto':
+        //     return <HowToView steps={(deepDive.content as DeepDiveContent['howto']).steps} />;
+        // case 'case-study':
+        //     return <CaseStudyView {...(deepDive.content as DeepDiveContent['case-study'])} />;
+        // case 'data':
+        //     return <DataView points={(deepDive.content as DeepDiveContent['data']).points} />;
+        // case 'myth':
+        //     return <MythView {...(deepDive.content as DeepDiveContent['myth'])} />;
+        // case 'alternatives':
+        //     return <AlternativesView points={(deepDive.content as DeepDiveContent['alternatives']).points} />;
+        // case 'metadata':
+        //     return <MetadataView items={(deepDive.content as DeepDiveContent['metadata']).items} />;
+        case 'article-summary':
+            return <ArticleSummaryView content={(deepDive.content as DeepDiveContent['article-summary'])} emblaApi={emblaApi} />;
         default:
             return <p>Unsupported deep dive type.</p>;
     }
@@ -173,7 +177,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                 </div>
                                 <div className="flex-1 px-4 md:px-8 py-8 overflow-y-auto deep-dive-scrollable-content no-scrollbar">
                                     <div className="w-full max-w-4xl mx-auto">
-                                       <DeepDiveContent deepDive={deepDive} />
+                                       <DeepDiveContent deepDive={deepDive} emblaApi={emblaApi} />
                                     </div>
                                 </div>
                                  <div className="absolute bottom-16 right-8 flex flex-col items-center gap-1 text-muted-foreground/50 animate-bounce">

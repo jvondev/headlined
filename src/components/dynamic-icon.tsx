@@ -2,7 +2,7 @@
 "use client";
 
 import type { FC } from "react";
-import { Quote, HelpCircle, ListChecks, Columns, ListOrdered, BookText, BarChart3, ShieldAlert, Shuffle, Info, Rss, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, Pencil, type LucideProps } from "lucide-react";
+import { Quote, HelpCircle, ListChecks, Columns, ListOrdered, BookText, BarChart3, ShieldAlert, Shuffle, Info, Rss, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, Pencil, ExternalLink, ChevronRight, type LucideProps } from "lucide-react";
 import type { IconName } from "@/types";
 
 const iconMap: Record<IconName, FC<LucideProps>> = {
@@ -22,6 +22,8 @@ const iconMap: Record<IconName, FC<LucideProps>> = {
   ThumbsUp,
   ThumbsDown,
   Pencil,
+  ExternalLink,
+  ChevronRight,
 };
 
 interface DynamicIconProps extends LucideProps {
