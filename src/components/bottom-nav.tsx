@@ -10,7 +10,7 @@ export function BottomNavigationBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50">
+    <nav className="bg-background border-t border-border">
       <div className="flex h-16 items-center justify-around px-4">
         <Link
           href="/"

@@ -34,7 +34,7 @@ interface InsightViewProps {
 }
 
 
-const DeepDiveContent: FC<{ deepDive: DeepDive<DeepDiveType>, emblaApi: any }> = ({ deepDive, emblaApi }) => {
+const DeepDiveContent: FC<{ deepDive: DeepDive<DeepDiveType>, emblaApi: any, blogContent: string }> = ({ deepDive, emblaApi, blogContent }) => {
     switch (deepDive.type) {
         // DONT REMOVE IT
         // case 'checklist':
@@ -58,7 +58,7 @@ const DeepDiveContent: FC<{ deepDive: DeepDive<DeepDiveType>, emblaApi: any }> =
         // case 'metadata':
         //     return <MetadataView items={(deepDive.content as DeepDiveContent['metadata']).items} />;
         case 'article-summary':
-            return <ArticleSummaryView content={(deepDive.content as DeepDiveContent['article-summary'])} emblaApi={emblaApi} />;
+            return <ArticleSummaryView content={(deepDive.content as DeepDiveContent['article-summary'])} blogContent={blogContent} emblaApi={emblaApi} />;
         default:
             return <p>Unsupported deep dive type.</p>;
     }
@@ -175,9 +175,9 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                         <h2 className="font-headline text-2xl">{deepDive.title}</h2>
                                     </div>
                                 </div>
-                                <div className="flex-1 px-4 md:px-8 py-8 overflow-y-auto deep-dive-scrollable-content no-scrollbar">
-                                    <div className="w-full max-w-4xl mx-auto">
-                                       <DeepDiveContent deepDive={deepDive} emblaApi={emblaApi} />
+                                <div className="flex-1 px-4 md:px-8">
+                                    <div className="w-full max-w-4xl mx-auto h-full">
+                                       <DeepDiveContent deepDive={deepDive} emblaApi={emblaApi} blogContent={insight.blogContent} />
                                     </div>
                                 </div>
                                  <div className="absolute bottom-16 right-8 flex flex-col items-center gap-1 text-muted-foreground/50 animate-bounce">
