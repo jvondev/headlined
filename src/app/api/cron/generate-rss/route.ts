@@ -66,7 +66,7 @@ export async function GET(request: Request) {
                     };
 
                     try {
-                        const { blogContent, byline } = await extractFullContent(item, basicArticleData); // Removed deepDives
+                        const { blogContent, byline, deepDives } = await extractFullContent(item, basicArticleData); // Removed deepDives
                         const finalAuthor = byline || basicArticleData.author;
 
                         const finalArticle = {
@@ -74,7 +74,7 @@ export async function GET(request: Request) {
                             author: finalAuthor,
                             blogContent,
                             originalFeedUrl: rssFeed.url, // Add originalFeedUrl
-                            // deepDives removed
+                            deepDives,
                         };
 
                         allProcessedArticles.push(finalArticle); // Collect the processed article

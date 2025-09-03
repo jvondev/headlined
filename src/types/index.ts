@@ -126,6 +126,7 @@ export interface RssArticle {
     author?: string;
     thumbnail?: string;
     originalFeedUrl?: string; // Added originalFeedUrl
+    deepDives: DeepDive<DeepDiveType>[];
 }
 
 export interface RssFeed {

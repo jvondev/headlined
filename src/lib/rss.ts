@@ -1,9 +1,25 @@
 'use server';
 
 import { RssArticle, DeepDive, MetadataItem, Insight, RssFeed } from '@/types';
-import { getFeedInfoFromUrl, getRssFeeds } from '@/data/rss-feeds';
 import fs from 'fs';
 import path from 'path';
+
+async function loadRssFeeds(): Promise<RssFeed[]> {
+    const filePath = path.join(process.cwd(), 'src', 'data', 'rss-feeds.json');
+    try {
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        return JSON.parse(fileContent) as RssFeed[];
+    } catch (error) {
+        console.error('Failed to load rss-feeds.json:', error);
+        return [];
+    }
+}
+
+async function getFeedInfoFromUrl(url: string): Promise<RssFeed | undefined> {
+    const feeds = await loadRssFeeds();
+    return feeds.find(feed => feed.url === url);
+}
+
 import { JSDOM } from 'jsdom';
 import { Readability } from '@mozilla/readability';
 import TurndownService from 'turndown';
@@ -158,7 +174,7 @@ export async function getRssFeed(feedUrl: string): Promise<RssArticle[]> {
           const filePath = path.join(articlesDir, file);
           const fileContent = fs.readFileSync(filePath, 'utf-8');
           const article = JSON.parse(fileContent) as RssArticle;
-          if (!feedUrl || article.feedUrl === feedUrl) {
+          if (!feedUrl || article.originalFeedUrl === feedUrl) {
             allArticles.push(article);
           }
         }
@@ -186,12 +202,12 @@ export async function getRssArticleBySlug(slug: string): Promise<RssArticle | un
   }
 
 export async function getAdjacentRssArticle(currentSlug: string): Promise<{ prev: RssArticle | null, next: RssArticle | null }> {
-    const allFeeds = await getRssFeeds();
+    const allFeeds = await loadRssFeeds();
     const sourceName = currentSlug.startsWith('rss-') ? currentSlug.split('-')[1] : currentSlug.split('-')[0];
     const feed = allFeeds.find(f => f.sourceName === sourceName);
     if (!feed) return { prev: null, next: null };
 
-    const articles = await getRssFeed(feed.url); 
+    const articles = await getRssFeed(feed.url!); 
     const currentIndex = articles.findIndex(article => article.slug === currentSlug);
 
     if (currentIndex === -1) {
@@ -205,7 +221,9 @@ export async function getAdjacentRssArticle(currentSlug: string): Promise<{ prev
 }
 
 export async function rssToInsight(article: RssArticle): Promise<Insight> {
-    const feedInfo = await getFeedInfoFromUrl(article.feedUrl);
+    const feedInfo = article.originalFeedUrl
+        ? await getFeedInfoFromUrl(article.originalFeedUrl)
+        : undefined;
     return {
         slug: article.slug, // Slug already has 'rss-' prefix
         seo: {
@@ -214,11 +232,12 @@ export async function rssToInsight(article: RssArticle): Promise<Insight> {
         },
         category: [feedInfo?.category || 'News', feedInfo?.name || ''],
         title: article.title,
-        headline: article.headline,
+        headline: article.summary,
+        
         summary: article.summary,
         deepDives: article.deepDives,
         blogContent: article.blogContent,
-        thumbnailUrl: article.thumbnailUrl,
+        thumbnailUrl: article.thumbnail,
         author: article.author,
     }
 }
