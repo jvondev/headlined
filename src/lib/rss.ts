@@ -75,6 +75,21 @@ export async function extractFullContent(item: any, existingArticleData: Omit<Rs
 
     const contentDoc = new JSDOM(`<div>${finalHtmlContent}</div>`).window.document;
 
+    contentDoc.querySelectorAll('img').forEach(img => {
+        const src = img.getAttribute('src');
+        if (src) {
+            const isGreyPlaceholderInUrl = src.toLowerCase().includes('grey-placeholder');
+
+            const width = parseInt(img.getAttribute('width') || '0', 10);
+            const height = parseInt(img.getAttribute('height') || '0', 10);
+            const isTiny = (width > 0 && width <= 5) || (height > 0 && height <= 5); // e.g., 1x1, 5x5 pixels
+
+            if (isGreyPlaceholderInUrl || isTiny) {
+                img.remove();
+            }
+        }
+    });
+
     const bylineCandidates = Array.from(contentDoc.querySelectorAll('p, a, span, div, [data-testid="byline-new"]'));
     const bylines: string[] = [];
     bylineCandidates.slice(0, 10).forEach(node => {

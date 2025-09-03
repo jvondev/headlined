@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getRssFeeds } from '@/data/rss-feeds';
+// Removed: import { getRssFeeds } from '@/data/rss-feeds';
 import { extractFullContent, generateSlug } from '@/lib/rss';
 import fs from 'fs';
 import path from 'path';
 import Parser from 'rss-parser';
-import { RssArticle } from '@/types';
+import { RssArticle, RssFeed } from '@/types'; // Added RssFeed type
 
 const parser = new Parser({
     customFields: {
@@ -25,7 +25,9 @@ const slugify = (text: string) => {
 
 export async function GET(request: Request) {
     try {
-        const rssFeeds = await getRssFeeds();
+        const rssFeedsPath = path.join(process.cwd(), 'public', 'rss-feeds.json');
+        const fileContents = await fs.promises.readFile(rssFeedsPath, 'utf8');
+        const rssFeeds: RssFeed[] = JSON.parse(fileContents);
 
         if (rssFeeds.length === 0) {
             return NextResponse.json({ message: 'No RSS feeds configured.' }, { status: 200 });
@@ -37,7 +39,7 @@ export async function GET(request: Request) {
             try {
                 const feed = await parser.parseURL(rssFeed.url);
                 let articlesToProcess = feed.items;
-                articlesToProcess = articlesToProcess.slice(0, 20); // Limit to 20 articles per feed
+                articlesToProcess = articlesToProcess.slice(0, 15); // Limit to 15 articles per feed
 
                 for (const item of articlesToProcess) {
                     if (!item.link || !item.title) {

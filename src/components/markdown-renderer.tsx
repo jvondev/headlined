@@ -92,14 +92,18 @@ function parseMarkdownIntoSections(markdown: string): MarkdownSection[] {
 const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, showAds = true }) => {
     const { theme } = useTheme();
     const [openSections, setOpenSections] = React.useState<Map<string, boolean>>(new Map());
+    const [renderedSections, setRenderedSections] = React.useState<Set<string>>(new Set());
     const sectionRefs = React.useRef<Map<string, HTMLElement>>(new Map());
 
-    // Check if there are any headings. If not, inject a default "Summary" h2 heading.
-    const hasHeadings = /^#+\s/m.test(children);
-    const markdownContent = hasHeadings ? children : `## Summary\n\n${children}`;
-    
-    const sections = parseMarkdownIntoSections(markdownContent);
-    const initialContent = markdownContent.split(/^(?:#{1,4}\s+.*)/m)[0];
+    const memoizedParsedContent = React.useMemo(() => {
+        const hasHeadings = /^#+\s/m.test(children);
+        const markdownContent = hasHeadings ? children : `## Summary\n\n${children}`;
+        const sections = parseMarkdownIntoSections(markdownContent);
+        const initialContent = markdownContent.split(/^(?:#{1,4}\s+.*)/m)[0];
+        return { sections, initialContent, markdownContent };
+    }, [children]);
+
+    const { sections, initialContent, markdownContent } = memoizedParsedContent;
 
     const flattenSections = (sections: MarkdownSection[]): MarkdownSection[] => {
         let flat: MarkdownSection[] = [];
@@ -113,6 +117,8 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
     };
 
     const allSections = flattenSections(sections);
+
+    const [failedImageUrls, setFailedImageUrls] = React.useState<Set<string>>(new Set());
 
     const components = {
         code({ node, inline, className, children, ...props }: any) {
@@ -138,29 +144,26 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
             const { node } = paragraph;
             if (node?.children[0]?.tagName === "img") {
                 const image = node.children[0];
+                const imageUrl = image.properties.src || '';
+
+                if (failedImageUrls.has(imageUrl)) {
+                    return null; // Don't render if image failed to load
+                }
+
                 return (
                      <div className="relative my-8 w-full aspect-video rounded-lg overflow-hidden not-prose">
                         <Image
-                            src={image.properties.src || ''}
+                            src={imageUrl}
                             alt={image.properties.alt || 'Image from article'}
                             fill
                             className="object-contain"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            onError={() => {
+                                console.log('Image failed to load:', imageUrl);
+                                setFailedImageUrls(prev => new Set(prev).add(imageUrl));
+                            }}
                         />
                     </div>
-                );
-            }
-            // New logic for sentence-per-line
-            if (typeof paragraph.children === 'string') {
-                const sentences = paragraph.children.split(/(?<=[.!?])\s+/);
-                return (
-                    <p>
-                        {sentences.map((sentence, index) => (
-                            <span key={index} className="block mb-2">
-                                {sentence}
-                            </span>
-                        ))}
-                    </p>
                 );
             }
             return <p>{paragraph.children}</p>;
@@ -186,6 +189,8 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
                 openChildren(sectionToChange);
 
                 newOpenSections.set(sectionToChange.id, true);
+                // Mark as rendered when opened
+                setRenderedSections(prev => new Set(prev).add(sectionToChange.id));
 
                 // Scroll to the newly opened heading
                 const currentSectionElement = sectionRefs.current.get(sectionToChange.id);
@@ -222,6 +227,7 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
         }, [sectionKey]);
 
         const contentRef = React.useRef<HTMLDivElement>(null);
+        const hasBeenRendered = renderedSections.has(sectionKey);
 
         const handleSectionOpenChange = (isOpen: boolean) => {
             handleOpenChange(section, isOpen);
@@ -246,21 +252,25 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
                 <CollapsibleTrigger ref={triggerRef} className="flex items-center gap-2 w-full text-left p-4 bg-card-foreground/5 hover:bg-card-foreground/10 transition-colors duration-300">
                     <ChevronRight className="h-5 w-5 transition-transform duration-300 flex-shrink-0 group-data-[state=open]:rotate-90" />
                     {isH1 ? (
-                        <HeadingTag className="text-4xl md:text-5xl font-extrabold text-primary-foreground">{section.heading}</HeadingTag>
+                        <HeadingTag className="text-3xl md:text-4xl font-extrabold text-primary-foreground">{section.heading}</HeadingTag>
                     ) : (
                         <span className={cn(
                             "font-bold",
-                            section.level === 2 && "text-3xl md:text-4xl text-foreground",
-                            section.level === 3 && "text-2xl md:text-3xl text-muted-foreground",
-                            section.level === 4 && "text-xl md:text-2xl text-muted-foreground",
+                            section.level === 2 && "text-2xl md:text-3xl text-foreground",
+                            section.level === 3 && "text-xl md:text-2xl text-muted-foreground",
+                            section.level === 4 && "text-lg md:text-xl text-muted-foreground",
                         )}>
                             {section.heading}
                         </span>
                     )}
                 </CollapsibleTrigger>
                 <CollapsibleContent ref={contentRef} className="px-4 pb-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden text-sm transition-all duration-300 ease-in-out opacity-0 data-[state=open]:opacity-100 data-[state=closed]:opacity-0">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{section.content}</ReactMarkdown>
-                    {section.children.map((childSection, childIndex) => renderSection(childSection, childIndex))}
+                    {(openSections.get(sectionKey) || hasBeenRendered) && (
+                        <>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{section.content}</ReactMarkdown>
+                            {section.children.map((childSection, childIndex) => renderSection(childSection, childIndex))}
+                        </>
+                    )}
                 </CollapsibleContent>
             </Collapsible>
             </div>
