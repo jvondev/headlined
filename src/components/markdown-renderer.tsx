@@ -89,12 +89,9 @@ function parseMarkdownIntoSections(markdown: string): MarkdownSection[] {
 
 
 
-const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, showAds = true }) => {
-    const { theme } = useTheme();
-    const [openSections, setOpenSections] = React.useState<Map<string, boolean>>(new Map());
-    const [renderedSections, setRenderedSections] = React.useState<Set<string>>(new Set());
-    const sectionRefs = React.useRef<Map<string, HTMLElement>>(new Map());
+const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, showAds = true }) => { const { theme } = useTheme();
 
+    // Move these calculations up
     const memoizedParsedContent = React.useMemo(() => {
         const hasHeadings = /^#+\s/m.test(children);
         const markdownContent = hasHeadings ? children : `## Summary\n\n${children}`;
@@ -117,6 +114,18 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
     };
 
     const allSections = flattenSections(sections);
+
+    // Now, openSections can safely use allSections
+    const [openSections, setOpenSections] = React.useState<Map<string, boolean>>(() => {
+        const initialMap = new Map<string, boolean>();
+        if (allSections.length === 1) {
+            initialMap.set(allSections[0].id, true);
+        }
+        return initialMap;
+    });
+
+    const [renderedSections, setRenderedSections] = React.useState<Set<string>>(new Set());
+    const sectionRefs = React.useRef<Map<string, HTMLElement>>(new Map());
 
     const [failedImageUrls, setFailedImageUrls] = React.useState<Set<string>>(new Set());
 

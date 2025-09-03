@@ -66,8 +66,16 @@ export async function GET(request: Request) {
                     };
 
                     try {
-                        const { blogContent, byline, deepDives } = await extractFullContent(item, basicArticleData); // Removed deepDives
+                        const { blogContent, byline, deepDives, contentDoc } = await extractFullContent(item, basicArticleData); // Removed deepDives
                         const finalAuthor = byline || basicArticleData.author;
+
+                        // If thumbnail is still not found, try to extract from contentDoc
+                        if (!thumbnailUrl) {
+                            const firstImage = contentDoc.querySelector('img');
+                            if (firstImage && firstImage.src) {
+                                thumbnailUrl = firstImage.src;
+                            }
+                        }
 
                         const finalArticle = {
                             ...basicArticleData,

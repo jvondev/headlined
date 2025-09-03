@@ -40,12 +40,7 @@ turndownService.addRule('h2', {
     replacement: (content) => `\n## ${content}\n\n`
 });
 
-turndownService.addRule('removeByline', {
-    filter: (node) => {
-        return node.classList.contains('detected-byline');
-    },
-    replacement: () => ''
-});
+
 
 turndownService.addRule('figcaption', {
     filter: 'figcaption',
@@ -57,7 +52,7 @@ turndownService.addRule('figcaption', {
 
 const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes for cache
 
-export async function extractFullContent(item: any, existingArticleData: Omit<RssArticle, 'blogContent' | 'deepDives'>): Promise<{ blogContent: string, deepDives: DeepDive<'metadata'>[], byline: string }> {
+export async function extractFullContent(item: any, existingArticleData: Omit<RssArticle, 'blogContent' | 'deepDives'>): Promise<{ blogContent: string, deepDives: DeepDive<'metadata'>[], byline: string, contentDoc: Document }> {
     console.log('Extracting content for link:', item.link);
     let finalHtmlContent = '';
 
@@ -106,18 +101,52 @@ export async function extractFullContent(item: any, existingArticleData: Omit<Rs
         }
     });
 
-    const bylineCandidates = Array.from(contentDoc.querySelectorAll('p, a, span, div, [data-testid="byline-new"]'));
+    // --- Byline Removal Logic ---
+    // Common selectors for bylines. Add more as needed based on observed patterns.
+    const bylineSelectors = [
+        '[data-testid*="byline"]',
+        '.byline',
+        '.author',
+        '.article-byline',
+        'span[itemprop="author"]',
+        'div[class*="author"]',
+        'p[class*="byline"]',
+        'address', 
+        'div[class*="_1n017go5"]', // for author in theverge
+        // Sometimes bylines are in address tags
+    ];
+
+    bylineSelectors.forEach(selector => {
+        contentDoc.querySelectorAll(selector).forEach(node => {
+            const text = node.textContent?.trim() || '';
+            // Heuristic to avoid removing too much: check text length and common byline keywords
+            if (text.length > 5 && text.length < 100 && // Adjusted max length for bios to improve accuracy
+                (text.toLowerCase().includes('by ') ||
+                 text.toLowerCase().includes('correspondent') ||
+                 text.toLowerCase().includes('staff writer') ||
+                 text.toLowerCase().includes('contributor') ||
+                 text.toLowerCase().includes('editor') ||
+                 text.toLowerCase().includes('reporter') ||
+                 text.toLowerCase().includes('writes for') ||
+                 text.toLowerCase().includes('is a'))) { // Added more keywords
+                node.remove(); // Remove the entire element
+                console.log('Removed potential byline element:', text);
+            }
+        });
+    });
+
+    // The byline extraction below is now primarily for metadata, not for content removal.
     const bylines: string[] = [];
-    bylineCandidates.slice(0, 10).forEach(node => {
+    // Re-evaluate byline candidates after removal to get the actual byline for metadata
+    const finalBylineCandidates = Array.from(contentDoc.querySelectorAll('p, a, span, div, [data-testid*="byline"], .byline, .author, .article-byline'));
+    finalBylineCandidates.slice(0, 10).forEach(node => {
         const text = node.textContent?.trim() || '';
-        if (node.getAttribute('data-testid')?.includes('byline') || text.toLowerCase().includes('correspondent') || text.toLowerCase().includes('bbc news')) {
+        if (node.getAttribute('data-testid')?.includes('byline') || text.toLowerCase().includes('correspondent') || text.toLowerCase().includes('bbc news') || text.toLowerCase().includes('by ')) {
             if (text.length > 3 && text.length < 100) {
                  bylines.push(text);
-                 node.classList.add('detected-byline');
             }
         }
     });
-
     const finalByline = [...new Set(bylines)].join('\n');
     
     // Check if there are any headings. If not, inject a default "Summary" h2 heading.
@@ -142,7 +171,7 @@ export async function extractFullContent(item: any, existingArticleData: Omit<Rs
       },
     };
 
-    return { blogContent: markdownContent, deepDives: [metadataDeepDive], byline: finalByline };
+    return { blogContent: markdownContent, deepDives: [metadataDeepDive], byline: finalByline, contentDoc };
 }
 
 export async function generateSlug(title: string, feedUrl: string): Promise<string> {

@@ -53,11 +53,13 @@ export default function ExplorePage() {
       } catch (err) {
         console.error("Error fetching feeds or cleaning subscriptions:", err);
         setError("Failed to load available feeds. Please try again later.");
-        toast({
-          title: "Error!",
-          description: "Failed to load available feeds. Please check your internet connection.",
-          variant: "destructive",
-        });
+        setTimeout(() => { // Defer toast call
+          toast({
+            title: "Error!",
+            description: "Failed to load available feeds. Please check your internet connection.",
+            variant: "destructive",
+          });
+        }, 0);
       } finally {
         setLoading(false);
       }
