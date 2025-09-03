@@ -30,7 +30,7 @@ const steps = [
     id: "deep-dive",
     title: "Explore Deeper",
     description: "Swipe left to explore more details.",
-    action: "scrollRight",
+    action: "none",
     delay: 2000,
   },
   {

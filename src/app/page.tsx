@@ -86,10 +86,19 @@ export default function HomePage() {
   useEffect(() => {
     // 1. Read subscribed feed IDs from local storage
     const storedFeeds = localStorage.getItem("subscribedFeeds");
+    let initialFeeds: SubscribedFeed[] = [];
+
     if (storedFeeds) {
-      const parsedFeeds: SubscribedFeed[] = JSON.parse(storedFeeds);
-      setSubscribedFeedIds(parsedFeeds.map((feed) => feed.id));
+      initialFeeds = JSON.parse(storedFeeds);
     }
+
+    // If no feeds are subscribed, default to BBC News
+    if (initialFeeds.length === 0) {
+      const bbcNewsFeed = { id: "https://feeds.bbci.co.uk/news/world/rss.xml", name: "BBC News" };
+      initialFeeds.push(bbcNewsFeed);
+      localStorage.setItem("subscribedFeeds", JSON.stringify(initialFeeds)); // Persist default
+    }
+    setSubscribedFeedIds(initialFeeds.map((feed) => feed.id));
 
     // Try to get last viewed article slug from local storage
     const lastSlug = localStorage.getItem('lastViewedArticleSlug');
