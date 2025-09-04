@@ -64,7 +64,7 @@ const articleToInsight = (article: ArticleWithTopic, allRssFeeds: RssFeed[], top
     slug: article.slug,
     headline: article.title,
     summary: article.summary,
-    thumbnailUrl: undefined, // Article doesn't have this, set to undefined
+    thumbnailUrl: article.thumbnailUrl,
     category: categories, 
     deepDives: deepDives, // Populate deepDives
     seo: { title: article.title, description: article.summary },

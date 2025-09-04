@@ -62,18 +62,29 @@ export async function GET(request: Request) {
                         link: item.link,
                         pubDate: item.pubDate,
                         author: item.creator || '',
-                        thumbnail: thumbnailUrl, // Renamed from thumbnailUrl
+                        thumbnailUrl: thumbnailUrl,
+                        originalFeedUrl: rssFeed.url, // Added this line
                     };
 
                     try {
-                        const { blogContent, byline, deepDives, contentDoc } = await extractFullContent(item, basicArticleData); // Removed deepDives
+                        const { blogContent, byline, contentDoc } = await extractFullContent(item, basicArticleData);
                         const finalAuthor = byline || basicArticleData.author;
 
-                        // If thumbnail is still not found, try to extract from contentDoc
                         if (!thumbnailUrl) {
-                            const firstImage = contentDoc.querySelector('img');
-                            if (firstImage && firstImage.src) {
-                                thumbnailUrl = firstImage.src;
+                            const imagePatterns = [
+                                /<meta\s+property="og:image"\s+content="([^"]+)"/,
+                                /<meta\s+name="twitter:image"\s+content="([^"]+)"/,
+                                /<img[^>]+src="([^"]+)"/
+                            ];
+                            
+                            const contentHtml = contentDoc.body.innerHTML;
+
+                            for (const pattern of imagePatterns) {
+                                const match = contentHtml.match(pattern);
+                                if (match && match[1]) {
+                                    thumbnailUrl = match[1];
+                                    break;
+                                }
                             }
                         }
 
@@ -81,11 +92,10 @@ export async function GET(request: Request) {
                             ...basicArticleData,
                             author: finalAuthor,
                             blogContent,
-                            originalFeedUrl: rssFeed.url, // Add originalFeedUrl
-                            deepDives,
+                            thumbnailUrl: thumbnailUrl,
                         };
 
-                        allProcessedArticles.push(finalArticle); // Collect the processed article
+                        allProcessedArticles.push(finalArticle);
 
                     } catch (error: unknown) {
                         console.error(`Failed to process article ${item.title} (${item.link}):`, error);

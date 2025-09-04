@@ -120,13 +120,12 @@ export interface RssArticle {
     slug: string;
     title: string;
     summary: string;
-    blogContent: string;
     link: string;
-    pubDate?: string;
-    author?: string;
-    thumbnail?: string;
-    originalFeedUrl?: string; // Added originalFeedUrl
-    deepDives: DeepDive<DeepDiveType>[];
+    pubDate: string | undefined;
+    author: string;
+    thumbnailUrl: string;
+    blogContent: string;
+    originalFeedUrl: string;
 }
 
 export interface RssFeed {

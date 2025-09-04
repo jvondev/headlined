@@ -5,6 +5,7 @@ import { useEffect, type FC, useContext, useMemo } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { MoveRight, ChevronRight, Rss } from "lucide-react";
+import { useTheme } from "next-themes";
 // DONT REMOVE IT
 // import { ChecklistView } from "./deep-dive/checklist-view";
 // import { ComparisonView } from "./deep-dive/comparison-view";
@@ -70,6 +71,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
   const { setHorizontalEmblaApi } = useContext(CarouselContext);
   const router = useRouter();
   const isMobile = useIsMobile();
+  const { theme } = useTheme();
   
   const processedDeepDives = useMemo(() => {
     if (!insight.deepDives) return [];
@@ -215,25 +217,25 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                 sizes="100vw"
                                 priority
                             />
-                            <div className="absolute inset-0 bg-black/60" />
+                            <div className={cn("absolute inset-0", theme === 'light' ? 'bg-white/55' : 'bg-black/60')} />
                         </>
                     )}
                     <div className={cn(
                         "relative flex h-full flex-col justify-center items-center p-8 md:p-12 text-center z-10",
-                        insight.thumbnailUrl && "text-white"
+                        insight.thumbnailUrl && (theme === 'light' ? 'text-black' : 'text-white')
                     )}>
                         <div className="max-w-3xl">
                              <div className="flex flex-wrap justify-center gap-2 mb-2">
                                 {(insight.category || []).slice(0,3).map((cat) => (
                                     <Link key={cat} href={`/category/${cat.toLowerCase().replace(/ /g, '-')}`}>
-                                        <Badge variant={insight.thumbnailUrl ? 'secondary' : 'default'} className={cn(insight.thumbnailUrl && "bg-white/20 text-white border-none")}>{cat}</Badge>
+                                        <Badge variant={insight.thumbnailUrl ? 'secondary' : 'default'} className={cn(insight.thumbnailUrl && (theme === 'light' ? 'bg-black/10 text-black border-none' : 'bg-white/20 text-white border-none'))}>{cat}</Badge>
                                     </Link>
                                 ))}
                             </div>
-                            <h1 className="font-headline text-4xl md:text-5xl font-bold mt-2">{insight.headline}</h1>
+                            <h1 className="font-headline text-3xl md:text-5xl font-bold mt-2">{insight.headline}</h1>
                             <p className={cn(
                                 "mt-4 text-lg md:text-xl max-w-xl mx-auto",
-                                insight.thumbnailUrl ? "text-white/80" : "text-muted-foreground"
+                                insight.thumbnailUrl ? (theme === 'light' ? 'text-black/80' : 'text-white/80') : "text-muted-foreground"
                             )}>{insight.summary}</p>
                         </div>
                         <div className="absolute bottom-16 right-8 flex flex-col items-center gap-1 text-muted-foreground animate-bounce">
