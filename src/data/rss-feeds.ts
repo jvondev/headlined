@@ -1,12 +1,14 @@
 import type { RssFeed } from '@/types';
-import fs from 'fs';
-import path from 'path';
 
 async function getAllRssFeeds(): Promise<RssFeed[]> {
-    const filePath = path.join(process.cwd(), 'src', 'data', 'rss-feeds.json');
     try {
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
-        return JSON.parse(fileContent) as RssFeed[];
+        // Fetch from the public directory
+        const response = await fetch('/rss-feeds.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data as RssFeed[];
     } catch (error) {
         console.error('Failed to load rss-feeds.json:', error);
         return [];
