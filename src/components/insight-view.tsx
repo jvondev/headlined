@@ -1,8 +1,7 @@
-
 "use client";
 
 import type { Insight, DeepDive, DeepDiveType, SavedItem, DeepDiveContent } from "@/types";
-import { useEffect, type FC, useContext } from "react";
+import { useEffect, type FC, useContext, useMemo } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { MoveRight, ChevronRight, Rss } from "lucide-react";
@@ -26,6 +25,7 @@ import { Badge } from "./ui/badge";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface InsightViewProps {
   insight: Insight;
@@ -35,7 +35,7 @@ interface InsightViewProps {
 }
 
 
-const DeepDiveContent: FC<{ deepDive: DeepDive<DeepDiveType>, emblaApi: any, blogContent: string }> = ({ deepDive, emblaApi, blogContent }) => {
+const DeepDiveContent: FC<{ deepDive: any, emblaApi: any }> = ({ deepDive, emblaApi }) => {
     switch (deepDive.type) {
         // DONT REMOVE IT
         // case 'checklist':
@@ -59,7 +59,7 @@ const DeepDiveContent: FC<{ deepDive: DeepDive<DeepDiveType>, emblaApi: any, blo
         // case 'metadata':
         //     return <MetadataView items={(deepDive.content as DeepDiveContent['metadata']).items} />;
         case 'article-summary':
-            return <ArticleSummaryView content={(deepDive.content as DeepDiveContent['article-summary'])} blogContent={blogContent} emblaApi={emblaApi} />;
+            return <ArticleSummaryView content={deepDive.content} sentences={deepDive.content.sentences} emblaApi={emblaApi} />;
         default:
             return <p>Unsupported deep dive type.</p>;
     }
@@ -69,6 +69,84 @@ const DeepDiveContent: FC<{ deepDive: DeepDive<DeepDiveType>, emblaApi: any, blo
 export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDeepDive = false, initialDeepDiveIndex }) => {
   const { setHorizontalEmblaApi } = useContext(CarouselContext);
   const router = useRouter();
+  const isMobile = useIsMobile();
+  
+  const processedDeepDives = useMemo(() => {
+    if (!insight.deepDives) return [];
+
+    const newDeepDives: (DeepDive<DeepDiveType> & { content: { sentences?: string[] } })[] = [];
+
+    for (const deepDive of insight.deepDives) {
+        if (deepDive.type === 'article-summary' && insight.blogContent) {
+            let plainText = insight.blogContent
+              .replace(/^#+\s.*$/gm, '')
+              .replace(/^-{3,}$/gm, '')
+              .replace(/^\s*>\s?/gm, '');
+            plainText = plainText
+              .replace(/!\[.*?\]\(.*?\)/g, '')
+              .replace(/\[(.*?)\]\(.*?\)/g, '$1');
+            plainText = plainText.replace(/(\*\*|__|_|\*|`|~~)(.*?)\1/g, '$2');
+            plainText = plainText.replace(/[#*_\-`~\[\]()<>]/g, '').replace(/\s+/g, ' ').trim();
+            const allSentences = (plainText.match(/[^.!?]+[.!?]+/g) || [])
+              .filter(sentence => sentence.split(' ').length >= 6);
+            
+            const sentences = allSentences.slice(0, 4);
+
+            if (sentences.length === 0) continue;
+
+            const summarySlides: string[][] = [];
+            let remainingSentences = [...sentences];
+
+            while (remainingSentences.length > 0) {
+                const charCount = remainingSentences.join(' ').length;
+                let numSentencesToTake;
+
+                if (isMobile) {
+                    if (charCount > 750) numSentencesToTake = 1;
+                    else if (charCount > 400) numSentencesToTake = 2;
+                    else if (charCount > 200) numSentencesToTake = 3;
+                    else numSentencesToTake = 4;
+                } else { // Desktop
+                    if (charCount > 1200) numSentencesToTake = 1;
+                    else if (charCount > 900) numSentencesToTake = 2;
+                    else if (charCount > 500) numSentencesToTake = 3;
+                    else numSentencesToTake = 4;
+                }
+
+                const sentencesForThisSlide = remainingSentences.slice(0, numSentencesToTake);
+                summarySlides.push(sentencesForThisSlide);
+                remainingSentences = remainingSentences.slice(sentencesForThisSlide.length);
+            }
+
+            if (summarySlides.length > 0 && summarySlides[summarySlides.length - 1].length === 1) {
+                const totalSentencesInSlides = summarySlides.flat().length;
+                if (allSentences.length > totalSentencesInSlides) {
+                    const nextSentence = allSentences[totalSentencesInSlides];
+                    if (nextSentence) {
+                        summarySlides[summarySlides.length - 1].push(nextSentence);
+                    }
+                }
+            }
+
+            summarySlides.forEach((slideSentences, slideIndex) => {
+                const newContent = { 
+                    ...deepDive.content, 
+                    sentences: slideSentences,
+                };
+                
+                newDeepDives.push({
+                    ...deepDive,
+                    title: summarySlides.length > 1 ? `${deepDive.title} (${slideIndex + 1}/${summarySlides.length})` : deepDive.title,
+                    content: newContent,
+                });
+            });
+
+        } else {
+            newDeepDives.push(deepDive);
+        }
+    }
+    return newDeepDives;
+  }, [insight.deepDives, insight.blogContent, isMobile]);
   
   const getStartIndex = () => {
     if (startOnDeepDive && typeof initialDeepDiveIndex === 'number' && initialDeepDiveIndex >= 0) {
@@ -102,7 +180,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
 
     const handleSettle = () => {
         // The trigger is now the slide *after* the last deep dive
-        if (emblaApi.selectedScrollSnap() === (insight.deepDives?.length || 0) + 1) {
+        if (emblaApi.selectedScrollSnap() === processedDeepDives.length + 1) {
             const isRss = insight.slug.startsWith('rss-');
             const blogSlug = isRss ? insight.slug.replace('rss-', '') : insight.slug;
             const blogPath = isRss ? `/blog/rss/${blogSlug}` : `/blog/${blogSlug}`;
@@ -118,7 +196,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
         }
         unregister();
     }
-  }, [emblaApi, setHorizontalEmblaApi, insight, isActive, router]);
+  }, [emblaApi, setHorizontalEmblaApi, insight, isActive, router, processedDeepDives.length]);
   
 
   return (
@@ -166,7 +244,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                 </div>
 
                 {/* Deep Dive Cards */}
-                {(insight.deepDives || []).map((deepDive, index) => {
+                {processedDeepDives.map((deepDive, index) => {
                     return (
                         <div key={index} className="relative flex-[0_0_100%] deep-dive-card-wrapper" role="group" aria-roledescription="slide" aria-label={`Deep Dive ${index + 1}: ${deepDive.title}`}>
                             <Card className="deep-dive-card">
@@ -176,13 +254,13 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                         <h2 className="font-headline text-2xl">{deepDive.title}</h2>
                                     </div>
                                 </div>
-                                <div className="flex-1 px-4 md:px-8">
+                                <div className="flex-1 mt-4 px-4 md:px-8">
                                     <div className="w-full max-w-4xl mx-auto h-full">
-                                       <DeepDiveContent deepDive={deepDive} emblaApi={emblaApi} blogContent={insight.blogContent} />
+                                       <DeepDiveContent deepDive={deepDive} emblaApi={emblaApi} />
                                     </div>
                                 </div>
                                  <div className="absolute bottom-16 right-8 flex flex-col items-center gap-1 text-muted-foreground/50 animate-bounce">
-                                   <span className="text-xs">{index < (insight.deepDives?.length || 0) - 1 ? 'Next' : 'Full Story'}</span>
+                                   <span className="text-xs">{index < processedDeepDives.length - 1 ? 'Next' : 'Full Story'}</span>
                                    <ChevronRight className="size-5" />
                                 </div>
                             </Card>
