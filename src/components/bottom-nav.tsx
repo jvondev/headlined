@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Compass } from "lucide-react";
+import { Home, Compass, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function BottomNavigationBar() {
@@ -31,6 +31,16 @@ export function BottomNavigationBar() {
         >
           <Compass className="h-5 w-5" />
           Explore
+        </Link>
+        <Link
+          href="/saved"
+          className={cn(
+            "flex flex-col items-center gap-1 text-sm font-medium transition-colors hover:text-primary",
+            pathname === "/saved" ? "text-primary" : "text-muted-foreground"
+          )}
+        >
+          <Bookmark className="h-5 w-5" />
+          Saved
         </Link>
       </div>
     </nav>

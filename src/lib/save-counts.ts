@@ -1,4 +1,6 @@
 
+// (DONT REMOVE BELLOW SAVE COUNT, I WILL NEED IT)
+/*
 'use server';
 
 import { promises as fs } from 'fs';
@@ -78,3 +80,4 @@ export async function updateCount(itemId: string, action: 'increment' | 'decreme
         await releaseLock();
     }
 }
+*/

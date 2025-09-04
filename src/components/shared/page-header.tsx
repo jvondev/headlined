@@ -58,20 +58,6 @@ export function PageHeader({
             <div className="flex flex-col">
                 <div className="relative flex justify-between items-center h-14">
                     <div className="flex items-center gap-1">
-                        {showHome && (
-                            <Button asChild variant="ghost" size="icon" className="bg-background/50 backdrop-blur-sm rounded-full">
-                                <Link href={`/`} aria-label="Back to home">
-                                    <Home className="h-5 w-5" />
-                                </Link>
-                            </Button>
-                        )}
-                        {showRss && (
-                            <Button asChild variant="ghost" size="icon" className="bg-background/50 backdrop-blur-sm rounded-full">
-                                <Link href={`/rss/feed`} aria-label="RSS Feeds">
-                                    <Rss className="h-5 w-5" />
-                                </Link>
-                            </Button>
-                        )}
                     </div>
 
                     {children}
@@ -79,13 +65,7 @@ export function PageHeader({
                     {title && <h1 className="text-lg font-headline font-semibold absolute left-1/2 -translate-x-1/2">{title}</h1>}
                     
                     <div className="flex items-center gap-1">
-                        {showSaved && (
-                             <Button asChild variant="ghost" size="icon" className="bg-background/50 backdrop-blur-sm rounded-full">
-                                <Link href="/saved" aria-label="Saved Items">
-                                    <Bookmark className="h-5 w-5" />
-                                </Link>
-                            </Button>
-                        )}
+                        
                         <Search />
                         <ModeToggle />
                     </div>

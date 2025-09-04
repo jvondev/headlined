@@ -17,7 +17,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { InsightView } from "@/components/insight-view";
 import { AdPlaceholder } from "@/components/ad-placeholder";
-import { getPaginatedInsights, getSaveCount, updateSaveCount } from "@/lib/actions";
+import { getPaginatedInsights /*, getSaveCount, updateSaveCount*/ } from "@/lib/actions";
 import { useSavedItems } from "@/hooks/use-saved-items";
 import { useToast } from "@/hooks/use-toast";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
@@ -137,7 +137,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   const [activeDeepDiveIndex, setActiveDeepDiveIndex] = useState(startOnDeepDive ? initialDeepDiveIndex : -1);
   const [isPreferenceSheetOpen, setIsPreferenceSheetOpen] = useState(false);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
-  const [isUpdatingCount, startCountTransition] = useTransition();
+  // const [isUpdatingCount, startCountTransition] = useTransition();
   
   const currentInsight = insights[activeSlideIndex];
 
@@ -158,13 +158,13 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   const { resetOnboarding, hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus(); // Add this line
   
   const scrollUp = useCallback(() => {
-    if (emblaApi?.canScrollPrev()) {
+    if (emblaApi && emblaApi!.canScrollPrev()) {
       emblaApi.scrollPrev();
     }
   }, [emblaApi]);
 
   const scrollDown = useCallback(() => {
-    if (emblaApi?.canScrollNext()) {
+    if (emblaApi && emblaApi!.canScrollNext()) {
       emblaApi.scrollNext();
     }
   }, [emblaApi]);
@@ -275,7 +275,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
     if (!emblaApi) return;
 
     const onSettle = (api: UseEmblaCarouselType[1]) => {
-        const newIndex = api.selectedScrollSnap();
+        const newIndex = api!.selectedScrollSnap();
         setActiveSlideIndex(newIndex);
         
         if (hasMore && !isLoading && newIndex >= insights.length - 3) {
@@ -291,16 +291,18 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   }, [emblaApi, hasMore, isLoading, insights.length, loadMoreInsights]);
 
 
-   const setHorizontalEmblaApi = useCallback((slug: string, api: EmblaCarouselType) => {
+   const setHorizontalEmblaApi = useCallback((slug: string, api: UseEmblaCarouselType[1]) => {
     horizontalApis.current.set(slug, api);
     
     const onSettle = (apiInstance: UseEmblaCarouselType[1]) => {
       // The first slide is the main insight, so deep dives start at index 1 in the carousel.
-      const deepDiveIdx = apiInstance.selectedScrollSnap() - 1;
+      const deepDiveIdx = apiInstance!.selectedScrollSnap() - 1;
       setActiveDeepDiveIndex(deepDiveIdx);
     }
     
-    api.on('settle', onSettle);
+    if (api) {
+      api.on('settle', onSettle);
+    }
     
     return () => {
       if (api) {
@@ -333,11 +335,13 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   const [saveCount, setSaveCount] = useState(0);
 
   // Effect to fetch save count when the active item changes
+  /*
   useEffect(() => {
     if (currentItemId) {
       getSaveCount(currentItemId).then(setSaveCount);
     }
   }, [currentItemId]);
+  */
 
 
   const handleSaveWithNote = (item: Omit<SavedItem, 'savedAt'>) => {
@@ -345,9 +349,11 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
     toast({ title: "Saved!", description: "Your item and note have been saved." });
     if (!hasSaved(item.id)) {
         setHasSaved(item.id, true);
+        /*
         startCountTransition(() => {
             updateSaveCount(item.id, 'increment').then(setSaveCount);
         });
+        */
     }
   };
   
@@ -356,9 +362,11 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
     toast({ title: "Removed", description: "Removed from your saved items." });
     if (hasSaved(id)) {
         setHasSaved(id, false);
+        /*
         startCountTransition(() => {
             updateSaveCount(id, 'decrement').then(setSaveCount);
         });
+        */
     }
   }
   
@@ -414,9 +422,11 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
         toast({ title: "Saved!", description: "Added to your saved items." });
         if (!hasSaved(fullItemData.id)) {
             setHasSaved(fullItemData.id, true);
+            /*
             startCountTransition(() => {
                 updateSaveCount(fullItemData.id, 'increment').then(setSaveCount);
             });
+            */
         }
     }
   };
@@ -522,7 +532,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
           </div>
         </div>
         
-        <div className="fixed bottom-4 right-4 z-20 flex flex-col items-center gap-2">
+        <div className="fixed bottom-20 right-4 z-20 flex flex-col items-center gap-2">
              <Button
               onClick={() => setIsPreferenceSheetOpen(true)}
               variant="outline"
@@ -556,11 +566,13 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
                 >
                   <SaveIcon className={cn("h-4 w-4", saveIconClassName)} />
                 </Button>
+                {/* 
                 {saveCount > 0 && (
                     <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-primary-foreground">
                         {Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(saveCount)}
                     </span>
                 )}
+                */}
             </div>
             <Button 
               onClick={scrollRight} 
@@ -568,13 +580,13 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
               size="icon" 
               aria-label="Scroll Right" 
               className="bg-background/50 backdrop-blur-sm rounded-full"
-              disabled={!currentInsight || currentInsight.isAd || (currentHorizontalApi && !currentHorizontalApi.canScrollNext())}
+              disabled={Boolean(!currentInsight || (currentInsight && currentInsight.isAd) || (currentHorizontalApi && !currentHorizontalApi.canScrollNext()))}
             >
               <ArrowRight className="h-4 w-4" />
             </Button>
         </div>
 
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-20 flex gap-2">
             <Button 
               onClick={scrollDown} 
               variant="outline" 
