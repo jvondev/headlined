@@ -66,7 +66,7 @@ export default function ExplorePage() {
     };
 
     fetchFeedsAndCleanSubscriptions();
-  }, []);
+  }, []); // Revert dependency array
 
   const handleFeedSelect = (selection: string) => {
     // This function is for selecting a feed to view, not for subscribing/unsubscribing

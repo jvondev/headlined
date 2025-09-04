@@ -73,7 +73,7 @@ export async function generateAndSaveRssData() {
                 };
 
                 try {
-                    const { blogContent, byline, contentDoc } = await extractFullContent(item, basicArticleData);
+                    const { blogContent, byline, contentDoc, deepDives } = await extractFullContent(item, basicArticleData);
                     const finalAuthor = byline || basicArticleData.author;
 
                     if (!thumbnailUrl) {
@@ -99,6 +99,7 @@ export async function generateAndSaveRssData() {
                         author: finalAuthor,
                         blogContent,
                         thumbnailUrl: thumbnailUrl,
+                        deepDives,
                     };
 
                     allProcessedArticles.push(finalArticle);

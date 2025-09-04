@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getFeedCategories, getRssFeeds } from "@/data/rss-feeds";
+// import { getFeedCategories, getRssFeeds } from "@/data/rss-feeds"; // Data now comes from props
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RssFeed } from "@/types";
@@ -40,33 +40,17 @@ interface RssFeedSelectionModalContentProps {
     onFeedSelect: (feedUrl: string) => void;
     onSubscribeToggle: (feed: RssFeed) => void; // New prop for subscribe/unsubscribe
     subscribedFeedIds: string[]; // New prop to pass subscribed feed IDs
+    availableFeeds: RssFeed[]; // Added this prop
+    categories: string[]; // Added this prop
 }
 
-export default function RssFeedSelectionModalContent({ onFeedSelect, onSubscribeToggle, subscribedFeedIds }: RssFeedSelectionModalContentProps) {
-    const [categories, setCategories] = useState<string[]>([]);
-    const [feeds, setFeeds] = useState<RssFeed[]>([]);
+export default function RssFeedSelectionModalContent({ onFeedSelect, onSubscribeToggle, subscribedFeedIds, availableFeeds, categories }: RssFeedSelectionModalContentProps) {
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const hasFetched = useRef(false);
     const [displayLimit, setDisplayLimit] = useState(20); // Initial display limit
 
     useEffect(() => {
-        if (hasFetched.current) return;
-        hasFetched.current = true;
-
-        async function fetchData() {
-            const [fetchedCategories, fetchedFeeds] = await Promise.all([
-                getFeedCategories(),
-                getRssFeeds()
-            ]);
-            
-            const allCategories = ["All", ...fetchedCategories];
-            setCategories(allCategories);
-            setFeeds(fetchedFeeds);
-            // Set "All" as the default selected category
-            setSelectedCategory("All");
-        }
-        fetchData();
-    }, []);
+        setSelectedCategory("All");
+    }, [availableFeeds, categories]);
 
     const handleSourceSelection = (feedUrl: string) => {
         onFeedSelect(feedUrl);
@@ -77,8 +61,8 @@ export default function RssFeedSelectionModalContent({ onFeedSelect, onSubscribe
     };
 
     const filteredFeeds = selectedCategory === "All"
-        ? feeds
-        : feeds.filter(feed => feed.category === selectedCategory);
+        ? availableFeeds
+        : availableFeeds.filter(feed => feed.category === selectedCategory);
 
     const feedsToDisplay = filteredFeeds.slice(0, displayLimit);
 
@@ -98,6 +82,7 @@ export default function RssFeedSelectionModalContent({ onFeedSelect, onSubscribe
                         setDisplayLimit(20); // Reset limit on category change
                     }}
                     initialSelectedTopics={selectedCategory ? [selectedCategory] : []}
+                    topics={categories}
                 />
             </div>
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { InsightCarousel } from "@/components/insight-carousel";
 import { InsightPageLoadingSkeleton } from "@/components/insight-page-loading-skeleton";
-import { getRssFeeds, getFeedCategories } from "@/data/rss-feeds"; // Assuming these are now client-side
+import { getRssFeeds, getFeedCategories } from "@/data/rss-feeds"; // Import getRssFeeds
 import type { Insight, RssFeed, DeepDive, DeepDiveType } from "@/types"; // Import RssFeed type, DeepDive, DeepDiveType
 import { useOnboardingStatus } from "@/hooks/use-onboarding-status"; // Import useOnboardingStatus
 
@@ -65,7 +65,7 @@ const articleToInsight = (article: ArticleWithTopic, allRssFeeds: RssFeed[], top
     headline: article.title,
     summary: article.summary,
     thumbnailUrl: article.thumbnailUrl,
-    category: categories, 
+    category: categories,
     deepDives: deepDives, // Populate deepDives
     seo: { title: article.title, description: article.summary },
     title: article.title, // Added missing property
@@ -204,12 +204,12 @@ export default function HomePage() {
     );
   }
 
-  
+
 
   return (
     <main className="min-h-screen w-full bg-background">
-      <InsightCarousel 
-        initialInsights={insightsForCarouselState} 
+      <InsightCarousel
+        initialInsights={insightsForCarouselState}
         initialSlug={initialCarouselSlug || insightsForCarouselState[0]?.slug} // Use stored slug or first article
         initialHasMore={false} // Assuming all data is loaded initially
         hasSeenOnboarding={hasSeenOnboarding} // Pass prop

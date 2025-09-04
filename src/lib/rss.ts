@@ -58,7 +58,7 @@ export async function extractFullContent(item: any, existingArticleData: Omit<Rs
 
     if (item.link) {
         try {
-            const res = await fetch(item.link, { headers: { 'User-Agent': 'Mozilla/5.0' }, next: { revalidate: CACHE_DURATION / 1000 } });
+            const res = await fetch(item.link, { headers: { 'User-Agent': 'Mozilla/5.0' } });
             console.log('Fetch response OK:', res.ok);
             if (res.ok) {
                 const html = await res.text();
@@ -266,7 +266,7 @@ export async function rssToInsight(article: RssArticle): Promise<Insight> {
         summary: article.summary,
         deepDives: article.deepDives,
         blogContent: article.blogContent,
-        thumbnailUrl: article.thumbnail,
+        thumbnailUrl: article.thumbnailUrl,
         author: article.author,
     }
 }
