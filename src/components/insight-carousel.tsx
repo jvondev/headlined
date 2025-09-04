@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback, type FC, useRef, useMemo, useTransiti
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, ArrowRight, Pencil, HelpCircle } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "./ui/button";
 import { CarouselContext } from "@/context/carousel-context";
 import { useOnboardingStatus } from "@/hooks/use-onboarding-status";
@@ -89,6 +90,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const isMobile = useIsMobile();
   const returnToSlug = searchParams.get("returnTo");
   const action = searchParams.get("action");
 
@@ -574,28 +576,34 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
                 )}
                 */}
             </div>
-            <Button 
-              onClick={scrollRight} 
-              variant="outline" 
-              size="icon" 
-              aria-label="Scroll Right" 
-              className="bg-background/50 backdrop-blur-sm rounded-full"
+            
+        </div>
+
+        <div className="fixed right-0 top-1/2 -translate-y-1/2 z-20">
+            <Button
+              onClick={scrollRight}
+              variant="outline"
+              aria-label="Scroll Right"
+              className={cn(
+                "h-10 px-3 bg-background/50 backdrop-blur-sm rounded-l-[1rem] rounded-r-none text-sm font-semibold flex items-center gap-2 text-muted-foreground", // Desktop
+                isMobile && "h-auto w-auto min-w-[2rem] py-4 px-1 mb-0 mt-0 text-xs flex justify-center items-center gap-1 [writing-mode:vertical-rl] rounded-tr-none rounded-tl-[1rem] rounded-br-none rounded-bl-[1rem] text-muted-foreground" // Mobile: flex items-center, rotate 270
+              )}
               disabled={Boolean(!currentInsight || (currentInsight && currentInsight.isAd) || (currentHorizontalApi && !currentHorizontalApi.canScrollNext()))}
             >
-              <ArrowRight className="h-4 w-4" />
+              <span className={cn(isMobile && "rotate-180")}>Read More</span> <ArrowRight className="h-4 w-4" />
             </Button>
         </div>
 
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+        <div className="fixed bottom-0 left-0 right-0 z-20 flex justify-center mb-16">
             <Button 
               onClick={scrollDown} 
               variant="outline" 
               size="icon" 
               aria-label="Next Insight" 
-              className="bg-background/50 backdrop-blur-sm rounded-full"
+              className="min-w-[3rem] w-auto h-auto py-2 px-4 bg-background/50 mb-0 mt-0 backdrop-blur-sm rounded-t-[1rem] rounded-b-none text-sm font-semibold flex items-center gap-2 text-muted-foreground"
               disabled={!emblaApi?.canScrollNext()}
             >
-              <ArrowDown />
+              Next Insight <ArrowDown className="h-5 w-5" />
             </Button>
         </div>
 

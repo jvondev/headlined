@@ -35,10 +35,6 @@ export const ArticleSummaryView: FC<ArticleSummaryViewProps> = ({ content, embla
             <span className='truncate'>Read original article</span>
           </Button>
         </Link>
-        <Button variant='default' onClick={() => emblaApi?.scrollNext()} className='truncate w-full md:w-auto'>
-          <span className='truncate'>Read more</span>
-          <DynamicIcon name='ChevronRight' className='ml-2 h-4 w-4 flex-shrink-0' />
-        </Button>
       </div>
     </div>
   );

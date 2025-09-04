@@ -262,7 +262,13 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                     </div>
                                 </div>
                                  <div className="absolute bottom-16 right-8 flex flex-col items-center gap-1 text-muted-foreground/50 animate-bounce">
-                                   <span className="text-xs">{index < processedDeepDives.length - 1 ? 'Next' : 'Full Story'}</span>
+                                   <span className="text-xs">
+    {deepDive.type === 'article-summary' && index < processedDeepDives.length - 1
+        ? 'Read Summary'
+        : index < processedDeepDives.length - 1
+            ? 'Next'
+            : 'Read Full Story'}
+</span>
                                    <ChevronRight className="size-5" />
                                 </div>
                             </Card>
