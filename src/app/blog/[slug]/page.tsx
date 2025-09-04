@@ -15,7 +15,7 @@ interface Article {
   originalFeedUrl: string;
 }
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 86400; // Revalidate every day
 
 async function getArticleData(slug: string) {
     const categories = ["design", "news", "tech"]; // Example categories
@@ -55,28 +55,7 @@ async function getArticleData(slug: string) {
     return { insight: undefined };
 }
 
-export async function generateStaticParams() {
-  const categories = ["design", "news", "tech"]; // Example categories
-  let allSlugs: { slug: string }[] = [];
 
-  for (const category of categories) {
-    try {
-      const filePath = path.join(process.cwd(), 'public', 'generated-categories', `${category}.json`);
-      const fileContent = await fs.readFile(filePath, 'utf8');
-      const data = JSON.parse(fileContent);
-
-      for (const sourceName in data) {
-        if (Object.prototype.hasOwnProperty.call(data, sourceName)) {
-          const sourceArticles: Article[] = data[sourceName];
-          allSlugs = [...allSlugs, ...sourceArticles.map(art => ({ slug: art.slug }))];
-        }
-      }
-    } catch (error) {
-      console.error(`Error reading or parsing ${category}.json for static params:`, error);
-    }
-  }
-  return allSlugs;
-}
 
 type BlogPageProps = {
     params: {

@@ -25,7 +25,7 @@ const slugify = (text: string) => {
 
 // New function containing the core logic
 export async function generateAndSaveRssData() {
-    const rssFeedsPath = path.join(process.cwd(), 'src', 'data', 'rss-feeds.json');
+    const rssFeedsPath = path.join(process.cwd(), 'public', 'rss-feeds.json');
     const fileContents = await fs.promises.readFile(rssFeedsPath, 'utf8');
     const rssFeeds: RssFeed[] = JSON.parse(fileContents);
 

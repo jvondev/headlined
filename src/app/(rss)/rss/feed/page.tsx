@@ -5,6 +5,8 @@ import path from 'path';
 import { RssArticle, RssFeed } from '@/types';
 import { getRssFeeds } from '@/data/rss-feeds';
 
+export const dynamic = 'force-dynamic'; // Ensure this page is always rendered on demand
+
 // Helper to slugify category names for file paths (copied from cron job)
 const slugify = (text: string) => {
     return text
