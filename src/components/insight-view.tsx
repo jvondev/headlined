@@ -6,16 +6,17 @@ import { useEffect, type FC, useContext } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { MoveRight, ChevronRight, Rss } from "lucide-react";
-import { ChecklistView } from "./deep-dive/checklist-view";
-import { ComparisonView } from "./deep-dive/comparison-view";
-import { QnaView } from "./deep-dive/qna-view";
-import { QuoteView } from "./deep-dive/quote-view";
-import { HowToView } from "./deep-dive/how-to-view";
-import { CaseStudyView } from "./deep-dive/case-study-view";
-import { DataView } from "./deep-dive/data-view";
-import { MythView } from "./deep-dive/myth-view";
-import { AlternativesView } from "./deep-dive/alternatives-view";
-import { MetadataView } from "./deep-dive/metadata-view";
+// DONT REMOVE IT
+// import { ChecklistView } from "./deep-dive/checklist-view";
+// import { ComparisonView } from "./deep-dive/comparison-view";
+// import { QnaView } from "./deep-dive/qna-view";
+// import { QuoteView } from "./deep-dive/quote-view";
+// import { HowToView } from "./deep-dive/how-to-view";
+// import { CaseStudyView } from "./deep-dive/case-study-view";
+// import { DataView } from "./deep-dive/data-view";
+// import { MythView } from "./deep-dive/myth-view";
+// import { AlternativesView } from "./deep-dive/alternatives-view";
+// import { MetadataView } from "./deep-dive/metadata-view";
 import { ArticleSummaryView } from "./deep-dive/article-summary-view"; // Import new view
 import { DynamicIcon } from "./dynamic-icon";
 import { CarouselContext } from "@/context/carousel-context";
