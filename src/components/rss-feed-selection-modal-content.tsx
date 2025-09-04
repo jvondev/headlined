@@ -110,7 +110,9 @@ export default function RssFeedSelectionModalContent({ onFeedSelect, onSubscribe
                         onClick={() => handleAllCategorySelection(selectedCategory)}
                     >
                         <CardContent className="p-0 flex flex-col h-full items-center justify-center">
-                            <CardTitle className="text-center text-lg font-medium">All {selectedCategory} Feeds</CardTitle>
+                            <CardTitle className="text-center text-lg font-medium">
+                                {selectedCategory === "All" ? "All Feeds" : `All ${selectedCategory} Feeds`}
+                            </CardTitle>
                         </CardContent>
                     </Card>
                 )}

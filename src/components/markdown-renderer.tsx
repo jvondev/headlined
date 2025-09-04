@@ -27,6 +27,17 @@ interface MarkdownSection {
     children: MarkdownSection[]; // Added for nesting
 }
 
+// Simple hashing function for stable IDs
+function simpleHash(str: string): string {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(36); // Convert to base36 string
+}
+
 // This function parses the markdown and splits it into sections based on headings
 function parseMarkdownIntoSections(markdown: string): MarkdownSection[] {
     if (!markdown) return [];
@@ -34,7 +45,6 @@ function parseMarkdownIntoSections(markdown: string): MarkdownSection[] {
     const lines = markdown.split('\n');
     const sections: MarkdownSection[] = [];
     const stack: MarkdownSection[] = []; // To keep track of parent sections
-    let sectionCounter = 0; // Unique ID counter
 
     let currentContent = ''; // Accumulate content before a heading
 
@@ -55,7 +65,7 @@ function parseMarkdownIntoSections(markdown: string): MarkdownSection[] {
             }
 
             const newSection: MarkdownSection = {
-                id: `section-${sectionCounter++}`,
+                id: simpleHash(`${match[2]}-${match[1].length}`), // Use heading and level for stable ID
                 heading: match[2],
                 level: match[1].length,
                 content: '',
@@ -224,65 +234,18 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
     };
 
     const renderSection = (section: MarkdownSection, index: number) => {
-        const HeadingTag = `h${section.level}` as keyof JSX.IntrinsicElements;
-        const isH1 = section.level === 1;
-        const sectionKey = section.id;
-        const triggerRef = React.useCallback((node: HTMLButtonElement) => {
-            if (node) {
-                sectionRefs.current.set(sectionKey, node);
-            } else {
-                sectionRefs.current.delete(sectionKey);
-            }
-        }, [sectionKey]);
-
-        const contentRef = React.useRef<HTMLDivElement>(null);
-        const hasBeenRendered = renderedSections.has(sectionKey);
-
-        const handleSectionOpenChange = (isOpen: boolean) => {
-            handleOpenChange(section, isOpen);
-            if (isOpen) {
-                // Use a timeout to allow the collapsible to start opening before scrolling
-                setTimeout(() => {
-                    const currentSectionElement = sectionRefs.current.get(sectionKey);
-                    if (currentSectionElement) {
-                        currentSectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                }, 300); // Keep the timeout to allow animations to settle
-            }
-        };
-
         return (
-            <div key={sectionKey} className="mb-4 rounded-lg border bg-card shadow-sm overflow-hidden">
-                <Collapsible
-                    open={openSections.get(sectionKey) || false}
-                    onOpenChange={handleSectionOpenChange}
-                    className="group"
-                >
-                <CollapsibleTrigger ref={triggerRef} className="flex items-center gap-2 w-full text-left p-4 bg-card-foreground/5 hover:bg-card-foreground/10 transition-colors duration-300">
-                    <ChevronRight className="h-5 w-5 transition-transform duration-300 flex-shrink-0 group-data-[state=open]:rotate-90" />
-                    {isH1 ? (
-                        <HeadingTag className="text-3xl md:text-4xl font-extrabold text-primary-foreground">{section.heading}</HeadingTag>
-                    ) : (
-                        <span className={cn(
-                            "font-bold",
-                            section.level === 2 && "text-2xl md:text-3xl text-foreground",
-                            section.level === 3 && "text-xl md:text-2xl text-muted-foreground",
-                            section.level === 4 && "text-lg md:text-xl text-muted-foreground",
-                        )}>
-                            {section.heading}
-                        </span>
-                    )}
-                </CollapsibleTrigger>
-                <CollapsibleContent ref={contentRef} className="px-4 pb-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden text-sm transition-all duration-300 ease-in-out opacity-0 data-[state=open]:opacity-100 data-[state=closed]:opacity-0">
-                    {(openSections.get(sectionKey) || hasBeenRendered) && (
-                        <>
-                            <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{section.content}</ReactMarkdown>
-                            {section.children.map((childSection, childIndex) => renderSection(childSection, childIndex))}
-                        </>
-                    )}
-                </CollapsibleContent>
-            </Collapsible>
-            </div>
+            <MarkdownSectionRenderer
+                key={section.id}
+                section={section}
+                handleOpenChange={handleOpenChange}
+                openSections={openSections}
+                renderedSections={renderedSections}
+                sectionRefs={sectionRefs}
+                setRenderedSections={setRenderedSections}
+                failedImageUrls={failedImageUrls}
+                components={components}
+            />
         );
     };
 
@@ -303,6 +266,101 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
         {/* Render all sections recursively */}
         {sections.map(renderSection)}
       </div>
+    );
+};
+
+interface MarkdownSectionRendererProps {
+    section: MarkdownSection;
+    handleOpenChange: (section: MarkdownSection, isOpen: boolean) => void;
+    openSections: Map<string, boolean>;
+    renderedSections: Set<string>;
+    sectionRefs: React.MutableRefObject<Map<string, HTMLElement>>;
+    setRenderedSections: React.Dispatch<React.SetStateAction<Set<string>>>;
+    failedImageUrls: Set<string>;
+    components: any; // You might want to define a more specific type for components
+}
+
+const MarkdownSectionRenderer: FC<MarkdownSectionRendererProps> = ({
+    section,
+    handleOpenChange,
+    openSections,
+    renderedSections,
+    sectionRefs,
+    setRenderedSections,
+    failedImageUrls,
+    components,
+}) => {
+    const HeadingTag = `h${section.level}` as keyof JSX.IntrinsicElements;
+    const isH1 = section.level === 1;
+    const sectionKey = section.id;
+    const triggerRef = React.useCallback((node: HTMLButtonElement) => {
+        if (node) {
+            sectionRefs.current.set(sectionKey, node);
+        } else {
+            sectionRefs.current.delete(sectionKey);
+        }
+    }, [sectionKey]);
+
+    const contentRef = React.useRef<HTMLDivElement>(null);
+    const hasBeenRendered = renderedSections.has(sectionKey);
+
+    const handleSectionOpenChange = (isOpen: boolean) => {
+        handleOpenChange(section, isOpen);
+        if (isOpen) {
+            // Use a timeout to allow the collapsible to start opening before scrolling
+            setTimeout(() => {
+                const currentSectionElement = sectionRefs.current.get(sectionKey);
+                if (currentSectionElement) {
+                    currentSectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 300); // Keep the timeout to allow animations to settle
+        }
+    };
+
+    return (
+        <div key={sectionKey} className="mb-4 rounded-lg border bg-card shadow-sm overflow-hidden">
+            <Collapsible
+                open={openSections.get(sectionKey) || false}
+                onOpenChange={handleSectionOpenChange}
+                className="group"
+            >
+            <CollapsibleTrigger ref={triggerRef} className="flex items-center gap-2 w-full text-left p-4 bg-card-foreground/5 hover:bg-card-foreground/10 transition-colors duration-300">
+                <ChevronRight className="h-5 w-5 transition-transform duration-300 flex-shrink-0 group-data-[state=open]:rotate-90" />
+                {isH1 ? (
+                    <HeadingTag className="text-3xl md:text-4xl font-extrabold text-primary-foreground">{section.heading}</HeadingTag>
+                ) : (
+                    <span className={cn(
+                        "font-bold",
+                        section.level === 2 && "text-2xl md:text-3xl text-foreground",
+                        section.level === 3 && "text-xl md:text-2xl text-muted-foreground",
+                        section.level === 4 && "text-lg md:text-xl text-muted-foreground",
+                    )}>
+                        {section.heading}
+                    </span>
+                )}
+            </CollapsibleTrigger>
+            <CollapsibleContent ref={contentRef} className="px-4 pb-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden text-sm transition-all duration-300 ease-in-out opacity-0 data-[state=open]:opacity-100 data-[state=closed]:opacity-0">
+                {(openSections.get(sectionKey) || hasBeenRendered) && (
+                    <>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{section.content}</ReactMarkdown>
+                        {section.children.map((childSection, childIndex) => (
+                            <MarkdownSectionRenderer
+                                key={childSection.id}
+                                section={childSection}
+                                handleOpenChange={handleOpenChange}
+                                openSections={openSections}
+                                renderedSections={renderedSections}
+                                sectionRefs={sectionRefs}
+                                setRenderedSections={setRenderedSections}
+                                failedImageUrls={failedImageUrls}
+                                components={components}
+                            />
+                        ))}
+                    </>
+                )}
+            </CollapsibleContent>
+        </Collapsible>
+        </div>
     );
 };
 
