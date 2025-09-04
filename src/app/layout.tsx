@@ -33,7 +33,7 @@ export default function RootLayout({
       <body className="font-body antialiased h-screen overflow-hidden flex flex-col" suppressHydrationWarning={true}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
