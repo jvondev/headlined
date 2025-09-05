@@ -68,6 +68,20 @@ export async function GET() {
                     thumbnailUrl = item.enclosure.url;
                 }
 
+                const categories: string[] = [];
+                const rawCategories = item.categories || (item.category ? [item.category] : []);
+
+                // Ensure rawCategories is always an array for consistent processing
+                const categoriesToProcess = Array.isArray(rawCategories) ? rawCategories : [rawCategories];
+
+                for (const cat of categoriesToProcess) {
+                    if (typeof cat === 'string') {
+                        categories.push(cat);
+                    } else if (typeof cat === 'object' && cat !== null && cat.term) {
+                        categories.push(cat.term);
+                    }
+                }
+
                 const basicArticleData = {
                     slug: (await generateSlug(item.title, source.url)).replace('rss-', ''),
                     title: item.title,
@@ -77,6 +91,7 @@ export async function GET() {
                     author: item.creator || '',
                     thumbnailUrl: thumbnailUrl,
                     originalFeedUrl: source.url,
+                    categories: categories, // Add categories here
                 };
 
                 let finalArticle: RssArticle | null = null; // Declare finalArticle here
@@ -150,7 +165,9 @@ export async function GET() {
             thumbnail_url: finalArticle.thumbnailUrl,
             original_feed_url: source.url,
             blog_content: finalArticle.blogContent,
-            category: source.category,
+            // IMPORTANT: The 'category' column in Supabase 'blog_posts' table needs to be of type TEXT[] (array of text)
+            // for this to work correctly. If it's currently TEXT, you'll need to perform a schema migration.
+            category: finalArticle.categories.length > 0 ? finalArticle.categories : [source.category],
             source: source.name, // Use source.name from rss_sources table
           });
 

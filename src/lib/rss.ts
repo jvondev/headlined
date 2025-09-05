@@ -295,7 +295,7 @@ export async function rssToInsight(article: RssArticle): Promise<Insight> {
             title: article.title,
             description: article.description,
         },
-        category: [feedInfo?.category || 'News', feedInfo?.name || ''],
+        category: article.categories.length > 0 ? article.categories : [feedInfo?.category || 'News', feedInfo?.name || ''],
         title: article.title,        
         description: article.description,
         deepDives: article.deepDives,

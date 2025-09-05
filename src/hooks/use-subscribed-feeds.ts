@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-const LOCAL_STORAGE_KEY = 'subscribedRssFeeds';
+const LOCAL_STORAGE_KEY = 'subscribedFeeds';
 
 export function useSubscribedFeeds() {
     const [subscribedFeeds, setSubscribedFeeds] = useState<string[]>([]);
@@ -13,7 +13,14 @@ export function useSubscribedFeeds() {
         try {
             const storedFeeds = localStorage.getItem(LOCAL_STORAGE_KEY);
             if (storedFeeds) {
-                setSubscribedFeeds(JSON.parse(storedFeeds));
+                const parsedFeeds = JSON.parse(storedFeeds);
+                // Check if it's an array of objects (new format) or array of strings (old format)
+                if (Array.isArray(parsedFeeds) && parsedFeeds.length > 0 && typeof parsedFeeds[0] === 'object' && parsedFeeds[0] !== null && 'id' in parsedFeeds[0]) {
+                    setSubscribedFeeds(parsedFeeds.map((feed: any) => feed.id));
+                } else {
+                    // Assume it's already an array of strings or empty
+                    setSubscribedFeeds(parsedFeeds);
+                }
             } else {
                 // Default to BBC News if no feeds are subscribed
                 setSubscribedFeeds(["https://feeds.bbci.co.uk/news/world/rss.xml"]);

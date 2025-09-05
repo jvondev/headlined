@@ -127,6 +127,7 @@ export interface RssArticle {
     blogContent: string;
     originalFeedUrl: string;
     deepDives: DeepDive<DeepDiveType>[];
+    categories: string[];
 }
 
 export interface RssFeed {

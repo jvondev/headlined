@@ -223,9 +223,12 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                         <div className="max-w-3xl">
                              <div className="flex flex-wrap justify-center gap-2 mb-2">
                                 {(insight.category || []).slice(0,3).map((cat) => (
-                                    <Link key={cat} href={`/category/${cat.toLowerCase().replace(/ /g, '-')}`}>
-                                        <Badge variant={insight.thumbnailUrl ? 'secondary' : 'default'} className={cn(insight.thumbnailUrl && (theme === 'light' ? 'bg-black/10 text-black border-none' : 'bg-white/20 text-white border-none'))}>{cat}</Badge>
-                                    </Link>
+                                    // Add a check to ensure cat is a string
+                                    typeof cat === 'string' && (
+                                        <Link key={cat} href={`/category/${cat.toLowerCase().replace(/ /g, '-')}`}>
+                                            <Badge variant={insight.thumbnailUrl ? 'secondary' : 'default'} className={cn(insight.thumbnailUrl && (theme === 'light' ? 'bg-black/10 text-black border-none' : 'bg-white/20 text-white border-none'))}>{cat}</Badge>
+                                        </Link>
+                                    )
                                 ))}
                             </div>
                             <h1 className="font-headline text-3xl md:text-5xl font-bold mt-2">{insight.title}</h1>

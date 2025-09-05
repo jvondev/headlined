@@ -24,7 +24,7 @@ async function getArticleData(slug: string) {
       description: article.description,
       blogContent: article.blog_content,
       thumbnailUrl: article.thumbnail_url,
-      category: [article.category],
+      category: article.category || [],
       deepDives: [],
       seo: { title: article.title, description: article.description },
     }

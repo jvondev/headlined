@@ -15,7 +15,7 @@ interface Article {
   thumbnailUrl?: string; // Added thumbnailUrl
   blogContent: string;
   originalFeedUrl: string;
-  category: string;
+  category: string[]; // Changed to string[]
   source: string;
 }
 
@@ -27,12 +27,20 @@ const stripMarkdownHeaders = (markdown: string): string => {
 // Helper function to map Article to Insight
 const articleToInsight = (article: Article, allRssFeeds: RssFeed[]): Insight => {
   const feedInfo = allRssFeeds.find(feed => feed.url === article.originalFeedUrl);
-  const categories: string[] = [];
+  let categories: string[] = [];
 
-  if (feedInfo) {
-    categories.push(feedInfo.name); // Add feed name as category
+  // Add categories from the article itself (which is now TEXT[])
+  if (article.category && Array.isArray(article.category)) {
+    categories = [...categories, ...article.category];
   }
-  categories.push(article.category); // Add topic category from article
+
+  // Add feed name as a category if feedInfo exists
+  if (feedInfo) {
+    categories.push(feedInfo.name);
+  }
+
+  // Ensure uniqueness and remove empty strings
+  categories = Array.from(new Set(categories.filter(c => c && c.trim() !== '')));
 
   return {
     slug: article.slug,
@@ -49,6 +57,7 @@ const articleToInsight = (article: Article, allRssFeeds: RssFeed[]): Insight => 
 export default async function HomePage() {
   let articles: Article[] = [];
   let allRssFeeds: RssFeed[] = [];
+  let hasMore: boolean = false;
   let error: string | null = null;
 
   try {
@@ -99,7 +108,7 @@ export default async function HomePage() {
     });
 
   } catch (err: any) {
-    console.error("Error fetching articles from Supabase:", err.message);
+    console.error("Error fetching insights for homepage:", err.message);
     error = "Failed to load feed data. Please try again later.";
   }
 
@@ -121,7 +130,7 @@ export default async function HomePage() {
       <main className="flex min-h-screen w-full flex-col items-center justify-center bg-background">
         <div className="text-center">
           <h1 className="font-headline text-4xl font-bold">No Articles Found</h1>
-          <p className="mt-2 text-lg text-muted-foreground">No articles found for your subscribed feeds.</p>
+          <p className="mt-2 text-lg text-muted-foreground">No articles found.</p>
         </div>
       </main>
     );
@@ -132,8 +141,9 @@ export default async function HomePage() {
       <Suspense fallback={<div>Loading carousel...</div>}>
         <InsightCarousel
           initialInsights={insightsForCarouselState}
-          // subscribedFeedIds and initialSlug will be handled client-side within InsightCarousel
-          // hasSeenOnboarding and markOnboardingComplete will be handled client-side within InsightCarousel
+          initialHasMore={hasMore}
+          shouldFetchPaginatedInsights={true} // Enable paginated fetching in the carousel
+          // initialSlug, hasSeenOnboarding, and markOnboardingComplete will be handled client-side within InsightCarousel
         />
       </Suspense>
     </main>
