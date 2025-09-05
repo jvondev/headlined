@@ -74,28 +74,24 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
   const { theme } = useTheme();
   
   const processedDeepDives = useMemo(() => {
-    if (!insight.deepDives) return [];
-
     const newDeepDives: (DeepDive<DeepDiveType> & { content: { sentences?: string[] } })[] = [];
 
-    for (const deepDive of insight.deepDives) {
-        if (deepDive.type === 'article-summary' && insight.blogContent) {
-            let plainText = insight.blogContent
-              .replace(/^#+\s.*$/gm, '')
-              .replace(/^-{3,}$/gm, '')
-              .replace(/^\s*>\s?/gm, '');
-            plainText = plainText
-              .replace(/!\[.*?\]\(.*?\)/g, '')
-              .replace(/\[(.*?)\]\(.*?\)/g, '$1');
-            plainText = plainText.replace(/(\*\*|__|_|\*|`|~~)(.*?)\1/g, '$2');
-            plainText = plainText.replace(/[#*_\-`~\[\]()<>]/g, '').replace(/\s+/g, ' ').trim();
-            const allSentences = (plainText.match(/[^.!?]+[.!?]+/g) || [])
-              .filter(sentence => sentence.split(' ').length >= 6);
-            
-            const sentences = allSentences.slice(0, 4);
+    if (insight.blogContent) {
+        let plainText = insight.blogContent
+          .replace(/^#+\s.*$/gm, '')
+          .replace(/^-{3,}$/gm, '')
+          .replace(/^\s*>\s?/gm, '');
+        plainText = plainText
+          .replace(/!\[.*?\]\(.*?\)/g, '')
+          .replace(/\[(.*?)\]\(.*?\)/g, '$1');
+        plainText = plainText.replace(/(\*\*|__|_|\*|`|~~)(.*?)\1/g, '$2');
+        plainText = plainText.replace(/[#*_\-`~[\]()<>]/g, '').replace(/\s+/g, ' ').trim();
+        const allSentences = (plainText.match(/[^.!?]+[.!?]+/g) || [])
+          .filter(sentence => sentence.split(' ').length >= 6);
 
-            if (sentences.length === 0) continue;
+        const sentences = allSentences.slice(0, 4);
 
+        if (sentences.length > 0) { // Only proceed if there are sentences
             const summarySlides: string[][] = [];
             let remainingSentences = [...sentences];
 
@@ -131,24 +127,24 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
             }
 
             summarySlides.forEach((slideSentences, slideIndex) => {
-                const newContent = { 
-                    ...deepDive.content, 
+                const newContent = {
+                    snippet: slideSentences.join(' ').substring(0, 150) + '...', // Generate snippet
+                    slug: insight.slug, // Add slug
+                    originalArticleUrl: insight.slug.startsWith('rss-') ? `/blog/rss/${insight.slug.replace('rss-', '')}` : `/blog/${insight.slug}`, // Assuming originalArticleUrl is derived from slug
                     sentences: slideSentences,
                 };
-                
+
                 newDeepDives.push({
-                    ...deepDive,
-                    title: summarySlides.length > 1 ? `${deepDive.title} (${slideIndex + 1}/${summarySlides.length})` : deepDive.title,
+                    type: 'article-summary', // Explicitly set type
+                    title: summarySlides.length > 1 ? `Summary (${slideIndex + 1}/${summarySlides.length})` : 'Summary', // Default title
+                    icon: 'BookText', // Changed to BookText
                     content: newContent,
                 });
             });
-
-        } else {
-            newDeepDives.push(deepDive);
         }
     }
     return newDeepDives;
-  }, [insight.deepDives, insight.blogContent, isMobile]);
+  }, [insight.blogContent, isMobile, insight.slug]);
   
   const getStartIndex = () => {
     if (startOnDeepDive && typeof initialDeepDiveIndex === 'number' && initialDeepDiveIndex >= 0) {
@@ -211,7 +207,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                         <>
                             <Image
                                 src={insight.thumbnailUrl}
-                                alt={insight.headline}
+                                alt={insight.title}
                                 fill
                                 className="object-cover"
                                 sizes="100vw"
@@ -232,11 +228,11 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                     </Link>
                                 ))}
                             </div>
-                            <h1 className="font-headline text-3xl md:text-5xl font-bold mt-2">{insight.headline}</h1>
+                            <h1 className="font-headline text-3xl md:text-5xl font-bold mt-2">{insight.title}</h1>
                             <p className={cn(
                                 "mt-4 text-lg md:text-xl max-w-xl mx-auto",
                                 insight.thumbnailUrl ? (theme === 'light' ? 'text-black/80' : 'text-white/80') : "text-muted-foreground"
-                            )}>{insight.summary}</p>
+                            )}>{insight.description}</p>
                         </div>
                         <div className="absolute bottom-16 right-8 flex flex-col items-center gap-1 text-muted-foreground animate-bounce">
                            <span className={cn("text-xs", insight.thumbnailUrl && "text-white/70")}>Deep Dive</span>

@@ -1,59 +1,66 @@
 import { NextResponse } from 'next/server';
-
-import { extractFullContent, generateSlug } from '@/lib/rss';
-import fs from 'fs';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js';
 import Parser from 'rss-parser';
-import { RssArticle, RssFeed } from '@/types'; // Added RssFeed type
+import { generateSlug, extractFullContent } from '@/lib/rss';
+import { RssArticle, RssFeed } from '@/types';
 
-const parser = new Parser({
-    customFields: {
-        item: [['media:content', 'mediaContent', { keepArray: false }]],
-    }
-});
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // Use service role key for cron job
 
-// Helper to slugify category names for file paths
-const slugify = (text: string) => {
-    return text
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w-]+/g, '')
-        .replace(/--+/g, '-');
-};
+const parser = new Parser();
 
-// New function containing the core logic
-export async function generateAndSaveRssData() {
-    const rssFeedsPath = path.join(process.cwd(), 'public', 'rss-feeds.json');
-    const fileContents = await fs.promises.readFile(rssFeedsPath, 'utf8');
-    const rssFeeds: RssFeed[] = JSON.parse(fileContents);
+export async function GET() {
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    return NextResponse.json(
+      { error: 'Supabase URL and/or Service Role Key are not set.' },
+      { status: 500 }
+    );
+  }
 
-    if (rssFeeds.length === 0) {
-        console.log('No RSS feeds configured.');
-        return {
-            message: 'No RSS feeds configured.',
-            processedArticlesCount: 0,
-            savedCategoryFilesCount: 0,
-            savedCategoryFiles: [],
-        };
+  const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+
+  try {
+    const { data: rssSources, error: fetchError } = await supabase
+      .from('rss_sources')
+      .select('*')
+
+    if (fetchError) {
+      console.error('Error fetching RSS sources:', fetchError);
+      return NextResponse.json(
+        { error: 'Failed to fetch RSS sources.' },
+        { status: 500 }
+      );
     }
 
+    if (!rssSources || rssSources.length === 0) {
+      return NextResponse.json(
+        { message: 'No RSS sources found in database.' },
+        { status: 200 }
+      );
+    }
+
+    let newPostsCount = 0;
     const allProcessedArticles: RssArticle[] = [];
 
-    for (const rssFeed of rssFeeds) {
-        try {
-            const feed = await parser.parseURL(rssFeed.url);
-            let articlesToProcess = feed.items;
-            articlesToProcess = articlesToProcess.slice(0, 15);
+    for (const source of rssSources) {
+      try {
+        const feed = await parser.parseURL(source.url);
 
-            for (const item of articlesToProcess) {
-                if (!item.link || !item.title) {
-                    console.warn('Skipping article due to missing link or title:', item);
-                    continue;
-                }
+        for (const item of feed.items.slice(0, 15)) {
+          // Basic validation for required fields
+          if (!item.link || !item.title || !item.pubDate) {
+            console.warn(
+              `Skipping item from ${source.name} due to missing link, title, or pubDate:`,
+              item
+            );
+            continue;
+          }
 
-                const summary = item.contentSnippet?.slice(0, 200) || item.content?.slice(0, 200) || '';
+                const description = (item.summary || item.contentSnippet || '')
+                  .replace(/\[&#8230;\]/g, '') // removes [&#8230;]
+                  .replace(/…/g, '')           // removes …
+                  .trim();
+
                 let thumbnailUrl;
                 if (item.mediaContent && item.mediaContent.$ && item.mediaContent.$.url) {
                     thumbnailUrl = item.mediaContent.$.url;
@@ -62,15 +69,17 @@ export async function generateAndSaveRssData() {
                 }
 
                 const basicArticleData = {
-                    slug: (await generateSlug(item.title, rssFeed.url)).replace('rss-', ''),
+                    slug: (await generateSlug(item.title, source.url)).replace('rss-', ''),
                     title: item.title,
-                    summary: summary,
+                    description: description,
                     link: item.link,
                     pubDate: item.pubDate,
                     author: item.creator || '',
                     thumbnailUrl: thumbnailUrl,
-                    originalFeedUrl: rssFeed.url,
+                    originalFeedUrl: source.url,
                 };
+
+                let finalArticle: RssArticle | null = null; // Declare finalArticle here
 
                 try {
                     const { blogContent, byline, contentDoc, deepDives } = await extractFullContent(item, basicArticleData);
@@ -94,7 +103,7 @@ export async function generateAndSaveRssData() {
                         }
                     }
 
-                    const finalArticle = {
+                    finalArticle = { // Assign to finalArticle
                         ...basicArticleData,
                         author: finalAuthor,
                         blogContent,
@@ -107,77 +116,65 @@ export async function generateAndSaveRssData() {
                 } catch (error: unknown) {
                     console.error(`Failed to process article ${item.title} (${item.link}):`, error);
                 }
-            }
-        } catch (error: unknown) {
-            console.error(`Failed to parse feed ${rssFeed.url}:`, error);
+
+          if (!finalArticle) {
+                    console.warn(`Skipping upsert for ${item.title} due to missing finalArticle data.`);
+                    continue;
+                }
+
+          // Check if post already exists based on link
+          const { data: existingPost, error: checkError } = await supabase
+            .from('blog_posts')
+            .select('id')
+            .eq('link', item.link)
+            .single();
+
+          if (checkError && checkError.code !== 'PGRST116') { // PGRST116 means no rows found
+            console.error(`Error checking existing post for ${item.link}:`, checkError);
+            continue;
+          }
+
+          if (existingPost) {
+            // console.log(`Post already exists: ${item.title}`);
+            continue; // Skip if post already exists
+          }
+
+          // Insert new post
+          const { error: insertError } = await supabase.from('blog_posts').upsert({
+            slug: finalArticle.slug,
+            title: item.title,
+            description: finalArticle.description,
+            link: item.link,
+            pub_date: new Date(item.pubDate).toISOString(),
+            author: finalArticle.author,
+            thumbnail_url: finalArticle.thumbnailUrl,
+            original_feed_url: source.url,
+            blog_content: finalArticle.blogContent,
+            category: source.category,
+            source: source.name, // Use source.name from rss_sources table
+          });
+
+          if (insertError) {
+            console.error(`Error inserting post ${item.title}:`, insertError);
+          } else {
+            newPostsCount++;
+            console.log(`Inserted new post: ${item.title}`);
+          }
         }
+      } catch (parseError) {
+        console.error(`Error parsing feed for ${source.name}:`, parseError);
+      }
     }
 
-    const groupedArticles: {
-        [category: string]: {
-            [sourceName: string]: RssArticle[];
-        };
-    } = {};
-
-    for (const article of allProcessedArticles) {
-        const feedInfo = rssFeeds.find(feed => feed.url === article.originalFeedUrl);
-        if (feedInfo) {
-            const category = feedInfo.category;
-            const sourceName = feedInfo.sourceName;
-
-            if (!groupedArticles[category]) {
-                groupedArticles[category] = {};
-            }
-            if (!groupedArticles[category][sourceName]) {
-                groupedArticles[category][sourceName] = [];
-            }
-            groupedArticles[category][sourceName].push(article);
-        } else {
-            console.warn(`Could not find feed info for article: ${article.slug}`);
-        }
-    }
-
-    const categoryOutputDir = path.join(process.cwd(), 'public', 'generated-categories');
-    if (fs.existsSync(categoryOutputDir)) {
-        fs.rmSync(categoryOutputDir, { recursive: true, force: true });
-    }
-    fs.mkdirSync(categoryOutputDir, { recursive: true });
-
-    const savedCategoryFiles: string[] = [];
-    for (const category in groupedArticles) {
-        if (Object.prototype.hasOwnProperty.call(groupedArticles, category)) {
-            const categorySlug = slugify(category);
-            const filePath = path.join(categoryOutputDir, `${categorySlug}.json`);
-            const fileContent = JSON.stringify(groupedArticles[category], null, 2);
-
-            try {
-                fs.writeFileSync(filePath, fileContent);
-                savedCategoryFiles.push(filePath);
-                console.log(`Successfully saved ${filePath} locally.`);
-            } catch (saveError) {
-                console.error(`Failed to save ${filePath} locally:`, saveError);
-            }
-        }
-    }
-
-    return {
-        message: 'RSS feeds processed and categorized JSONs saved locally successfully.',
-        processedArticlesCount: allProcessedArticles.length,
-        savedCategoryFilesCount: savedCategoryFiles.length,
-        savedCategoryFiles: savedCategoryFiles,
-    };
-}
-
-export async function GET(request: Request) {
-    try {
-        const result = await generateAndSaveRssData();
-        return NextResponse.json(result, { status: 200 });
-    } catch (error: unknown) {
-        console.error('Error processing RSS feeds:', error);
-        let errorMessage = 'An unknown error occurred.';
-        if (error instanceof Error) {
-            errorMessage = error.message;
-        }
-        return NextResponse.json({ message: 'Error processing RSS feeds.', error: errorMessage }, { status: 500 });
-    }
+    return NextResponse.json(
+      { message: `Cron job completed. Inserted ${newPostsCount} new posts.` },
+      { status: 200 }
+    );
+  } catch (generalError) {
+    console.error('General error during cron job:', generalError);
+    return NextResponse.json(
+      { error: 'An unexpected error occurred during the cron job.' },
+      { status: 500 }
+    );
+  }
 }

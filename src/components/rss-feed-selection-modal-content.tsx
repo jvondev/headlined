@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 // import { getFeedCategories, getRssFeeds } from "@/data/rss-feeds"; // Data now comes from props
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { RssFeed } from "@/types";
 import Image from "next/image";
 import { TopicSelector } from "@/components/topic-selector";
 import { Plus, Check } from "lucide-react"; // Import icons
+import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
 
 // Helper function to construct the favicon URL
 const getFaviconUrl = (feedUrl: string) => {
@@ -38,13 +39,12 @@ const FaviconImage = ({ fallbackIconUrl, alt }: { fallbackIconUrl?: string, alt:
 
 interface RssFeedSelectionModalContentProps {
     onFeedSelect: (feedUrl: string) => void;
-    onSubscribeToggle: (feed: RssFeed) => void; // New prop for subscribe/unsubscribe
-    subscribedFeedIds: string[]; // New prop to pass subscribed feed IDs
     availableFeeds: RssFeed[]; // Added this prop
     categories: string[]; // Added this prop
 }
 
-export default function RssFeedSelectionModalContent({ onFeedSelect, onSubscribeToggle, subscribedFeedIds, availableFeeds, categories }: RssFeedSelectionModalContentProps) {
+export default function RssFeedSelectionModalContent({ onFeedSelect, availableFeeds, categories }: RssFeedSelectionModalContentProps) {
+    const { subscribedFeeds, subscribeFeed, unsubscribeFeed, isSubscribed } = useSubscribedFeeds();
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [displayLimit, setDisplayLimit] = useState(20); // Initial display limit
 
@@ -70,6 +70,12 @@ export default function RssFeedSelectionModalContent({ onFeedSelect, onSubscribe
         setDisplayLimit(prevLimit => prevLimit + 20); // Load 20 more feeds
     };
 
+    const formattedCategories = useMemo(() => {
+        const allCategory = { name: "All", description: "View all available feeds." };
+        const otherCategories = categories.map(cat => ({ name: cat, description: `Feeds related to ${cat}` }));
+        return [allCategory, ...otherCategories];
+    }, [categories]);
+
     return (
         <div className="container mx-auto px-4">
             <h1 className="text-3xl font-bold my-8 text-center">RSS Feed Explorer</h1>
@@ -82,7 +88,7 @@ export default function RssFeedSelectionModalContent({ onFeedSelect, onSubscribe
                         setDisplayLimit(20); // Reset limit on category change
                     }}
                     initialSelectedTopics={selectedCategory ? [selectedCategory] : []}
-                    topics={categories}
+                    topics={formattedCategories}
                 />
             </div>
 
@@ -102,7 +108,7 @@ export default function RssFeedSelectionModalContent({ onFeedSelect, onSubscribe
                     </Card>
                 )}
                 {feedsToDisplay.map((feed) => {
-                    const isSubscribed = subscribedFeedIds.includes(feed.url);
+                    const isFeedSubscribed = isSubscribed(feed.url);
                     return (
                         <Card
                             key={feed.url}
@@ -116,10 +122,14 @@ export default function RssFeedSelectionModalContent({ onFeedSelect, onSubscribe
                                 className="absolute top-2 right-2 rounded-full bg-background shadow-md z-10"
                                 onClick={(e) => {
                                     e.stopPropagation(); // Prevent card click
-                                    onSubscribeToggle(feed);
+                                    if (isFeedSubscribed) {
+                                        unsubscribeFeed(feed.url);
+                                    } else {
+                                        subscribeFeed(feed.url);
+                                    }
                                 }}
                             >
-                                {isSubscribed ? (
+                                {isFeedSubscribed ? (
                                     <Check className="h-4 w-4 text-green-500" />
                                 ) : (
                                     <Plus className="h-4 w-4 text-primary" />

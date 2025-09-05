@@ -79,7 +79,7 @@ async function getSearchableData(): Promise<SearchableItem[]> {
             slug: insight.slug,
             type: 'insight',
             title: insight.title,
-            content: `${insight.headline} ${insight.summary}`,
+            content: `${insight.title} ${insight.description}`,
             icon: 'Info', 
         });
 

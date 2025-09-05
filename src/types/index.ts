@@ -76,11 +76,11 @@ export interface Insight {
   };
   category: string[];
   title: string;
-  headline: string;
-  summary: string;
+  description: string;
   thumbnailUrl?: string;
   deepDives: DeepDive<DeepDiveType>[];
   blogContent: string;
+  originalFeedUrl?: string; // Add originalFeedUrl field
   author?: string; // Add optional author field
   isAd?: boolean; // Flag to identify ad placeholders
 }
@@ -119,7 +119,7 @@ export interface SavedItem {
 export interface RssArticle {
     slug: string;
     title: string;
-    summary: string;
+    description: string;
     link: string;
     pubDate: string | undefined;
     author: string;

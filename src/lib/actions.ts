@@ -4,7 +4,7 @@ import { getPaginatedInsights as getSupabasePaginatedInsights } from '@/lib/insi
 import { getRssFeed } from '@/lib/rss'
 import { getFeedCategories, getFeedsByCategory, getFeedInfoFromUrl, getRssFeeds as getAllFeeds } from '@/data/rss-feeds'
 import { Insight, RssArticle } from '@/types'
-import { getCount, updateCount } from '@/lib/save-counts';
+// import { getCount, updateCount } from '@/lib/save-counts';
 
 const PAGE_SIZE = 10;
 
@@ -18,12 +18,11 @@ async function rssToInsight(article: RssArticle): Promise<Insight> {
         slug: article.slug, // The slug from getRssFeed now includes 'rss-' prefix
         seo: {
             title: article.title,
-            description: article.summary,
+            description: article.description,
         },
         category: [feedInfo?.category || 'News', feedInfo?.name || ''],
         title: article.title,
-        headline: article.headline,
-        summary: article.summary,
+        description: article.description,
         deepDives: article.deepDives,
         blogContent: article.blogContent,
         thumbnailUrl: article.thumbnailUrl,

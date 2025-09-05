@@ -1,61 +1,35 @@
 import { notFound } from "next/navigation";
 import { BlogPageClient } from "./client";
 import type { Metadata } from "next";
-import { promises as fs } from 'fs';
-import path from 'path';
-
-interface Article {
-  slug: string;
-  title: string;
-  summary: string;
-  link: string;
-  pubDate: string;
-  author: string;
-  blogContent: string;
-  originalFeedUrl: string;
-}
+import { serverSupabase } from "@/lib/server-supabase";
 
 export const revalidate = 86400; // Revalidate every day
 
 async function getArticleData(slug: string) {
-    const categories = ["design", "news", "tech"]; // Example categories
+  const { data: article, error } = await serverSupabase
+    .from('blog_posts')
+    .select('*')
+    .eq('slug', slug)
+    .single();
 
-    for (const category of categories) {
-        try {
-            const filePath = path.join(process.cwd(), 'public', 'generated-categories', `${category}.json`);
-            const fileContent = await fs.readFile(filePath, 'utf8');
-            const data = JSON.parse(fileContent);
-            
-            for (const sourceName in data) {
-                if (Object.prototype.hasOwnProperty.call(data, sourceName)) {
-                    const sourceArticles: Article[] = data[sourceName];
-                    const foundArticle = sourceArticles.find(art => art.slug === slug);
-                    if (foundArticle) {
-                        // Map Article to a basic Insight structure for BlogPageClient
-                        return {
-                            insight: {
-                                slug: foundArticle.slug,
-                                title: foundArticle.title,
-                                headline: foundArticle.title,
-                                summary: foundArticle.summary,
-                                blogContent: foundArticle.blogContent,
-                                thumbnailUrl: undefined,
-                                category: [], // Can be populated if needed
-                                deepDives: [],
-                                seo: { title: foundArticle.title, description: foundArticle.summary },
-                            }
-                        };
-                    }
-                }
-            }
-        } catch (error) {
-            console.error(`Error reading or parsing ${category}.json:`, error);
-        }
-    }
+  if (error || !article) {
+    console.error(`Error fetching article for slug ${slug}:`, error);
     return { insight: undefined };
+  }
+
+  return {
+    insight: {
+      slug: article.slug,
+      title: article.title,
+      description: article.description,
+      blogContent: article.blog_content,
+      thumbnailUrl: article.thumbnail_url,
+      category: [article.category],
+      deepDives: [],
+      seo: { title: article.title, description: article.description },
+    }
+  };
 }
-
-
 
 type BlogPageProps = {
     params: {

@@ -5,79 +5,13 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react"; // Import the icon
 
-const topics = [
-  {
-    name: "All",
-    description: "View all available feeds.",
-  },
-  {
-    name: "News",
-    description: "Stay informed with the latest headlines and current events.",
-  },
-  {
-    name: "Tech",
-    description: "Explore advancements in technology, gadgets, and digital trends.",
-  },
-  {
-    name: "Design",
-    description: "Discover creative designs, aesthetics, and visual innovations.",
-  },
-  {
-    name: "Science",
-    description: "Uncover breakthroughs, research, and discoveries in various scientific fields.",
-  },
-  {
-    name: "Health",
-    description: "Learn about well-being, fitness, nutrition, and medical advancements.",
-  },
-  {
-    name: "Finance",
-    description: "Understand markets, investments, personal finance, and economic trends.",
-  },
-  {
-    name: "Food",
-    description: "Delight in culinary arts, recipes, food culture, and dining experiences.",
-  },
-  {
-    name: "Travel",
-    description: "Journey through destinations, travel tips, and cultural explorations.",
-  },
-  {
-    name: "Sports",
-    description: "Follow athletic events, team news, and sports analysis.",
-  },
-  {
-    name: "Entertainment",
-    description: "Catch up on movies, music, pop culture, and celebrity news.",
-  },
-  {
-    name: "Fashion",
-    description: "Explore style trends, clothing, accessories, and beauty.",
-  },
-  {
-    name: "Education",
-    description: "Gain insights into learning, academic pursuits, and educational systems.",
-  },
-  {
-    name: "Environment",
-    description: "Understand ecological issues, conservation, and sustainability efforts.",
-  },
-  {
-    name: "Politics",
-    description: "Stay updated on government, policy, and political developments.",
-  },
-  {
-    name: "Art",
-    description: "Appreciate artistic expressions, history, and cultural movements.",
-  },
-];
-
 interface TopicSelectorProps {
   onTopicSelect: (selectedTopics: string[]) => void;
   initialSelectedTopics?: string[];
+  topics: { name: string; description: string; }[]; // Add topics prop
 }
 
-export function TopicSelector({ onTopicSelect, initialSelectedTopics = [] }: TopicSelectorProps) {
+export function TopicSelector({ onTopicSelect, initialSelectedTopics = [], topics }: TopicSelectorProps) {
   const [selectedTopics, setSelectedTopics] = useState<string[]>(initialSelectedTopics);
   const [showAllTopics, setShowAllTopics] = useState(false);
   const topicsContainerRef = useRef<HTMLDivElement>(null);

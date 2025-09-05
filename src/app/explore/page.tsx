@@ -121,12 +121,16 @@ export default function ExplorePage() {
     );
   }
 
+  const categories = Array.from(new Set(availableFeeds.map(feed => feed.category)));
+
   return (
     <div className="container mx-auto p-4 pt-16">
       <RssFeedSelectionModalContent
         onFeedSelect={handleFeedSelect}
         onSubscribeToggle={handleSubscribeToggle}
         subscribedFeedIds={subscribedFeeds.map(f => f.id)}
+        availableFeeds={availableFeeds}
+        categories={categories}
       />
     </div>
   );

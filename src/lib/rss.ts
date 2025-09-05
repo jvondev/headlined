@@ -40,6 +40,20 @@ turndownService.addRule('h2', {
     replacement: (content) => `\n## ${content}\n\n`
 });
 
+turndownService.addRule('author-bio', {
+  filter: function (node, options) {
+    if (node.nodeName !== 'P') {
+      return false;
+    }
+    const text = node.textContent || '';
+    return text.trim().startsWith('is a ');
+  },
+  replacement: function (content, node, options) {
+    return '';
+  }
+});
+
+
 
 
 turndownService.addRule('figcaption', {
@@ -54,9 +68,12 @@ const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes for cache
 
 export async function extractFullContent(item: any, existingArticleData: Omit<RssArticle, 'blogContent' | 'deepDives'>): Promise<{ blogContent: string, deepDives: DeepDive<'metadata'>[], byline: string, contentDoc: Document }> {
     console.log('Extracting content for link:', item.link);
-    let finalHtmlContent = '';
+    let finalHtmlContent = item.content || item['content:encoded'] || '';
 
-    if (item.link) {
+    // Heuristic: If the initial content is too short, try fetching the full article
+    const MIN_CONTENT_LENGTH = 500; // Adjust as needed
+
+    if ((!finalHtmlContent || finalHtmlContent.length < MIN_CONTENT_LENGTH) && item.link) {
         try {
             const res = await fetch(item.link, { headers: { 'User-Agent': 'Mozilla/5.0' } });
             console.log('Fetch response OK:', res.ok);
@@ -68,20 +85,21 @@ export async function extractFullContent(item: any, existingArticleData: Omit<Rs
                 const reader = new Readability(document.cloneNode(true) as Document);
                 const readableArticle = reader.parse();
 
-                if (readableArticle && readableArticle.textContent.length > 250) {
+                if (readableArticle) {
                     finalHtmlContent = readableArticle.content;
                 } else {
+                    // Fallback to body innerHTML if Readability fails
                     finalHtmlContent = document.body.innerHTML;
                 }
             } else {
-                finalHtmlContent = item['content:encoded'] || item.content || '';
+                // If fetch failed, and no content in item, finalHtmlContent remains empty
+                // or retains its original (possibly short) value
             }
         } catch (e) {
             console.warn(`Could not fetch or parse full article content for ${item.link}`, e);
-            finalHtmlContent = item['content:encoded'] || item.content || '';
+            // If fetch failed, and no content in item, finalHtmlContent remains empty
+            // or retains its original (possibly short) value
         }
-    } else {
-         finalHtmlContent = item['content:encoded'] || item.content || '';
     }
 
     const contentDoc = new JSDOM(`<div>${finalHtmlContent}</div>`).window.document;
@@ -102,6 +120,25 @@ export async function extractFullContent(item: any, existingArticleData: Omit<Rs
     });
 
     // --- Byline Removal Logic ---
+    // More aggressive, unconditional removal for selectors known to be bylines.
+    const unconditionalBylineSelectors = [
+        'div[class*="_1n017go5"]', // for author in theverge (old)
+        'div.duet--article--byline-and-date', // for standard article byline
+        'div.duet--article--article-byline-small-author-bio', // for standard article author bio
+        'p.duet--article--byline-author-bio', // for author bio
+        '.c-byline', // for recirculation river bylines
+        'div.duet--quick-post--byline', // for quick post bylines
+    ];
+
+    unconditionalBylineSelectors.forEach(selector => {
+        contentDoc.querySelectorAll(selector).forEach(node => {
+            console.log(`Unconditionally removing element with selector '${selector}':`, node.textContent?.trim());
+            node.remove();
+        });
+    });
+
+    
+
     // Common selectors for bylines. Add more as needed based on observed patterns.
     const bylineSelectors = [
         '[data-testid*="byline"]',
@@ -112,7 +149,6 @@ export async function extractFullContent(item: any, existingArticleData: Omit<Rs
         'div[class*="author"]',
         'p[class*="byline"]',
         'address', 
-        'div[class*="_1n017go5"]', // for author in theverge
         // Sometimes bylines are in address tags
     ];
 
@@ -120,7 +156,7 @@ export async function extractFullContent(item: any, existingArticleData: Omit<Rs
         contentDoc.querySelectorAll(selector).forEach(node => {
             const text = node.textContent?.trim() || '';
             // Heuristic to avoid removing too much: check text length and common byline keywords
-            if (text.length > 5 && text.length < 100 && // Adjusted max length for bios to improve accuracy
+            if (text.length > 5 &&
                 (text.toLowerCase().includes('by ') ||
                  text.toLowerCase().includes('correspondent') ||
                  text.toLowerCase().includes('staff writer') ||
@@ -257,13 +293,11 @@ export async function rssToInsight(article: RssArticle): Promise<Insight> {
         slug: article.slug, // Slug already has 'rss-' prefix
         seo: {
             title: article.title,
-            description: article.summary,
+            description: article.description,
         },
         category: [feedInfo?.category || 'News', feedInfo?.name || ''],
-        title: article.title,
-        headline: article.summary,
-        
-        summary: article.summary,
+        title: article.title,        
+        description: article.description,
         deepDives: article.deepDives,
         blogContent: article.blogContent,
         thumbnailUrl: article.thumbnailUrl,
