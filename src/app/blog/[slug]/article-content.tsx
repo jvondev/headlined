@@ -22,7 +22,7 @@ export function ArticleContent({ insight }: { insight: Insight }) {
           ))}
         </div>
         <h1 className="font-headline text-4xl md:text-5xl font-bold mt-4 !mb-2">{insight.title}</h1>
-        <p className="text-xl text-muted-foreground !mt-2">{insight.summary}</p>
+        <p className="text-xl text-muted-foreground !mt-2">{insight.description}</p>
         
         {isRss && bylines.length > 0 && (
           <div className="mt-6 text-base not-prose text-muted-foreground">
@@ -37,7 +37,7 @@ export function ArticleContent({ insight }: { insight: Insight }) {
         <div className="relative mb-12 w-full aspect-video rounded-lg overflow-hidden not-prose">
             <Image
                 src={insight.thumbnailUrl}
-                alt={insight.headline}
+                alt={insight.title}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

@@ -1,30 +1,22 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { Suspense } from 'react';
 import { InsightCarousel } from "@/components/insight-carousel";
 import { InsightPageLoadingSkeleton } from "@/components/insight-page-loading-skeleton";
-import { getRssFeeds, getFeedCategories } from "@/data/rss-feeds"; // Import getRssFeeds
-import type { Insight, RssFeed, DeepDive, DeepDiveType } from "@/types"; // Import RssFeed type, DeepDive, DeepDiveType
-import { useOnboardingStatus } from "@/hooks/use-onboarding-status"; // Import useOnboardingStatus
+import type { Insight, RssFeed } from "@/types";
+import { serverSupabase } from "@/lib/server-supabase"; // Import server-side supabase client
+import { supabase } from "@/lib/supabase"; // Import client-side supabase client for localStorage
 
 interface Article {
   slug: string;
   title: string;
-  summary: string;
+  description: string;
   link: string;
   pubDate: string;
   author: string;
+  thumbnailUrl?: string; // Added thumbnailUrl
   blogContent: string;
   originalFeedUrl: string;
-}
-
-interface ArticleWithTopic extends Article {
-  topicCategory: string;
-}
-
-interface SubscribedFeed {
-  id: string; // This will be the originalFeedUrl
-  name: string;
+  category: string;
+  source: string;
 }
 
 // Helper function to strip markdown headers
@@ -33,143 +25,85 @@ const stripMarkdownHeaders = (markdown: string): string => {
 };
 
 // Helper function to map Article to Insight
-const articleToInsight = (article: ArticleWithTopic, allRssFeeds: RssFeed[], topicCategory: string): Insight => {
+const articleToInsight = (article: Article, allRssFeeds: RssFeed[]): Insight => {
   const feedInfo = allRssFeeds.find(feed => feed.url === article.originalFeedUrl);
   const categories: string[] = [];
 
   if (feedInfo) {
     categories.push(feedInfo.name); // Add feed name as category
   }
-  categories.push(topicCategory); // Add topic category
-
-  const deepDives: DeepDive<DeepDiveType>[] = [];
-
-  // Add RSS Biodata DeepDive
-  if (feedInfo) {
-    const cleanedBlogContent = stripMarkdownHeaders(article.blogContent);
-    const snippet = cleanedBlogContent.substring(0, 200) + '...'; // Increased snippet length
-
-    deepDives.push({
-      type: 'article-summary',
-      title: 'Article Summary',
-      icon: 'BookText',
-      content: {
-        snippet: snippet,
-        originalArticleUrl: article.link,
-      },
-    });
-  }
+  categories.push(article.category); // Add topic category from article
 
   return {
     slug: article.slug,
-    headline: article.title,
-    summary: article.summary,
+    description: article.description,
     thumbnailUrl: article.thumbnailUrl,
     category: categories,
-    deepDives: deepDives, // Populate deepDives
-    seo: { title: article.title, description: article.summary },
-    title: article.title, // Added missing property
-    blogContent: article.blogContent, // Added missing property
-    // Add other Insight properties with default/empty values if necessary
+    deepDives: [], // deepDives are removed as per user request
+    seo: { title: article.title, description: article.description },
+    title: article.title,
+    blogContent: article.blogContent,
   };
 };
 
-export default function HomePage() {
-  const [subscribedFeedIds, setSubscribedFeedIds] = useState<string[]>([]);
-  const [articles, setArticles] = useState<ArticleWithTopic[]>([]); // Use ArticleWithTopic
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [insightsForCarouselState, setInsightsForCarouselState] = useState<Insight[]>([]); // New state for insights
-  const { hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus(); // Get onboarding status
-  const [initialCarouselSlug, setInitialCarouselSlug] = useState<string | undefined>(undefined);
+export default async function HomePage() {
+  let articles: Article[] = [];
+  let allRssFeeds: RssFeed[] = [];
+  let error: string | null = null;
 
-  useEffect(() => {
-    // 1. Read subscribed feed IDs from local storage
-    const storedFeeds = localStorage.getItem("subscribedFeeds");
-    let initialFeeds: SubscribedFeed[] = [];
+  try {
+    // Fetch all RSS feeds from Supabase to get names and categories
+    const { data: rssSources, error: rssSourcesError } = await serverSupabase
+      .from('rss_sources')
+      .select('name, url, category');
 
-    if (storedFeeds) {
-      initialFeeds = JSON.parse(storedFeeds);
+    if (rssSourcesError) {
+      throw new Error(rssSourcesError.message);
     }
 
-    // If no feeds are subscribed, default to BBC News
-    if (initialFeeds.length === 0) {
-      const bbcNewsFeed = { id: "https://feeds.bbci.co.uk/news/world/rss.xml", name: "BBC News" };
-      initialFeeds.push(bbcNewsFeed);
-      localStorage.setItem("subscribedFeeds", JSON.stringify(initialFeeds)); // Persist default
-    }
-    setSubscribedFeedIds(initialFeeds.map((feed) => feed.id));
+    allRssFeeds = rssSources.map(source => ({
+      name: source.name,
+      url: source.url,
+      category: source.category,
+      sourceName: source.name.toLowerCase().replace(/\s/g, ''), // Simple sourceName generation
+    }));
 
-    // Try to get last viewed article slug from local storage
-    const lastSlug = localStorage.getItem('lastViewedArticleSlug');
-    if (lastSlug) {
-      setInitialCarouselSlug(lastSlug);
-      localStorage.removeItem('lastViewedArticleSlug'); // Clean up
-    }
-  }, []);
+    // Fetch blog posts from Supabase
+    const { data: blogPosts, error: blogPostsError } = await serverSupabase
+      .from('blog_posts')
+      .select('slug, title, description, link, pub_date, author, thumbnail_url, original_feed_url, blog_content, category, source');
 
-  useEffect(() => {
-    if (subscribedFeedIds.length === 0) {
-      setLoading(false);
-      return;
+    if (blogPostsError) {
+      throw new Error(blogPostsError.message);
     }
 
-    const fetchAndFilterArticles = async () => {
-      setLoading(true);
-      setError(null);
-      let allFetchedArticles: ArticleWithTopic[] = []; // Use ArticleWithTopic
+    articles = blogPosts.map(post => ({
+      slug: post.slug,
+      title: post.title,
+      description: post.description || '',
+      link: post.link,
+      pubDate: post.pub_date || new Date().toISOString(),
+      author: post.author || '',
+      thumbnailUrl: post.thumbnail_url || '',
+      originalFeedUrl: post.original_feed_url,
+      blogContent: post.blog_content || '',
+      category: post.category,
+      source: post.source,
+    }));
 
-      const allRssFeeds = await getRssFeeds(); // Fetch all RSS feeds to get names
+    // Sort by publication date (newest first)
+    articles.sort((a, b) => {
+      const dateA = new Date(a.pubDate || 0).getTime();
+      const dateB = new Date(b.pubDate || 0).getTime();
+      return dateB - dateA;
+    });
 
-      // Assuming categories are fixed for now, or can be dynamically discovered
-      const categories = ["design", "news", "tech"]; // Example categories
-
-      for (const category of categories) {
-        try {
-          const response = await fetch(`/generated-categories/${category}.json`);
-          if (!response.ok) {
-            console.warn(`Could not fetch /generated-categories/${category}.json: ${response.status}`);
-            continue;
-          }
-          const data = await response.json();
-          // Data structure is { sourceName: Article[] }
-          for (const sourceName in data) {
-            if (Object.prototype.hasOwnProperty.call(data, sourceName)) {
-              const sourceArticles: Article[] = data[sourceName];
-              allFetchedArticles = [...allFetchedArticles, ...sourceArticles.map(article => ({ ...article, topicCategory: category }))];
-            }
-          }
-        } catch (err) {
-          console.error(`Error fetching articles for category ${category}:`, err);
-          setError("Failed to load some feed data.");
-        }
-      }
-
-      // Filter articles by subscribed feed IDs
-      const filteredArticles = allFetchedArticles.filter((article) =>
-        subscribedFeedIds.includes(article.originalFeedUrl)
-      );
-
-      // Sort by publication date (newest first)
-      filteredArticles.sort((a, b) => {
-        const dateA = new Date(a.pubDate || 0).getTime();
-        const dateB = new Date(b.pubDate || 0).getTime();
-        return dateB - dateA;
-      });
-
-      setArticles(filteredArticles);
-      // Map articles to Insight objects for InsightCarousel and set the new state
-      const mappedInsights: Insight[] = filteredArticles.map(article => articleToInsight(article, allRssFeeds, article.topicCategory));
-      setInsightsForCarouselState(mappedInsights);
-      setLoading(false);
-    };
-
-    fetchAndFilterArticles();
-  }, [subscribedFeedIds]);
-
-  if (loading) {
-    return <InsightPageLoadingSkeleton />;
+  } catch (err: any) {
+    console.error("Error fetching articles from Supabase:", err.message);
+    error = "Failed to load feed data. Please try again later.";
   }
+
+  const insightsForCarouselState: Insight[] = articles.map(article => articleToInsight(article, allRssFeeds));
 
   if (error) {
     return (
@@ -177,17 +111,6 @@ export default function HomePage() {
         <div className="text-center text-red-500">
           <h1 className="font-headline text-4xl font-bold">Error Loading Feed</h1>
           <p className="mt-2 text-lg text-muted-foreground">{error}</p>
-        </div>
-      </main>
-    );
-  }
-
-  if (subscribedFeedIds.length === 0) {
-    return (
-      <main className="flex min-h-screen w-full flex-col items-center justify-center bg-background">
-        <div className="text-center">
-          <h1 className="font-headline text-4xl font-bold">No Subscriptions</h1>
-          <p className="mt-2 text-lg text-muted-foreground">You haven't subscribed to any feeds yet. Go to "Explore" to find some!</p>
         </div>
       </main>
     );
@@ -204,17 +127,15 @@ export default function HomePage() {
     );
   }
 
-
-
   return (
     <main className="min-h-screen w-full bg-background">
-      <InsightCarousel
-        initialInsights={insightsForCarouselState}
-        initialSlug={initialCarouselSlug || insightsForCarouselState[0]?.slug} // Use stored slug or first article
-        initialHasMore={false} // Assuming all data is loaded initially
-        hasSeenOnboarding={hasSeenOnboarding} // Pass prop
-        markOnboardingComplete={markOnboardingComplete} // Pass prop
-      />
+      <Suspense fallback={<div>Loading carousel...</div>}>
+        <InsightCarousel
+          initialInsights={insightsForCarouselState}
+          // subscribedFeedIds and initialSlug will be handled client-side within InsightCarousel
+          // hasSeenOnboarding and markOnboardingComplete will be handled client-side within InsightCarousel
+        />
+      </Suspense>
     </main>
   );
 }

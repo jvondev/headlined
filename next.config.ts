@@ -42,6 +42,11 @@ const nextConfig: NextConfig = {
       },
     ]
   },
+  transpilePackages: [
+    "@radix-ui/react-toast",
+    "class-variance-authority",
+    "lucide-react",
+  ],
 };
 
 export default nextConfig;

@@ -26,6 +26,7 @@ import { usePreferences } from "@/hooks/use-preferences";
 import { SaveDialog } from "./save-dialog";
 import { getInsightBySlug } from "@/lib/insights";
 import { InsightPageLoadingSkeleton } from "@/components/insight-page-loading-skeleton";
+import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
 
 
 type InsightCarouselProps = {
@@ -64,8 +65,7 @@ const injectAds = (insights: Insight[]): Insight[] => {
           seo: { title: 'Advertisement', description: '' },
           category: [],
           title: 'Advertisement',
-          headline: 'Advertisement',
-          summary: '',
+          description: '',
           deepDives: [],
           blogContent: '',
         });
@@ -97,20 +97,29 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   // State initialization on client side to avoid hydration issues
   const [insights, setInsights] = useState<Insight[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const { subscribedFeeds, isLoaded: isSubscribedFeedsLoaded } = useSubscribedFeeds();
 
   useEffect(() => {
     setIsClient(true);
     // Initialize with ads on client mount
-    setInsights(injectAds(initialInsights));
-  }, []); // Empty dependency array ensures this runs only once on mount
+    if (isSubscribedFeedsLoaded) {
+      const filteredInsights = subscribedFeeds.length > 0
+        ? initialInsights.filter(insight => subscribedFeeds.includes(insight.originalFeedUrl ?? ''))
+        : initialInsights; // If no feeds subscribed, show all
+      setInsights(injectAds(filteredInsights));
+    }
+  }, [initialInsights, isSubscribedFeedsLoaded, subscribedFeeds]);
 
   useEffect(() => {
     // This effect runs when initialInsights prop changes on the client.
-    if (isClient) {
-      const insightsWithAds = injectAds(initialInsights);
+    if (isClient && isSubscribedFeedsLoaded) {
+      const filteredInsights = subscribedFeeds.length > 0
+        ? initialInsights.filter(insight => subscribedFeeds.includes(insight.originalFeedUrl ?? ''))
+        : initialInsights; // If no feeds subscribed, show all
+      const insightsWithAds = injectAds(filteredInsights);
       setInsights(insightsWithAds);
     }
-  }, [initialInsights, isClient]);
+  }, [initialInsights, isClient, isSubscribedFeedsLoaded, subscribedFeeds]);
 
 
   const [hasMore, setHasMore] = useState(initialHasMore);
@@ -247,8 +256,12 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
       preferences: isRss ? {} : preferences, // Only apply preferences to non-RSS feeds
     });
 
-    if (newInsights.length > 0) {
-      setInsights(prev => [...prev, ...injectAds(newInsights)]);
+    const filteredNewInsights = subscribedFeeds.length > 0
+      ? newInsights.filter(insight => subscribedFeeds.includes(insight.originalFeedUrl ?? ''))
+      : newInsights; // If no feeds subscribed, show all
+
+    if (filteredNewInsights.length > 0) {
+      setInsights(prev => [...prev, ...injectAds(filteredNewInsights)]);
     }
     setHasMore(newHasMore);
     setIsLoading(false);
@@ -383,7 +396,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
       item = {
         id: `${currentInsight.slug}-insight`,
         slug: currentInsight.slug,
-        title: currentInsight.headline,
+        title: currentInsight.title,
         type: 'insight',
         deepDiveIndex: -1,
       };

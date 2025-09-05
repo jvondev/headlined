@@ -22,7 +22,7 @@ const InsightPreview: FC<{ insight: Insight }> = ({ insight }) => {
                 <>
                     <Image
                         src={insight.thumbnailUrl}
-                        alt={insight.headline}
+                        alt={insight.title}
                         fill
                         className="object-cover"
                         sizes="33vw"
@@ -31,7 +31,7 @@ const InsightPreview: FC<{ insight: Insight }> = ({ insight }) => {
                 </>
             )}
             <div className={cn("relative", insight.thumbnailUrl && "text-white")}>
-                <h2 className="font-headline text-lg font-bold leading-tight">{insight.headline}</h2>
+                <h2 className="font-headline text-lg font-bold leading-tight">{insight.title}</h2>
             </div>
         </div>
     )
