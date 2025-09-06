@@ -6,26 +6,56 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { DynamicIcon } from '../dynamic-icon';
 import { Quote as QuoteIcon } from "lucide-react"; // Import QuoteIcon
+import { useIsMobile } from "@/hooks/use-mobile"; // Import useIsMobile
+import { cn } from "@/lib/utils"; // Import cn
 
 interface ArticleSummaryViewProps {
   content: ArticleSummaryContent;
   emblaApi: any;
   sentence: string;
-  subsentences?: string[]; // Changed to subsentences array
+  subsentence?: string; // Changed to single subsentence string
 }
 
-export const ArticleSummaryView: FC<ArticleSummaryViewProps> = ({ content, emblaApi, sentence, subsentences }) => {
+export const ArticleSummaryView: FC<ArticleSummaryViewProps> = ({ content, emblaApi, sentence, subsentence }) => {
+  const isMobile = useIsMobile();
+  const combinedTextLength = (sentence + (subsentence || '')).length;
+
+  // Determine font size class for main sentence (blockquote)
+  const mainSentenceFontSizeClass = isMobile 
+    ? combinedTextLength < 100 
+      ? 'text-3xl' 
+      : combinedTextLength < 200 
+        ? 'text-2xl' 
+        : 'text-xl'
+    : 'text-3xl md:text-4xl'; // Adjusted for desktop
+
+  // Determine font size class for subsentence (p)
+  const subsentenceFontSizeClass = isMobile 
+    ? combinedTextLength < 100 
+      ? 'text-xl' 
+      : combinedTextLength < 200 
+        ? 'text-lg' 
+        : 'text-base'
+    : 'text-xl'; // Adjusted for desktop
+
+  // Determine QuoteIcon size class
+  const quoteIconSizeClass = isMobile
+    ? combinedTextLength < 100 
+      ? 'size-12' 
+      : combinedTextLength < 200 
+        ? 'size-10' 
+        : 'size-8'
+    : 'size-12'; // Fixed size for desktop
+
   return (
     <div className="flex flex-col items-center justify-center text-center h-full p-4"> {/* Adjusted layout */}
-      <QuoteIcon className="size-12 text-muted-foreground/20" /> {/* Added QuoteIcon */}
-      <blockquote className="mt-6 text-2xl md:text-3xl font-semibold leading-snug max-w-2xl"> {/* Adjusted class names and tag */}
+      <QuoteIcon className={cn(quoteIconSizeClass, "text-muted-foreground/20")} /> {/* Apply dynamic size */}
+      <blockquote className={cn("mt-6 font-semibold leading-snug max-w-2xl", mainSentenceFontSizeClass)}> {/* Apply dynamic font size */}
         &ldquo;{sentence}&rdquo; {/* Wrapped sentence in quotes */}
       </blockquote>
-      {subsentences && subsentences.length > 0 && ( // Conditionally render subsentences
-        <p className="mt-4 text-lg text-muted-foreground"> {/* Changed div to p */}
-          {subsentences.map((sub, index) => (
-            <span key={index}>&mdash; {sub}</span> // Wrapped in span to avoid extra p tags
-          ))}
+      {subsentence && (
+        <p className={cn("mt-4 text-muted-foreground", subsentenceFontSizeClass)}> {/* Apply dynamic font size */}
+          <span>&mdash; {subsentence}</span>
         </p>
       )}
       

@@ -21,6 +21,7 @@ const mapSupabaseInsightToInsightType = (supabaseData: any): Insight => {
     deepDives: [],
     blogContent: supabaseData.blog_content || '',
     thumbnailUrl: supabaseData.thumbnail_url,
+    author: supabaseData.author || '',
   };
 };
 
@@ -29,7 +30,7 @@ export const getAllInsights = unstable_cache(
   async (): Promise<Insight[]> => {
     const { data, error } = await serverSupabase
       .from('blog_posts')
-      .select('id, slug, category, title, description, created_at, updated_at, thumbnail_url');
+      .select('id, slug, category, title, description, created_at, updated_at, thumbnail_url, author');
 
     if (error) {
       console.error('Error fetching all insights:', error);
@@ -120,14 +121,14 @@ export const getAdjacentInsights = unstable_cache(
     // Fetch previous insight (older created_at)
     const { data: prevInsightData, error: prevError } = await serverSupabase
       .from('blog_posts')
-      .select('id, slug, category, title, description, created_at, updated_at, thumbnail_url')
+      .select('id, slug, category, title, description, created_at, updated_at, thumbnail_url, author')
       .order('created_at', { ascending: false }) // Get the closest older one
       .limit(1);
 
     // Fetch next insight (newer created_at)
     const { data: nextInsightData, error: nextError } = await serverSupabase
       .from('blog_posts')
-      .select('id, slug, category, title, description, created_at, updated_at, thumbnail_url')
+      .select('id, slug, category, title, description, created_at, updated_at, thumbnail_url, author')
       .gt('created_at', currentCreatedAt) // Greater than current created_at
       .order('created_at', { ascending: true }) // Get the closest newer one
       .limit(1);

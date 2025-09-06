@@ -36,7 +36,7 @@ interface InsightViewProps {
 }
 
 
-const DeepDiveContent: FC<{ deepDive: any, emblaApi: any, insightAuthor?: string }> = ({ deepDive, emblaApi, insightAuthor }) => { // Added insightAuthor
+const DeepDiveContent: FC<{ deepDive: any, emblaApi: any, insight: Insight }> = ({ deepDive, emblaApi, insight }) => {
     switch (deepDive.type) {
         // DONT REMOVE IT
         // case 'checklist':
@@ -60,7 +60,30 @@ const DeepDiveContent: FC<{ deepDive: any, emblaApi: any, insightAuthor?: string
         // case 'metadata':
         //     return <MetadataView items={(deepDive.content as DeepDiveContent['metadata']).items} />;
         case 'article-summary':
-            return <ArticleSummaryView content={deepDive.content} sentence={deepDive.content.sentence} emblaApi={emblaApi} subsentences={insightAuthor ? splitIntoSubsentences(insightAuthor) : []} />; // Changed author to subsentences
+            let sentenceToProcess = deepDive.content.sentence;
+
+            // Phrases to remove from the beginning of the sentence, case-insensitively
+            const phrasesToRemove = ["image credits:", "watch:"];
+            // Add insight.author to phrasesToRemove if it exists
+            if (insight.author) {
+              phrasesToRemove.push(insight.author + ":"); // Assuming author is followed by a colon
+              phrasesToRemove.push(insight.author); // Also add without colon
+            }
+            let removedSomethingInThisIteration = true;
+            while (removedSomethingInThisIteration) {
+              removedSomethingInThisIteration = false;
+              for (const phrase of phrasesToRemove) {
+                if (sentenceToProcess.toLowerCase().startsWith(phrase.toLowerCase())) {
+                  sentenceToProcess = sentenceToProcess.substring(phrase.length).trim();
+                  removedSomethingInThisIteration = true;
+                  break; // Break from inner for loop to re-check from the beginning of phrasesToRemove
+                }
+              }
+            }
+
+            const { mainSentence, subsentence } = sentenceToProcess ? splitIntoSubsentences(sentenceToProcess) : { mainSentence: '', subsentence: undefined };
+            
+            return <ArticleSummaryView content={deepDive.content} sentence={mainSentence} emblaApi={emblaApi} subsentence={subsentence} />; // Changed to subsentence
         
         default:
             return <p>Unsupported deep dive type.</p>;
@@ -87,8 +110,42 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
           .replace(/\[(.*?)\]\(.*?\)/g, '$1');
         plainText = plainText.replace(/(\*\*|__|_|\*|`|~~)(.*?)\1/g, '$2');
         plainText = plainText.replace(/[#*_\-`~[\]()<>]/g, '').replace(/\s+/g, ' ').trim();
-        const allSentences = (plainText.match(/[^.!?]+[.!?]+/g) || [])
-          .filter(sentence => sentence.split(' ').length >= 6);
+        // Remove specific metadata patterns like "In Brief Posted: ..."
+        plainText = plainText.replace(/In Brief Posted:.*?\d{1,2}:\d{2}\s(?:AM|PM)\s[A-Z]{3}\s·\s(?:January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4}/g, '');
+        let allSentences = (plainText.match(/[^.!?]+[.!?]+/g) || [])
+          .filter(sentence => sentence.split(' ').length >= 5);
+
+        // Heuristic to remove potential image captions that are not part of alt text
+        const CAPTION_KEYWORDS = ["figure", "image", "photo", "source", "credit"];
+        const MAX_CAPTION_WORDS = 15; // Max words for a potential caption
+
+        allSentences = allSentences.filter(sentence => {
+            const lowerCaseSentence = sentence.toLowerCase();
+            const wordCount = sentence.split(' ').length;
+            const containsKeyword = CAPTION_KEYWORDS.some(keyword => lowerCaseSentence.includes(keyword));
+
+            // If it's short and contains a keyword, it's likely a caption
+            if (wordCount <= MAX_CAPTION_WORDS && containsKeyword) {
+                return false; // Exclude this sentence
+            }
+            return true; // Keep the sentence
+        });
+
+        const MIN_SENTENCE_WORDS_FOR_STANDALONE = 10; // Define threshold for short sentences
+
+        // Merge short sentences with the next one
+        const mergedSentences: string[] = [];
+        for (let i = 0; i < allSentences.length; i++) {
+            const currentSentence = allSentences[i];
+            if (currentSentence.split(' ').length < MIN_SENTENCE_WORDS_FOR_STANDALONE && i + 1 < allSentences.length) {
+                // Merge current short sentence with the next one
+                mergedSentences.push(currentSentence.trim() + " " + allSentences[i + 1].trim());
+                i++; // Skip the next sentence as it has been merged
+            } else {
+                mergedSentences.push(currentSentence.trim());
+            }
+        }
+        allSentences = mergedSentences; // Update allSentences with the merged list
 
         // No need for sentences.slice(0,4) or summarySlides logic here.
         // We will create a deep dive for each sentence in allSentences.
@@ -234,7 +291,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                 </div>
                                 <div className="flex-1 mt-4 px-4 md:px-8">
                                     <div className="w-full max-w-4xl mx-auto h-full">
-                                       <DeepDiveContent deepDive={deepDive} emblaApi={emblaApi} insightAuthor={insight.author} />
+                                       <DeepDiveContent deepDive={deepDive} emblaApi={emblaApi} insight={insight} />
                                     </div>
                                 </div>
                                  
