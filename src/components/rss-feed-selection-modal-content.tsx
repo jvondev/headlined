@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 // import { getFeedCategories, getRssFeeds } from "@/data/rss-feeds"; // Data now comes from props
@@ -38,27 +39,36 @@ const FaviconImage = ({ fallbackIconUrl, alt }: { fallbackIconUrl?: string, alt:
 };
 
 interface RssFeedSelectionModalContentProps {
-    onFeedSelect: (feedUrl: string) => void;
     availableFeeds: RssFeed[]; // Added this prop
     categories: string[]; // Added this prop
 }
 
-export default function RssFeedSelectionModalContent({ onFeedSelect, availableFeeds, categories }: RssFeedSelectionModalContentProps) {
-    const { subscribedFeeds, subscribeFeed, unsubscribeFeed, isSubscribed } = useSubscribedFeeds();
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+export default function RssFeedSelectionModalContent({ availableFeeds, categories }: RssFeedSelectionModalContentProps) {
     const [displayLimit, setDisplayLimit] = useState(20); // Initial display limit
+    const { subscribedFeeds, subscribeFeed, unsubscribeFeed, isSubscribed, isLoaded } = useSubscribedFeeds();
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const { toast } = useToast();
+    const prevSubscribedFeedsRef = useRef<string[]>([]);
+    useEffect(() => {
+        if (!isLoaded) return;
+
+        const prevFeeds = prevSubscribedFeedsRef.current;
+        // Only show toast if there was a previous state, indicating a change, not initial load
+        if (prevFeeds.length > 0) {
+            if (subscribedFeeds.length > prevFeeds.length) {
+                toast({ title: "Subscribed!", description: "You have subscribed to a new feed." });
+            } else if (subscribedFeeds.length < prevFeeds.length) {
+                toast({ title: "Unsubscribed!", description: "You have unsubscribed from a feed." });
+            }
+        }
+        prevSubscribedFeedsRef.current = subscribedFeeds;
+    }, [subscribedFeeds, toast, isLoaded]);
 
     useEffect(() => {
         setSelectedCategory("All");
     }, [availableFeeds, categories]);
 
-    const handleSourceSelection = (feedUrl: string) => {
-        onFeedSelect(feedUrl);
-    };
-
-    const handleAllCategorySelection = (category: string) => {
-        onFeedSelect(`category:${category}`); // Special string to indicate category selection
-    };
+    
 
     const filteredFeeds = selectedCategory === "All"
         ? availableFeeds
@@ -98,7 +108,6 @@ export default function RssFeedSelectionModalContent({ onFeedSelect, availableFe
                 {selectedCategory && (
                     <Card
                         className="cursor-pointer overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 active:scale-95 aspect-[4/3]"
-                        onClick={() => handleAllCategorySelection(selectedCategory)}
                     >
                         <CardContent className="p-0 flex flex-col h-full items-center justify-center">
                             <CardTitle className="text-center text-lg font-medium">
@@ -113,7 +122,6 @@ export default function RssFeedSelectionModalContent({ onFeedSelect, availableFe
                         <Card
                             key={feed.url}
                             className="relative cursor-pointer overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 active:scale-95 aspect-[4/3]"
-                            onClick={() => handleSourceSelection(feed.url)}
                             style={{ backgroundColor: feed.cardBackgroundColor || undefined }}
                         >
                             <Button

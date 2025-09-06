@@ -1,5 +1,6 @@
-
 "use client";
+
+
 
 import { useState, useEffect, useCallback } from 'react';
 
@@ -8,6 +9,8 @@ const LOCAL_STORAGE_KEY = 'subscribedFeeds';
 export function useSubscribedFeeds() {
     const [subscribedFeeds, setSubscribedFeeds] = useState<string[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
+
+    
 
     useEffect(() => {
         try {
