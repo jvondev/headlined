@@ -614,7 +614,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
               size="icon" 
               aria-label="Next Insight" 
               className="min-w-[3rem] w-auto h-auto py-2 px-4 bg-background/50 mb-0 mt-0 backdrop-blur-sm rounded-t-[1rem] rounded-b-none text-sm font-semibold flex items-center gap-2 text-muted-foreground"
-              disabled={!emblaApi?.canScrollNext()}
+              
             >
               Next<ArrowDown className="h-5 w-5" />
             </Button>
