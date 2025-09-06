@@ -3,6 +3,7 @@ import { InsightCarousel } from "@/components/insight-carousel";
 import { InsightPageLoadingSkeleton } from "@/components/insight-page-loading-skeleton";
 import type { Insight, RssFeed } from "@/types";
 import { serverSupabase } from "@/lib/server-supabase"; // Import server-side supabase client
+import { getPaginatedInsights } from "@/lib/insights"; // Import getPaginatedInsights
 import { supabase } from "@/lib/supabase"; // Import client-side supabase client for localStorage
 
 interface Article {
@@ -55,7 +56,7 @@ const articleToInsight = (article: Article, allRssFeeds: RssFeed[]): Insight => 
 };
 
 export default async function HomePage() {
-  let articles: Article[] = [];
+  let insightsForCarouselState: Insight[] = [];
   let allRssFeeds: RssFeed[] = [];
   let hasMore: boolean = false;
   let error: string | null = null;
@@ -77,42 +78,15 @@ export default async function HomePage() {
       sourceName: source.name.toLowerCase().replace(/\s/g, ''), // Simple sourceName generation
     }));
 
-    // Fetch blog posts from Supabase
-    const { data: blogPosts, error: blogPostsError } = await serverSupabase
-      .from('blog_posts')
-      .select('slug, title, description, link, pub_date, author, thumbnail_url, original_feed_url, blog_content, category, source');
-
-    if (blogPostsError) {
-      throw new Error(blogPostsError.message);
-    }
-
-    articles = blogPosts.map(post => ({
-      slug: post.slug,
-      title: post.title,
-      description: post.description || '',
-      link: post.link,
-      pubDate: post.pub_date || new Date().toISOString(),
-      author: post.author || '',
-      thumbnailUrl: post.thumbnail_url || '',
-      originalFeedUrl: post.original_feed_url,
-      blogContent: post.blog_content || '',
-      category: post.category,
-      source: post.source,
-    }));
-
-    // Sort by publication date (newest first)
-    articles.sort((a, b) => {
-      const dateA = new Date(a.pubDate || 0).getTime();
-      const dateB = new Date(b.pubDate || 0).getTime();
-      return dateB - dateA;
-    });
+    // Fetch paginated blog posts using the new function
+    const { insights, hasMore: newHasMore } = await getPaginatedInsights({ page: 1 });
+    insightsForCarouselState = insights;
+    hasMore = newHasMore;
 
   } catch (err: any) {
     console.error("Error fetching insights for homepage:", err.message);
     error = "Failed to load feed data. Please try again later.";
   }
-
-  const insightsForCarouselState: Insight[] = articles.map(article => articleToInsight(article, allRssFeeds));
 
   if (error) {
     return (
@@ -125,7 +99,7 @@ export default async function HomePage() {
     );
   }
 
-  if (articles.length === 0) {
+  if (insightsForCarouselState.length === 0) {
     return (
       <main className="flex min-h-screen w-full flex-col items-center justify-center bg-background">
         <div className="text-center">

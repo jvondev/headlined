@@ -1,8 +1,9 @@
 
-import { getPaginatedInsights, getAllInsights } from "@/lib/insights";
+import { getPaginatedInsights } from "@/lib/insights";
+import { serverSupabase } from "@/lib/server-supabase";
 import { redirect } from "next/navigation";
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 86400; // Revalidate every day
 
 type CategoryPageProps = {
     params: {
@@ -10,18 +11,7 @@ type CategoryPageProps = {
     }
 }
 
-export async function generateStaticParams() {
-  const allInsights = await getAllInsights();
-  const categories = new Set<string>();
-  allInsights.forEach(insight => {
-    insight.category.forEach(cat => {
-      categories.add(cat.toLowerCase().replace(/ /g, '-'));
-    });
-  });
-  return Array.from(categories).map(category => ({
-    category: category,
-  }));
-}
+
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
     const category = decodeURIComponent(params.category);

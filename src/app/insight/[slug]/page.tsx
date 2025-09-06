@@ -1,5 +1,6 @@
 
 import { getInsightBySlug, getAllInsights } from "@/lib/insights";
+import { serverSupabase } from "@/lib/server-supabase";
 import { InsightPageClient } from './client';
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -13,12 +14,16 @@ type InsightPageProps = {
     searchParams: { [key: string]: string | string[] | undefined }
 }
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 86400; // Revalidate every day
 
 export async function generateStaticParams() {
-  const insights = await getAllInsights();
-  // Filter out RSS slugs as this page only handles non-RSS insights
-  return insights.filter(insight => !insight.slug.startsWith('rss-')).map((insight) => ({
+  const { data: insights } = await serverSupabase
+    .from('blog_posts')
+    .select('slug')
+    .order('created_at', { ascending: false })
+    .limit(10); // Limit to 10 most recent insights for static generation
+
+  return (insights || []).map((insight: { slug: string }) => ({
     slug: insight.slug,
   }));
 }
