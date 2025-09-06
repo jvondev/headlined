@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RssFeed } from "@/types";
-import Image from "next/image";
+
 import { TopicSelector } from "@/components/topic-selector";
 import { Plus, Check } from "lucide-react"; // Import icons
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
@@ -27,12 +27,12 @@ const FaviconImage = ({ fallbackIconUrl, alt }: { fallbackIconUrl?: string, alt:
     const [src, setSrc] = useState(fallbackIconUrl || "/favicon.ico");
 
     return (
-        <Image
+        <img
             src={src}
             alt={alt}
-            fill
-            className="object-contain w-full h-full"
+            className="absolute inset-0 w-full h-full object-contain"
             onError={() => setSrc("/favicon.ico")} // Set fallback to final default
+            loading="lazy"
         />
     );
 };

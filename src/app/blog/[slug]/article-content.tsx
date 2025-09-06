@@ -1,7 +1,7 @@
 
 'use client';
 
-import Image from "next/image";
+
 import MarkdownRenderer from "@/components/markdown-renderer";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -35,13 +35,11 @@ export function ArticleContent({ insight }: { insight: Insight }) {
 
       {insight.thumbnailUrl && (
         <div className="relative mb-12 w-full aspect-video rounded-lg overflow-hidden not-prose">
-            <Image
+            <img
                 src={insight.thumbnailUrl}
                 alt={insight.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                priority
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
             />
         </div>
       )}

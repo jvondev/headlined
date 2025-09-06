@@ -2,7 +2,7 @@
 import type { Insight, SavedItem } from "@/types";
 import { FC } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 import { DynamicIcon } from "./dynamic-icon";
 import { DeepDivePreview } from "./deep-dive/deep-dive-preview";
@@ -20,12 +20,11 @@ const InsightPreview: FC<{ insight: Insight }> = ({ insight }) => {
         <div className="relative w-full h-full text-foreground flex flex-col justify-center items-center text-center p-4">
             {insight.thumbnailUrl && (
                 <>
-                    <Image
+                    <img
                         src={insight.thumbnailUrl}
                         alt={insight.title}
-                        fill
-                        className="object-cover"
-                        sizes="33vw"
+                        className="absolute inset-0 w-full h-full object-cover"
+                        loading="lazy"
                     />
                     <div className="absolute inset-0 bg-black/60" />
                 </>

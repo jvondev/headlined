@@ -23,7 +23,7 @@ import { CarouselContext } from "@/context/carousel-context";
 import { Card } from "./ui/card";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
-import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -205,13 +205,11 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                 <div className="relative flex-[0_0_100%] bg-background text-foreground" role="group" aria-roledescription="slide" aria-label="Main Insight">
                     {insight.thumbnailUrl && (
                         <>
-                            <Image
+                            <img
                                 src={insight.thumbnailUrl}
                                 alt={insight.title}
-                                fill
-                                className="object-cover"
-                                sizes="100vw"
-                                priority
+                                className="absolute inset-0 w-full h-full object-cover"
+                                loading="lazy"
                             />
                             <div className={cn("absolute inset-0", theme === 'light' ? 'bg-white/55' : 'bg-black/60')} />
                         </>
