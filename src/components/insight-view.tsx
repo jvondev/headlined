@@ -235,10 +235,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                 insight.thumbnailUrl ? (theme === 'light' ? 'text-black/80' : 'text-white/80') : "text-muted-foreground"
                             )}>{insight.description}</p>
                         </div>
-                        <div className="absolute bottom-16 right-8 flex flex-col items-center gap-1 text-muted-foreground animate-bounce">
-                           <span className={cn("text-xs", insight.thumbnailUrl && "text-white/70")}>Deep Dive</span>
-                           <ChevronRight className={cn("size-5", insight.thumbnailUrl && "text-white/70")} />
-                        </div>
+                        
                     </div>
                 </div>
 
@@ -258,16 +255,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                        <DeepDiveContent deepDive={deepDive} emblaApi={emblaApi} />
                                     </div>
                                 </div>
-                                 <div className="absolute bottom-16 right-8 flex flex-col items-center gap-1 text-muted-foreground/50 animate-bounce">
-                                   <span className="text-xs">
-    {deepDive.type === 'article-summary' && index < processedDeepDives.length - 1
-        ? 'Read Summary'
-        : index < processedDeepDives.length - 1
-            ? 'Next'
-            : 'Read Full Story'}
-</span>
-                                   <ChevronRight className="size-5" />
-                                </div>
+                                 
                             </Card>
                         </div>
                     )

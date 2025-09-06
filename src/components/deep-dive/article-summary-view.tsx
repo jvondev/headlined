@@ -23,7 +23,7 @@ export const ArticleSummaryView: FC<ArticleSummaryViewProps> = ({ content, embla
             <p className='text-base md:text-xl text-foreground text-left py-2'>
               {sentence}
             </p>
-            {index < sentences.length && <Separator className="mb-8 mt-2" />}
+            {index < sentences.length && <Separator className="mb-4 mt-2" />}
           </div>
         ))}
       </ScrollArea>

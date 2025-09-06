@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Home, Rss, Bookmark, MoreVertical } from "lucide-react";
+import { Home, Rss, Bookmark, MoreVertical, Maximize, Minimize } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Search } from "@/components/search";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,8 @@ type PageHeaderProps = {
     rssCategories?: string[];
     rssSelectedCategory?: string;
     onRssCategoryChange?: (category: string) => void;
+    isFullScreen: boolean;
+    toggleFullScreen: () => void;
 }
 
 const VISIBLE_CATEGORIES_LIMIT = 5;
@@ -32,6 +34,8 @@ export function PageHeader({
     rssCategories,
     rssSelectedCategory,
     onRssCategoryChange,
+    isFullScreen,
+    toggleFullScreen,
 }: PageHeaderProps) {
   const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
@@ -50,8 +54,8 @@ export function PageHeader({
 
   return (
        <div className={cn("fixed top-0 left-0 right-0 z-20 transition-all duration-300", {
-        'opacity-0 pointer-events-none -translate-y-full': isMounted && !isVisibleProp,
-        'opacity-100 translate-y-0': isMounted && isVisibleProp,
+        'opacity-0 pointer-events-none -translate-y-full': isMounted && !isVisibleProp || isFullScreen,
+        'opacity-100 translate-y-0': isMounted && isVisibleProp && !isFullScreen,
         'opacity-0': !isMounted, 
        })}>
         <div className="container mx-auto px-2 md:px-4">
@@ -65,9 +69,17 @@ export function PageHeader({
                     {title && <h1 className="text-lg font-headline font-semibold absolute left-1/2 -translate-x-1/2">{title}</h1>}
                     
                     <div className="flex items-center gap-1">
-                        
-                        <Search />
+                        <Search className={cn({ "hidden": isFullScreen })} />
                         <ModeToggle />
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={toggleFullScreen}
+                            aria-label={isFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
+                            className={cn("bg-background/50 backdrop-blur-sm rounded-full", { "hidden": isFullScreen })}
+                        >
+                            {isFullScreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+                        </Button>
                     </div>
                 </div>
 

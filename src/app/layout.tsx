@@ -9,6 +9,9 @@ import { Analytics } from '@vercel/analytics/next';
 import { useOnboardingStatus } from '@/hooks/use-onboarding-status'; // Import the hook
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow'; // Import the OnboardingFlow component
 import { BottomNavigationBar } from '@/components/bottom-nav'; // Import the BottomNavigationBar component
+import { useState, useCallback } from 'react';
+import { FullScreenContext } from '@/context/full-screen-context';
+import { cn } from '@/lib/utils';
 
 // Metadata can't be client-side, so keep it outside the client component
 // export const metadata: Metadata = {
@@ -22,6 +25,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const { hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus();
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  const toggleFullScreen = useCallback(() => {
+    setIsFullScreen(prev => !prev);
+  }, []);
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -37,12 +45,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex-grow overflow-y-auto no-scrollbar">
-            {children}
-          </div>
-          <BottomNavigationBar />
-          <Analytics />
-          <Toaster />
+          <FullScreenContext.Provider value={{ isFullScreen, toggleFullScreen }}>
+            <div className="flex-grow overflow-y-auto no-scrollbar">
+              {children}
+            </div>
+            <BottomNavigationBar className={cn({ "hidden": isFullScreen })} />
+            <Analytics />
+            <Toaster />
+          </FullScreenContext.Provider>
         </ThemeProvider>
       </body>
     </html>

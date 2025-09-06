@@ -18,7 +18,9 @@ import { DynamicIcon } from "./dynamic-icon";
 import type { SearchResult } from "@/types";
 import { Button } from "./ui/button";
 
-export function Search() {
+import { cn } from "@/lib/utils";
+
+export function Search({ className }: { className?: string }) {
   const { isReady, search, results } = useSearch();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -79,7 +81,7 @@ export function Search() {
         onClick={() => setOpen(true)}
         variant="ghost" 
         size="icon" 
-        className="bg-background/50 backdrop-blur-sm rounded-full"
+        className={cn("bg-background/50 backdrop-blur-sm rounded-full", className)}
       >
         <SearchIcon className="h-5 w-5" />
         <span className="sr-only">Search</span>

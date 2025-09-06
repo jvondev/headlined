@@ -14,6 +14,7 @@ import { OnboardingContext } from "@/context/onboarding-context";
 import { OnboardingFlow } from "@/components/onboarding/onboarding-flow";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { PageHeader } from "./shared/page-header";
+import { useFullScreen } from '@/context/full-screen-context';
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { InsightView } from "@/components/insight-view";
@@ -155,6 +156,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   const { toast } = useToast();
   const [isEmblaApiReady, setIsEmblaApiReady] = useState(false);
   const [onboardingActive, setOnboardingActive] = useState(false); // State for setOnboardingActive
+  const { isFullScreen, toggleFullScreen } = useFullScreen(); // Added FullScreenContext
 
   useEffect(() => {
     if (emblaApi) {
@@ -517,11 +519,13 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
         <OnboardingFlow onComplete={markOnboardingComplete} />
       )}
       <CarouselContext.Provider value={{ setHorizontalEmblaApi, currentInsightSlug: currentInsight?.slug }}>
-      <div className="relative flex h-screen w-full flex-col items-center justify-center">
+      <div className="relative flex h-screen w-full flex-col items-center justify-center" onDoubleClick={toggleFullScreen}>
         <PageHeader 
             rssCategories={isRssPage ? rssCategories : undefined}
             rssSelectedCategory={rssSelectedCategory}
             onRssCategoryChange={handleCategoryChange}
+            isFullScreen={isFullScreen}
+            toggleFullScreen={toggleFullScreen}
         />
 
         {returnToSlug && (
@@ -547,7 +551,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
           </div>
         </div>
         
-        <div className="fixed bottom-20 right-4 z-20 flex flex-col items-center gap-2">
+        <div className={cn("fixed bottom-20 right-4 z-20 flex flex-col items-center gap-2", { "hidden": isFullScreen })}>
              <Button
               onClick={() => setIsPreferenceSheetOpen(true)}
               variant="outline"
@@ -592,7 +596,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
             
         </div>
 
-        <div className="fixed right-0 top-1/2 -translate-y-1/2 z-20">
+        <div className={cn("fixed right-0 top-1/2 -translate-y-1/2 z-20", { "hidden": isFullScreen })}>
             <Button
               onClick={scrollRight}
               variant="outline"
@@ -607,7 +611,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
             </Button>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 z-20 flex justify-center mb-16">
+        <div className={cn("fixed bottom-0 left-0 right-0 z-20 flex justify-center mb-16", { "hidden": isFullScreen })}>
             <Button 
               onClick={scrollDown} 
               variant="outline" 

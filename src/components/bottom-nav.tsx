@@ -6,11 +6,11 @@ import { usePathname } from "next/navigation";
 import { Home, Compass, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function BottomNavigationBar() {
+export function BottomNavigationBar({ className }: { className?: string }) {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/30 backdrop-blur-lg border-t border-border shadow-lg">
+    <nav className={cn("fixed bottom-0 left-0 right-0 z-50 bg-background/30 backdrop-blur-lg border-t border-border shadow-lg", className)}>
       <div className="flex h-16 items-center justify-around px-4">
         <Link
           href="/"
@@ -39,7 +39,7 @@ export function BottomNavigationBar() {
             pathname === "/saved" ? "text-primary" : "text-muted-foreground"
           )}
         >
-          <Bookmark className="h-5 w-5" />
+        <Bookmark className="h-5 w-5" />
           Saved
         </Link>
       </div>
