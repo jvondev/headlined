@@ -253,7 +253,9 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
       <div className={className}>
         {/* Render any content that appears before the first heading */}
         {initialContent && (
-             <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{initialContent}</ReactMarkdown>
+            <div className="mb-4 rounded-lg border bg-card shadow-sm overflow-hidden p-4">
+                <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{initialContent}</ReactMarkdown>
+            </div>
         )}
 
         {/* Inject ad after initial content block */}

@@ -33,7 +33,7 @@ export function ArticleContent({ insight }: { insight: Insight }) {
         )}
       </div>
 
-      {insight.thumbnailUrl && (
+      {insight.thumbnailUrl && !insight.blogContent.includes(insight.thumbnailUrl) && (
         <div className="relative mb-12 w-full aspect-video rounded-lg overflow-hidden not-prose">
             <img
                 src={insight.thumbnailUrl}
