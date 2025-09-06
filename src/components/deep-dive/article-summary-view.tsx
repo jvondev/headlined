@@ -8,6 +8,7 @@ import { DynamicIcon } from '../dynamic-icon';
 import { Quote as QuoteIcon } from "lucide-react"; // Import QuoteIcon
 import { useIsMobile } from "@/hooks/use-mobile"; // Import useIsMobile
 import { cn } from "@/lib/utils"; // Import cn
+import { useFullScreen } from "@/context/full-screen-context"; // Import useFullScreen
 
 interface ArticleSummaryViewProps {
   content: ArticleSummaryContent;
@@ -18,6 +19,7 @@ interface ArticleSummaryViewProps {
 
 export const ArticleSummaryView: FC<ArticleSummaryViewProps> = ({ content, emblaApi, sentence, subsentence }) => {
   const isMobile = useIsMobile();
+  const { isFullScreen } = useFullScreen(); // Get full screen state
   const combinedTextLength = (sentence + (subsentence || '')).length;
 
   // Determine font size class for main sentence (blockquote)
@@ -59,7 +61,7 @@ export const ArticleSummaryView: FC<ArticleSummaryViewProps> = ({ content, embla
         </p>
       )}
       
-      <div className='flex-shrink-0 flex flex-row justify-center gap-2 pt-4 mb-12 sticky bottom-0 z-10 bg-background'>
+      <div className={cn('flex-shrink-0 flex flex-row justify-center gap-2 pt-4 mb-12 sticky bottom-0 z-10 bg-background', { 'invisible': isFullScreen })}>
         <Link href={content.originalArticleUrl} target='_blank' rel='noopener noreferrer' passHref>
           <Button variant='outline' className='truncate w-full md:w-auto'>
             <DynamicIcon name='ExternalLink' className='mr-2 h-4 w-4 flex-shrink-0' />
