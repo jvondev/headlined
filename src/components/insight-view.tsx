@@ -24,7 +24,7 @@ import { Card } from "./ui/card";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 
-import { cn } from "@/lib/utils";
+import { cn, splitIntoSubsentences } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -36,7 +36,7 @@ interface InsightViewProps {
 }
 
 
-const DeepDiveContent: FC<{ deepDive: any, emblaApi: any }> = ({ deepDive, emblaApi }) => {
+const DeepDiveContent: FC<{ deepDive: any, emblaApi: any, insightAuthor?: string }> = ({ deepDive, emblaApi, insightAuthor }) => { // Added insightAuthor
     switch (deepDive.type) {
         // DONT REMOVE IT
         // case 'checklist':
@@ -60,7 +60,8 @@ const DeepDiveContent: FC<{ deepDive: any, emblaApi: any }> = ({ deepDive, embla
         // case 'metadata':
         //     return <MetadataView items={(deepDive.content as DeepDiveContent['metadata']).items} />;
         case 'article-summary':
-            return <ArticleSummaryView content={deepDive.content} sentences={deepDive.content.sentences} emblaApi={emblaApi} />;
+            return <ArticleSummaryView content={deepDive.content} sentence={deepDive.content.sentence} emblaApi={emblaApi} subsentences={insightAuthor ? splitIntoSubsentences(insightAuthor) : []} />; // Changed author to subsentences
+        
         default:
             return <p>Unsupported deep dive type.</p>;
     }
@@ -89,55 +90,36 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
         const allSentences = (plainText.match(/[^.!?]+[.!?]+/g) || [])
           .filter(sentence => sentence.split(' ').length >= 6);
 
-        const sentences = allSentences.slice(0, 4);
+        // No need for sentences.slice(0,4) or summarySlides logic here.
+        // We will create a deep dive for each sentence in allSentences.
 
-        if (sentences.length > 0) { // Only proceed if there are sentences
-            const summarySlides: string[][] = [];
-            let remainingSentences = [...sentences];
+        const totalWords = plainText.split(/\s+/).length; // Calculate total words
 
-            while (remainingSentences.length > 0) {
-                const charCount = remainingSentences.join(' ').length;
-                let numSentencesToTake;
+        let numSummarySentences = 3; // Minimum 3 sentences
 
-                if (isMobile) {
-                    if (charCount > 750) numSentencesToTake = 1;
-                    else if (charCount > 400) numSentencesToTake = 2;
-                    else if (charCount > 200) numSentencesToTake = 3;
-                    else numSentencesToTake = 4;
-                } else { // Desktop
-                    if (charCount > 1200) numSentencesToTake = 1;
-                    else if (charCount > 900) numSentencesToTake = 2;
-                    else if (charCount > 500) numSentencesToTake = 3;
-                    else numSentencesToTake = 4;
-                }
+        // Dynamic calculation based on totalWords
+        if (totalWords > 300) {
+            numSummarySentences = Math.min(allSentences.length, 3 + Math.floor((totalWords - 300) / 200));
+            numSummarySentences = Math.min(numSummarySentences, 8); // Cap at 8 sentences
+        }
+        // Ensure we don't ask for more sentences than available
+        numSummarySentences = Math.min(numSummarySentences, allSentences.length);
 
-                const sentencesForThisSlide = remainingSentences.slice(0, numSentencesToTake);
-                summarySlides.push(sentencesForThisSlide);
-                remainingSentences = remainingSentences.slice(sentencesForThisSlide.length);
-            }
+        const sentencesForSummary = allSentences.slice(0, numSummarySentences);
 
-            if (summarySlides.length > 0 && summarySlides[summarySlides.length - 1].length === 1) {
-                const totalSentencesInSlides = summarySlides.flat().length;
-                if (allSentences.length > totalSentencesInSlides) {
-                    const nextSentence = allSentences[totalSentencesInSlides];
-                    if (nextSentence) {
-                        summarySlides[summarySlides.length - 1].push(nextSentence);
-                    }
-                }
-            }
-
-            summarySlides.forEach((slideSentences, slideIndex) => {
+        if (sentencesForSummary.length > 0) { // Only proceed if there are sentences
+            sentencesForSummary.forEach((sentence, sentenceIndex) => {
                 const newContent = {
-                    snippet: slideSentences.join(' ').substring(0, 150) + '...', // Generate snippet
-                    slug: insight.slug, // Add slug
-                    originalArticleUrl: insight.slug.startsWith('rss-') ? `/blog/rss/${insight.slug.replace('rss-', '')}` : `/blog/${insight.slug}`, // Assuming originalArticleUrl is derived from slug
-                    sentences: slideSentences,
+                    snippet: sentence.substring(0, 150) + '...',
+                    slug: insight.slug,
+                    originalArticleUrl: insight.slug.startsWith('rss-') ? `/blog/rss/${insight.slug.replace('rss-', '')}` : `/blog/${insight.slug}`,
+                    sentence: sentence,
                 };
 
                 newDeepDives.push({
-                    type: 'article-summary', // Explicitly set type
-                    title: summarySlides.length > 1 ? `Summary (${slideIndex + 1}/${summarySlides.length})` : 'Summary', // Default title
-                    icon: 'BookText', // Changed to BookText
+                    type: 'article-summary',
+                    title: `Summary (${sentenceIndex + 1}/${sentencesForSummary.length})`, // Total based on sentencesForSummary
+                    icon: 'BookText',
                     content: newContent,
                 });
             });
@@ -252,7 +234,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                 </div>
                                 <div className="flex-1 mt-4 px-4 md:px-8">
                                     <div className="w-full max-w-4xl mx-auto h-full">
-                                       <DeepDiveContent deepDive={deepDive} emblaApi={emblaApi} />
+                                       <DeepDiveContent deepDive={deepDive} emblaApi={emblaApi} insightAuthor={insight.author} />
                                     </div>
                                 </div>
                                  
