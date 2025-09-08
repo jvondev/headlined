@@ -124,3 +124,12 @@ export function splitIntoSubsentences(text: string): { mainSentence: string; sub
   // If no valid split is found after checking all potential delimiters
   return { mainSentence: removeLeadingTrailingQuotes(text), subsentence: undefined };
 }
+
+export function truncateWords(str: string, numWords: number): string {
+  if (!str) return "";
+  const words = str.split(" ");
+  if (words.length <= numWords) {
+    return str;
+  }
+  return words.slice(0, numWords).join(" ") + "...";
+}

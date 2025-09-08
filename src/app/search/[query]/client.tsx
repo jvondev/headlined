@@ -11,6 +11,7 @@ import { AlertTriangle, BookText } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { SearchResult } from "@/types";
 import { Button } from "@/components/ui/button";
+import { truncateWords } from "@/lib/utils";
 
 const PAGE_SIZE = 5;
 
@@ -121,7 +122,7 @@ export function SearchResultsClient({ query }: SearchResultsClientProps) {
                             </CardHeader>
                             <CardContent>
                                 <CardDescription>
-                                    <HighlightedText text={`${result.content.substring(0, 150)}...`} query={query} />
+                                    <HighlightedText text={truncateWords(result.content, 10)} query={query} />
                                 </CardDescription>
                             </CardContent>
                         </Card>

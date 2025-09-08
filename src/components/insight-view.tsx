@@ -24,7 +24,7 @@ import { Card } from "./ui/card";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 
-import { cn, splitIntoSubsentences } from "@/lib/utils";
+import { cn, splitIntoSubsentences, truncateWords } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -254,11 +254,11 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                         </>
                     )}
                     <div className={cn(
-                        "relative flex h-full flex-col justify-center items-center p-8 md:p-12 text-center z-10",
+                        "relative flex h-full flex-col justify-center items-center p-8 md:p-12 text-left z-10",
                         insight.thumbnailUrl && (theme === 'light' ? 'text-black' : 'text-white')
                     )}>
                         <div className="max-w-3xl">
-                             <div className="flex flex-wrap justify-center gap-2 mb-2">
+                             <div className="flex flex-wrap justify-start gap-2 mb-2">
                                 {(insight.category || []).slice(0,3).map((cat) => (
                                     // Add a check to ensure cat is a string
                                     typeof cat === 'string' && (
@@ -270,9 +270,9 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                             </div>
                             <h1 className="font-headline text-3xl md:text-5xl font-bold mt-2">{insight.title}</h1>
                             <p className={cn(
-                                "mt-4 text-lg md:text-xl max-w-xl mx-auto",
+                                "mt-4 text-lg md:text-xl max-w-xl",
                                 insight.thumbnailUrl ? (theme === 'light' ? 'text-black/80' : 'text-white/80') : "text-muted-foreground"
-                            )}>{insight.description}</p>
+                            )}>{truncateWords(insight.description, 8)}</p>
                         </div>
                         
                     </div>
@@ -289,8 +289,8 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                         <h2 className="font-headline text-2xl">{deepDive.title}</h2>
                                     </div>
                                 </div>
-                                <div className="flex-1 mt-4 px-4 md:px-8">
-                                    <div className="w-full max-w-4xl mx-auto h-full">
+                                <div className="flex-1 mt-4 md:px-8">
+                                    <div className="w-full max-w-4xl h-full mx-auto">
                                        <DeepDiveContent deepDive={deepDive} emblaApi={emblaApi} insight={insight} />
                                     </div>
                                 </div>

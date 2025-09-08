@@ -50,7 +50,7 @@ export const ArticleSummaryView: FC<ArticleSummaryViewProps> = ({ content, embla
     : 'size-12'; // Fixed size for desktop
 
   return (
-    <div className="flex flex-col items-center justify-center text-center h-full p-4"> {/* Adjusted layout */}
+    <div className="flex flex-col items-start justify-center text-left h-full p-8 md:p-12 max-w-2xl mx-auto"> {/* Adjusted layout */}
       <QuoteIcon className={cn(quoteIconSizeClass, "text-muted-foreground/20")} /> {/* Apply dynamic size */}
       <blockquote className={cn("mt-6 font-semibold leading-snug max-w-2xl", mainSentenceFontSizeClass)}> {/* Apply dynamic font size */}
         &ldquo;{sentence}&rdquo; {/* Wrapped sentence in quotes */}
@@ -61,7 +61,7 @@ export const ArticleSummaryView: FC<ArticleSummaryViewProps> = ({ content, embla
         </p>
       )}
       
-      <div className={cn('flex-shrink-0 flex flex-row justify-center gap-2 pt-4 mb-12 sticky bottom-0 z-10 bg-background', { 'invisible': isFullScreen })}>
+      <div className={cn('flex-shrink-0 flex flex-row justify-start gap-2 pt-4 mb-12 sticky bottom-0 z-10 bg-background', { 'invisible': isFullScreen })}>
         <Link href={content.originalArticleUrl} target='_blank' rel='noopener noreferrer' passHref>
           <Button variant='outline' className='truncate w-full md:w-auto'>
             <DynamicIcon name='ExternalLink' className='mr-2 h-4 w-4 flex-shrink-0' />
