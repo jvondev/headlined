@@ -102,24 +102,31 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
 
   useEffect(() => {
     setIsClient(true);
-    // Initialize with ads on client mount
-    if (isSubscribedFeedsLoaded) {
-      const filteredInsights = subscribedFeeds.length > 0
-        ? initialInsights.filter(insight => subscribedFeeds.includes(insight.originalFeedUrl ?? ''))
-        : initialInsights; // If no feeds subscribed, show all
-      setInsights(injectAds(filteredInsights));
-    }
+    const fetchAndSetInsights = async () => {
+      if (isSubscribedFeedsLoaded) {
+        const fetchedInsights = subscribedFeeds.length > 0
+          ? await getPaginatedInsights({ page: 1, feedUrls: subscribedFeeds }).then(res => res.insights)
+          : initialInsights; // Fallback to initialInsights if no feeds subscribed
+        setInsights(injectAds(fetchedInsights));
+      }
+    };
+    fetchAndSetInsights();
   }, [initialInsights, isSubscribedFeedsLoaded, subscribedFeeds]);
 
   useEffect(() => {
     // This effect runs when initialInsights prop changes on the client.
-    if (isClient && isSubscribedFeedsLoaded) {
-      const filteredInsights = subscribedFeeds.length > 0
-        ? initialInsights.filter(insight => subscribedFeeds.includes(insight.originalFeedUrl ?? ''))
-        : initialInsights; // If no feeds subscribed, show all
-      const insightsWithAds = injectAds(filteredInsights);
-      setInsights(insightsWithAds);
-    }
+    const fetchAndSetInsights = async () => {
+      if (isClient && isSubscribedFeedsLoaded) {
+        console.log("InsightCarousel (initialInsights change): subscribedFeeds", subscribedFeeds);
+        console.log("InsightCarousel (initialInsights change): isSubscribedFeedsLoaded", isSubscribedFeedsLoaded);
+        const fetchedInsights = subscribedFeeds.length > 0
+          ? await getPaginatedInsights({ page: 1, feedUrls: subscribedFeeds }).then(res => res.insights)
+          : initialInsights; // Fallback to initialInsights if no feeds subscribed
+        const insightsWithAds = injectAds(fetchedInsights);
+        setInsights(insightsWithAds);
+      }
+    };
+    fetchAndSetInsights();
   }, [initialInsights, isClient, isSubscribedFeedsLoaded, subscribedFeeds]);
 
 

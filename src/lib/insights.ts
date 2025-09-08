@@ -22,6 +22,7 @@ const mapSupabaseInsightToInsightType = (supabaseData: any): Insight => {
     blogContent: supabaseData.blog_content || '',
     thumbnailUrl: supabaseData.thumbnail_url,
     author: supabaseData.author || '',
+    originalFeedUrl: supabaseData.original_feed_url,
   };
 };
 
@@ -47,10 +48,11 @@ interface PaginatedInsightsOptions {
   category?: string;
   isRss?: boolean; // This will be handled by the main actions.ts, but kept for type compatibility
   preferences?: any; // TODO: Define a proper type for preferences
+  feedUrls?: string[]; // Added for filtering by subscribed feeds
 }
 
 export const getPaginatedInsights = unstable_cache(
-  async ({ page, category }: PaginatedInsightsOptions): Promise<{ insights: Insight[], hasMore: boolean }> => {
+  async ({ page, category, feedUrls }: PaginatedInsightsOptions): Promise<{ insights: Insight[], hasMore: boolean }> => {
     const startIndex = (page - 1) * PAGE_SIZE;
     const endIndex = startIndex + PAGE_SIZE - 1; // Supabase range is inclusive
 
@@ -61,6 +63,10 @@ export const getPaginatedInsights = unstable_cache(
 
     if (category) {
       query = query.filter('category', 'cs', `{${category}}`);
+    }
+
+    if (feedUrls && feedUrls.length > 0) {
+      query = query.in('original_feed_url', feedUrls);
     }
 
     const { data, error } = await query.range(startIndex, endIndex + 1); // Fetch one extra to check hasMore
@@ -208,5 +214,28 @@ export const getInsightsBySlugs = unstable_cache(
     return data.map(mapSupabaseInsightToInsightType) as Insight[];
   },
   ['insights-by-slugs'],
+  { revalidate: 3600 }
+);
+
+export const getFilteredInsights = unstable_cache(
+  async (feedUrls: string[]): Promise<Insight[]> => {
+    if (!feedUrls || feedUrls.length === 0) {
+      return [];
+    }
+
+    const { data, error } = await serverSupabase
+      .from('blog_posts')
+      .select('*')
+      .in('original_feed_url', feedUrls)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching filtered insights:', error);
+      return [];
+    }
+
+    return data.map(mapSupabaseInsightToInsightType) as Insight[];
+  },
+  ['filtered-insights'],
   { revalidate: 3600 }
 );

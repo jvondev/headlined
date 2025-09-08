@@ -12,8 +12,16 @@ type Preferences = {
     [category: string]: number;
 };
 
+interface PaginatedInsightsOptions {
+  page: number;
+  category?: string;
+  isRss?: boolean;
+  preferences?: Preferences;
+  feedUrls?: string[]; // Added for filtering by subscribed feeds
+}
+
 async function rssToInsight(article: RssArticle): Promise<Insight> {
-    const feedInfo = await getFeedInfoFromUrl(article.feedUrl);
+    const feedInfo = await getFeedInfoFromUrl(article.originalFeedUrl);
     return {
         slug: article.slug, // The slug from getRssFeed now includes 'rss-' prefix
         seo: {
@@ -36,12 +44,8 @@ export async function getPaginatedInsights({
     category,
     isRss = false,
     preferences = {},
-}: {
-    page: number,
-    category?: string,
-    isRss?: boolean,
-    preferences?: Preferences,
-}): Promise<{ insights: Insight[], hasMore: boolean }> {
+    feedUrls, // Added feedUrls parameter
+}: PaginatedInsightsOptions): Promise<{ insights: Insight[], hasMore: boolean }> {
 
   if (isRss) {
     let allItems: RssArticle[] = [];
@@ -83,7 +87,7 @@ export async function getPaginatedInsights({
     return { insights, hasMore };
   } else {
     // For non-RSS, use the Supabase-backed getPaginatedInsights
-    const { insights, hasMore } = await getSupabasePaginatedInsights({ page, category, preferences });
+    const { insights, hasMore } = await getSupabasePaginatedInsights({ page, category, preferences, feedUrls }); // Pass feedUrls
     return { insights, hasMore };
   }
 }
