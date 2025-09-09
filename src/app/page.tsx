@@ -256,7 +256,7 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Suspense fallback={<div>Loading carousel...</div>}>
+      <Suspense fallback={<InsightPageLoadingSkeleton />}>
         <InsightCarouselWrapper
           initialInsights={[readmoreHomepageInsight, ...insightsForCarouselState]}
           initialHasMore={hasMore}

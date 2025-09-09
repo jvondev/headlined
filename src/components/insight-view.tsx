@@ -4,7 +4,7 @@ import type { Insight, DeepDive, DeepDiveType, SavedItem, DeepDiveContent } from
 import { useEffect, type FC, useContext, useMemo } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import { MoveRight, ChevronRight, Rss } from "lucide-react";
+import { MoveRight, ChevronRight, Rss, ArrowDown } from "lucide-react";
 import { useTheme } from "next-themes";
 // DONT REMOVE IT
 import { ChecklistView } from "./deep-dive/checklist-view";
@@ -92,7 +92,7 @@ const DeepDiveContent: FC<{ deepDive: any, emblaApi: any, insight: Insight }> = 
 
 
 export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDeepDive = false, initialDeepDiveIndex }) => {
-  const { setHorizontalEmblaApi } = useContext(CarouselContext);
+  const { setHorizontalEmblaApi, triggerParentScrollDown } = useContext(CarouselContext);
   const router = useRouter();
   const isMobile = useIsMobile();
   const { theme } = useTheme();
@@ -223,6 +223,12 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
     const handleSettle = () => {
         // The trigger is now the slide *after* the last deep dive
         if (emblaApi.selectedScrollSnap() === processedDeepDives.length + 1) {
+            if (insight.slug === "home") {
+                if (triggerParentScrollDown) {
+                    triggerParentScrollDown();
+                }
+                return; // Do not navigate to full story for homepage insight
+            }
             const isRss = insight.slug.startsWith('rss-');
             const blogSlug = isRss ? insight.slug.replace('rss-', '') : insight.slug;
             const blogPath = isRss ? `/blog/rss/${blogSlug}` : `/blog/${blogSlug}`;
@@ -308,8 +314,12 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                  {/* Full Story trigger card */}
                 <div className="relative flex-[0_0_25%] bg-background" role="group" aria-roledescription="slide" aria-label="Full Story Trigger">
                    <div className="flex h-full flex-col items-center justify-center text-center p-8">
-                        <MoveRight className="size-8 text-muted-foreground/50" />
-                        <p className="mt-4 text-lg text-muted-foreground">Opening full story...</p>
+                        {insight.slug === "home" ? (
+                            <ArrowDown className="size-8 text-muted-foreground/50" />
+                        ) : (
+                            <MoveRight className="size-8 text-muted-foreground/50" />
+                        )}
+                        <p className="mt-4 text-lg text-muted-foreground">{insight.slug === "home" ? "Read More" : "Opening full story..."}</p>
                    </div>
                 </div>
             </div>

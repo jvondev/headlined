@@ -9,7 +9,7 @@ const readmoreHomepageInsight: Insight = {
   slug: "home",
   title: "Free No-Login RSS Feeds & News Reader that Scroll like TikTok",
   description: "Start reading instantly — no signup.",
-  category: ["RSS", "Free", "No Login", "Scroll like TikTok"],
+  category: ["RSS Feeds Reader", "Free", "No Login", "Scroll like TikTok"],
   seo: {
     title: "Free No-Login RSS Feeds & News Reader that Scroll like TikTok | ReadMore",
     description: "Free No-Signup RSS reader. Subscribe to any RSS feed, enjoy a scrolling reading experience, and get summarized articles. ReadMore is a free RSS reader that respects your privacy.",

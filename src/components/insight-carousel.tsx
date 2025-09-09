@@ -188,10 +188,12 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
 
   const scrollRight = useCallback(() => {
     const horizontalApi = horizontalApis.current.get(currentInsight?.slug);
-    if(horizontalApi && horizontalApi.canScrollNext()) {
-        horizontalApi.scrollNext();
+    if (currentInsight?.slug === "home" && horizontalApi && !horizontalApi.canScrollNext()) {
+      scrollDown();
+    } else if (horizontalApi && horizontalApi.canScrollNext()) {
+      horizontalApi.scrollNext();
     }
-  }, [currentInsight]);
+  }, [currentInsight, scrollDown]);
 
 
   useEffect(() => {
@@ -517,7 +519,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
       {!hasSeenOnboarding && (
         <OnboardingFlow onComplete={markOnboardingComplete} />
       )}
-      <CarouselContext.Provider value={{ setHorizontalEmblaApi, currentInsightSlug: currentInsight?.slug }}>
+      <CarouselContext.Provider value={{ setHorizontalEmblaApi, currentInsightSlug: currentInsight?.slug, triggerParentScrollDown: scrollDown }}>
       <div className="relative flex h-screen w-full flex-col items-center justify-center" onDoubleClick={toggleFullScreen}>
         <PageHeader 
             rssCategories={isRssPage ? rssCategories : undefined}
