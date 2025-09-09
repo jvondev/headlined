@@ -5,6 +5,8 @@ import type { Insight, RssFeed } from "@/types";
 import { serverSupabase } from "@/lib/server-supabase"; // Import server-side supabase client
 import { getPaginatedInsights } from "@/lib/insights"; // Import getPaginatedInsights
 import { supabase } from "@/lib/supabase"; // Import client-side supabase client for localStorage
+import { HomepageInsightSlide } from "@/components/homepage-insight-slide"; // Import the new homepage slide component
+
 
 interface Article {
   slug: string;
@@ -55,6 +57,141 @@ const articleToInsight = (article: Article, allRssFeeds: RssFeed[]): Insight => 
   };
 };
 
+// Define readmoreHomepageInsight outside the component for metadata generation
+const readmoreHomepageInsight: Insight = {
+  slug: "home",
+  title: "Welcome to ReadMore: Your Personal RSS Feed Reader",
+  description: "Discover the best RSS reader experience. Follow your favorite RSS feeds, enjoy a TikTok-like scrolling interface, and get daily updates. Free and no login required.",
+  category: ["RSS", "RSS Reader", "News", "Free App"],
+  seo: {
+    title: "ReadMore: The Ultimate RSS Reader | Free & No Login",
+    description: "Your new favorite RSS reader. Subscribe to any RSS feed, enjoy a seamless reading experience, and get summarized articles. ReadMore is a free RSS reader that respects your privacy.",
+  },
+  deepDives: [
+    {
+      type: "qna",
+      title: "What is ReadMore?",
+      icon: "HelpCircle",
+      content: {
+        questions: [
+          {
+            q: "What is an RSS reader?",
+            a: "An RSS (Really Simple Syndication) reader is an application that aggregates content from various web sources, such as blogs and news websites, into a single, easy-to-read feed. Instead of visiting multiple websites, you get all the new articles in one place.",
+          },
+          {
+            q: "Is ReadMore free to use?",
+            a: "Yes, ReadMore is completely free to use. There are no hidden costs or premium features. We believe in providing a seamless reading experience for everyone.",
+          },
+          {
+            q: "Do I need an account to use ReadMore?",
+            a: "No, you don't need to create an account or log in to use ReadMore. We respect your privacy and offer a no-login-required experience. Just open the app and start reading.",
+          },
+        ],
+      },
+    },
+    {
+      type: "checklist",
+      title: "Key Features",
+      icon: "ListChecks",
+      content: {
+        items: [
+          { text: "Subscribe to any RSS feed", isDone: true },
+          { text: "TikTok-like scrolling interface for easy reading", isDone: true },
+          { text: "Article summarizer to get the key points quickly", isDone: true },
+          { text: "Daily updates from your favorite sources", isDone: true },
+          { text: "Completely free, no hidden costs", isDone: true },
+          { text: "No login or account required", isDone: true },
+          { text: "Save your favorite articles to read later", isDone: true },
+        ],
+      },
+    },
+    {
+      type: "howto",
+      title: "How to use ReadMore",
+      icon: "ListOrdered",
+      content: {
+        steps: [
+          { title: "Discover Feeds", description: "Explore the feed library or add your own RSS feed URL." },
+          { title: "Subscribe", description: "Click the 'Subscribe' button to add a feed to your personal collection." },
+          { title: "Read", description: "Scroll through your feed like you would on TikTok. Click on a card to read the full article." },
+          { title: "Save", description: "Save your favorite articles to read later." },
+        ],
+      },
+    },
+    {
+      type: "comparison",
+      title: "ReadMore vs. Others",
+      icon: "Columns",
+      content: {
+        titleA: "ReadMore",
+        titleB: "Other RSS Readers",
+        items: [
+          { feature: "Price", itemA: "Free", itemB: "Freemium/Paid" },
+          { feature: "Login Required", itemA: "No", itemB: "Yes" },
+          { feature: "UI/UX", itemA: "TikTok-like scroll", itemB: "Traditional list" },
+          { feature: "Article Summarizer", itemA: "Yes", itemB: "No" },
+        ],
+      },
+    },
+    {
+      type: "alternatives",
+      title: "Alternatives to ReadMore",
+      icon: "Shuffle",
+      content: {
+        points: [
+          { name: "Feedly", description: "A popular RSS reader with a lot of features, but requires a subscription for some of them." },
+          { name: "Inoreader", description: "A powerful RSS reader with a free tier, but with limitations." },
+          { name: "The Old Reader", description: "A simple RSS reader with a social component." },
+        ],
+      },
+    },
+  ],
+  blogContent: "", // No blog content for this static slide
+};
+
+export const metadata = {
+  title: readmoreHomepageInsight.seo.title,
+  description: readmoreHomepageInsight.seo.description,
+  keywords: readmoreHomepageInsight.category.join(', '),
+  openGraph: {
+    title: readmoreHomepageInsight.seo.title,
+    description: readmoreHomepageInsight.seo.description,
+    url: 'https://readmore.app', // Replace with your actual URL
+    siteName: 'ReadMore',
+    images: [
+      {
+        url: 'https://readmore.app/readmore_icon.webp', // Replace with your actual image URL
+        width: 800,
+        height: 600,
+        alt: 'ReadMore App Icon',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: readmoreHomepageInsight.seo.title,
+    description: readmoreHomepageInsight.seo.description,
+    creator: '@readmoreapp', // Replace with your Twitter handle
+    images: ['https://readmore.app/readmore_icon.webp'], // Replace with your actual image URL
+  },
+};
+
+// JSON-LD Structured Data for SEO
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "ReadMore",
+  "url": "https://readmore.app", // Replace with your actual URL
+  "description": readmoreHomepageInsight.seo.description,
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://readmore.app/search?q={search_term_string}", // Replace with your actual search URL
+    "query-input": "required name=search_term_string"
+  }
+};
+
 export default async function HomePage() {
   let insightsForCarouselState: Insight[] = [];
   let allRssFeeds: RssFeed[] = [];
@@ -80,7 +217,8 @@ export default async function HomePage() {
 
     // Fetch paginated blog posts using the new function
     const { insights, hasMore: newHasMore } = await getPaginatedInsights({ page: 1 });
-    insightsForCarouselState = insights;
+    
+    insightsForCarouselState = [...insights];
     hasMore = newHasMore;
 
   } catch (err: any) {
@@ -112,9 +250,13 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen w-full bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Suspense fallback={<div>Loading carousel...</div>}>
         <InsightCarousel
-          initialInsights={insightsForCarouselState}
+          initialInsights={[readmoreHomepageInsight, ...insightsForCarouselState]}
           initialHasMore={hasMore}
           shouldFetchPaginatedInsights={true} // Enable paginated fetching in the carousel
           // initialSlug, hasSeenOnboarding, and markOnboardingComplete will be handled client-side within InsightCarousel

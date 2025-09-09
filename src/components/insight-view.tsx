@@ -7,15 +7,15 @@ import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { MoveRight, ChevronRight, Rss } from "lucide-react";
 import { useTheme } from "next-themes";
 // DONT REMOVE IT
-// import { ChecklistView } from "./deep-dive/checklist-view";
-// import { ComparisonView } from "./deep-dive/comparison-view";
-// import { QnaView } from "./deep-dive/qna-view";
-// import { QuoteView } from "./deep-dive/quote-view";
-// import { HowToView } from "./deep-dive/how-to-view";
+import { ChecklistView } from "./deep-dive/checklist-view";
+import { ComparisonView } from "./deep-dive/comparison-view";
+import { QnaView } from "./deep-dive/qna-view";
+import { QuoteView } from "./deep-dive/quote-view";
+import { HowToView } from "./deep-dive/how-to-view";
 // import { CaseStudyView } from "./deep-dive/case-study-view";
-// import { DataView } from "./deep-dive/data-view";
+import { DataView } from "./deep-dive/data-view";
 // import { MythView } from "./deep-dive/myth-view";
-// import { AlternativesView } from "./deep-dive/alternatives-view";
+import { AlternativesView } from "./deep-dive/alternatives-view";
 // import { MetadataView } from "./deep-dive/metadata-view";
 import { ArticleSummaryView } from "./deep-dive/article-summary-view"; // Import new view
 import { DynamicIcon } from "./dynamic-icon";
@@ -39,24 +39,24 @@ interface InsightViewProps {
 const DeepDiveContent: FC<{ deepDive: any, emblaApi: any, insight: Insight }> = ({ deepDive, emblaApi, insight }) => {
     switch (deepDive.type) {
         // DONT REMOVE IT
-        // case 'checklist':
-        //     return <ChecklistView items={(deepDive.content as DeepDiveContent['checklist']).items} />;
-        // case 'comparison':
-        //     return <ComparisonView {...(deepDive.content as DeepDiveContent['comparison'])} />;
-        // case 'qna':
-        //     return <QnaView questions={(deepDive.content as DeepDiveContent['qna']).questions} />;
-        // case 'quote':
-        //     return <QuoteView {...(deepDive.content as DeepDiveContent['quote'])} />;
-        // case 'howto':
-        //     return <HowToView steps={(deepDive.content as DeepDiveContent['howto']).steps} />;
+        case 'checklist':
+            return <ChecklistView items={(deepDive.content as DeepDiveContent['checklist']).items} />;
+        case 'comparison':
+            return <ComparisonView {...(deepDive.content as DeepDiveContent['comparison'])} />;
+        case 'qna':
+            return <QnaView questions={(deepDive.content as DeepDiveContent['qna']).questions} />;
+        case 'quote':
+            return <QuoteView {...(deepDive.content as DeepDiveContent['quote'])} />;
+        case 'howto':
+            return <HowToView steps={(deepDive.content as DeepDiveContent['howto']).steps} />;
         // case 'case-study':
         //     return <CaseStudyView {...(deepDive.content as DeepDiveContent['case-study'])} />;
-        // case 'data':
-        //     return <DataView points={(deepDive.content as DeepDiveContent['data']).points} />;
+        case 'data':
+            return <DataView points={(deepDive.content as DeepDiveContent['data']).points} />;
         // case 'myth':
         //     return <MythView {...(deepDive.content as DeepDiveContent['myth'])} />;
-        // case 'alternatives':
-        //     return <AlternativesView points={(deepDive.content as DeepDiveContent['alternatives']).points} />;
+        case 'alternatives':
+            return <AlternativesView points={(deepDive.content as DeepDiveContent['alternatives']).points} />;
         // case 'metadata':
         //     return <MetadataView items={(deepDive.content as DeepDiveContent['metadata']).items} />;
         case 'article-summary':
@@ -98,6 +98,11 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
   const { theme } = useTheme();
   
   const processedDeepDives = useMemo(() => {
+    // If insight already has deepDives, use them directly
+    if (insight.deepDives && insight.deepDives.length > 0) {
+      return insight.deepDives;
+    }
+
     const newDeepDives: (DeepDive<DeepDiveType> & { content: { sentences?: string[] } })[] = [];
 
     if (insight.blogContent) {
@@ -183,7 +188,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
         }
     }
     return newDeepDives;
-  }, [insight.blogContent, isMobile, insight.slug]);
+  }, [insight.blogContent, insight.deepDives, isMobile, insight.slug]);
   
   const getStartIndex = () => {
     if (startOnDeepDive && typeof initialDeepDiveIndex === 'number' && initialDeepDiveIndex >= 0) {

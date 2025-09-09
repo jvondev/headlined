@@ -2,31 +2,20 @@
 import type { DataPoint } from "@/types";
 import type { FC } from "react";
 import { cn } from "@/lib/utils";
+import { DynamicIcon } from "@/components/dynamic-icon";
 
 interface DataViewProps {
   points: DataPoint[];
 }
 
 export const DataView: FC<DataViewProps> = ({ points }) => {
-  const count = points.length;
-
-  // Determine grid classes based on the number of points
-  const gridClasses = cn("grid grid-cols-1 gap-6 text-center", {
-    "md:grid-cols-1": count === 1,
-    "md:grid-cols-2": count === 2 || count === 4,
-    "md:grid-cols-2 lg:grid-cols-3": count > 4, // For many items, a denser grid
-    // For 3 items, we don't set a specific column count on md,
-    // so it defaults to grid-cols-1 and items will wrap naturally.
-    // On larger screens, this could be adjusted if needed.
-  });
-
-
   return (
-    <div className={gridClasses}>
+    <div className="grid grid-cols-2 gap-4 p-4">
       {points.map((point, index) => (
-        <div key={index} className="p-4 rounded-lg bg-secondary/50">
-          <p className="text-5xl font-bold font-headline text-primary">{point.value}</p>
-          <p className="mt-2 text-muted-foreground">{point.label}</p>
+        <div key={index} className="flex flex-col items-center justify-center p-4 rounded-lg bg-secondary/50 text-center h-full">
+          {point.icon && <DynamicIcon name={point.icon} className="size-8 text-primary mb-2" />}
+          <p className="text-lg font-semibold leading-tight">{point.value}</p>
+          <p className="text-sm text-muted-foreground mt-1">{point.label}</p>
         </div>
       ))}
     </div>

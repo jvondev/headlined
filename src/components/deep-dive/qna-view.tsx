@@ -15,7 +15,7 @@ interface QnaViewProps {
 
 export const QnaView: FC<QnaViewProps> = ({ questions }) => {
   return (
-    <Accordion type="single" collapsible className="w-full pr-4">
+    <Accordion type="single" collapsible className="w-full p-6">
       {questions.map((qna, index) => (
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger className="text-left font-semibold">

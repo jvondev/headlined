@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Insight, SavedItem } from "@/types";
@@ -19,6 +18,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { InsightView } from "@/components/insight-view";
 import { AdPlaceholder } from "@/components/ad-placeholder";
+import { HomepageInsightSlide } from "@/components/homepage-insight-slide";
 import { getPaginatedInsights /*, getSaveCount, updateSaveCount*/ } from "@/lib/actions";
 import { useSavedItems } from "@/hooks/use-saved-items";
 import { useToast } from "@/hooks/use-toast";
@@ -104,30 +104,20 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
     setIsClient(true);
     const fetchAndSetInsights = async () => {
       if (isSubscribedFeedsLoaded) {
-        const fetchedInsights = subscribedFeeds.length > 0
-          ? await getPaginatedInsights({ page: 1, feedUrls: subscribedFeeds }).then(res => res.insights)
-          : initialInsights; // Fallback to initialInsights if no feeds subscribed
-        setInsights(injectAds(fetchedInsights));
+        let insightsToProcess: Insight[];
+        if (subscribedFeeds.length > 0) {
+          const fetched = await getPaginatedInsights({ page: 1, feedUrls: subscribedFeeds }).then(res => res.insights);
+          insightsToProcess = [initialInsights[0], ...fetched]; // Prepend the homepage insight
+        } else {
+          insightsToProcess = initialInsights; // Use initialInsights which already has the homepage insight
+        }
+        setInsights(injectAds(insightsToProcess));
       }
     };
     fetchAndSetInsights();
   }, [initialInsights, isSubscribedFeedsLoaded, subscribedFeeds]);
 
-  useEffect(() => {
-    // This effect runs when initialInsights prop changes on the client.
-    const fetchAndSetInsights = async () => {
-      if (isClient && isSubscribedFeedsLoaded) {
-        console.log("InsightCarousel (initialInsights change): subscribedFeeds", subscribedFeeds);
-        console.log("InsightCarousel (initialInsights change): isSubscribedFeedsLoaded", isSubscribedFeedsLoaded);
-        const fetchedInsights = subscribedFeeds.length > 0
-          ? await getPaginatedInsights({ page: 1, feedUrls: subscribedFeeds }).then(res => res.insights)
-          : initialInsights; // Fallback to initialInsights if no feeds subscribed
-        const insightsWithAds = injectAds(fetchedInsights);
-        setInsights(insightsWithAds);
-      }
-    };
-    fetchAndSetInsights();
-  }, [initialInsights, isClient, isSubscribedFeedsLoaded, subscribedFeeds]);
+  
 
 
   const [hasMore, setHasMore] = useState(initialHasMore);
@@ -481,6 +471,8 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
           <div className="relative min-w-0 flex-[0_0_100%] h-full" key={`${insight.slug}-${index}`} role="group" aria-roledescription="slide" aria-label={`Insight ${index + 1} of ${insights.length}`}>
               {insight.isAd ? (
                 <AdPlaceholder />
+              ) : insight.slug === "home" ? (
+                <HomepageInsightSlide />
               ) : (
                 <InsightView 
                   insight={insight} 

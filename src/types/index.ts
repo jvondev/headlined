@@ -29,6 +29,7 @@ export interface HowToStep {
 export interface DataPoint {
     value: string;
     label: string;
+    icon?: IconName;
 }
 
 export interface AlternativeItem {

@@ -18,23 +18,27 @@ interface ComparisonViewProps {
 
 export const ComparisonView: FC<ComparisonViewProps> = ({ titleA, titleB, items }) => {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow className="border-none">
-          <TableHead className="w-1/3">Feature</TableHead>
-          <TableHead className="text-center">{titleA}</TableHead>
-          <TableHead className="text-center">{titleB}</TableHead>
+    <div className="p-4">
+      <div className="overflow-x-auto">
+        <Table>
+      <TableHeader className="bg-muted">
+        <TableRow>
+          <TableHead className="w-1/3 p-3">Feature</TableHead>
+          <TableHead className="text-left p-3">{titleA}</TableHead>
+          <TableHead className="text-left p-3">{titleB}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {items.map((item, index) => (
-          <TableRow key={index}>
-            <TableCell className="font-medium">{item.feature}</TableCell>
-            <TableCell className="text-center">{item.itemA}</TableCell>
-            <TableCell className="text-center">{item.itemB}</TableCell>
+          <TableRow key={index} className="border-b">
+            <TableCell className="font-medium p-3 text-left text-sm md:text-base">{item.feature}</TableCell>
+            <TableCell className="p-3 text-left text-sm md:text-base">{item.itemA}</TableCell>
+            <TableCell className="p-3 text-left text-sm md:text-base">{item.itemB}</TableCell>
           </TableRow>
         ))}
       </TableBody>
     </Table>
+    </div>
+    </div>
   );
 };

@@ -15,7 +15,7 @@ interface HowToViewProps {
 
 export const HowToView: FC<HowToViewProps> = ({ steps }) => {
   return (
-    <Accordion type="single" collapsible className="w-full pr-4">
+    <Accordion type="single" collapsible className="w-full p-6">
       {steps.map((step, index) => (
         <AccordionItem key={index} value={`item-${index}`} className="border-b-0">
           <div className="flex gap-4 items-center py-4">
