@@ -1,11 +1,13 @@
 import { Suspense } from 'react';
-import { InsightCarousel } from "@/components/insight-carousel";
+
 import { InsightPageLoadingSkeleton } from "@/components/insight-page-loading-skeleton";
 import type { Insight, RssFeed } from "@/types";
 import { serverSupabase } from "@/lib/server-supabase"; // Import server-side supabase client
 import { getPaginatedInsights } from "@/lib/insights"; // Import getPaginatedInsights
 import { supabase } from "@/lib/supabase"; // Import client-side supabase client for localStorage
 import { HomepageInsightSlide } from "@/components/homepage-insight-slide"; // Import the new homepage slide component
+import { InsightCarouselWrapper } from "@/components/insight-carousel-wrapper";
+
 
 
 interface Article {
@@ -255,11 +257,10 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Suspense fallback={<div>Loading carousel...</div>}>
-        <InsightCarousel
+        <InsightCarouselWrapper
           initialInsights={[readmoreHomepageInsight, ...insightsForCarouselState]}
           initialHasMore={hasMore}
-          shouldFetchPaginatedInsights={true} // Enable paginated fetching in the carousel
-          // initialSlug, hasSeenOnboarding, and markOnboardingComplete will be handled client-side within InsightCarousel
+          shouldFetchPaginatedInsights={true}
         />
       </Suspense>
     </main>

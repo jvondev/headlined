@@ -56,7 +56,7 @@ export function InsightFeedClient() {
   return (
     <div className="flex flex-col gap-4">
       {insights.map((insight) => (
-        <InsightView key={insight.slug} insight={insight} />
+        <InsightView key={insight.slug} insight={insight} isActive={true} />
       ))}
       <div ref={ref} className="h-10" /> {/* Sentinel for infinite scroll */}
     </div>

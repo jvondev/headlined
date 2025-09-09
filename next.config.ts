@@ -56,4 +56,4 @@ const nextConfig: NextConfig = {
   ],
 };
 
-export default withPWAConfig(nextConfig);
+export default withPWAConfig(nextConfig as any);

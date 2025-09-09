@@ -70,7 +70,7 @@ export function SaveDialog({ open, onOpenChange, itemToSave, initialNote, onSave
           <TextareaAutosize
             placeholder="What's on your mind? Why is this important?"
             value={note}
-            onChange={(e) => setNote(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNote(e.target.value)}
             className="w-full resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-base bg-transparent no-scrollbar"
             autoFocus
             minRows={1}

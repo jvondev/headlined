@@ -1,6 +1,6 @@
 
 import { getInsightsBySlugs } from "@/lib/insights";
-import { PageHeader } from "@/components/shared/page-header";
+import { SavedPageHeader } from "@/components/saved/saved-page-header";
 import SavedPageClient from "./client";
 import { cookies } from 'next/headers';
 import type { SavedItem, Insight } from "@/types";
@@ -30,7 +30,7 @@ export default async function SavedPage() {
 
     return (
         <div className="bg-background min-h-screen">
-            <PageHeader title="Saved Items" />
+            <SavedPageHeader title="Saved Items" />
 
             <main className="container mx-auto px-4 py-8 pt-24">
                 <SavedPageClient initialInsights={insightsWithSavedData} />
