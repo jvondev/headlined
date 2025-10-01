@@ -102,20 +102,51 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
 
   useEffect(() => {
     setIsClient(true);
-    const fetchAndSetInsights = async () => {
+    const processAndSetInsights = async () => {
       if (isSubscribedFeedsLoaded) {
         let insightsToProcess: Insight[];
+
         if (subscribedFeeds.length > 0) {
           const fetched = await getPaginatedInsights({ page: 1, feedUrls: subscribedFeeds }).then(res => res.insights);
-          insightsToProcess = [initialInsights[0], ...fetched]; // Prepend the homepage insight
+          const homepageInsight = initialInsights.find(i => i.slug === 'home');
+          insightsToProcess = homepageInsight ? [homepageInsight, ...fetched] : [...fetched];
         } else {
-          insightsToProcess = initialInsights; // Use initialInsights which already has the homepage insight
+          insightsToProcess = [...initialInsights];
         }
-        setInsights(injectAds(insightsToProcess));
+
+        let finalInsights: Insight[] = [];
+        const homepageInsight = insightsToProcess.find(i => i.slug === 'home');
+        let otherInsights = insightsToProcess.filter(i => i.slug !== 'home');
+
+        if (pathname === '/') {
+          // Shuffle insights other than the homepage insight
+          const shuffled = otherInsights.sort(() => Math.random() - 0.5);
+          
+          // Add homepage insight at the top
+          if (homepageInsight) {
+            finalInsights.push(homepageInsight);
+          }
+          // Add shuffled insights with ads
+          finalInsights.push(...injectAds(shuffled));
+
+        } else if (pathname.startsWith('/insight/')) {
+          // Pin the current insight
+          const pinnedInsightIndex = otherInsights.findIndex(insight => insight.slug === initialSlug);
+          if (pinnedInsightIndex > -1) {
+            const pinnedInsight = otherInsights.splice(pinnedInsightIndex, 1)[0];
+            finalInsights.push(pinnedInsight);
+          }
+          // Add the rest of the insights (with ads)
+          finalInsights.push(...injectAds(otherInsights));
+        } else {
+          finalInsights = insightsToProcess;
+        }
+        
+        setInsights(finalInsights);
       }
     };
-    fetchAndSetInsights();
-  }, [initialInsights, isSubscribedFeedsLoaded, subscribedFeeds]);
+    processAndSetInsights();
+  }, [initialInsights, initialSlug, isSubscribedFeedsLoaded, subscribedFeeds, pathname]);
 
   
 

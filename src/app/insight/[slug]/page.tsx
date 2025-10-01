@@ -1,4 +1,3 @@
-
 import { getInsightBySlug, getAllInsights } from "@/lib/insights";
 import { serverSupabase } from "@/lib/server-supabase";
 import { InsightPageClient } from './client';
@@ -6,6 +5,8 @@ import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPaginatedInsights } from "@/lib/actions";
 import { cookies } from "next/headers";
+import { Suspense } from 'react';
+import { InsightPageLoadingSkeleton } from '@/components/insight-page-loading-skeleton';
 
 type InsightPageProps = {
     params: {
@@ -47,7 +48,15 @@ export async function generateMetadata({ params, searchParams }: InsightPageProp
   };
 }
 
-export default async function InsightPage({ params, searchParams }: InsightPageProps) {
+export default function InsightPage({ params, searchParams }: InsightPageProps) {
+  return (
+    <Suspense fallback={<InsightPageLoadingSkeleton />}>
+      <InsightPageWithData params={params} searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function InsightPageWithData({ params, searchParams }: InsightPageProps) {
   const { slug, category, deepDiveQuery } = getDynamicParams(params, searchParams);
   const initialDeepDiveIndex = deepDiveQuery ? parseInt(deepDiveQuery as string, 10) : undefined;
   
