@@ -23,6 +23,7 @@ const mapSupabaseInsightToInsightType = (supabaseData: any): Insight => {
     thumbnailUrl: supabaseData.thumbnail_url,
     author: supabaseData.author || '',
     originalFeedUrl: supabaseData.original_feed_url,
+    createdAt: supabaseData.created_at, // Add createdAt field
   };
 };
 

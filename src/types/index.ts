@@ -84,6 +84,7 @@ export interface Insight {
   originalFeedUrl?: string; // Add originalFeedUrl field
   author?: string; // Add optional author field
   isAd?: boolean; // Flag to identify ad placeholders
+  createdAt?: string; // Add optional createdAt field for client-side filtering
 }
 
 // Search-related types

@@ -43,6 +43,8 @@ type InsightCarouselProps = {
   shouldFetchPaginatedInsights?: boolean,
 }
 
+const PAGE_SIZE = 10; // Define page size for client-side pagination
+
 // Function to inject ads into the insight list
 const injectAds = (insights: Insight[]): Insight[] => {
   const newInsightsWithAds: Insight[] = [];
@@ -99,51 +101,83 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   const [insights, setInsights] = useState<Insight[]>([]);
   const [isClient, setIsClient] = useState(false);
   const { subscribedFeeds, isLoaded: isSubscribedFeedsLoaded } = useSubscribedFeeds();
+  const [isLoadingInsights, setIsLoadingInsights] = useState(true); // New state
 
   useEffect(() => {
     setIsClient(true);
     const processAndSetInsights = async () => {
+      setIsLoadingInsights(true); // Set loading to true
       if (isSubscribedFeedsLoaded) {
-        let insightsToProcess: Insight[];
+        const CLIENT_DATE_FILTER_POOL_SIZE = 50; // Max insights to fetch for client-side date filtering/shuffling
 
-        if (subscribedFeeds.length > 0) {
-          const fetched = await getPaginatedInsights({ page: 1, feedUrls: subscribedFeeds }).then(res => res.insights);
-          const homepageInsight = initialInsights.find(i => i.slug === 'home');
-          insightsToProcess = homepageInsight ? [homepageInsight, ...fetched] : [...fetched];
-        } else {
-          insightsToProcess = [...initialInsights];
+        let rawFetchedInsights: Insight[] = [];
+        let currentPage = 1;
+        let serverHasMore = true;
+
+        // Fetch insights until we have enough for date filtering or server runs out
+        // We'll fetch in chunks of PAGE_SIZE (which is 10) until we reach CLIENT_DATE_FILTER_POOL_SIZE
+        while (rawFetchedInsights.length < CLIENT_DATE_FILTER_POOL_SIZE && serverHasMore) {
+          const { insights: fetchedPage, hasMore: pageHasMore } = await getPaginatedInsights({
+            page: currentPage,
+            feedUrls: subscribedFeeds,
+          });
+          rawFetchedInsights.push(...fetchedPage);
+          serverHasMore = pageHasMore;
+          currentPage++;
         }
+
+        // Client-side date filtering
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setUTCDate(today.getUTCDate() + 1);
+        const yesterday = new Date(today);
+        yesterday.setUTCDate(today.getUTCDate() - 1);
+
+        let dateFilteredInsights = rawFetchedInsights.filter(insight => {
+          // Ensure insight.createdAt is a valid date string before creating a Date object
+          if (!insight.createdAt) return false;
+          const createdAt = new Date(insight.createdAt);
+          return createdAt >= today && createdAt < tomorrow;
+        });
+
+        if (dateFilteredInsights.length < PAGE_SIZE) {
+          const yesterdayInsights = rawFetchedInsights.filter(insight => {
+            // Ensure insight.createdAt is a valid date string before creating a Date object
+            if (!insight.createdAt) return false;
+            const createdAt = new Date(insight.createdAt);
+            return createdAt >= yesterday && createdAt < today;
+          });
+          // Combine today's and yesterday's, avoiding duplicates if any
+          const existingSlugs = new Set(dateFilteredInsights.map(i => i.slug));
+          yesterdayInsights.forEach(insight => {
+            if (!existingSlugs.has(insight.slug)) {
+              dateFilteredInsights.push(insight);
+            }
+          });
+        }
+
+        // Client-side inclusive shuffling
+        for (let i = dateFilteredInsights.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [dateFilteredInsights[i], dateFilteredInsights[j]] = [dateFilteredInsights[j], dateFilteredInsights[i]];
+        }
+
+        const homepageInsight = initialInsights.find(i => i.slug === 'home');
+        let otherInsights = dateFilteredInsights.filter(i => i.slug !== 'home');
 
         let finalInsights: Insight[] = [];
-        const homepageInsight = insightsToProcess.find(i => i.slug === 'home');
-        let otherInsights = insightsToProcess.filter(i => i.slug !== 'home');
-
-        if (pathname === '/') {
-          // Shuffle insights other than the homepage insight
-          const shuffled = otherInsights.sort(() => Math.random() - 0.5);
-          
-          // Add homepage insight at the top
-          if (homepageInsight) {
-            finalInsights.push(homepageInsight);
-          }
-          // Add shuffled insights with ads
-          finalInsights.push(...injectAds(shuffled));
-
-        } else if (pathname.startsWith('/insight/')) {
-          // Pin the current insight
-          const pinnedInsightIndex = otherInsights.findIndex(insight => insight.slug === initialSlug);
-          if (pinnedInsightIndex > -1) {
-            const pinnedInsight = otherInsights.splice(pinnedInsightIndex, 1)[0];
-            finalInsights.push(pinnedInsight);
-          }
-          // Add the rest of the insights (with ads)
-          finalInsights.push(...injectAds(otherInsights));
-        } else {
-          finalInsights = insightsToProcess;
+        if (homepageInsight) {
+          finalInsights.push(homepageInsight);
         }
-        
+        finalInsights.push(...injectAds(otherInsights)); // Use otherInsights directly after client-side shuffle
+
         setInsights(finalInsights);
+        // The hasMore logic will need to be re-evaluated based on client-side pagination
+        // For now, let's assume hasMore is true if we fetched CLIENT_DATE_FILTER_POOL_SIZE insights
+        setHasMore(rawFetchedInsights.length >= CLIENT_DATE_FILTER_POOL_SIZE);
       }
+      setIsLoadingInsights(false); // Set loading to false
     };
     processAndSetInsights();
   }, [initialInsights, initialSlug, isSubscribedFeedsLoaded, subscribedFeeds, pathname]);
@@ -492,7 +526,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   }
 
   const renderContent = () => {
-    if (!isClient) {
+    if (!isClient || isLoadingInsights) { // Check isLoadingInsights here
       return <InsightPageLoadingSkeleton />;
     }
     if (insights.length === 0 && !isLoading) {
