@@ -232,6 +232,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
             const isRss = insight.slug.startsWith('rss-');
             const blogSlug = isRss ? insight.slug.replace('rss-', '') : insight.slug;
             const blogPath = isRss ? `/blog/rss/${blogSlug}` : `/blog/${blogSlug}`;
+            localStorage.setItem('lastViewedArticleSlug', insight.slug);
             router.push(`${blogPath}?from=insight&returnTo=${insight.slug}`);
         }
     }

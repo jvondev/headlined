@@ -104,11 +104,14 @@ export function BlogPageClient({
   const handleOpenChange = useCallback((open: boolean) => {
     if (!open) {
       setIsOpen(false);
-      // Store the current slug before navigating back
-      localStorage.setItem('lastViewedArticleSlug', slug);
       // Delay navigation to allow the modal's closing animation to complete.
       setTimeout(() => {
-        router.push("/"); // Navigate back to the homepage
+        const lastSlug = localStorage.getItem('lastViewedArticleSlug');
+        if (lastSlug) {
+          router.push(`/insight/${lastSlug}`);
+        } else {
+          router.push("/"); // Navigate back to the homepage
+        }
       }, 300);
     }
   }, [router, slug]);
