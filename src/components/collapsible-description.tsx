@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -36,7 +35,7 @@ export const CollapsibleDescription: React.FC<CollapsibleDescriptionProps> = ({ 
           {isTruncated && !isExpanded && (
             <>
               <span>... </span>
-              <Badge variant="outline" className="cursor-pointer">more</Badge>
+              <Badge variant="secondary" className="cursor-pointer">more</Badge>
             </>
           )}
         </p>
