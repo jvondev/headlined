@@ -23,8 +23,9 @@ import { CarouselContext } from "@/context/carousel-context";
 import { Card } from "./ui/card";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
+import { CollapsibleDescription } from "./collapsible-description";
 
-import { cn, splitIntoSubsentences, truncateWords } from "@/lib/utils";
+import { cn, splitIntoSubsentences } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -281,10 +282,10 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                                 ))}
                             </div>
                             <h1 className="font-headline text-3xl md:text-5xl font-bold mt-2">{insight.title}</h1>
-                            <p className={cn(
+                            <CollapsibleDescription description={insight.description} className={cn(
                                 "mt-4 text-lg md:text-xl max-w-xl",
                                 insight.thumbnailUrl ? (theme === 'light' ? 'text-black/80' : 'text-white/80') : "text-muted-foreground"
-                            )}>{truncateWords(insight.description, 8)}</p>
+                            )} />
                         </div>
                         
                     </div>
