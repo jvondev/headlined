@@ -17,7 +17,6 @@ import { useFullScreen } from '@/context/full-screen-context';
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { InsightView } from "@/components/insight-view";
-import { AdPlaceholder } from "@/components/ad-placeholder";
 import { HomepageInsightSlide } from "@/components/homepage-insight-slide";
 import { getPaginatedInsights /*, getSaveCount, updateSaveCount*/ } from "@/lib/actions";
 import { useSavedItems } from "@/hooks/use-saved-items";
@@ -44,41 +43,6 @@ type InsightCarouselProps = {
 }
 
 const PAGE_SIZE = 10; // Define page size for client-side pagination
-
-// Function to inject ads into the insight list
-const injectAds = (insights: Insight[]): Insight[] => {
-  const newInsightsWithAds: Insight[] = [];
-  let lastAdIndex = -1;
-
-  insights.forEach((insight, index) => {
-    newInsightsWithAds.push(insight);
-    const distanceSinceLastAd = index - lastAdIndex;
-    
-    // Check if it's time to potentially insert an ad
-    if (distanceSinceLastAd >= 4) {
-      // Randomly decide to insert an ad (e.g., 50% chance after 4 slides)
-      // or definitely insert if distance is 8 or more
-      const shouldInsertAd = Math.random() < 0.5 || distanceSinceLastAd >= 8;
-      
-      if (shouldInsertAd) {
-        newInsightsWithAds.push({
-          isAd: true,
-          slug: `ad-${index}`, // Unique slug for the ad
-          // Fill with dummy data to satisfy the Insight type
-          seo: { title: 'Advertisement', description: '' },
-          category: [],
-          title: 'Advertisement',
-          description: '',
-          deepDives: [],
-          blogContent: '',
-        });
-        lastAdIndex = index;
-      }
-    }
-  });
-
-  return newInsightsWithAds;
-};
 
 export const InsightCarousel: FC<InsightCarouselProps> = ({ 
   initialInsights, 
@@ -170,7 +134,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
         if (homepageInsight) {
           finalInsights.push(homepageInsight);
         }
-        finalInsights.push(...injectAds(otherInsights)); // Use otherInsights directly after client-side shuffle
+        finalInsights.push(...otherInsights); // Use otherInsights directly after client-side shuffle
 
         setInsights(finalInsights);
         // The hasMore logic will need to be re-evaluated based on client-side pagination
@@ -182,7 +146,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
     processAndSetInsights();
   }, [initialInsights, initialSlug, isSubscribedFeedsLoaded, subscribedFeeds, pathname]);
 
-  
+
 
 
   const [hasMore, setHasMore] = useState(initialHasMore);
@@ -327,7 +291,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
       : newInsights; // If no feeds subscribed, show all
 
     if (filteredNewInsights.length > 0) {
-      setInsights(prev => [...prev, ...injectAds(filteredNewInsights)]);
+      setInsights(prev => [...prev, ...filteredNewInsights]);
     }
     setHasMore(newHasMore);
     setIsLoading(false);
@@ -337,13 +301,12 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   useEffect(() => {
     if (!isClient) return;
 
-    const insightsWithAds = injectAds(initialInsights);
-    setInsights(insightsWithAds);
+    setInsights(initialInsights);
     setHasMore(initialHasMore);
     page.current = 1;
 
     if (emblaApi) {
-        const newStartIndex = insightsWithAds.findIndex(i => i.slug === initialSlug);
+        const newStartIndex = initialInsights.findIndex(i => i.slug === initialSlug);
         const safeStartIndex = Math.max(0, newStartIndex);
         // Using reInit with a timeout to avoid race conditions with state updates
         setTimeout(() => emblaApi.reInit({ startIndex: safeStartIndex }), 0);
@@ -398,7 +361,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   };
 
   const currentItemId = useMemo(() => {
-    if (!currentInsight || currentInsight.isAd) return '';
+    if (!currentInsight) return '';
     if (activeDeepDiveIndex < 0) {
       return `${currentInsight.slug}-insight`;
     }
@@ -455,7 +418,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   const currentSavedItem = getSavedItem(currentItemId);
 
   const itemToSave = useMemo(() => {
-    if (!currentInsight || currentInsight.isAd) return null;
+    if (!currentInsight) return null;
     let item: Omit<SavedItem, 'savedAt' | 'note' | 'insightData'>;
 
     if (activeDeepDiveIndex < 0) {
@@ -514,7 +477,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
 
 
   const handlePreference = (preference: 'like' | 'dislike') => {
-    if (!currentInsight || currentInsight.isAd) return;
+    if (!currentInsight) return;
     currentInsight.category.forEach(cat => {
         addPreference(cat, preference);
     });
@@ -536,9 +499,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
       <>
         {insights.map((insight, index) => (
           <div className="relative min-w-0 flex-[0_0_100%] h-full" key={`${insight.slug}-${index}`} role="group" aria-roledescription="slide" aria-label={`Insight ${index + 1} of ${insights.length}`}>
-              {insight.isAd ? (
-                <AdPlaceholder />
-              ) : insight.slug === "home" ? (
+              {insight.slug === "home" ? (
                 <HomepageInsightSlide />
               ) : (
                 <InsightView 
@@ -624,7 +585,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
               size="icon"
               aria-label="More options"
               className="bg-background/50 backdrop-blur-sm rounded-full"
-              disabled={!currentInsight || currentInsight.isAd}
+              disabled={!currentInsight}
             >
               <MoreVertical className="h-4 w-4" />
             </Button>
@@ -647,14 +608,14 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
                   size="icon"
                   aria-label="Save"
                   className="bg-background/50 backdrop-blur-sm rounded-full"
-                  disabled={!currentInsight || currentInsight.isAd}
+                  disabled={!currentInsight}
                 >
                   <SaveIcon className={cn("h-4 w-4", saveIconClassName)} />
                 </Button>
                 {/* 
                 {saveCount > 0 && (
                     <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-primary-foreground">
-                        {Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(saveCount)}
+                        {Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(.slug)}
                     </span>
                 )}
                 */}
@@ -671,7 +632,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
                 "h-10 px-3 bg-background/50 backdrop-blur-sm rounded-l-[1rem] rounded-r-none text-sm font-semibold flex items-center gap-2 text-muted-foreground", // Desktop
                 isMobile && "h-auto w-auto min-w-[2rem] py-4 px-1 mb-0 mt-0 text-xs flex justify-center items-center gap-1 [writing-mode:vertical-rl] rounded-tr-none rounded-tl-[1rem] rounded-br-none rounded-bl-[1rem] text-muted-foreground" // Mobile: flex items-center, rotate 270
               )}
-              disabled={Boolean(!currentInsight || (currentInsight && currentInsight.isAd) || (currentHorizontalApi && !currentHorizontalApi.canScrollNext()))}
+              disabled={Boolean(!currentInsight || (currentHorizontalApi && !currentHorizontalApi.canScrollNext()))}
             >
               <span className={cn(isMobile && "rotate-180")}>Read More</span> <ArrowRight className="h-4 w-4" />
             </Button>

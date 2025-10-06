@@ -11,12 +11,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { AdPlaceholder } from './ad-placeholder';
 
 interface MarkdownRendererProps {
   children: string;
   className?: string;
-  showAds?: boolean;
 }
 
 interface MarkdownSection {
@@ -99,7 +97,7 @@ function parseMarkdownIntoSections(markdown: string): MarkdownSection[] {
 
 
 
-const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, showAds = true }) => { const { theme } = useTheme();
+const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className }) => { const { theme } = useTheme();
 
     // Move these calculations up
     const memoizedParsedContent = React.useMemo(() => {
@@ -189,9 +187,7 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
         },
     };
 
-    // Ad is placed after initial content if there is any, otherwise it won't be shown
-    // unless there are sections.
-    const shouldShowAd = (initialContent.trim().length > 0 || sections.length > 0) && showAds;
+
 
     const handleOpenChange = (sectionToChange: MarkdownSection, isOpen: boolean) => {
         setOpenSections(prevOpenSections => {
@@ -258,12 +254,7 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ children, className, show
             </div>
         )}
 
-        {/* Inject ad after initial content block */}
-        {shouldShowAd && (
-            <div className="my-8 not-prose">
-                <AdPlaceholder isCompact={true} />
-            </div>
-        )}
+
 
         {/* Render all sections recursively */}
         {sections.map(renderSection)}
