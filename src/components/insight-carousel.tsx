@@ -18,7 +18,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { InsightView } from "@/components/insight-view";
 import { HomepageInsightSlide } from "@/components/homepage-insight-slide";
-import { getPaginatedInsights /*, getSaveCount, updateSaveCount*/ } from "@/lib/actions";
+import { getPaginatedInsights /*, getSaveCount, updateSaveCount*/ } from "@/lib/insights";
 import { useSavedItems } from "@/hooks/use-saved-items";
 import { useToast } from "@/hooks/use-toast";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
