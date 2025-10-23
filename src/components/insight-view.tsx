@@ -272,7 +272,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                     )}>
                         <div className="max-w-3xl">
                              <div className="flex flex-wrap justify-start gap-2 mb-2">
-                                {(insight.category || []).slice(0,3).map((cat) => (
+                                {(insight.tags || []).slice(0,3).map((cat) => (
                                     // Add a check to ensure cat is a string
                                     typeof cat === 'string' && (
                                         <Link key={cat} href={`/category/${cat.toLowerCase().replace(/ /g, '-')}`}>
