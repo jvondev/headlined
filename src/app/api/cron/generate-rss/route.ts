@@ -22,7 +22,7 @@ export async function GET() {
   try {
     const { data: rssSources, error: fetchError } = await supabase
       .from('rss_sources')
-      .select('*')
+      .select('*, topic_id')
 
     if (fetchError) {
       console.error('Error fetching RSS sources:', fetchError);
@@ -38,6 +38,8 @@ export async function GET() {
         { status: 200 }
       );
     }
+
+
 
     let newPostsCount = 0;
     const allProcessedArticles: RssArticle[] = [];
@@ -68,7 +70,7 @@ export async function GET() {
                     thumbnailUrl = item.enclosure.url;
                 }
 
-                const categories: string[] = [];
+                const tags: string[] = [];
                 const rawCategories = item.categories || (item.category ? [item.category] : []);
 
                 // Ensure rawCategories is always an array for consistent processing
@@ -76,9 +78,9 @@ export async function GET() {
 
                 for (const cat of categoriesToProcess) {
                     if (typeof cat === 'string') {
-                        categories.push(cat);
+                        tags.push(cat);
                     } else if (typeof cat === 'object' && cat !== null && cat.term) {
-                        categories.push(cat.term);
+                        tags.push(cat.term);
                     }
                 }
 
@@ -91,7 +93,7 @@ export async function GET() {
                     author: item.creator || '',
                     thumbnailUrl: thumbnailUrl,
                     originalFeedUrl: source.url,
-                    categories: categories, // Add categories here
+                    tags: tags, // Add tags here
                 };
 
                 let finalArticle: RssArticle | null = null; // Declare finalArticle here
@@ -118,12 +120,16 @@ export async function GET() {
                         }
                     }
 
+                    let topicId = source.topic_id;
+
                     finalArticle = { // Assign to finalArticle
                         ...basicArticleData,
                         author: finalAuthor,
                         blogContent,
                         thumbnailUrl: thumbnailUrl,
                         deepDives,
+                        topic_id: topicId,
+                        tags: tags,
                     };
 
                     allProcessedArticles.push(finalArticle);
@@ -149,11 +155,6 @@ export async function GET() {
             continue;
           }
 
-          if (existingPost) {
-            // console.log(`Post already exists: ${item.title}`);
-            continue; // Skip if post already exists
-          }
-
           // Insert new post
           const { error: insertError } = await supabase.from('blog_posts').upsert({
             slug: finalArticle.slug,
@@ -165,9 +166,8 @@ export async function GET() {
             thumbnail_url: finalArticle.thumbnailUrl,
             original_feed_url: source.url,
             blog_content: finalArticle.blogContent,
-            // IMPORTANT: The 'category' column in Supabase 'blog_posts' table needs to be of type TEXT[] (array of text)
-            // for this to work correctly. If it's currently TEXT, you'll need to perform a schema migration.
-            category: finalArticle.categories.length > 0 ? finalArticle.categories : [source.category],
+            topic_id: finalArticle.topic_id,
+            tags: finalArticle.tags,
             source: source.name, // Use source.name from rss_sources table
           });
 
@@ -187,6 +187,7 @@ export async function GET() {
       { message: `Cron job completed. Inserted ${newPostsCount} new posts.` },
       { status: 200 }
     );
+
   } catch (generalError) {
     console.error('General error during cron job:', generalError);
     return NextResponse.json(
