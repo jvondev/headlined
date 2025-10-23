@@ -298,7 +298,7 @@ export const InsightView: FC<InsightViewProps> = ({ insight, isActive, startOnDe
                             <Card className="deep-dive-card">
                                 <div className="border-b py-6 text-center">
                                     <div className="flex justify-center items-center gap-3">
-                                        <DynamicIcon name={deepDive.icon} className="size-7 text-primary/70" />
+                                        {deepDive.icon && <DynamicIcon name={deepDive.icon} className="size-7 text-primary/70" />}
                                         <h2 className="font-headline text-2xl">{deepDive.title}</h2>
                                     </div>
                                 </div>

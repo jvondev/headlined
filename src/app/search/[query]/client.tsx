@@ -112,7 +112,7 @@ export function SearchResultsClient({ query }: SearchResultsClientProps) {
                             <CardHeader>
                                 <div className="flex items-center gap-2">
                                     <Badge variant="secondary">{result.type}</Badge>
-                                    <span className="text-sm text-muted-foreground">{result.category}</span>
+                                    {result.tags && result.tags.length > 0 && <span className="text-sm text-muted-foreground">{result.tags[0]}</span>}
                                 </div>
                                 <CardTitle className="mt-2">
                                     <Link href={getResultUrl(result)} className="hover:underline">

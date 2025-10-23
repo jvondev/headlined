@@ -121,7 +121,10 @@ export function Search({ className }: { className?: string }) {
                   )}
                   <div className="flex flex-col">
                     <span className="font-medium">{result.title}</span>
-                    <span className="text-xs text-muted-foreground">{result.category} / {result.type}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {result.tags && result.tags.length > 0 ? `${result.tags[0]} / ` : ''}
+                      {result.type}
+                    </span>
                   </div>
                 </CommandItem>
               ))}
