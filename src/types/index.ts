@@ -75,7 +75,8 @@ export interface Insight {
     title: string;
     description: string;
   };
-  category: string[];
+  topic_id: string | null;
+  tags: string[];
   title: string;
   description: string;
   thumbnailUrl?: string;
@@ -101,7 +102,7 @@ export interface SearchableItem {
 }
 
 export interface SearchResult extends SearchableItem {
-  category: string;
+  tags: string[];
 }
 
 // Saved Item type
@@ -117,6 +118,24 @@ export interface SavedItem {
 }
 
 
+export interface Interest {
+  id: string;
+  name: string;
+  aliases: string[];
+  is_public: boolean;
+  topic_id: string | null;
+  icon?: string;
+  background_color?: string;
+  text_color?: string;
+}
+
+export interface Topic {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: string;
+}
+
 // RSS-related types
 export interface RssArticle {
     slug: string;
@@ -129,13 +148,15 @@ export interface RssArticle {
     blogContent: string;
     originalFeedUrl: string;
     deepDives: DeepDive<DeepDiveType>[];
-    categories: string[];
+    topic_id: string | null;
+    tags: string[];
 }
 
 export interface RssFeed {
     name: string;
     url: string;
-    category: string;
+    topic_id: string | null;
+    tags: string[];
     sourceName: string; // e.g., 'bbc', 'verge'
     fallbackIconUrl?: string; // URL for a high-quality fallback logo
     cardBackgroundColor?: string;
