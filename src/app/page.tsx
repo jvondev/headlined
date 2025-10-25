@@ -7,6 +7,7 @@ import { getPaginatedInsights } from "@/lib/insights"; // Import getPaginatedIns
 import { supabase } from "@/lib/supabase"; // Import client-side supabase client for localStorage
 import { HomepageInsightSlide } from "@/components/homepage-insight-slide"; // Import the new homepage slide component
 import { InsightCarouselWrapper } from "@/components/insight-carousel-wrapper";
+import { OnboardingProvider } from "@/context/onboarding-provider";
 
 
 
@@ -204,7 +205,7 @@ export default async function HomePage() {
     // Fetch all RSS feeds from Supabase to get names and categories
     const { data: rssSources, error: rssSourcesError } = await serverSupabase
       .from('rss_sources')
-      .select('name, url, category');
+      .select('name, url, topics ( name, id )');
 
     if (rssSourcesError) {
       throw new Error(rssSourcesError.message);
@@ -213,7 +214,8 @@ export default async function HomePage() {
     allRssFeeds = rssSources.map(source => ({
       name: source.name,
       url: source.url,
-      category: source.category,
+      tags: source.topics ? [source.topics.name] : [],
+      topic_id: source.topics ? source.topics.id : null,
       sourceName: source.name.toLowerCase().replace(/\s/g, ''), // Simple sourceName generation
     }));
 
@@ -257,11 +259,13 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Suspense fallback={<InsightPageLoadingSkeleton />}>
-        <InsightCarouselWrapper
-          initialInsights={[readmoreHomepageInsight, ...insightsForCarouselState]}
-          initialHasMore={hasMore}
-          shouldFetchPaginatedInsights={true}
-        />
+        <OnboardingProvider>
+          <InsightCarouselWrapper
+            initialInsights={[readmoreHomepageInsight, ...insightsForCarouselState]}
+            initialHasMore={hasMore}
+            shouldFetchPaginatedInsights={true}
+          />
+        </OnboardingProvider>
       </Suspense>
     </main>
   );
