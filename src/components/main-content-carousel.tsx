@@ -10,6 +10,9 @@ import type { Post, Topic, Interest } from "@/types";
 import { getPaginatedPosts } from "@/lib/posts";
 import { getTopics } from "@/data/topics";
 import { getAllInterests } from "@/data/interests";
+import { SavedContent } from "@/components/saved-content";
+import { ExploreContent } from "@/components/explore-content";
+import { SearchContent } from "@/components/search-content";
 
 type MainContentCarouselProps = {
   activeFilterType: "topic" | "interest" | "none";
@@ -77,6 +80,7 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
         } else if (activeFilterType === "none") {
             // For Saved, Explore, Search, we don't fetch posts here directly
             // Their content will be rendered by their respective components
+            // Set loading to false immediately as MainContentCarousel doesn't fetch their data
             setIsLoadingFilterPosts(false);
         }
         setInitialPostsForFilter(fetchedPosts);
@@ -85,7 +89,10 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
         console.error("Error fetching posts for filter:", err.message);
         setFilterError("Failed to load posts for this filter.");
       } finally {
-        setIsLoadingFilterPosts(false);
+        // Only set loading to false if it was true, to avoid flickering
+        if (isLoadingFilterPosts) {
+            setIsLoadingFilterPosts(false);
+        }
       }
     };
     fetchPostsForFilter();
@@ -121,21 +128,14 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
     if (emblaApi) {
       emblaApi.scrollTo(newIndex, true);
     }
-  }, [activeFilterType, activeFilterValue, emblaApi]);
+  }, [activeFilterType, activeFilterValue, topics, interests, emblaApi]);
 
   return (
     <div className="flex-1 overflow-hidden" ref={emblaRef}>
       <div className="flex h-full">
         {/* Saved Page */}
         <div className="flex-[0_0_100%] h-full">
-          {isLoadingFilterPosts ? (
-            <PostPageLoadingSkeleton />
-          ) : (
-            <div className="text-center py-16">
-              <h1 className="font-headline text-4xl font-bold">Saved Content</h1>
-              <p className="mt-2 text-lg text-muted-foreground">Your saved items will appear here.</p>
-            </div>
-          )}
+          <SavedContent isLoading={activeFilterType === "none" && activeFilterValue === "Saved" && isLoadingFilterPosts} />
         </div>
 
         {/* Topics and Interests Posts */}
@@ -168,26 +168,12 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
 
         {/* Explore Page */}
         <div className="flex-[0_0_100%] h-full">
-          {isLoadingFilterPosts ? (
-            <PostPageLoadingSkeleton />
-          ) : (
-            <div className="text-center py-16">
-              <h1 className="font-headline text-4xl font-bold">Explore New Content</h1>
-              <p className="mt-2 text-lg text-muted-foreground">Discover new topics and interests.</p>
-            </div>
-          )}
+          <ExploreContent isLoading={activeFilterType === "none" && activeFilterValue === "Explore" && isLoadingFilterPosts} />
         </div>
 
         {/* Search Page */}
         <div className="flex-[0_0_100%] h-full">
-          {isLoadingFilterPosts ? (
-            <PostPageLoadingSkeleton />
-          ) : (
-            <div className="text-center py-16">
-              <h1 className="font-headline text-4xl font-bold">Search Content</h1>
-              <p className="mt-2 text-lg text-muted-foreground">Search for posts across all feeds.</p>
-            </div>
-          )}
+          <SearchContent isLoading={activeFilterType === "none" && activeFilterValue === "Search" && isLoadingFilterPosts} />
         </div>
       </div>
     </div>
