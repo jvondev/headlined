@@ -10,7 +10,7 @@ export default async function HomePage() {
   const interests = await getAllInterests();
 
   return (
-    <main className="min-h-screen w-full bg-background">
+    <main className="h-screen w-full bg-background">
       <Suspense fallback={<PostPageLoadingSkeleton />}>
         <OnboardingProvider>
           <SynchronizedCarousel
