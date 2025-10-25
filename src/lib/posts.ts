@@ -17,7 +17,7 @@ const mapSupabasePostToPostType = (supabaseData: any): Post => {
     thumbnail_url: supabaseData.thumbnail_url,
     created_at: supabaseData.created_at,
     updated_at: supabaseData.updated_at,
-    topic_id: supabaseData.topic_id,
+    topic: supabaseData.topic,
     summaries: [], // Assuming summaries are not stored in the posts table
   };
 };
@@ -41,12 +41,12 @@ export const getAllPosts = unstable_cache(
 
 interface PaginatedPostsOptions {
   page: number;
-  topic_id?: string;
+  topic_name?: string; // Add optional topic_name
   search_query?: string; // Add optional search_query
 }
 
 export const getPaginatedPosts = unstable_cache(
-  async ({ page, topic_id, search_query }: PaginatedPostsOptions): Promise<{ posts: Post[], hasMore: boolean }> => {
+  async ({ page, topic_name, search_query }: PaginatedPostsOptions): Promise<{ posts: Post[], hasMore: boolean }> => {
     const startIndex = (page - 1) * PAGE_SIZE;
     const endIndex = startIndex + PAGE_SIZE - 1; // Supabase range is inclusive
 
@@ -58,9 +58,9 @@ export const getPaginatedPosts = unstable_cache(
     if (search_query) {
       // Perform full-text search if search_query is provided
       query = query.textSearch('fts', search_query);
-    } else if (topic_id) {
-      // Filter by topic_id if no search_query
-      query = query.eq('topic_id', topic_id);
+    } else if (topic_name) {
+      // Filter by topic column if topic_name is provided
+      query = query.eq('topic', topic_name);
     }
 
     const { data, error } = await query.range(startIndex, endIndex + 1); // Fetch one extra to check hasMore

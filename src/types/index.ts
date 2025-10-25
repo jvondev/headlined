@@ -30,7 +30,7 @@ export interface Post {
   thumbnail_url: string | null;
   created_at: string;
   updated_at: string;
-  topic_id: string | null;
+  topic: string | null;
   summaries: Summary[];
 }
 
@@ -47,7 +47,7 @@ export interface SearchableItem {
 }
 
 export interface SearchResult extends SearchableItem {
-  topic_id: string | null;
+  topic: string | null;
 }
 
 // Saved Item type

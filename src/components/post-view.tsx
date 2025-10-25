@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import { Card } from "./ui/card";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
-import { CollapsibleDescription } from "./collapsible-description";
+
 import { SummaryView } from "./summary-view";
 
 import { cn, splitIntoSubsentences } from "@/lib/utils";
@@ -78,10 +78,7 @@ export const PostView: FC<PostViewProps> = ({ post, isActive }) => {
                 )}>
                     <div className="max-w-3xl">
                         <h1 className="font-headline text-3xl md:text-5xl font-bold mt-2">{post.title}</h1>
-                        <CollapsibleDescription description={post.description} className={cn(
-                            "mt-4 text-lg md:text-xl max-w-xl",
-                            post.thumbnail_url ? (theme === 'light' ? 'text-black/80' : 'text-white/80') : "text-muted-foreground"
-                        )} />
+
                     </div>
                 </div>
             </div>

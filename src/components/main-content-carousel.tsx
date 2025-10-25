@@ -69,7 +69,7 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
             setFilterError("Topic not found.");
             return;
           }
-          const result = await getPaginatedPosts({ page: 1, topic_id: currentTopic.id });
+          const result = await getPaginatedPosts({ page: 1, topic_name: currentTopic.name });
           fetchedPosts = result.posts;
           hasMore = result.hasMore;
         } else if (currentItem.type === "interest") {
@@ -132,7 +132,7 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
                       shouldFetchPaginatedPosts={true}
                       hasSeenOnboarding={hasSeenOnboarding}
                       markOnboardingComplete={markOnboardingComplete}
-                      topicId={item.type === "topic" ? (topics.find(t => t.name === item.name)?.id || "") : undefined}
+                      topicName={item.type === "topic" ? (topics.find(t => t.name === item.name)?.name || "") : undefined}
                       searchQuery={item.type === "interest" ? (interests.find(i => i.name === item.name)?.name || "") : undefined}
                     />
                   )

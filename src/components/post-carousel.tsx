@@ -31,7 +31,7 @@ type PostCarouselProps = {
   shouldFetchPaginatedPosts?: boolean,
   hasSeenOnboarding: boolean,
   markOnboardingComplete: () => void,
-  topicId?: string; // Make topicId optional
+  topicName?: string; // Use topicName instead of topicId
   searchQuery?: string; // Add searchQuery optional prop
 }
 
@@ -44,7 +44,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   shouldFetchPaginatedPosts = false,
   hasSeenOnboarding,
   markOnboardingComplete,
-  topicId, // Destructure topicId
+  topicName, // Destructure topicName
   searchQuery, // Destructure searchQuery
 }) => {
   const router = useRouter();
@@ -154,7 +154,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     
     const { posts: newPosts, hasMore: newHasMore } = await getPaginatedPosts({
       page: page.current,
-      topic_id: topicId, // Use topicId prop
+      topic_name: topicName, // Use topicName prop
       search_query: searchQuery, // Use searchQuery prop
     });
 
@@ -167,7 +167,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     }
     setHasMore(newHasMore);
     setIsLoading(false);
-  }, [isLoading, hasMore, topicId, searchQuery, posts.length, isPreferencesLoaded]);
+  }, [isLoading, hasMore, topicName, searchQuery, posts.length, isPreferencesLoaded]);
   
 
 
@@ -190,7 +190,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return () => {
       emblaApi.off("settle", onSettle);
     };
-  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicId, searchQuery]);
+  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery]);
 
 
 
@@ -274,7 +274,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return (
       <>
         {posts.map((post, index) => (
-          <div className="relative min-w-0 flex-[0_0_100%] h-full" key={`${post.slug}-${index}-${topicId || searchQuery}`} role="group" aria-roledescription="slide" aria-label={`Post ${index + 1} of ${posts.length}`}>
+          <div className="relative min-w-0 flex-[0_0_100%] h-full" key={`${post.slug}-${index}-${topicName || searchQuery}`} role="group" aria-roledescription="slide" aria-label={`Post ${index + 1} of ${posts.length}`}>
               {post.slug === "home" ? (
                 <HomepagePostSlide />
               ) : (
