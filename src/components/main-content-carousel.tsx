@@ -99,99 +99,95 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
 
   useEffect(() => {
     // Build the map of filter values to slide indices
-    let index = 0;
-    slideIndexMap.current["Saved"] = index++;
-    topics.forEach(topic => slideIndexMap.current[topic.name] = index++);
-    interests.forEach(interest => slideIndexMap.current[interest.name] = index++);
-    slideIndexMap.current["Explore"] = index++;
-    slideIndexMap.current["Search"] = index++;
+    slideIndexMap.current["Saved"] = 0;
+    slideIndexMap.current["TopicsAndInterests"] = 1; // Represents the combined topics/interests slide
+    slideIndexMap.current["Explore"] = 2;
+    slideIndexMap.current["Search"] = 3;
 
     let newIndex = 0;
     if (activeFilterType === "none") {
-        newIndex = slideIndexMap.current[activeFilterValue] || 0;
-    } else {
-        newIndex = slideIndexMap.current[activeFilterValue] || 0;
+        if (activeFilterValue === "Saved") {
+            newIndex = slideIndexMap.current["Saved"];
+        } else if (activeFilterValue === "Explore") {
+            newIndex = slideIndexMap.current["Explore"];
+        } else if (activeFilterValue === "Search") {
+            newIndex = slideIndexMap.current["Search"];
+        }
+    } else if (activeFilterType === "topic" || activeFilterType === "interest") {
+        newIndex = slideIndexMap.current["TopicsAndInterests"];
     }
     setSelectedIndex(newIndex);
 
     if (emblaApi) {
       emblaApi.scrollTo(newIndex, true);
     }
-  }, [activeFilterType, activeFilterValue, topics, interests, emblaApi]);
+  }, [activeFilterType, activeFilterValue, emblaApi]);
 
   return (
     <div className="flex-1 overflow-hidden" ref={emblaRef}>
       <div className="flex h-full">
         {/* Saved Page */}
         <div className="flex-[0_0_100%] h-full">
-          {activeFilterType === "none" && activeFilterValue === "Saved" ? (
-            isLoadingFilterPosts ? (
-              <PostPageLoadingSkeleton />
-            ) : (
-              <div className="text-center py-16">
-                <h1 className="font-headline text-4xl font-bold">Saved Content</h1>
-                <p className="mt-2 text-lg text-muted-foreground">Your saved items will appear here.</p>
-              </div>
-            )
-          ) : null}
+          {isLoadingFilterPosts ? (
+            <PostPageLoadingSkeleton />
+          ) : (
+            <div className="text-center py-16">
+              <h1 className="font-headline text-4xl font-bold">Saved Content</h1>
+              <p className="mt-2 text-lg text-muted-foreground">Your saved items will appear here.</p>
+            </div>
+          )}
         </div>
 
         {/* Topics and Interests Posts */}
-        {(activeFilterType === "topic" || activeFilterType === "interest") ? (
-            <div className="flex-[0_0_100%] h-full">
-                {isLoadingFilterPosts ? (
-                    <PostPageLoadingSkeleton />
-                ) : filterError ? (
-                    <div className="text-center text-red-500 py-16">
-                        <h1 className="font-headline text-4xl font-bold">Error</h1>
-                        <p className="mt-2 text-lg text-muted-foreground">{filterError}</p>
-                    </div>
-                ) : initialPostsForFilter.length === 0 ? (
-                    <div className="text-center py-16">
-                        <h1 className="font-headline text-4xl font-bold">No Posts Found</h1>
-                        <p className="mt-2 text-lg text-muted-foreground">No posts found for "{currentFilterName}".</p>
-                    </div>
-                ) : (
-                    <PostCarousel
-                        initialPosts={initialPostsForFilter}
-                        initialSlug={initialPostsForFilter[0]?.slug || ""}
-                        initialHasMore={initialHasMoreForFilter}
-                        shouldFetchPaginatedPosts={true}
-                        hasSeenOnboarding={hasSeenOnboarding}
-                        markOnboardingComplete={markOnboardingComplete}
-                        topicId={activeFilterType === "topic" ? (topics.find(t => t.name === activeFilterValue)?.id || "") : undefined}
-                        searchQuery={activeFilterType === "interest" ? (interests.find(i => i.name === activeFilterValue)?.name || "") : undefined}
-                    />
-                )}
-            </div>
-        ) : null}
+        <div className="flex-[0_0_100%] h-full">
+            {isLoadingFilterPosts ? (
+                <PostPageLoadingSkeleton />
+            ) : filterError ? (
+                <div className="text-center text-red-500 py-16">
+                    <h1 className="font-headline text-4xl font-bold">Error</h1>
+                    <p className="mt-2 text-lg text-muted-foreground">{filterError}</p>
+                </div>
+            ) : initialPostsForFilter.length === 0 ? (
+                <div className="text-center py-16">
+                    <h1 className="font-headline text-4xl font-bold">No Posts Found</h1>
+                    <p className="mt-2 text-lg text-muted-foreground">No posts found for "{currentFilterName}".</p>
+                </div>
+            ) : (
+                <PostCarousel
+                    initialPosts={initialPostsForFilter}
+                    initialSlug={initialPostsForFilter[0]?.slug || ""}
+                    initialHasMore={initialHasMoreForFilter}
+                    shouldFetchPaginatedPosts={true}
+                    hasSeenOnboarding={hasSeenOnboarding}
+                    markOnboardingComplete={markOnboardingComplete}
+                    topicId={activeFilterType === "topic" ? (topics.find(t => t.name === activeFilterValue)?.id || "") : undefined}
+                    searchQuery={activeFilterType === "interest" ? (interests.find(i => i.name === activeFilterValue)?.name || "") : undefined}
+                />
+            )}
+        </div>
 
         {/* Explore Page */}
         <div className="flex-[0_0_100%] h-full">
-          {activeFilterType === "none" && activeFilterValue === "Explore" ? (
-            isLoadingFilterPosts ? (
-              <PostPageLoadingSkeleton />
-            ) : (
-              <div className="text-center py-16">
-                <h1 className="font-headline text-4xl font-bold">Explore New Content</h1>
-                <p className="mt-2 text-lg text-muted-foreground">Discover new topics and interests.</p>
-              </div>
-            )
-          ) : null}
+          {isLoadingFilterPosts ? (
+            <PostPageLoadingSkeleton />
+          ) : (
+            <div className="text-center py-16">
+              <h1 className="font-headline text-4xl font-bold">Explore New Content</h1>
+              <p className="mt-2 text-lg text-muted-foreground">Discover new topics and interests.</p>
+            </div>
+          )}
         </div>
 
         {/* Search Page */}
         <div className="flex-[0_0_100%] h-full">
-          {activeFilterType === "none" && activeFilterValue === "Search" ? (
-            isLoadingFilterPosts ? (
-              <PostPageLoadingSkeleton />
-            ) : (
-              <div className="text-center py-16">
-                <h1 className="font-headline text-4xl font-bold">Search Content</h1>
-                <p className="mt-2 text-lg text-muted-foreground">Search for posts across all feeds.</p>
-              </div>
-            )
-          ) : null}
+          {isLoadingFilterPosts ? (
+            <PostPageLoadingSkeleton />
+          ) : (
+            <div className="text-center py-16">
+              <h1 className="font-headline text-4xl font-bold">Search Content</h1>
+              <p className="mt-2 text-lg text-muted-foreground">Search for posts across all feeds.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
