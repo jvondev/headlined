@@ -86,25 +86,25 @@ export function CarouselNav({
                             ? pathname === item.href 
                             : (activeFilterType === item.type && activeFilterValue === item.name);
 
-                        return (
-                            <Link href={item.href} key={item.name} passHref>
-                                <Button
-                                    ref={el => itemRefs.current[item.name] = el}
-                                    variant={isActive ? "secondary" : "outline"}
-                                    size={item.isIconOnly ? "icon" : "sm"}
-                                    onClick={() => {
-                                        if (item.type !== "none") {
-                                            onFilterChange(item.type, item.name);
-                                        }
-                                    }}
-                                    className={cn("rounded-full shrink-0", item.isIconOnly ? "" : "px-4")}
-                                >
-                                    {item.icon && <item.icon className={cn("h-4 w-4", { "mr-2": !item.isIconOnly })} />}
-                                    {!item.isIconOnly && item.name}
-                                </Button>
-                            </Link>
-                        );
-                    })}
+                                            return (
+                                                <Button
+                                                    ref={el => itemRefs.current[item.name] = el}
+                                                    variant={isActive ? "secondary" : "outline"}
+                                                    size={item.isIconOnly ? "icon" : "sm"}
+                                                    onClick={() => {
+                                                        if (item.type === "none") {
+                                                            // For Saved, Explore, Search, just update the active filter
+                                                            onFilterChange(item.type, item.name);
+                                                        } else {
+                                                            onFilterChange(item.type, item.name);
+                                                        }
+                                                    }}
+                                                    className={cn("rounded-full shrink-0", item.isIconOnly ? "" : "px-4")}
+                                                >
+                                                    {item.icon && <item.icon className={cn("h-4 w-4", { "mr-2": !item.isIconOnly })} />}
+                                                    {!item.isIconOnly && item.name}
+                                                </Button>
+                                            );                    })}
                 </div>
             </ScrollAreaPrimitive.Viewport>
             <ScrollBar orientation="horizontal" className="invisible" />
