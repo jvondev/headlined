@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import useEmblaCarousel from "embla-carousel-react";
-import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { cn } from "@/lib/utils";
 import { PostCarousel } from "@/components/post-carousel";
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
@@ -14,9 +12,6 @@ import { getPaginatedPosts } from "@/lib/posts";
 import type { Post, Topic, Interest } from "@/types";
 import { useOnboardingStatus } from "@/hooks/use-onboarding-status";
 import { PageHeader } from "@/components/shared/page-header";
-import { useFullScreen } from "@/context/full-screen-context";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const DEFAULT_TOPIC_SLUG = "tech"; // Default topic
 
@@ -60,35 +55,16 @@ export default function HomePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus();
-  const { isFullScreen, toggleFullScreen } = useFullScreen();
 
   const [topics, setTopics] = useState<Topic[]>([]);
   const [interests, setInterests] = useState<Interest[]>([]);
-  const [activeFilterType, setActiveFilterType] = useState<"topic" | "interest">("topic");
+  const [activeFilterType, setActiveFilterType] = useState<"topic" | "interest" | "none">("topic");
   const [activeFilterValue, setActiveFilterValue] = useState<string>("");
 
   const [initialPostsForFilter, setInitialPostsForFilter] = useState<Post[]>([]);
   const [initialHasMoreForFilter, setInitialHasMoreForFilter] = useState(false);
   const [isLoadingFilterPosts, setIsLoadingFilterPosts] = useState(true);
   const [filterError, setFilterError] = useState<string | null>(null);
-
-  // Embla for horizontal topic/interest carousel
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: false,
-    axis: 'x',
-    startIndex: 0,
-  }, [WheelGesturesPlugin({
-    forceWheelAxis: 'x',
-    wheelDraggingClass: 'is-wheel-dragging'
-  })]);
-
-  const scrollPrev = useCallback(() => {
-    emblaApi?.scrollPrev();
-  }, [emblaApi]);
-
-  const scrollNext = useCallback(() => {
-    emblaApi?.scrollNext();
-  }, [emblaApi]);
 
   // Fetch topics and interests on mount
   useEffect(() => {
@@ -106,69 +82,18 @@ export default function HomePage() {
       if (topicParam) {
         setActiveFilterType("topic");
         setActiveFilterValue(topicParam);
-        const initialIndex = fetchedTopics.findIndex(topic => topic.name === topicParam);
-        if (initialIndex !== -1) {
-          emblaApi?.scrollTo(initialIndex, false);
-        }
       } else if (interestParam) {
         setActiveFilterType("interest");
         setActiveFilterValue(interestParam);
-        // Need to adjust emblaApi scroll for interests if they are in the same carousel
-        // For now, assume topics come first in the carousel
-        const initialIndex = fetchedTopics.length + fetchedInterests.findIndex(interest => interest.name === interestParam);
-        if (initialIndex !== fetchedTopics.length -1) { // Check if interest is found
-          emblaApi?.scrollTo(initialIndex, false);
-        }
       } else if (fetchedTopics.length > 0) {
         // Default to tech topic if no params
         setActiveFilterType("topic");
         setActiveFilterValue(DEFAULT_TOPIC_SLUG);
-        const initialIndex = fetchedTopics.findIndex(topic => topic.name === DEFAULT_TOPIC_SLUG);
-        if (initialIndex !== -1) {
-          emblaApi?.scrollTo(initialIndex, false);
-        }
         router.replace(`/?topic=${DEFAULT_TOPIC_SLUG}`);
       }
     };
     fetchData();
-  }, [emblaApi, router, searchParams]);
-
-  // Handle filter change via Embla API
-  useEffect(() => {
-    if (!emblaApi || topics.length === 0 || interests.length === 0) return;
-
-    const onSelect = () => {
-      const newIndex = emblaApi.selectedScrollSnap();
-      const totalTopics = topics.length;
-
-      if (newIndex < totalTopics) {
-        // It's a topic
-        const newTopicSlug = topics[newIndex]?.name;
-        if (newTopicSlug && (activeFilterType !== "topic" || activeFilterValue !== newTopicSlug)) {
-          setActiveFilterType("topic");
-          setActiveFilterValue(newTopicSlug);
-          router.replace(`/?topic=${newTopicSlug}`);
-        }
-      } else {
-        // It's an interest
-        const interestIndex = newIndex - totalTopics;
-        const newInterestSlug = interests[interestIndex]?.name;
-        if (newInterestSlug && (activeFilterType !== "interest" || activeFilterValue !== newInterestSlug)) {
-          setActiveFilterType("interest");
-          setActiveFilterValue(newInterestSlug);
-          router.replace(`/?interest=${newInterestSlug}`);
-        }
-      }
-    };
-
-    emblaApi.on('select', onSelect);
-    emblaApi.on('reInit', onSelect);
-
-    return () => {
-      emblaApi.off('select', onSelect);
-      emblaApi.off('reInit', onSelect);
-    };
-  }, [emblaApi, topics, interests, router, activeFilterType, activeFilterValue]);
+  }, [router, searchParams]);
 
   // Fetch posts for the active filter
   useEffect(() => {
@@ -205,6 +130,12 @@ export default function HomePage() {
           const result = await getPaginatedPosts({ page: 1, search_query: searchQuery });
           fetchedPosts = result.posts;
           hasMore = result.hasMore;
+        } else if (activeFilterType === "none") {
+            // Handle "Saved" and "Explore" here if they need to fetch posts
+            // For now, we assume they navigate to a different page and don't fetch posts on the homepage
+            setInitialPostsForFilter([]);
+            setInitialHasMoreForFilter(false);
+            setIsLoadingFilterPosts(false);
         }
         setInitialPostsForFilter(fetchedPosts);
         setInitialHasMoreForFilter(hasMore);
@@ -225,8 +156,6 @@ export default function HomePage() {
       <Suspense fallback={<PostPageLoadingSkeleton />}>
         <OnboardingProvider>
           <PageHeader
-            isFullScreen={isFullScreen}
-            toggleFullScreen={toggleFullScreen}
             topics={topics}
             interests={interests}
             activeFilterType={activeFilterType}
@@ -236,39 +165,16 @@ export default function HomePage() {
                 router.replace(`/?topic=${value}`);
               } else if (type === "interest") {
                 router.replace(`/?interest=${value}`);
+              } else if (value === "Saved") {
+                router.push("/saved");
+              } else if (value === "Explore") {
+                router.push("/explore");
               }
             }}
           />
 
-          {/* Horizontal Topic/Interest Carousel */}
-          <div className="relative h-full w-full flex flex-col">
-            <div className="flex-shrink-0 py-2">
-              <div className="overflow-hidden" ref={emblaRef}>
-                <div className="flex">
-                  {topics.map((topic) => (
-                    <div key={topic.name} className="flex-[0_0_100%] px-4">
-                      <h2 className="text-xl font-bold text-center">{topic.name}</h2>
-                    </div>
-                  ))}
-                  {interests.map((interest) => (
-                    <div key={interest.name} className="flex-[0_0_100%] px-4">
-                      <h2 className="text-xl font-bold text-center">{interest.name}</h2>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="absolute top-1/2 left-0 right-0 flex justify-between transform -translate-y-1/2 px-2">
-                <Button onClick={scrollPrev} disabled={!emblaApi?.canScrollPrev()} variant="ghost" size="icon" className="bg-background/50 backdrop-blur-sm rounded-full">
-                  <ArrowLeft className="h-6 w-6" />
-                </Button>
-                <Button onClick={scrollNext} disabled={!emblaApi?.canScrollNext()} variant="ghost" size="icon" className="bg-background/50 backdrop-blur-sm rounded-full">
-                  <ArrowRight className="h-6 w-6" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Vertical Post Carousel for Active Filter */}
-            <div className="flex-1">
+          {/* Vertical Post Carousel for Active Filter */}
+          <div className="flex-1">
               {isLoadingFilterPosts ? (
                 <PostPageLoadingSkeleton />
               ) : filterError ? (
@@ -294,7 +200,6 @@ export default function HomePage() {
                 />
               )}
             </div>
-          </div>
         </OnboardingProvider>
       </Suspense>
     </main>

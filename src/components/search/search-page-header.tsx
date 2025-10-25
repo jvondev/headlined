@@ -6,14 +6,12 @@ import { Search as SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/shared/page-header";
-import { useFullScreen } from "@/context/full-screen-context";
 
 type SearchPageHeaderProps = {
   initialQuery: string;
 };
 
 export const SearchPageHeader: FC<SearchPageHeaderProps> = ({ initialQuery }) => {
-  const { isFullScreen, toggleFullScreen } = useFullScreen();
   const [query, setQuery] = useState(initialQuery);
   const router = useRouter();
 
@@ -25,10 +23,7 @@ export const SearchPageHeader: FC<SearchPageHeaderProps> = ({ initialQuery }) =>
   };
 
   return (
-    <PageHeader
-      isFullScreen={isFullScreen}
-      toggleFullScreen={toggleFullScreen}
-    >
+    <PageHeader>
       <form onSubmit={handleSearch} className="flex-1 relative max-w-xl mx-auto">
         <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input 

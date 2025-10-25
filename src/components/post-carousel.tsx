@@ -11,7 +11,6 @@ import { CarouselContext } from "@/context/carousel-context";
 import { useOnboardingContext } from "@/context/onboarding-context";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { PageHeader } from "./shared/page-header";
-import { useFullScreen } from '@/context/full-screen-context';
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { PostView } from "@/components/post-view";
@@ -102,7 +101,6 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const currentPost = posts[activeSlideIndex];
 
   const { toast } = useToast();
-  const { isFullScreen, toggleFullScreen } = useFullScreen(); // Added FullScreenContext
   const { setVerticalEmblaApi } = useOnboardingContext();
 
   useEffect(() => {
@@ -308,14 +306,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   return (
       <CarouselContext.Provider value={{ currentPostSlug: currentPost?.slug }}>
-      <div className="relative flex h-screen w-full flex-col items-center justify-center" onDoubleClick={toggleFullScreen}>
-        <PageHeader 
-            isFullScreen={isFullScreen}
-            toggleFullScreen={toggleFullScreen}
-            topics={[]}
-            currentTopicSlug={''}
-            onTopicChange={() => {}}
-        />
+      <div className="relative flex h-screen w-full flex-col items-center justify-center">
 
         <div className="overflow-hidden h-full w-full" ref={emblaRef} role="region" aria-roledescription="carousel" aria-label="Posts Carousel">
           <div className="flex flex-col h-full">
@@ -323,8 +314,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
           </div>
         </div>
         
-        <div className={cn("fixed bottom-20 right-4 z-20 flex flex-col items-center gap-2", { "hidden": isFullScreen })}>
-            <div className="relative">
+                <div className={cn("fixed bottom-20 right-4 z-20 flex flex-col items-center gap-2")}>            <div className="relative">
                 <Button
                   onClick={handleSaveClick}
                   variant="outline"
@@ -339,8 +329,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
             
         </div>
 
-        <div className={cn("fixed bottom-0 left-0 right-0 z-20 flex justify-center mb-16", { "hidden": isFullScreen })}>
-            <Button 
+        <div className={cn("fixed bottom-0 left-0 right-0 z-20 flex justify-center mb-16")}>            <Button 
               onClick={scrollDown} 
               variant="outline" 
               size="icon" 

@@ -11,6 +11,6 @@ export const topicsData: Omit<Topic, 'id' | 'created_at'>[] = [
   },
   {
     name: "sports",
-    icon: "Football",
+    icon: "Goal",
   },
 ];
