@@ -102,7 +102,8 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         if (currentItem) {
             setActiveFilterType(currentItem.type);
             setActiveFilterValue(currentItem.name);
-            navEmblaApi.scrollTo(newSelectedIndex, true);
+            const targetIndex = Math.max(0, newSelectedIndex - 1);
+            navEmblaApi.scrollTo(targetIndex, true);
         }
     }, [navEmblaApi, allFilterItems]);
 
