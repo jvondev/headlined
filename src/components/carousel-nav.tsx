@@ -38,7 +38,10 @@ export function CarouselNav({
                     const isActive = selectedIndex === index;
 
                     return (
-                        <div key={item.name} className="flex-[0_0_auto] mr-2 last:mr-0">
+                        <div key={item.name} className={cn("flex-[0_0_auto] mr-2 last:mr-0", {
+                            "pl-4": index === 0,
+                            "pr-4": index === allFilterItems.length - 1,
+                        })}>
                             <Button
                                 variant={isActive ? "secondary" : "outline"}
                                 size={item.isIconOnly ? "icon" : "sm"}
