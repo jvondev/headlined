@@ -22,12 +22,12 @@ export const CollapsibleDescription: React.FC<CollapsibleDescriptionProps> = ({ 
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded} className={cn("w-full", className)}>
       <CollapsibleContent>
-        <p>
+        <div>
           {description}
-        </p>
+        </div>
       </CollapsibleContent>
       <CollapsibleTrigger asChild>
-        <p className={cn(
+        <div className={cn(
           "mt-4 text-lg md:text-xl max-w-xl",
           "text-muted-foreground"
       )}>
@@ -38,7 +38,7 @@ export const CollapsibleDescription: React.FC<CollapsibleDescriptionProps> = ({ 
               <Badge variant="secondary" className="cursor-pointer">more</Badge>
             </>
           )}
-        </p>
+        </div>
       </CollapsibleTrigger>
     </Collapsible>
   );

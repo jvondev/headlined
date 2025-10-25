@@ -8,9 +8,7 @@ import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, Arrow
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "./ui/button";
 import { CarouselContext } from "@/context/carousel-context";
-import { useOnboardingStatus } from "@/hooks/use-onboarding-status";
-import { OnboardingContext } from "@/context/onboarding-context";
-import { OnboardingFlow } from "@/components/onboarding/onboarding-flow";
+import { useOnboardingContext } from "@/context/onboarding-context";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { PageHeader } from "./shared/page-header";
 import { useFullScreen } from '@/context/full-screen-context';
@@ -37,8 +35,6 @@ type InsightCarouselProps = {
   rssCategories?: string[],
   rssSelectedCategory?: string,
   initialHasMore: boolean,
-  hasSeenOnboarding: boolean,
-  markOnboardingComplete: () => void,
   shouldFetchPaginatedInsights?: boolean,
 }
 
@@ -171,7 +167,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   })]);
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(initialSlide);
-  const horizontalApis = useRef<Map<string, UseEmblaCarouselType[1] | null>>(new Map());
+
   const [activeDeepDiveIndex, setActiveDeepDiveIndex] = useState(startOnDeepDive ? initialDeepDiveIndex : -1);
   const [isPreferenceSheetOpen, setIsPreferenceSheetOpen] = useState(false);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
@@ -180,21 +176,20 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   const currentInsight = insights[activeSlideIndex];
 
   const { toast } = useToast();
-  const [isEmblaApiReady, setIsEmblaApiReady] = useState(false);
-  const [onboardingActive, setOnboardingActive] = useState(false); // State for setOnboardingActive
   const { isFullScreen, toggleFullScreen } = useFullScreen(); // Added FullScreenContext
+  const { setVerticalEmblaApi, setHorizontalEmblaApi } = useOnboardingContext();
 
   useEffect(() => {
     if (emblaApi) {
-      setIsEmblaApiReady(true);
+      setVerticalEmblaApi(emblaApi);
     }
-  }, [emblaApi]);
+    return () => {
+      setVerticalEmblaApi(null);
+    };
+  }, [emblaApi, setVerticalEmblaApi]);
 
-  const setOnboardingActiveCallback = useCallback((active: boolean) => {
-    setOnboardingActive(active);
-  }, []);
   const { isSaved, getSavedItem, addSavedItem, removeSavedItem, hasSaved, setHasSaved } = useSavedItems();
-  const { resetOnboarding, hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus(); // Add this line
+
   
   const scrollUp = useCallback(() => {
     if (emblaApi && emblaApi!.canScrollPrev()) {
@@ -208,21 +203,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
     }
   }, [emblaApi]);
 
-  const scrollLeft = useCallback(() => {
-    const horizontalApi = horizontalApis.current.get(currentInsight?.slug);
-    if(horizontalApi && horizontalApi.canScrollPrev()) {
-      horizontalApi.scrollPrev();
-    }
-  }, [currentInsight]);
-
-  const scrollRight = useCallback(() => {
-    const horizontalApi = horizontalApis.current.get(currentInsight?.slug);
-    if (currentInsight?.slug === "home" && horizontalApi && !horizontalApi.canScrollNext()) {
-      scrollDown();
-    } else if (horizontalApi && horizontalApi.canScrollNext()) {
-      horizontalApi.scrollNext();
-    }
-  }, [currentInsight, scrollDown]);
+  const { triggerScrollRight } = useOnboardingContext();
 
 
   useEffect(() => {
@@ -235,10 +216,11 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
           scrollUp();
           break;
         case "ArrowRight":
-          scrollRight();
+          if (currentInsight)
+            triggerScrollRight(currentInsight.slug);
           break;
         case "ArrowLeft":
-          scrollLeft();
+          // scrollLeft();
           break;
       }
     };
@@ -246,7 +228,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [scrollDown, scrollUp, scrollRight, scrollLeft]);
+  }, [scrollDown, scrollUp, triggerScrollRight, currentInsight]);
 
 
   useEffect(() => {
@@ -335,26 +317,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   }, [emblaApi, hasMore, isLoading, insights.length, loadMoreInsights]);
 
 
-   const setHorizontalEmblaApi = useCallback((slug: string, api: UseEmblaCarouselType[1]) => {
-    horizontalApis.current.set(slug, api);
-    
-    const onSettle = (apiInstance: UseEmblaCarouselType[1]) => {
-      // The first slide is the main insight, so deep dives start at index 1 in the carousel.
-      const deepDiveIdx = apiInstance!.selectedScrollSnap() - 1;
-      setActiveDeepDiveIndex(deepDiveIdx);
-    }
-    
-    if (api) {
-      api.on('settle', onSettle);
-    }
-    
-    return () => {
-      if (api) {
-        api.off('settle', onSettle);
-      }
-      horizontalApis.current.delete(slug);
-    };
-   }, []);
+
 
   const handleCategoryChange = (category: string) => {
     
@@ -527,24 +490,13 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   }
 
   const isRssPage = pathname.startsWith('/rss') || pathname.startsWith('/insight/rss');
-  const currentHorizontalApi = currentInsight ? horizontalApis.current.get(currentInsight.slug) : undefined;
+
   
   const SaveIcon = isCurrentItemSaved ? Pencil : Bookmark;
   const saveIconClassName = isCurrentItemSaved ? 'fill-current' : '';
 
 
   return (
-    <OnboardingContext.Provider
-      value={{
-        triggerScrollDown: scrollDown,
-        triggerScrollRight: scrollRight,
-        setOnboardingActive: setOnboardingActiveCallback,
-        isEmblaApiReady: isEmblaApiReady,
-      }}
-    >
-      {!hasSeenOnboarding && (
-        <OnboardingFlow onComplete={markOnboardingComplete} />
-      )}
       <CarouselContext.Provider value={{ setHorizontalEmblaApi, currentInsightSlug: currentInsight?.slug, triggerParentScrollDown: scrollDown }}>
       <div className="relative flex h-screen w-full flex-col items-center justify-center" onDoubleClick={toggleFullScreen}>
         <PageHeader 
@@ -589,18 +541,7 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
             >
               <MoreVertical className="h-4 w-4" />
             </Button>
-            {/* New Replay Onboarding Button */}
-            <Button
-              onClick={() => {
-                resetOnboarding();
-              }}
-              variant="outline"
-              size="icon"
-              aria-label="Replay Onboarding"
-              className="bg-background/50 backdrop-blur-sm rounded-full"
-            >
-              <HelpCircle className="h-4 w-4" />
-            </Button>
+
             <div className="relative">
                 <Button
                   onClick={handleSaveClick}
@@ -625,14 +566,14 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
 
         <div className={cn("fixed right-0 top-1/2 -translate-y-1/2 z-20", { "hidden": isFullScreen })}>
             <Button
-              onClick={scrollRight}
+              onClick={() => currentInsight && triggerScrollRight(currentInsight.slug)}
               variant="outline"
               aria-label="Scroll Right"
               className={cn(
                 "h-10 px-3 bg-background/50 backdrop-blur-sm rounded-l-[1rem] rounded-r-none text-sm font-semibold flex items-center gap-2 text-muted-foreground", // Desktop
                 isMobile && "h-auto w-auto min-w-[2rem] py-4 px-1 mb-0 mt-0 text-xs flex justify-center items-center gap-1 [writing-mode:vertical-rl] rounded-tr-none rounded-tl-[1rem] rounded-br-none rounded-bl-[1rem] text-muted-foreground" // Mobile: flex items-center, rotate 270
               )}
-              disabled={Boolean(!currentInsight || (currentHorizontalApi && !currentHorizontalApi.canScrollNext()))}
+              disabled={Boolean(!currentInsight)}
             >
               <span className={cn(isMobile && "rotate-180")}>Read More</span> <ArrowRight className="h-4 w-4" />
             </Button>
@@ -681,6 +622,5 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
         )}
       </div>
     </CarouselContext.Provider>
-    </OnboardingContext.Provider>
   );
 };

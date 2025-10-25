@@ -4,9 +4,12 @@ import type { UseEmblaCarouselType } from 'embla-carousel-react';
 
 interface OnboardingContextType {
   triggerScrollDown: () => void;
-  triggerScrollRight: () => void;
+  triggerScrollRight: (slug: string) => void;
   setOnboardingActive: (active: boolean) => void;
   isEmblaApiReady: boolean;
+  setVerticalEmblaApi: (api: UseEmblaCarouselType[1] | null) => void;
+  setHorizontalEmblaApi: (slug: string, api: UseEmblaCarouselType[1]) => () => void;
+  onboardingActive: boolean;
 }
 
 export const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
