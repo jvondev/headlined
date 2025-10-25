@@ -1,42 +1,31 @@
-
 "use client";
 
 import type { FC } from "react";
-import { Quote, HelpCircle, ListChecks, Columns, ListOrdered, BookText, BarChart3, ShieldAlert, Shuffle, Info, Rss, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, Pencil, ExternalLink, ChevronRight, type LucideProps } from "lucide-react";
-import type { IconName } from "@/types";
-
-const iconMap: Record<IconName, FC<LucideProps>> = {
-  Quote,
-  HelpCircle,
-  ListChecks,
-  Columns,
-  ListOrdered,
-  BookText,
-  BarChart3,
-  ShieldAlert,
-  Shuffle,
-  Info,
-  Rss,
-  Bookmark,
-  MoreVertical,
-  ThumbsUp,
-  ThumbsDown,
-  Pencil,
-  ExternalLink,
-  ChevronRight,
-};
+import dynamic from "next/dynamic";
+import type { LucideProps } from "lucide-react";
+import React from "react"; // Import React for React.memo
 
 interface DynamicIconProps extends LucideProps {
-  name: IconName;
+  name: string; // Name is now a generic string
 }
 
-export const DynamicIcon: FC<DynamicIconProps> = ({ name, ...props }) => {
-  const IconComponent = iconMap[name];
+// Create a component that handles the dynamic import
+const DynamicIconComponent: FC<DynamicIconProps> = ({ name, ...props }) => {
+  const LucideIcon = dynamic(() => import("lucide-react").then((mod) => {
+    const IconComponent = mod[name as keyof typeof mod] as React.ComponentType<LucideProps>;
+    if (!IconComponent) {
+      console.warn(`Lucide icon "${name}" not found.`);
+      return () => null; // Return a component that renders null
+    }
+    return IconComponent;
+  }), {
+    ssr: false, // Ensure this component is rendered on the client side
+    loading: () => <div className={`${props.className} bg-muted rounded-md`} />, // Show static placeholder while loading
+  });
 
-  if (!IconComponent) {
-    // Optionally return a default icon or null
-    return null;
-  }
-
-  return <IconComponent {...props} />;
+  return <LucideIcon {...props} />;
 };
+
+// Memoize the DynamicIconComponent itself
+export const DynamicIcon = React.memo(DynamicIconComponent);
+DynamicIcon.displayName = "DynamicIcon";
