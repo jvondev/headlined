@@ -318,6 +318,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                 <PostView 
                   post={post} 
                   isActive={index === activeSlideIndex}
+                  emblaApi={emblaApi}
                 />
               )}
           </div>

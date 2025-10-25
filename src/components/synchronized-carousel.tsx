@@ -123,14 +123,16 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     }, [emblaApi, onSelect]);
 
     return (
-        <div className="flex flex-col h-full py-2 px-4">
-            <CarouselNav
-                emblaRef={navEmblaRef}
-                emblaApi={navEmblaApi}
-                allFilterItems={allFilterItems}
-                selectedIndex={selectedIndex}
-                onNavClick={onNavClick}
-            />
+        <div className="flex flex-col h-full relative">
+            <div className="absolute top-0 left-0 right-0 z-20 bg-transparent py-2 px-4">
+                <CarouselNav
+                    emblaRef={navEmblaRef}
+                    emblaApi={navEmblaApi}
+                    allFilterItems={allFilterItems}
+                    selectedIndex={selectedIndex}
+                    onNavClick={onNavClick}
+                />
+            </div>
             <MainContentCarousel
                 emblaRef={emblaRef}
                 emblaApi={emblaApi}

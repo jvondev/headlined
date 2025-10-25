@@ -1,7 +1,8 @@
 "use client";
 
 import type { Post, Summary } from "@/types";
-import { useEffect, type FC, useContext, useMemo, useState } from "react";
+import { useEffect, type FC, useContext, useMemo, useState, useRef } from "react";
+import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { useTheme } from "next-themes";
 import { Card } from "./ui/card";
 import Link from "next/link";
@@ -16,13 +17,49 @@ import { useIsMobile } from "@/hooks/use-mobile";
 interface PostViewProps {
   post: Post;
   isActive: boolean;
+  emblaApi?: UseEmblaCarouselType[1];
 }
 
-export const PostView: FC<PostViewProps> = ({ post, isActive }) => {
+export const PostView: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
   const router = useRouter();
   const isMobile = useIsMobile();
   const { theme } = useTheme();
   const [showSummary, setShowSummary] = useState(false);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const [offsetY, setOffsetY] = useState(0);
+
+  useEffect(() => {
+    if (!emblaApi || !imageContainerRef.current) return;
+
+                const handleScroll = () => {
+                  if (!emblaApi || !imageContainerRef.current) return;
+        
+                  const scrollProgress = emblaApi.scrollProgress();
+                  const slideIndex = emblaApi.selectedScrollSnap();
+                  const slidesInView = emblaApi.slidesInView();
+        
+                  if (!slidesInView.includes(slideIndex)) {
+                    setOffsetY(0);
+                    return;
+                  }
+        
+                  const slideViewportCenter = emblaApi.scrollSnapList()[slideIndex];
+                  const currentScroll = emblaApi.scrollProgress();
+        
+                  // Calculate the difference between the current scroll and the slide's center
+                  const scrollDifference = currentScroll - slideViewportCenter;
+        
+                  const parallaxSpeed = 80; // Adjust this value for more or less parallax
+                  const newOffsetY = scrollDifference * parallaxSpeed;
+                  setOffsetY(newOffsetY);
+                };    emblaApi.on("scroll", handleScroll);
+    emblaApi.on("reInit", handleScroll);
+
+    return () => {
+      emblaApi.off("scroll", handleScroll);
+      emblaApi.off("reInit", handleScroll);
+    };
+  }, [emblaApi]);
   
   const summaries = useMemo(() => {
     if (post.summaries && post.summaries.length > 0) {
@@ -56,24 +93,30 @@ export const PostView: FC<PostViewProps> = ({ post, isActive }) => {
   };
 
   return (
-    <div className="h-screen w-full flex items-center justify-center bg-background" onClick={handleCardClick}>
+    <div className="h-full w-full relative bg-background" onClick={handleCardClick}>
         {showSummary && summaries.length > 0 ? (
             <SummaryView summary={summaries[0]} />
         ) : (
-            <div className="relative flex-[0_0_100%] bg-background text-foreground" role="group" aria-roledescription="slide" aria-label="Main Post">
+            <>
                 {post.thumbnail_url && (
                     <>
-                        <img
-                            src={post.thumbnail_url}
-                            alt={post.title}
-                            className="absolute inset-0 w-full h-full object-cover"
-                            loading="lazy"
-                        />
+                        <div
+                            className="absolute inset-0 w-full h-full overflow-hidden"
+                            ref={imageContainerRef}
+                        >
+                            <img
+                                src={post.thumbnail_url}
+                                alt={post.title}
+                                className="absolute top-1/2 left-1/2 w-full h-full object-cover will-change-transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 ease-in-out"
+                                loading="lazy"
+                                style={{ transform: `translate(-50%, -50%) scale(1.2) translateY(${offsetY}px)` }}
+                            />
+                        </div>
                         <div className={cn("absolute inset-0", theme === 'light' ? 'bg-white/55' : 'bg-black/60')} />
                     </>
                 )}
                 <div className={cn(
-                    "relative flex h-full flex-col justify-center items-center p-8 md:p-12 text-left z-10",
+                    "absolute inset-0 flex flex-col justify-center items-center p-8 md:p-12 text-left z-10",
                     post.thumbnail_url && (theme === 'light' ? 'text-black' : 'text-white')
                 )}>
                     <div className="max-w-3xl">
@@ -81,7 +124,7 @@ export const PostView: FC<PostViewProps> = ({ post, isActive }) => {
 
                     </div>
                 </div>
-            </div>
+            </>
         )}
     </div>
   );
