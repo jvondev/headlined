@@ -5,12 +5,13 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { EmblaCarouselType } from "embla-carousel-react";
+import { DynamicIcon } from "@/components/dynamic-icon";
 
 type CarouselItem = {
     name: string;
     type: "topic" | "interest" | "none";
     href: string;
-    icon?: React.ForwardRefExoticComponent<Omit<any, "ref"> & React.RefAttributes<SVGSVGElement>>;
+    icon?: string;
     isIconOnly?: boolean;
 };
 
@@ -48,7 +49,7 @@ export function CarouselNav({
                                 onClick={() => onNavClick(index)}
                                 className={cn("rounded-full", item.isIconOnly ? "" : "px-4")}
                             >
-                                {item.icon && <item.icon className={cn("h-4 w-4", { "mr-2": !item.isIconOnly })} />}
+                                {item.icon && <DynamicIcon name={item.icon} className={cn("h-4 w-4", { "mr-2": !item.isIconOnly })} skeletonBgClass={isActive ? "bg-gray-300" : "bg-muted"} />}
                                 {!item.isIconOnly && item.name}
                             </Button>
                         </div>

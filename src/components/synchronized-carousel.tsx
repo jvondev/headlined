@@ -6,21 +6,14 @@ import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { CarouselNav } from "@/components/carousel-nav";
 import { MainContentCarousel } from "@/components/main-content-carousel";
 import type { Topic, Interest } from "@/types";
-import { Bookmark, Compass, Search, LayoutDashboard, LucideProps } from "lucide-react";
 import { usePathname } from "next/navigation";
-
-const iconMap = {
-    Bookmark,
-    Compass,
-    Search,
-    LayoutDashboard,
-};
+import { DynamicIcon } from "@/components/dynamic-icon";
 
 type CarouselItem = {
     name: string;
     type: "topic" | "interest" | "none";
     href: string;
-    icon?: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
+    icon?: string;
     isIconOnly?: boolean;
 };
 
@@ -36,22 +29,22 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     const initialFilterType = "topic";
 
     const allFilterItems: CarouselItem[] = React.useMemo(() => [
-        { name: "Saved", type: "none" as const, href: "/saved", icon: iconMap.Bookmark, isIconOnly: true },
-        { name: "Dashboard", type: "none" as const, href: "/", icon: iconMap.LayoutDashboard, isIconOnly: true },
+        { name: "Saved", type: "none" as const, href: "/saved", icon: "Bookmark", isIconOnly: true },
+        { name: "Dashboard", type: "none" as const, href: "/", icon: "LayoutDashboard", isIconOnly: true },
         ...(Array.isArray(topics) ? topics.map(topic => ({
             ...topic,
             type: "topic" as const,
             href: `/category/${topic.name}`,
-            icon: topic.icon ? iconMap[topic.icon as keyof typeof iconMap] : undefined,
+            icon: topic.icon,
         })) : []),
         ...(Array.isArray(interests) ? interests.map(interest => ({
             ...interest,
             type: "interest" as const,
             href: `/category/${interest.name}`,
-            icon: interest.icon ? iconMap[interest.icon as keyof typeof iconMap] : undefined,
+            icon: interest.icon,
         })) : []),
-        { name: "Explore", type: "none" as const, href: "/explore", icon: iconMap.Compass, isIconOnly: true },
-        { name: "Search", type: "none" as const, href: "/search", icon: iconMap.Search, isIconOnly: true },
+        { name: "Explore", type: "none" as const, href: "/explore", icon: "Compass", isIconOnly: true },
+        { name: "Search", type: "none" as const, href: "/search", icon: "Search", isIconOnly: true },
     ], [topics, interests]);
 
     const initialSelectedIndex = React.useMemo(() => {
