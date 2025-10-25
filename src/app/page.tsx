@@ -21,7 +21,7 @@ interface Article {
   thumbnailUrl?: string; // Added thumbnailUrl
   blogContent: string;
   originalFeedUrl: string;
-  category: string[]; // Changed to string[]
+  tags: string[];
   source: string;
 }
 
@@ -33,26 +33,30 @@ const stripMarkdownHeaders = (markdown: string): string => {
 // Helper function to map Article to Insight
 const articleToInsight = (article: Article, allRssFeeds: RssFeed[]): Insight => {
   const feedInfo = allRssFeeds.find(feed => feed.url === article.originalFeedUrl);
-  let categories: string[] = [];
+  let tags: string[] = [];
 
-  // Add categories from the article itself (which is now TEXT[])
-  if (article.category && Array.isArray(article.category)) {
-    categories = [...categories, ...article.category];
+  // Add tags from the article itself (which is now TEXT[])
+  if (article.tags && Array.isArray(article.tags)) {
+    tags = [...tags, ...article.tags];
   }
 
-  // Add feed name as a category if feedInfo exists
+  // Add feed name as a tag if feedInfo exists
   if (feedInfo) {
-    categories.push(feedInfo.name);
+    tags.push(feedInfo.name);
+    if (feedInfo.tags) {
+      tags = [...tags, ...feedInfo.tags];
+    }
   }
 
   // Ensure uniqueness and remove empty strings
-  categories = Array.from(new Set(categories.filter(c => c && c.trim() !== '')));
+  tags = Array.from(new Set(tags.filter(t => t && t.trim() !== '')));
 
   return {
     slug: article.slug,
     description: article.description,
     thumbnailUrl: article.thumbnailUrl,
-    category: categories,
+    tags: tags,
+    topic_id: null, // Add this line
     deepDives: [], // deepDives are removed as per user request
     seo: { title: article.title, description: article.description },
     title: article.title,
@@ -65,7 +69,7 @@ const readmoreHomepageInsight: Insight = {
   slug: "home",
   title: "Welcome to ReadMore: Your Personal RSS Feed Reader",
   description: "Discover the best RSS reader experience. Follow your favorite RSS feeds, enjoy a TikTok-like scrolling interface, and get daily updates. Free and no login required.",
-  category: ["RSS", "RSS Reader", "News", "Free App"],
+  tags: ["RSS", "RSS Reader", "News", "Free App"],
   seo: {
     title: "ReadMore: The Ultimate RSS Reader | Free & No Login",
     description: "Your new favorite RSS reader. Subscribe to any RSS feed, enjoy a seamless reading experience, and get summarized articles. ReadMore is a free RSS reader that respects your privacy.",
@@ -155,7 +159,7 @@ const readmoreHomepageInsight: Insight = {
 export const metadata = {
   title: readmoreHomepageInsight.seo.title,
   description: readmoreHomepageInsight.seo.description,
-  keywords: readmoreHomepageInsight.category.join(', '),
+  keywords: readmoreHomepageInsight.tags.join(', '),
   openGraph: {
     title: readmoreHomepageInsight.seo.title,
     description: readmoreHomepageInsight.seo.description,

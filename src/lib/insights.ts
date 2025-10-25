@@ -62,6 +62,10 @@ export const getPaginatedInsights = unstable_cache(
       .select('*')
       .order('created_at', { ascending: false }); // Order by creation date, newest first
 
+    // Filter for insights created within the last 24 hours
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    query = query.gte('created_at', twentyFourHoursAgo);
+
     if (category) {
       query = query.filter('category', 'cs', `{${category}}`);
     }

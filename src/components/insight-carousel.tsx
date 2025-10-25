@@ -58,89 +58,20 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   const action = searchParams.get("action");
 
   // State initialization on client side to avoid hydration issues
-  const [insights, setInsights] = useState<Insight[]>([]);
+  const [insights, setInsights] = useState<Insight[]>(initialInsights);
   const [isClient, setIsClient] = useState(false);
   const { subscribedFeeds, isLoaded: isSubscribedFeedsLoaded } = useSubscribedFeeds();
-  const [isLoadingInsights, setIsLoadingInsights] = useState(true); // New state
+  const [isLoadingInsights, setIsLoadingInsights] = useState(initialInsights.length === 0); // New state
 
   useEffect(() => {
     setIsClient(true);
-    const processAndSetInsights = async () => {
-      setIsLoadingInsights(true); // Set loading to true
-      if (isSubscribedFeedsLoaded) {
-        const CLIENT_DATE_FILTER_POOL_SIZE = 50; // Max insights to fetch for client-side date filtering/shuffling
+  }, []);
 
-        let rawFetchedInsights: Insight[] = [];
-        let currentPage = 1;
-        let serverHasMore = true;
+  useEffect(() => {
+    if (!isClient || insights.length > 0) return; // Only run if client-side and no insights loaded yet
 
-        // Fetch insights until we have enough for date filtering or server runs out
-        // We'll fetch in chunks of PAGE_SIZE (which is 10) until we reach CLIENT_DATE_FILTER_POOL_SIZE
-        while (rawFetchedInsights.length < CLIENT_DATE_FILTER_POOL_SIZE && serverHasMore) {
-          const { insights: fetchedPage, hasMore: pageHasMore } = await getPaginatedInsights({
-            page: currentPage,
-            feedUrls: subscribedFeeds,
-          });
-          rawFetchedInsights.push(...fetchedPage);
-          serverHasMore = pageHasMore;
-          currentPage++;
-        }
-
-        // Client-side date filtering
-        const today = new Date();
-        today.setUTCHours(0, 0, 0, 0);
-        const tomorrow = new Date(today);
-        tomorrow.setUTCDate(today.getUTCDate() + 1);
-        const yesterday = new Date(today);
-        yesterday.setUTCDate(today.getUTCDate() - 1);
-
-        let dateFilteredInsights = rawFetchedInsights.filter(insight => {
-          // Ensure insight.createdAt is a valid date string before creating a Date object
-          if (!insight.createdAt) return false;
-          const createdAt = new Date(insight.createdAt);
-          return createdAt >= today && createdAt < tomorrow;
-        });
-
-        if (dateFilteredInsights.length < PAGE_SIZE) {
-          const yesterdayInsights = rawFetchedInsights.filter(insight => {
-            // Ensure insight.createdAt is a valid date string before creating a Date object
-            if (!insight.createdAt) return false;
-            const createdAt = new Date(insight.createdAt);
-            return createdAt >= yesterday && createdAt < today;
-          });
-          // Combine today's and yesterday's, avoiding duplicates if any
-          const existingSlugs = new Set(dateFilteredInsights.map(i => i.slug));
-          yesterdayInsights.forEach(insight => {
-            if (!existingSlugs.has(insight.slug)) {
-              dateFilteredInsights.push(insight);
-            }
-          });
-        }
-
-        // Client-side inclusive shuffling
-        for (let i = dateFilteredInsights.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [dateFilteredInsights[i], dateFilteredInsights[j]] = [dateFilteredInsights[j], dateFilteredInsights[i]];
-        }
-
-        const homepageInsight = initialInsights.find(i => i.slug === 'home');
-        let otherInsights = dateFilteredInsights.filter(i => i.slug !== 'home');
-
-        let finalInsights: Insight[] = [];
-        if (homepageInsight) {
-          finalInsights.push(homepageInsight);
-        }
-        finalInsights.push(...otherInsights); // Use otherInsights directly after client-side shuffle
-
-        setInsights(finalInsights);
-        // The hasMore logic will need to be re-evaluated based on client-side pagination
-        // For now, let's assume hasMore is true if we fetched CLIENT_DATE_FILTER_POOL_SIZE insights
-        setHasMore(rawFetchedInsights.length >= CLIENT_DATE_FILTER_POOL_SIZE);
-      }
-      setIsLoadingInsights(false); // Set loading to false
-    };
     processAndSetInsights();
-  }, [initialInsights, initialSlug, isSubscribedFeedsLoaded, subscribedFeeds, pathname]);
+  }, [isClient, insights.length, initialSlug, isSubscribedFeedsLoaded, subscribedFeeds, pathname, shouldFetchPaginatedInsights]);
 
 
 
@@ -231,13 +162,13 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
   }, [scrollDown, scrollUp, triggerScrollRight, currentInsight]);
 
 
-  useEffect(() => {
-    if (action === 'next' && emblaApi) {
-        scrollDown();
-        const newPath = pathname.split('?')[0];
-        router.replace(newPath, { scroll: false });
-    }
-  }, [action, emblaApi, scrollDown, pathname, router]);
+  // useEffect(() => {
+  //   if (action === 'next' && emblaApi) {
+  //       scrollDown();
+  //       const newPath = pathname.split('?')[0];
+  //       router.replace(newPath, { scroll: false });
+  //   }
+  // }, [action, emblaApi, scrollDown, pathname, router]);
 
 
   const handleBackToBlog = useCallback(() => {
@@ -273,28 +204,18 @@ export const InsightCarousel: FC<InsightCarouselProps> = ({
       : newInsights; // If no feeds subscribed, show all
 
     if (filteredNewInsights.length > 0) {
-      setInsights(prev => [...prev, ...filteredNewInsights]);
+        if (insights.length === 0) {
+          setInsights(finalInsights);
+        } else {
+          setInsights(prev => [...prev, ...finalInsights]); // Append new insights
+        }
     }
     setHasMore(newHasMore);
     setIsLoading(false);
   }, [isLoading, hasMore, searchParams, rssSelectedCategory, preferences, isPreferencesLoaded]);
   
 
-  useEffect(() => {
-    if (!isClient) return;
 
-    setInsights(initialInsights);
-    setHasMore(initialHasMore);
-    page.current = 1;
-
-    if (emblaApi) {
-        const newStartIndex = initialInsights.findIndex(i => i.slug === initialSlug);
-        const safeStartIndex = Math.max(0, newStartIndex);
-        // Using reInit with a timeout to avoid race conditions with state updates
-        setTimeout(() => emblaApi.reInit({ startIndex: safeStartIndex }), 0);
-        setActiveSlideIndex(safeStartIndex);
-    }
-  }, [initialInsights, initialSlug, initialHasMore, emblaApi, isClient]);
 
 
   useEffect(() => {
