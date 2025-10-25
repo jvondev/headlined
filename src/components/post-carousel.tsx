@@ -1,7 +1,4 @@
-"use client";
-
-import type { Post, SavedItem } from "@/types";
-import { useState, useEffect, useCallback, type FC, useRef, useMemo, useTransition } from "react";
+import { useState, useEffect, useCallback, type FC, useRef, useMemo } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, Pencil, HelpCircle } from "lucide-react";
@@ -18,9 +15,10 @@ import { getPaginatedPosts } from "@/lib/posts";
 import { useSavedItems } from "@/hooks/use-saved-items";
 import { useToast } from "@/hooks/use-toast";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
-import { usePreferences } from "@/hooks/use-preferences";
+
 import { SaveDialog } from "./save-dialog";
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
+import { useCarouselState } from "@/context/carousel-state-context";
 
 
 
@@ -40,87 +38,86 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   markOnboardingComplete,
   topicName,
   searchQuery,
-}) => {  const router = useRouter();
+}) => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const returnToSlug = searchParams.get("returnTo");
   const action = searchParams.get("action");
 
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [hasMore, setHasMore] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const page = useRef(1);
-  
-    // Persistent state for each topic/search query
-    const carouselStates = useRef<Record<string, { posts: Post[], hasMore: boolean, page: number, activeSlideIndex: number }>>({});
-  
-    const currentKey = useMemo(() => {
-      if (topicName) return `topic-${topicName}`;
-      if (searchQuery) return `search-${searchQuery}`;
-      return "default";
-    }, [topicName, searchQuery]);
-  
-    useEffect(() => {
-      const savedState = carouselStates.current[currentKey];
-      if (savedState) {
-        setPosts(savedState.posts);
-        setHasMore(savedState.hasMore);
-        page.current = savedState.page;
-        setActiveSlideIndex(savedState.activeSlideIndex);
-        setIsLoading(false);
-        setError(null);
-      } else {
-        // Reset and fetch new data
-        setPosts([]);
-        setHasMore(false);
-        page.current = 1;
-        setActiveSlideIndex(0);
-        fetchPosts();
-      }
-    }, [currentKey]);
-  
-    const fetchPosts = useCallback(async () => {
-      if (isLoading) return;
-  
-      setIsLoading(true);
+  const { getCarouselState, setCarouselState } = useCarouselState();
+
+  const currentKey = useMemo(() => {
+    if (topicName) return `topic-${topicName}`;
+    if (searchQuery) return `search-${searchQuery}`;
+    return "default";
+  }, [topicName, searchQuery]);
+
+  const savedState = getCarouselState(currentKey);
+
+  const [posts, setPosts] = useState<Post[]>(savedState?.posts || []);
+  const [hasMore, setHasMore] = useState(savedState?.hasMore || false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const page = useRef(savedState?.page || 1);
+
+  useEffect(() => {
+    if (savedState) {
+      setPosts(savedState.posts);
+      setHasMore(savedState.hasMore);
+      page.current = savedState.page;
+      setActiveSlideIndex(savedState.activeSlideIndex);
+      setIsLoading(false);
       setError(null);
-  
-      try {
-        const { posts: newPosts, hasMore: newHasMore } = await getPaginatedPosts({
-          page: 1,
-          topic_name: topicName,
-          search_query: searchQuery,
-        });
-  
-        setPosts(newPosts);
-        setHasMore(newHasMore);
-        page.current = 1;
-        carouselStates.current[currentKey] = { posts: newPosts, hasMore: newHasMore, page: 1, activeSlideIndex: 0 };
-      } catch (err: any) {
-        console.error("Error fetching posts:", err.message);
-        setError("Failed to load posts.");
-      } finally {
-        setIsLoading(false);
-      }
-    }, [isLoading, topicName, searchQuery, currentKey]);
-  
-    const initialSlide = useMemo(() => {
-      const savedState = carouselStates.current[currentKey];
-      return savedState ? savedState.activeSlideIndex : 0;
-    }, [currentKey]);
-  
-    const [emblaRef, emblaApi] = useEmblaCarousel({
-      loop: false,
-      axis: 'y',
-      startIndex: initialSlide,
-    }, [WheelGesturesPlugin({
-      forceWheelAxis: 'y',
-      wheelDraggingClass: 'is-wheel-dragging'
-    })]);
-  
-    const [activeSlideIndex, setActiveSlideIndex] = useState(initialSlide);
+    } else {
+      setPosts([]);
+      setHasMore(false);
+      page.current = 1;
+      setActiveSlideIndex(0);
+      fetchPosts();
+    }
+  }, [currentKey]);
+
+  const fetchPosts = useCallback(async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { posts: newPosts, hasMore: newHasMore } = await getPaginatedPosts({
+        page: 1,
+        topic_name: topicName,
+        search_query: searchQuery,
+      });
+
+      setPosts(newPosts);
+      setHasMore(newHasMore);
+      page.current = 1;
+      setCarouselState(currentKey, { posts: newPosts, hasMore: newHasMore, page: 1, activeSlideIndex: 0 });
+    } catch (err: any) {
+      console.error("Error fetching posts:", err.message);
+      setError("Failed to load posts.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isLoading, topicName, searchQuery, currentKey, setCarouselState]);
+
+  const initialSlide = useMemo(() => {
+    return savedState ? savedState.activeSlideIndex : 0;
+  }, [savedState]);
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: false,
+    axis: 'y',
+    startIndex: initialSlide,
+  }, [WheelGesturesPlugin({
+    forceWheelAxis: 'y',
+    wheelDraggingClass: 'is-wheel-dragging'
+  })]);
+
+  const [activeSlideIndex, setActiveSlideIndex] = useState(initialSlide);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   
   const currentPost = posts[activeSlideIndex];
@@ -173,7 +170,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   const loadMorePosts = useCallback(async () => {
     console.log('loadMorePosts called');
-    if (isLoading || !hasMore || !isPreferencesLoaded) return;
+    if (isLoading || !hasMore) return;
     
     setIsLoading(true);
     page.current += 1;
@@ -187,13 +184,13 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     if (newPosts.length > 0) {
         setPosts(prev => {
             const updatedPosts = [...prev, ...newPosts];
-            carouselStates.current[currentKey] = { ...carouselStates.current[currentKey], posts: updatedPosts, hasMore: newHasMore, page: page.current };
+            setCarouselState(currentKey, { ...getCarouselState(currentKey)!, posts: updatedPosts, hasMore: newHasMore, page: page.current });
             return updatedPosts;
         });
     }
     setHasMore(newHasMore);
     setIsLoading(false);
-  }, [isLoading, hasMore, topicName, searchQuery, currentKey]);
+  }, [isLoading, hasMore, topicName, searchQuery, currentKey, getCarouselState, setCarouselState]);
   
 
 
@@ -205,7 +202,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     const onSettle = (api: UseEmblaCarouselType[1]) => {
         const newIndex = api!.selectedScrollSnap();
         setActiveSlideIndex(newIndex);
-        carouselStates.current[currentKey] = { ...carouselStates.current[currentKey], activeSlideIndex: newIndex };
+        setCarouselState(currentKey, { ...getCarouselState(currentKey)!, activeSlideIndex: newIndex });
         
         if (hasMore && !isLoading && newIndex >= posts.length - 3) {
             loadMorePosts();
@@ -217,7 +214,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return () => {
       emblaApi.off("settle", onSettle);
     };
-  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery]);
+  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery, currentKey, getCarouselState, setCarouselState]);
 
 
 
