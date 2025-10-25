@@ -10,7 +10,6 @@ import { Button } from "./ui/button";
 import { CarouselContext } from "@/context/carousel-context";
 import { useOnboardingContext } from "@/context/onboarding-context";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
-import { PageHeader } from "./shared/page-header";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { PostView } from "@/components/post-view";
