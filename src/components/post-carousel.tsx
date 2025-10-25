@@ -4,7 +4,7 @@ import type { Post, SavedItem } from "@/types";
 import { useState, useEffect, useCallback, type FC, useRef, useMemo, useTransition } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, ArrowRight, Pencil, HelpCircle } from "lucide-react";
+import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, Pencil, HelpCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "./ui/button";
 import { CarouselContext } from "@/context/carousel-context";
@@ -33,6 +33,8 @@ type PostCarouselProps = {
   shouldFetchPaginatedPosts?: boolean,
   hasSeenOnboarding: boolean,
   markOnboardingComplete: () => void,
+  topicId?: string; // Make topicId optional
+  searchQuery?: string; // Add searchQuery optional prop
 }
 
 const PAGE_SIZE = 10; // Define page size for client-side pagination
@@ -44,6 +46,8 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   shouldFetchPaginatedPosts = false,
   hasSeenOnboarding,
   markOnboardingComplete,
+  topicId, // Destructure topicId
+  searchQuery, // Destructure searchQuery
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -99,7 +103,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   const { toast } = useToast();
   const { isFullScreen, toggleFullScreen } = useFullScreen(); // Added FullScreenContext
-  const { setVerticalEmblaApi, setHorizontalEmblaApi } = useOnboardingContext();
+  const { setVerticalEmblaApi } = useOnboardingContext();
 
   useEffect(() => {
     if (emblaApi) {
@@ -125,8 +129,6 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     }
   }, [emblaApi]);
 
-  const { triggerScrollRight } = useOnboardingContext();
-
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -137,20 +139,13 @@ export const PostCarousel: FC<PostCarouselProps> = ({
         case "ArrowUp":
           scrollUp();
           break;
-        case "ArrowRight":
-          if (currentPost)
-            triggerScrollRight(currentPost.slug);
-          break;
-        case "ArrowLeft":
-          // scrollLeft();
-          break;
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [scrollDown, scrollUp, triggerScrollRight, currentPost]);
+  }, [scrollDown, scrollUp, currentPost]);
 
 
   const loadMorePosts = useCallback(async () => {
@@ -160,11 +155,10 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     setIsLoading(true);
     page.current += 1;
     
-    const topic_id = searchParams.get("topic_id");
-
     const { posts: newPosts, hasMore: newHasMore } = await getPaginatedPosts({
       page: page.current,
-      topic_id: topic_id || undefined,
+      topic_id: topicId, // Use topicId prop
+      search_query: searchQuery, // Use searchQuery prop
     });
 
     if (newPosts.length > 0) {
@@ -176,7 +170,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     }
     setHasMore(newHasMore);
     setIsLoading(false);
-  }, [isLoading, hasMore, searchParams, preferences, isPreferencesLoaded]);
+  }, [isLoading, hasMore, topicId, searchQuery, posts.length, isPreferencesLoaded]);
   
 
 
@@ -199,7 +193,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return () => {
       emblaApi.off("settle", onSettle);
     };
-  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts]);
+  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicId, searchQuery]);
 
 
 
@@ -283,7 +277,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return (
       <>
         {posts.map((post, index) => (
-          <div className="relative min-w-0 flex-[0_0_100%] h-full" key={`${post.slug}-${index}`} role="group" aria-roledescription="slide" aria-label={`Post ${index + 1} of ${posts.length}`}>
+          <div className="relative min-w-0 flex-[0_0_100%] h-full" key={`${post.slug}-${index}-${topicId || searchQuery}`} role="group" aria-roledescription="slide" aria-label={`Post ${index + 1} of ${posts.length}`}>
               {post.slug === "home" ? (
                 <HomepagePostSlide />
               ) : (
@@ -312,13 +306,15 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const SaveIcon = isCurrentItemSaved ? Pencil : Bookmark;
   const saveIconClassName = isCurrentItemSaved ? 'fill-current' : '';
 
-
   return (
-      <CarouselContext.Provider value={{ setHorizontalEmblaApi, currentPostSlug: currentPost?.slug, triggerParentScrollDown: scrollDown }}>
+      <CarouselContext.Provider value={{ currentPostSlug: currentPost?.slug }}>
       <div className="relative flex h-screen w-full flex-col items-center justify-center" onDoubleClick={toggleFullScreen}>
         <PageHeader 
             isFullScreen={isFullScreen}
             toggleFullScreen={toggleFullScreen}
+            topics={[]}
+            currentTopicSlug={''}
+            onTopicChange={() => {}}
         />
 
         <div className="overflow-hidden h-full w-full" ref={emblaRef} role="region" aria-roledescription="carousel" aria-label="Posts Carousel">
@@ -341,21 +337,6 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                 </Button>
             </div>
             
-        </div>
-
-        <div className={cn("fixed right-0 top-1/2 -translate-y-1/2 z-20", { "hidden": isFullScreen })}>
-            <Button
-              onClick={() => currentPost && triggerScrollRight(currentPost.slug)}
-              variant="outline"
-              aria-label="Scroll Right"
-              className={cn(
-                "h-10 px-3 bg-background/50 backdrop-blur-sm rounded-l-[1rem] rounded-r-none text-sm font-semibold flex items-center gap-2 text-muted-foreground", // Desktop
-                isMobile && "h-auto w-auto min-w-[2rem] py-4 px-1 mb-0 mt-0 text-xs flex justify-center items-center gap-1 [writing-mode:vertical-rl] rounded-tr-none rounded-tl-[1rem] rounded-br-none rounded-bl-[1rem] text-muted-foreground" // Mobile: flex items-center, rotate 270
-              )}
-              disabled={Boolean(!currentPost)}
-            >
-              <span className={cn(isMobile && "rotate-180")}>Read More</span> <ArrowRight className="h-4 w-4" />
-            </Button>
         </div>
 
         <div className={cn("fixed bottom-0 left-0 right-0 z-20 flex justify-center mb-16", { "hidden": isFullScreen })}>

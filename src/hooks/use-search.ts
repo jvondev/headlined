@@ -18,7 +18,7 @@ async function getSearchableData(): Promise<SearchableItem[]> {
     const documents: SearchableItem[] = [];
 
     posts.forEach((post) => {
-        // Add the main post summary
+        // Add the main post
         documents.push({
             id: `${post.slug}-post`,
             slug: post.slug,
@@ -26,19 +26,6 @@ async function getSearchableData(): Promise<SearchableItem[]> {
             title: post.title,
             content: `${post.title} ${post.description}`,
             icon: 'Info', 
-        });
-
-        // Add each summary as a separate document
-        post.summaries.forEach((summary, summaryIndex) => {
-            documents.push({
-                id: `${post.slug}-sum-${summaryIndex}`,
-                slug: post.slug,
-                type: summary.type,
-                title: summary.title,
-                content: summary.content.snippet,
-                summaryIndex,
-                icon: summary.icon,
-            });
         });
     });
 

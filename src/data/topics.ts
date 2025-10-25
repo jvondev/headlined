@@ -1,15 +1,18 @@
-'use server';
-
-import { serverSupabase } from "@/lib/server-supabase";
-import { Topic } from "@/types";
+import { topicsData } from "./topics-data";
+import type { Topic } from "@/types";
 
 export const getTopics = async (): Promise<Topic[]> => {
-    const { data, error } = await serverSupabase.from('topics').select('*');
+    return topicsData.map(topic => ({
+        ...topic,
+    }));
+};
 
-    if (error) {
-        console.error('Error fetching topics:', error);
-        return [];
+export const getTopicBySlug = async (slug: string): Promise<Topic | undefined> => {
+    const found = topicsData.find(topic => topic.name === slug);
+    if (found) {
+        return {
+            ...found,
+        };
     }
-
-    return data as Topic[];
+    return undefined;
 };

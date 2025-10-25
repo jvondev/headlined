@@ -42,10 +42,11 @@ export const getAllPosts = unstable_cache(
 interface PaginatedPostsOptions {
   page: number;
   topic_id?: string;
+  search_query?: string; // Add optional search_query
 }
 
 export const getPaginatedPosts = unstable_cache(
-  async ({ page, topic_id }: PaginatedPostsOptions): Promise<{ posts: Post[], hasMore: boolean }> => {
+  async ({ page, topic_id, search_query }: PaginatedPostsOptions): Promise<{ posts: Post[], hasMore: boolean }> => {
     const startIndex = (page - 1) * PAGE_SIZE;
     const endIndex = startIndex + PAGE_SIZE - 1; // Supabase range is inclusive
 
@@ -54,7 +55,11 @@ export const getPaginatedPosts = unstable_cache(
       .select('*')
       .order('created_at', { ascending: false }); // Order by creation date, newest first
 
-    if (topic_id) {
+    if (search_query) {
+      // Perform full-text search if search_query is provided
+      query = query.textSearch('fts', search_query);
+    } else if (topic_id) {
+      // Filter by topic_id if no search_query
       query = query.eq('topic_id', topic_id);
     }
 

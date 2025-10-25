@@ -63,25 +63,17 @@ export interface SavedItem {
 
 
 export interface Interest {
-  id: string;
   name: string;
   aliases: string[] | null;
-  topic_id: string | null;
   icon?: string;
 }
 
 export interface Topic {
-  id: string;
   name: string;
-  created_at: string;
   icon: string | null;
 }
 
 export interface Source {
-    id: string;
     name: string;
     url: string;
-    created_at: string;
-    updated_at: string;
-    topic_id: string | null;
 }

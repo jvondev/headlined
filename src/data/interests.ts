@@ -1,15 +1,18 @@
-'use server';
+import { interestsData } from "./interests-data";
+import type { Interest } from "@/types";
 
-import { serverSupabase } from "@/lib/server-supabase";
-import { Interest } from "@/types";
+export const getAllInterests = async (): Promise<Interest[]> => {
+    return interestsData.map(interest => ({
+        ...interest,
+    }));
+};
 
-export const getInterests = async (): Promise<Interest[]> => {
-    const { data, error } = await serverSupabase.from('interests').select('*');
-
-    if (error) {
-        console.error('Error fetching interests:', error);
-        return [];
+export const getInterestBySlug = async (slug: string): Promise<Interest | undefined> => {
+    const found = interestsData.find(interest => interest.name === slug);
+    if (found) {
+        return {
+            ...found,
+        };
     }
-
-    return data as Interest[];
+    return undefined;
 };
