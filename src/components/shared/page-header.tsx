@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -17,36 +16,21 @@ type PageHeaderProps = {
     children?: React.ReactNode;
     title?: string;
     isHeaderVisible?: boolean;
-    // Props for RSS Category switcher
-    rssCategories?: string[];
-    rssSelectedCategory?: string;
-    onRssCategoryChange?: (category: string) => void;
     isFullScreen: boolean;
     toggleFullScreen: () => void;
 }
-
-const VISIBLE_CATEGORIES_LIMIT = 5;
 
 export function PageHeader({ 
     children, 
     title,
     isHeaderVisible: isVisibleProp = true,
-    rssCategories,
-    rssSelectedCategory,
-    onRssCategoryChange,
     isFullScreen,
     toggleFullScreen,
 }: PageHeaderProps) {
   const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
 
-  const showHome = !pathname.startsWith('/insight') && pathname !== '/';
-  const showRss = !pathname.startsWith('/rss');
-  const showSaved = pathname !== '/saved';
-
-  const visibleCategories = rssCategories?.slice(0, VISIBLE_CATEGORIES_LIMIT) || [];
-  const hiddenCategories = rssCategories?.slice(VISIBLE_CATEGORIES_LIMIT) || [];
-
+  const showHome = !pathname.startsWith('/post') && pathname !== '/';
 
   useEffect(() => {
     setIsMounted(true);
@@ -82,46 +66,6 @@ export function PageHeader({
                         </Button>
                     </div>
                 </div>
-
-                 {rssCategories && (
-                    <div className="w-full pb-2">
-                        <ScrollArea className="w-full whitespace-nowrap">
-                            <div className="flex items-center justify-center gap-2">
-                                {visibleCategories.map(category => (
-                                    <Button
-                                        key={category}
-                                        variant={rssSelectedCategory === category ? "secondary" : "outline"}
-                                        size="sm"
-                                        onClick={() => onRssCategoryChange?.(category)}
-                                        className="rounded-full px-4 shrink-0"
-                                    >
-                                        {category}
-                                    </Button>
-                                ))}
-                                {hiddenCategories.length > 0 && (
-                                     <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="outline" size="sm" className="rounded-full px-4 shrink-0">
-                                                More
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent>
-                                            {hiddenCategories.map(category => (
-                                                <DropdownMenuItem 
-                                                    key={category} 
-                                                    onClick={() => onRssCategoryChange?.(category)}
-                                                    >
-                                                    {category}
-                                                </DropdownMenuItem>
-                                            ))}
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                )}
-                            </div>
-                            <ScrollBar orientation="horizontal" className="invisible" />
-                        </ScrollArea>
-                    </div>
-                )}
             </div>
         </div>
       </div>

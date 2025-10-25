@@ -1,7 +1,6 @@
-
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function InsightPageLoadingSkeleton() {
+export function PostPageLoadingSkeleton() {
   return (
     <main className="min-h-screen w-full flex flex-col items-center justify-center bg-background p-8">
         <div className="w-full h-full max-w-3xl flex flex-col items-center justify-center gap-4 text-center">

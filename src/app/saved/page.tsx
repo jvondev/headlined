@@ -1,9 +1,8 @@
-
-import { getInsightsBySlugs } from "@/lib/insights";
+import { getPostsBySlugs } from "@/lib/posts";
 import { SavedPageHeader } from "@/components/saved/saved-page-header";
 import SavedPageClient from "./client";
 import { cookies } from 'next/headers';
-import type { SavedItem, Insight } from "@/types";
+import type { SavedItem, Post } from "@/types";
 
 async function getSavedItems(cookieStore: any): Promise<SavedItem[]> {
   const savedItemsCookie = cookieStore.get('savedItems');
@@ -20,12 +19,12 @@ async function getSavedItems(cookieStore: any): Promise<SavedItem[]> {
 export default async function SavedPage() {
     const cookieStore = cookies();
     const savedItems = await getSavedItems(cookieStore);
-    const insightSlugs = savedItems.map(item => item.slug);
-    const insights = await getInsightsBySlugs(insightSlugs);
+    const postSlugs = savedItems.map(item => item.slug);
+    const posts = await getPostsBySlugs(postSlugs);
 
-    const insightsWithSavedData = insights.map(insight => {
-        const savedItem = savedItems.find(item => item.slug === insight.slug)!;
-        return { ...insight, savedItem };
+    const postsWithSavedData = posts.map(post => {
+        const savedItem = savedItems.find(item => item.slug === post.slug)!;
+        return { ...post, savedItem };
     });
 
     return (
@@ -33,7 +32,7 @@ export default async function SavedPage() {
             <SavedPageHeader title="Saved Items" />
 
             <main className="container mx-auto px-4 py-8 pt-24">
-                <SavedPageClient initialInsights={insightsWithSavedData} />
+                <SavedPageClient initialPosts={postsWithSavedData} />
             </main>
         </div>
     );

@@ -1,69 +1,35 @@
-
-import type { Insight, SavedItem } from "@/types";
+import type { Post, SavedItem } from "@/types";
 import { FC } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { cn } from "@/lib/utils";
 import { DynamicIcon } from "./dynamic-icon";
-import { DeepDivePreview } from "./deep-dive/deep-dive-preview";
 import { BookText } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
 
 
 interface SavedItemPreviewCardProps {
     item: SavedItem;
-    insight: Insight | null;
+    post: Post | null;
 }
 
-const InsightPreview: FC<{ insight: Insight }> = ({ insight }) => {
+const PostPreview: FC<{ post: Post }> = ({ post }) => {
     return (
         <div className="relative w-full h-full text-foreground flex flex-col justify-center items-center text-center p-4">
-            {insight.thumbnailUrl && (
+            {post.thumbnail_url && (
                 <>
                     <img
-                        src={insight.thumbnailUrl}
-                        alt={insight.title}
+                        src={post.thumbnail_url}
+                        alt={post.title}
                         className="absolute inset-0 w-full h-full object-cover"
                         loading="lazy"
                     />
                     <div className="absolute inset-0 bg-black/60" />
                 </>
             )}
-            <div className={cn("relative", insight.thumbnailUrl && "text-white")}>
-                <h2 className="font-headline text-lg font-bold leading-tight">{insight.title}</h2>
+            <div className={cn("relative", post.thumbnail_url && "text-white")}>
+                <h2 className="font-headline text-lg font-bold leading-tight">{post.title}</h2>
             </div>
-        </div>
-    )
-}
-
-const BlogPreview: FC<{ item: SavedItem, insight: Insight }> = ({ item, insight }) => {
-    return (
-        <div className="w-full h-full flex flex-col justify-center items-center text-center p-4">
-             <BookText className="size-8 text-muted-foreground/50" />
-             <h2 className="font-headline text-lg font-bold leading-tight mt-4">{insight.title}</h2>
-             <p className="mt-1 text-sm text-muted-foreground">Full Story</p>
-        </div>
-    )
-}
-
-const DeepDiveCardPreview: FC<{ item: SavedItem, insight: Insight }> = ({ item, insight }) => {
-    const deepDive = insight.deepDives.find((_, index) => index === item.deepDiveIndex);
-
-    if (!deepDive) return null;
-
-    return (
-        <div className="w-full h-full flex flex-col p-2">
-            <Card className="deep-dive-card w-full h-full overflow-hidden flex flex-col">
-                 <div className="border-b py-2 text-center">
-                    <div className="flex justify-center items-center gap-2">
-                        <DynamicIcon name={deepDive.icon} className="size-4 text-primary/70" />
-                        <h2 className="font-headline text-sm">{deepDive.title}</h2>
-                    </div>
-                </div>
-                <div className="flex-1 px-2 py-1 overflow-hidden text-sm flex items-center justify-center">
-                    <DeepDivePreview deepDive={deepDive} />
-                </div>
-            </Card>
         </div>
     )
 }
@@ -80,9 +46,9 @@ const NotePreview: FC<{ note: string }> = ({ note }) => {
 }
 
 
-export const SavedItemPreviewCard: FC<SavedItemPreviewCardProps> = ({ item, insight }) => {
+export const SavedItemPreviewCard: FC<SavedItemPreviewCardProps> = ({ item, post }) => {
 
-    if (!insight) {
+    if (!post) {
         return (
             <Card className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted border">
                 <p className="text-xs">Loading...</p>
@@ -91,13 +57,7 @@ export const SavedItemPreviewCard: FC<SavedItemPreviewCardProps> = ({ item, insi
     }
 
     const renderContent = () => {
-        if (item.type === 'insight') {
-            return <InsightPreview insight={insight} />
-        }
-        if (item.type === 'blog') {
-            return <BlogPreview item={item} insight={insight} />
-        }
-        return <DeepDiveCardPreview item={item} insight={insight} />
+        return <PostPreview post={post} />
     }
     
     const itemTypeLabel = item.type.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());

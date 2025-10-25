@@ -34,7 +34,7 @@ export const SearchPageHeader: FC<SearchPageHeaderProps> = ({ initialQuery }) =>
         <Input 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search insights..."
+            placeholder="Search posts..."
             className="pl-10 pr-20"
         />
         <Button type="submit" size="sm" className="absolute right-1.5 top-1/2 -translate-y-1/2">

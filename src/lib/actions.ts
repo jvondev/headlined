@@ -1,107 +1,20 @@
 'use server'
 
-import { getPaginatedInsights as getSupabasePaginatedInsights } from '@/lib/insights'
-import { getRssFeed } from '@/lib/rss'
-import { getFeedCategories, getFeedsByCategory, getFeedInfoFromUrl, getRssFeeds as getAllFeeds } from '@/data/rss-feeds'
-import { Insight, RssArticle } from '@/types'
-// import { getCount, updateCount } from '@/lib/save-counts';
+import { getPaginatedPosts as getSupabasePaginatedPosts } from '@/lib/posts'
+import { Post } from '@/types'
 
 const PAGE_SIZE = 10;
 
-type Preferences = {
-    [category: string]: number;
-};
-
-interface PaginatedInsightsOptions {
+interface PaginatedPostsOptions {
   page: number;
-  category?: string;
-  isRss?: boolean;
-  preferences?: Preferences;
-  feedUrls?: string[]; // Added for filtering by subscribed feeds
+  topic_id?: string;
 }
 
-async function rssToInsight(article: RssArticle): Promise<Insight> {
-    const feedInfo = await getFeedInfoFromUrl(article.originalFeedUrl);
-    return {
-        slug: article.slug, // The slug from getRssFeed now includes 'rss-' prefix
-        seo: {
-            title: article.title,
-            description: article.description,
-        },
-        category: [feedInfo?.category || 'News', feedInfo?.name || ''],
-        title: article.title,
-        description: article.description,
-        deepDives: article.deepDives,
-        blogContent: article.blogContent,
-        thumbnailUrl: article.thumbnailUrl,
-        author: article.author,
-    }
-}
-
-
-export async function getPaginatedInsights({
+export async function getPaginatedPosts({
     page,
-    category,
-    isRss = false,
-    preferences = {},
-    feedUrls, // Added feedUrls parameter
-}: PaginatedInsightsOptions): Promise<{ insights: Insight[], hasMore: boolean }> {
+    topic_id,
+}: PaginatedPostsOptions): Promise<{ posts: Post[], hasMore: boolean }> {
 
-  if (isRss) {
-    let allItems: RssArticle[] = [];
-
-    let feedsToFetch;
-    if (category) {
-        feedsToFetch = await getFeedsByCategory(category);
-    } else {
-        feedsToFetch = await getAllFeeds();
-    }
-
-    let articles: RssArticle[] = [];
-    const feedPromises = feedsToFetch.map(feed => getRssFeed(feed.url));
-    const allFeeds = await Promise.allSettled(feedPromises);
-
-    allFeeds.forEach(result => {
-        if (result.status === 'fulfilled') {
-            articles.push(...result.value);
-        }
-    });
-
-    // Sort RSS articles by date
-    articles.sort((a, b) => {
-        const dateA = a.pubDate ? new Date(a.pubDate).getTime() : 0;
-        const dateB = b.pubDate ? new Date(b.pubDate).getTime() : 0;
-        return dateB - dateA;
-    });
-
-    allItems = articles;
-
-    const startIndex = (page - 1) * PAGE_SIZE;
-    const endIndex = startIndex + PAGE_SIZE;
-
-    const paginatedItems = allItems.slice(startIndex, endIndex);
-    const hasMore = endIndex < allItems.length;
-
-    const insights = await Promise.all((paginatedItems as RssArticle[]).map(rssToInsight));
-
-    return { insights, hasMore };
-  } else {
-    // For non-RSS, use the Supabase-backed getPaginatedInsights
-    const { insights, hasMore } = await getSupabasePaginatedInsights({ page, category, preferences, feedUrls }); // Pass feedUrls
-    return { insights, hasMore };
-  }
+    const { posts, hasMore } = await getSupabasePaginatedPosts({ page, topic_id });
+    return { posts, hasMore };
 }
-
-
-// --- Save Count Actions ---
-/*
-export async function getSaveCount(itemId: string) {
-    if (!itemId) return 0;
-    return getCount(itemId);
-}
-
-export async function updateSaveCount(itemId: string, action: 'increment' | 'decrement') {
-    if (!itemId) return 0;
-    return updateCount(itemId, action);
-}
-*/

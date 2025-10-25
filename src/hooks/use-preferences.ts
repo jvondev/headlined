@@ -1,12 +1,11 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
 
-const LOCAL_STORAGE_KEY = 'insightPreferences';
+const LOCAL_STORAGE_KEY = 'postPreferences';
 
 type Preferences = {
-    [category: string]: number; // e.g., 'Tech': 1, 'Design': -1
+    [topic_id: string]: number; // e.g., 'uuid-123': 1, 'uuid-456': -1
 };
 
 export function usePreferences() {
@@ -35,15 +34,15 @@ export function usePreferences() {
         }
     };
 
-    const addPreference = useCallback((category: string, preference: 'like' | 'dislike') => {
+    const addPreference = useCallback((topic_id: string, preference: 'like' | 'dislike') => {
         setPreferences(prevPrefs => {
             const newPrefs = { ...prevPrefs };
-            const currentValue = newPrefs[category] || 0;
+            const currentValue = newPrefs[topic_id] || 0;
             
             if (preference === 'like') {
-                newPrefs[category] = currentValue + 1;
+                newPrefs[topic_id] = currentValue + 1;
             } else {
-                newPrefs[category] = currentValue - 1;
+                newPrefs[topic_id] = currentValue - 1;
             }
 
             saveToLocalStorage(newPrefs);
@@ -51,8 +50,8 @@ export function usePreferences() {
         });
     }, []);
 
-    const getPreferenceScore = useCallback((category: string) => {
-        return preferences[category] || 0;
+    const getPreferenceScore = useCallback((topic_id: string) => {
+        return preferences[topic_id] || 0;
     }, [preferences]);
 
     return { preferences, addPreference, getPreferenceScore, isLoaded };

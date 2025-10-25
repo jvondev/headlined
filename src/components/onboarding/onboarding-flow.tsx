@@ -20,9 +20,9 @@ const steps = [
     delay: 1500,
   },
   {
-    id: "next-insight",
-    title: "Discover New Insights",
-    description: "Swipe up to see your next insight.",
+    id: "next-post",
+    title: "Discover New Posts",
+    description: "Swipe up to see your next post.",
     action: "scrollDown",
     delay: 2000,
   },
@@ -117,7 +117,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           </p>
 
           {/* Visual cues for automated actions */}
-          {currentStep.id === "next-insight" && (
+          {currentStep.id === "next-post" && (
             <motion.div
               initial={{ opacity: 0, y: 50, scale: 1 }}
               animate={{

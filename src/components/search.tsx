@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -43,16 +42,7 @@ export function Search({ className }: { className?: string }) {
   }, []);
 
   const handleSelect = (result: SearchResult) => {
-    const isRss = result.slug.startsWith('rss-');
-    const slug = result.slug.replace(/^rss-/, '');
-
-    let url = `/insight/${isRss ? `rss/${slug}` : slug}`;
-    if (result.type === 'blog') {
-        url = `/blog/${isRss ? `rss/${slug}` : slug}`;
-    } else if (result.deepDiveIndex !== undefined) {
-        url += `?deepDive=${result.deepDiveIndex}`;
-    }
-
+    let url = `/post/${result.slug}`;
     runCommand(() => router.push(url));
   };
   
@@ -122,7 +112,7 @@ export function Search({ className }: { className?: string }) {
                   <div className="flex flex-col">
                     <span className="font-medium">{result.title}</span>
                     <span className="text-xs text-muted-foreground">
-                      {result.tags && result.tags.length > 0 ? `${result.tags[0]} / ` : ''}
+                      {result.topic_id && `${result.topic_id} / `}
                       {result.type}
                     </span>
                   </div>

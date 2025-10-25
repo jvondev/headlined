@@ -1,10 +1,9 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
 import type { SavedItem } from '@/types';
 
-const LOCAL_STORAGE_KEY = 'savedInsightItems';
+const LOCAL_STORAGE_KEY = 'savedPostItems';
 const HAS_SAVED_KEY_PREFIX = 'hasSaved_';
 
 export function useSavedItems() {

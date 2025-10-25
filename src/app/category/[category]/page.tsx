@@ -1,5 +1,4 @@
-
-import { getPaginatedInsights } from "@/lib/insights";
+import { getPaginatedPosts } from "@/lib/posts";
 import { serverSupabase } from "@/lib/server-supabase";
 import { redirect } from "next/navigation";
 
@@ -15,14 +14,12 @@ type CategoryPageProps = {
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
     const category = decodeURIComponent(params.category);
-    const { insights } = await getPaginatedInsights({ page: 1, category });
+    // TODO: Fetch topic by category name to get the topic_id
+    // const { posts } = await getPaginatedPosts({ page: 1, topic_id: ... });
 
-    if (insights.length > 0) {
-        // Redirect to the first insight of that category, but pass the category
-        // so the carousel knows to filter.
-        redirect(`/insight/${insights[0].slug}?category=${category}`);
-    }
+    // if (posts.length > 0) {
+    //     redirect(`/post/${posts[0].slug}?topic_id=${topic_id}`);
+    // }
 
-    // If no insights in that category, go to the main random insight page
     redirect('/');
 }

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo } from "react";
@@ -6,7 +5,7 @@ import Link from "next/link";
 import { useSavedItems } from "@/hooks/use-saved-items";
 import { Button } from "@/components/ui/button";
 import { X, BookmarkX, Shuffle, Download } from "lucide-react";
-import type { Insight, SavedItem } from "@/types";
+import type { Post, SavedItem } from "@/types";
 import { SavedItemPreviewCard } from "@/components/saved-item-preview";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useInterval } from "react-use";
@@ -14,7 +13,7 @@ import { SavedItemsFilter } from "@/components/saved-items-filter";
 
 type FilterType = "all" | "saved" | "note";
 
-export default function SavedPageClient({ initialInsights }: { initialInsights: (Insight & { savedItem: SavedItem })[] }) {
+export default function SavedPageClient({ initialPosts }: { initialPosts: (Post & { savedItem: SavedItem })[] }) {
     const { savedItems, removeSavedItem, isLoaded } = useSavedItems();
     const [filter, setFilter] = useState<FilterType>("all");
     
@@ -24,11 +23,11 @@ export default function SavedPageClient({ initialInsights }: { initialInsights: 
     const [shuffleAnimationItem, setShuffleAnimationItem] = useState<SavedItem | null>(null);
     const [isAnimating, setIsAnimating] = useState(false);
 
-    const insightsMap = useMemo(() => {
-        const map = new Map<string, Insight>();
-        initialInsights.forEach(insight => map.set(insight.slug, insight));
+    const postsMap = useMemo(() => {
+        const map = new Map<string, Post>();
+        initialPosts.forEach(post => map.set(post.slug, post));
         return map;
-    }, [initialInsights]);
+    }, [initialPosts]);
 
     const filteredItems = useMemo(() => {
         if (filter === "saved") {
@@ -81,17 +80,10 @@ export default function SavedPageClient({ initialInsights }: { initialInsights: 
 
     const getLinkHref = (item: SavedItem | null): string => {
         if (!item) return '#';
-        const isRss = item.slug.startsWith('rss-');
         
-        let href = item.type === 'blog'
-            ? `/blog/${isRss ? 'rss/' : ''}${item.slug.replace(/^rss-/, '')}`
-            : `/insight/${isRss ? 'rss/' : ''}${item.slug.replace(/^rss-/, '')}`;
+        let href = `/post/${item.slug}`;
             
         href += `?from=saved`;
-        
-        if (item.deepDiveIndex !== undefined && item.deepDiveIndex > -1) {
-            href += `&deepDive=${item.deepDiveIndex}`;
-        }
         
         return href;
     }
@@ -152,7 +144,7 @@ ${item.note.trim()}`;
                     <BookmarkX className="size-16 text-muted-foreground" />
                     <h2 className="mt-6 text-2xl font-bold font-headline">No Saved Items</h2>
                     <p className="mt-2 text-muted-foreground">
-                        You haven't saved any insights yet. Look for the bookmark icon to save content for later.
+                        You haven't saved any posts yet. Look for the bookmark icon to save content for later.
                     </p>
                 </div>
             );
@@ -161,17 +153,17 @@ ${item.note.trim()}`;
         return (
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 grid-flow-dense">
                 {filteredItems.map(item => {
-                    const insight = insightsMap.get(item.slug);
+                    const post = postsMap.get(item.slug);
                     const hasNote = item.note && item.note.trim().length > 0;
                     
-                    if (!insight) return null;
+                    if (!post) return null;
 
                     return (
                        <div key={item.id} className={hasNote ? "col-span-2 group relative" : "group relative"}>
                             <Link href={getLinkHref(item)} className="block w-full h-full">
                                 <SavedItemPreviewCard
                                     item={item}
-                                    insight={insight}
+                                    post={post}
                                 />
                             </Link>
                              <Button
@@ -222,7 +214,7 @@ ${item.note.trim()}`;
                 <AlertDialogContent className="max-w-md w-full">
                     <AlertDialogHeader>
                         <AlertDialogTitle>
-                           {isAnimating ? 'Shuffling...' : 'Your random insight is...'}
+                           {isAnimating ? 'Shuffling...' : 'Your random post is...'}
                         </AlertDialogTitle>
                         {isAnimating && (
                              <AlertDialogDescription>
@@ -236,7 +228,7 @@ ${item.note.trim()}`;
                            <div className="w-full max-w-[300px]">
                                 <SavedItemPreviewCard 
                                     item={shuffleAnimationItem}
-                                    insight={insightsMap.get(shuffleAnimationItem.slug)!}
+                                    post={postsMap.get(shuffleAnimationItem.slug)!}
                                 />
                            </div>
                        )}

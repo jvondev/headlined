@@ -1,108 +1,43 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
 import { SearchIndex, createSearchIndex } from '@/lib/search';
-import type { Insight, SearchResult, SearchableItem, DeepDive, DeepDiveType, DeepDiveContent } from '@/types';
-import { getAllInsightsForSearch } from '@/lib/client-insights';
+import type { Post, SearchResult, SearchableItem } from '@/types';
+import { getAllPostsForSearch } from '@/lib/client-posts';
 
 let searchIndex: SearchIndex | null = null;
 let searchableItemsCache: SearchableItem[] | null = null;
 let isIndexing = false;
 let indexingPromise: Promise<void> | null = null;
 
-
-// Helper to get content from a deep dive for indexing
-function getDeepDiveContentAsString(deepDive: DeepDive<DeepDiveType>): string {
-    const { title, content } = deepDive;
-    let contentString = title;
-
-    try {
-        switch (deepDive.type) {
-            case 'qna':
-                contentString += ' ' + (content as DeepDiveContent['qna']).questions.map(q => `${q.q} ${q.a}`).join(' ');
-                break;
-            case 'checklist':
-                contentString += ' ' + (content as DeepDiveContent['checklist']).items.map(item => item.text).join(' ');
-                break;
-            case 'comparison':
-                const compContent = content as DeepDiveContent['comparison'];
-                contentString += ` ${compContent.titleA} ${compContent.titleB} ` + compContent.items.map(item => `${item.feature} ${item.itemA} ${item.itemB}`).join(' ');
-                break;
-            case 'howto':
-                contentString += ' ' + (content as DeepDiveContent['howto']).steps.map(step => `${step.title} ${step.description}`).join(' ');
-                break;
-            case 'data':
-                contentString += ' ' + (content as DeepDiveContent['data']).points.map(p => `${p.value} ${p.label}`).join(' ');
-                break;
-            case 'alternatives':
-                contentString += ' ' + (content as DeepDiveContent['alternatives']).points.map(alt => `${alt.name} ${alt.description}`).join(' ');
-                break;
-            case 'metadata':
-                contentString += ' ' + (content as DeepDiveContent['metadata']).items.map(item => `${item.label} ${item.value}`).join(' ');
-                break;
-            case 'quote':
-                 contentString += ` ${(content as DeepDiveContent['quote']).text} ${(content as DeepDiveContent['quote']).author}`;
-                 break;
-            case 'case-study':
-                const csContent = content as DeepDiveContent['case-study'];
-                contentString += ` ${csContent.problem} ${csContent.solution} ${csContent.result}`;
-                break;
-            case 'myth':
-                const mythContent = content as DeepDiveContent['myth'];
-                contentString += ` ${mythContent.myth} ${mythContent.fact}`;
-                break;
-            default:
-                if (typeof content === 'object' && content !== null) {
-                    contentString += ' ' + Object.values(content).join(' ');
-                }
-                break;
-        }
-    } catch (e) {
-        console.error("Failed to stringify deep dive content for search", e);
-    }
-    return contentString;
-}
-
-
 async function getSearchableData(): Promise<SearchableItem[]> {
     if (searchableItemsCache) {
         return searchableItemsCache;
     }
-    const insights = await getAllInsightsForSearch();
+    const posts = await getAllPostsForSearch();
     const documents: SearchableItem[] = [];
 
-    insights.forEach((insight) => {
-        // Add the main insight summary
+    posts.forEach((post) => {
+        // Add the main post summary
         documents.push({
-            id: `${insight.slug}-insight`,
-            slug: insight.slug,
-            type: 'insight',
-            title: insight.title,
-            content: `${insight.title} ${insight.description}`,
+            id: `${post.slug}-post`,
+            slug: post.slug,
+            type: 'post',
+            title: post.title,
+            content: `${post.title} ${post.description}`,
             icon: 'Info', 
         });
 
-        // Add the full blog content
-        documents.push({
-            id: `${insight.slug}-blog`,
-            slug: insight.slug,
-            type: 'blog',
-            title: `${insight.title} (Full Story)`,
-            content: insight.blogContent,
-            icon: 'BookText', 
-        });
-
-        // Add each deep dive as a separate document
-        insight.deepDives.forEach((deepDive, deepDiveIndex) => {
+        // Add each summary as a separate document
+        post.summaries.forEach((summary, summaryIndex) => {
             documents.push({
-                id: `${insight.slug}-dd-${deepDiveIndex}`,
-                slug: insight.slug,
-                type: deepDive.type,
-                title: deepDive.title,
-                content: getDeepDiveContentAsString(deepDive),
-                deepDiveIndex,
-                icon: deepDive.icon,
+                id: `${post.slug}-sum-${summaryIndex}`,
+                slug: post.slug,
+                type: summary.type,
+                title: summary.title,
+                content: summary.content.snippet,
+                summaryIndex,
+                icon: summary.icon,
             });
         });
     });
@@ -196,19 +131,19 @@ export function useSearch() {
             return;
         }
         
-        const allInsights = await getAllInsightsForSearch();
-        const insightsMap = new Map<string, Insight>(allInsights.map(i => [i.slug, i]));
+        const allPosts = await getAllPostsForSearch();
+        const postsMap = new Map<string, Post>(allPosts.map(i => [i.slug, i]));
         
         const enrichedResults: SearchResult[] = finalResults
             .map(item => {
                 if (!item) return null;
                 
-                const insight = insightsMap.get(item.slug);
-                if (!insight) return null;
+                const post = postsMap.get(item.slug);
+                if (!post) return null;
 
                 return {
                     ...item,
-                    category: insight.category[0] || '',
+                    topic_id: post.topic_id,
                 };
             })
             .filter((r): r is SearchResult => r !== null)

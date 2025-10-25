@@ -1,10 +1,9 @@
-
 import { createContext } from 'react';
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 
 interface CarouselContextProps {
   setHorizontalEmblaApi: (slug: string, api: UseEmblaCarouselType[1]) => () => void;
-  currentInsightSlug: string;
+  currentPostSlug: string;
   triggerParentScrollDown: () => void; // Added this line
 }
 

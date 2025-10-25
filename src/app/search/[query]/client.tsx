@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, FC } from "react";
@@ -58,18 +57,7 @@ export function SearchResultsClient({ query }: SearchResultsClientProps) {
     }, [isReady, query, search, setResults]);
     
     const getResultUrl = (result: SearchResult) => {
-        const isRss = result.slug.startsWith('rss-');
-        const slug = result.slug.replace(/^rss-/, '');
-
-        if (result.type === 'blog') {
-             return `/blog/${isRss ? `rss/${slug}` : slug}`;
-        }
-        
-        let url = `/insight/${isRss ? `rss/${slug}` : slug}`;
-        
-        if (result.deepDiveIndex !== undefined) {
-            url += `?deepDive=${result.deepDiveIndex}`;
-        }
+        let url = `/post/${result.slug}`;
         return url;
     };
 
@@ -105,14 +93,14 @@ export function SearchResultsClient({ query }: SearchResultsClientProps) {
                              {result.icon ? (
                                 <DynamicIcon name={result.icon} className="size-4 md:size-5" />
                               ) : (
-                                <BookText className="size-4 md:size-5" /> // Default to book icon for blog/insight
+                                <BookText className="size-4 md:size-5" /> // Default to book icon for post
                               )}
                         </div>
                         <Card className="ml-6 md:ml-8">
                             <CardHeader>
                                 <div className="flex items-center gap-2">
                                     <Badge variant="secondary">{result.type}</Badge>
-                                    {result.tags && result.tags.length > 0 && <span className="text-sm text-muted-foreground">{result.tags[0]}</span>}
+                                    {result.topic_id && <span className="text-sm text-muted-foreground">{result.topic_id}</span>}
                                 </div>
                                 <CardTitle className="mt-2">
                                     <Link href={getResultUrl(result)} className="hover:underline">
