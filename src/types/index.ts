@@ -73,7 +73,18 @@ export interface Topic {
   icon: string | null;
 }
 
+export interface ParserConfig {
+  title?: string; // e.g., 'title' or 'dc:title'
+  link?: string; // e.g., 'link'
+  description?: string; // e.g., 'content:encoded' or 'summary'
+  thumbnailUrl?: string; // e.g., 'media:content.$.url' or 'enclosure.$.url'
+  pubDate?: string; // e.g., 'pubDate'
+}
+
 export interface Source {
     name: string;
     url: string;
+    topic:string;
+    parserConfig?: ParserConfig;
+    maxItems?: number; // Optional: maximum number of items to parse from this source
 }
