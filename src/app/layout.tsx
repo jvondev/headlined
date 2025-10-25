@@ -9,7 +9,6 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { useOnboardingStatus } from '@/hooks/use-onboarding-status'; // Import the hook
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow'; // Import the OnboardingFlow component
-import { BottomNavigationBar } from '@/components/bottom-nav'; // Import the BottomNavigationBar component
 import { useState, useCallback } from 'react';
 import { FullScreenContext } from '@/context/full-screen-context';
 import { cn } from '@/lib/utils';
@@ -64,7 +63,6 @@ export default function RootLayout({
             <div className="flex-grow overflow-y-auto no-scrollbar">
               {children}
             </div>
-            <BottomNavigationBar className={cn({ "hidden": isFullScreen })} />
             <Analytics />
             <SpeedInsights />
             <Toaster />

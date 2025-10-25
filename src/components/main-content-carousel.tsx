@@ -10,6 +10,7 @@ import { getPaginatedPosts } from "@/lib/posts";
 import { SavedContent } from "@/components/saved-content";
 import { ExploreContent } from "@/components/explore-content";
 import { SearchContent } from "@/components/search-content";
+import { DashboardContent } from "@/components/dashboard-content";
 
 type CarouselItem = {
   name: string;
@@ -51,7 +52,7 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
   useEffect(() => {
     const fetchPostsForFilter = async () => {
       const currentItem = allFilterItems[selectedIndex];
-      if (!currentItem || (currentItem.type === "none" && currentItem.name !== "Saved" && currentItem.name !== "Explore" && currentItem.name !== "Search")) return;
+      if (!currentItem || (currentItem.type === "none" && currentItem.name !== "Saved" && currentItem.name !== "Explore" && currentItem.name !== "Search" && currentItem.name !== "Dashboard")) return;
 
       setIsLoadingFilterPosts(true);
       setFilterError(null);
@@ -82,7 +83,7 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
           fetchedPosts = result.posts;
           hasMore = result.hasMore;
         } else if (currentItem.type === "none") {
-          // For Saved, Explore, Search, we don't fetch posts here directly
+          // For Saved, Explore, Search, Dashboard, we don't fetch posts here directly
           // Their content will be rendered by their respective components
           setIsLoadingFilterPosts(false);
         }
@@ -109,6 +110,7 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
             {selectedIndex === index && (
               <React.Fragment>
                 {item.name === "Saved" && <SavedContent isLoading={isLoadingFilterPosts} />}
+                {item.name === "Dashboard" && <DashboardContent />}
                 {item.type === "topic" || item.type === "interest" ? (
                   isLoadingFilterPosts ? (
                     <PostPageLoadingSkeleton />

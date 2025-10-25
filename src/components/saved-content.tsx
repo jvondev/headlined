@@ -7,11 +7,7 @@ type SavedContentProps = {
   isLoading: boolean;
 };
 
-export const SavedContent: FC<SavedContentProps> = ({ isLoading }) => {
-  if (isLoading) {
-    return <PostPageLoadingSkeleton />;
-  }
-
+export const SavedContent: FC = () => {
   return (
     <div className="text-center py-16">
       <h1 className="font-headline text-4xl font-bold">Saved Content</h1>

@@ -3,7 +3,6 @@
 import { useState, useCallback } from 'react';
 import { useOnboardingStatus } from '@/hooks/use-onboarding-status';
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow';
-import { BottomNavigationBar } from '@/components/bottom-nav';
 import { FullScreenContext } from '@/context/full-screen-context';
 import { cn } from '@/lib/utils';
 import { Analytics } from '@vercel/analytics/next';
@@ -28,7 +27,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           {children}
           {showOnboarding && <OnboardingFlow onComplete={markOnboardingComplete} />}
         </div>
-        <BottomNavigationBar className={cn({ "hidden": isFullScreen })} />
         <Analytics />
         <SpeedInsights />
         <Toaster />

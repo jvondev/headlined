@@ -6,12 +6,14 @@ import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { CarouselNav } from "@/components/carousel-nav";
 import { MainContentCarousel } from "@/components/main-content-carousel";
 import type { Topic, Interest } from "@/types";
-import { Bookmark, Compass, Search, LucideProps } from "lucide-react";
+import { Bookmark, Compass, Search, LayoutDashboard, LucideProps } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 const iconMap = {
     Bookmark,
     Compass,
     Search,
+    LayoutDashboard,
 };
 
 type CarouselItem = {
@@ -28,32 +30,14 @@ type SynchronizedCarouselProps = {
 };
 
 export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests }) => {
-    const [emblaRef, emblaApi] = useEmblaCarousel({
-        loop: false,
-        axis: 'x',
-        align: 'start',
-        duration: 50,
-    }, [WheelGesturesPlugin({
-        forceWheelAxis: 'x',
-        wheelDraggingClass: 'is-wheel-dragging'
-    })]);
+    const pathname = usePathname();
 
-    const [navEmblaRef, navEmblaApi] = useEmblaCarousel({
-        loop: false,
-        axis: 'x',
-        align: 'start',
-        duration: 50,
-    }, [WheelGesturesPlugin({
-        forceWheelAxis: 'x',
-        wheelDraggingClass: 'is-wheel-dragging'
-    })]);
-
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    const [activeFilterType, setActiveFilterType] = useState<"topic" | "interest" | "none">("none");
-    const [activeFilterValue, setActiveFilterValue] = useState<string>("Saved");
+    const initialFilterValue = "tech";
+    const initialFilterType = "topic";
 
     const allFilterItems: CarouselItem[] = React.useMemo(() => [
         { name: "Saved", type: "none" as const, href: "/saved", icon: iconMap.Bookmark, isIconOnly: true },
+        { name: "Dashboard", type: "none" as const, href: "/", icon: iconMap.LayoutDashboard, isIconOnly: true },
         ...(Array.isArray(topics) ? topics.map(topic => ({
             ...topic,
             type: "topic" as const,
@@ -69,6 +53,45 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         { name: "Explore", type: "none" as const, href: "/explore", icon: iconMap.Compass, isIconOnly: true },
         { name: "Search", type: "none" as const, href: "/search", icon: iconMap.Search, isIconOnly: true },
     ], [topics, interests]);
+
+    const initialSelectedIndex = React.useMemo(() => {
+        if (pathname === "/") {
+            const dashboardIndex = allFilterItems.findIndex(item => item.name === "Dashboard");
+            return dashboardIndex !== -1 ? dashboardIndex : 0;
+        }
+        const techIndex = allFilterItems.findIndex(item => item.name === initialFilterValue && item.type === initialFilterType);
+        return techIndex !== -1 ? techIndex : 0;
+    }, [allFilterItems, pathname]);
+
+    const [emblaRef, emblaApi] = useEmblaCarousel({
+        loop: false,
+        axis: 'x',
+        align: 'start',
+        duration: 50,
+        startIndex: initialSelectedIndex,
+    }, [WheelGesturesPlugin({
+        forceWheelAxis: 'x',
+        wheelDraggingClass: 'is-wheel-dragging'
+    })]);
+
+    const [navEmblaRef, navEmblaApi] = useEmblaCarousel({
+        loop: false,
+        axis: 'x',
+        align: 'start',
+        duration: 50,
+        startIndex: initialSelectedIndex,
+    }, [WheelGesturesPlugin({
+        forceWheelAxis: 'x',
+        wheelDraggingClass: 'is-wheel-dragging'
+    })]);
+
+    const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
+    const [activeFilterType, setActiveFilterType] = useState<"topic" | "interest" | "none">(
+        pathname === "/" ? "none" : "topic"
+    );
+    const [activeFilterValue, setActiveFilterValue] = useState<string>(
+        pathname === "/" ? "Dashboard" : "tech"
+    );
 
     const onSelect = useCallback((emblaMainApi: EmblaCarouselType) => {
         if (!emblaMainApi || !navEmblaApi) return;
@@ -90,7 +113,6 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
 
     useEffect(() => {
         if (!emblaApi) return;
-        onSelect(emblaApi);
         emblaApi.on("select", onSelect);
         emblaApi.on("reInit", onSelect);
         return () => {
@@ -100,7 +122,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     }, [emblaApi, onSelect]);
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full py-2 px-4">
             <CarouselNav
                 emblaRef={navEmblaRef}
                 emblaApi={navEmblaApi}
