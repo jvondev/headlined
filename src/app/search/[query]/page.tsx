@@ -9,7 +9,10 @@ type SearchPageProps = {
     };
 };
 
-
+export async function generateStaticParams() {
+  // This function is intentionally left empty for client-side search.
+  return [{ query: 'initial' }]; // Return a dummy path
+}
 
 export default function SearchPage({ params }: SearchPageProps) {
     const currentQuery = params.query;
