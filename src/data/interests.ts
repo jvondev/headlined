@@ -10,3 +10,7 @@ export const getInterestBySlug = async (slug: string): Promise<Interest | undefi
     }
     return undefined;
 };
+
+export const getAllInterests = async (): Promise<Interest[]> => {
+    return interestsData;
+};

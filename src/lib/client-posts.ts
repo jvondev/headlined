@@ -145,3 +145,5 @@ export const getPostsBySlugs = async (slugs: string[]): Promise<Post[]> => {
   const posts = await fetchAllPosts();
   return posts.filter(post => slugs.includes(post.slug));
 };
+
+export const getAllPostsForSearch = fetchAllPosts;

@@ -1,5 +1,6 @@
 import { getPaginatedPosts } from "@/lib/posts";
 import { redirect } from "next/navigation";
+import { getAllTopics } from "@/data/topics"; // Import getAllTopics
 
 export const revalidate = 86400; // Revalidate every day
 
@@ -9,7 +10,12 @@ type TopicPageProps = {
     }
 }
 
-
+export async function generateStaticParams() {
+    const topics = await getAllTopics();
+    return topics.map(topic => ({
+        topic: topic.name, // Assuming topic.name is the slug
+    }));
+}
 
 export default async function TopicPage({ params }: TopicPageProps) {
     const topic = decodeURIComponent(params.topic);

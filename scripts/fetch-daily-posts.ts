@@ -1,10 +1,34 @@
 
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '../src/types/supabase';
 import dotenv from 'dotenv';
 import fs from 'fs';
 
 dotenv.config();
+
+// Define the Post type directly within this file
+export interface Post {
+  slug: string;
+  title: string;
+  description: string | null;
+  link: string;
+  thumbnail_url: string | null;
+  topic: string | null;
+  created_at: string; // Added as it's used in the script
+  // summaries: Summary[]; // Not used in this script, so omitted for minimalism
+}
+
+// Minimal Database type definition for Supabase client
+interface Database {
+  public: {
+    Tables: {
+      posts: {
+        Row: Post;
+        Insert: Partial<Post>;
+        Update: Partial<Post>;
+      };
+    };
+  };
+}
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

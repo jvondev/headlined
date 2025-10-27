@@ -10,3 +10,7 @@ export const getTopicBySlug = async (slug: string): Promise<Topic | undefined> =
     }
     return undefined;
 };
+
+export const getAllTopics = async (): Promise<Topic[]> => {
+    return topicsData;
+};
