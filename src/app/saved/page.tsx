@@ -1,31 +1,54 @@
-import { getPostsBySlugs } from "@/lib/posts";
+'use client';
+
+import { getPostsBySlugs } from "@/lib/client-posts";
 import { SavedPageHeader } from "@/components/saved/saved-page-header";
 import SavedPageClient from "./client";
-import { cookies } from 'next/headers';
 import type { SavedItem, Post } from "@/types";
+import { useEffect, useState } from 'react';
 
-async function getSavedItems(cookieStore: any): Promise<SavedItem[]> {
-  const savedItemsCookie = cookieStore.get('savedItems');
+// Client-side function to get saved items from localStorage
+function getSavedItemsClient(): SavedItem[] {
+  if (typeof window === 'undefined') return [];
+  const savedItemsCookie = localStorage.getItem('savedItems');
   if (savedItemsCookie) {
     try {
-      return JSON.parse(savedItemsCookie.value);
+      return JSON.parse(savedItemsCookie);
     } catch (e) {
+      console.error('Error parsing saved items from localStorage:', e);
       return [];
     }
   }
   return [];
 }
 
-export default async function SavedPage() {
-    const cookieStore = cookies();
-    const savedItems = await getSavedItems(cookieStore);
-    const postSlugs = savedItems.map(item => item.slug);
-    const posts = await getPostsBySlugs(postSlugs);
+export default function SavedPage() {
+    const [postsWithSavedData, setPostsWithSavedData] = useState<Array<Post & { savedItem: SavedItem }>>([]);
+    const [loading, setLoading] = useState(true);
 
-    const postsWithSavedData = posts.map(post => {
-        const savedItem = savedItems.find(item => item.slug === post.slug)!;
-        return { ...post, savedItem };
-    });
+    useEffect(() => {
+        async function fetchSavedPosts() {
+            setLoading(true);
+            const savedItems = getSavedItemsClient();
+            const postSlugs = savedItems.map(item => item.slug);
+            const posts = await getPostsBySlugs(postSlugs);
+
+            const combinedData = posts.map(post => {
+                const savedItem = savedItems.find(item => item.slug === post.slug)!;
+                return { ...post, savedItem };
+            });
+            setPostsWithSavedData(combinedData);
+            setLoading(false);
+        }
+        fetchSavedPosts();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="bg-background min-h-screen flex items-center justify-center">
+                <p>Loading saved posts...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-background min-h-screen">

@@ -1,19 +1,18 @@
 import { getPaginatedPosts } from "@/lib/posts";
-import { serverSupabase } from "@/lib/server-supabase";
 import { redirect } from "next/navigation";
 
 export const revalidate = 86400; // Revalidate every day
 
-type CategoryPageProps = {
+type TopicPageProps = {
     params: {
-        category: string;
+        topic: string;
     }
 }
 
 
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
-    const category = decodeURIComponent(params.category);
+export default async function TopicPage({ params }: TopicPageProps) {
+    const topic = decodeURIComponent(params.topic);
     // TODO: Fetch topic by category name to get the topic_id
     // const { posts } = await getPaginatedPosts({ page: 1, topic_id: ... });
 

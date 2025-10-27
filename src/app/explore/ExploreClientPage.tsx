@@ -9,16 +9,25 @@ import { TopicGrid } from "@/components/TopicGrid";
 import { InterestGrid } from "@/components/InterestGrid";
 import RssFeedSelectionModalContent from "@/components/rss-feed-selection-modal-content";
 import { Topic, Interest, RssFeed } from "@/types";
+import { getClientRssFeeds } from "@/lib/client-rss";
 
 import { useContext, useCallback, useMemo } from "react";
 
 interface ExploreClientPageProps {
   topics: Topic[];
   interests: Interest[];
-  feeds: RssFeed[];
 }
 
-export default function ExploreClientPage({ topics, interests, feeds }: ExploreClientPageProps) {
+export default function ExploreClientPage({ topics, interests }: ExploreClientPageProps) {
+  const [feeds, setFeeds] = useState<RssFeed[]>([]);
+
+  useEffect(() => {
+    const fetchFeeds = async () => {
+      const fetchedFeeds = await getClientRssFeeds();
+      setFeeds(fetchedFeeds);
+    };
+    fetchFeeds();
+  }, []);
 
 
 

@@ -34,15 +34,20 @@ async function fetchDailyPosts() {
     process.exit(1);
   }
 
-  if (!data) {
+  if (!data || data.length === 0) {
     console.log('No new posts in the last 24 hours.');
     process.exit(0);
   }
 
+  const processedPosts = data.map((post) => {
+    const { id, created_at, updated_at, ...postWithoutUnusedFields } = post;
+    return postWithoutUnusedFields;
+  });
+
   const filePath = 'public/posts.json';
   try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-    console.log(`Successfully wrote ${data.length} posts to ${filePath}`);
+    fs.writeFileSync(filePath, JSON.stringify(processedPosts, null, 2));
+    console.log(`Successfully wrote ${processedPosts.length} posts to ${filePath}`);
   } catch (writeError) {
     console.error(`Error writing to ${filePath}:`, writeError);
     process.exit(1);

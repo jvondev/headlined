@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Post } from '@/types';
-import { getPaginatedPosts } from '@/lib/posts';
+import { getPaginatedPosts } from '@/lib/client-posts';
 import { useInView } from '@/hooks/use-in-view';
 import { PostView } from './post-view';
 import { PostPageLoadingSkeleton } from './post-page-loading-skeleton';

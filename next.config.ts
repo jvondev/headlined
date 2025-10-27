@@ -8,6 +8,7 @@ const withPWAConfig = withPWA({
 });
 
 const nextConfig: NextConfig = {
+  output: 'export',
   ...withPWAConfig,
   /* config options here */
   typescript: {

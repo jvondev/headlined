@@ -9,6 +9,7 @@ import { useOnboardingStatus } from '@/hooks/use-onboarding-status'; // Import t
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow'; // Import the OnboardingFlow component
 import { useState, useCallback } from 'react';
 import { FullScreenContext } from '@/context/full-screen-context';
+import { BackgroundSyncProvider } from '@/components/background-sync-provider'; // Import the BackgroundSyncProvider
 import { cn } from '@/lib/utils';
 
 // Metadata can't be client-side, so keep it outside the client component
@@ -58,6 +59,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FullScreenContext.Provider value={{ isFullScreen, toggleFullScreen }}>
+            <BackgroundSyncProvider /> {/* Render the background sync provider */}
             <div className="flex-grow overflow-y-auto no-scrollbar">
               {children}
             </div>

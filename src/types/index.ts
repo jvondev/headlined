@@ -22,14 +22,11 @@ export interface Summary {
 }
 
 export interface Post {
-  id: string;
   slug: string;
   title: string;
   description: string | null;
   link: string;
   thumbnail_url: string | null;
-  created_at: string;
-  updated_at: string;
   topic: string | null;
   summaries: Summary[];
 }

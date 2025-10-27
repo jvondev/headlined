@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useCallback, type FC, useRef, useMemo } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
@@ -11,7 +13,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { PostView } from "@/components/post-view";
 import { HomepagePostSlide } from "@/components/homepage-post-slide";
-import { getPaginatedPosts } from "@/lib/posts";
+import { getPaginatedPosts } from "@/lib/client-posts";
 import { useSavedItems } from "@/hooks/use-saved-items";
 import { useToast } from "@/hooks/use-toast";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
