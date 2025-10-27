@@ -5,8 +5,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { useOnboardingStatus } from '@/hooks/use-onboarding-status'; // Import the hook
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow'; // Import the OnboardingFlow component
 import { useState, useCallback } from 'react';
@@ -63,8 +61,7 @@ export default function RootLayout({
             <div className="flex-grow overflow-y-auto no-scrollbar">
               {children}
             </div>
-            <Analytics />
-            <SpeedInsights />
+            
             <Toaster />
           </FullScreenContext.Provider>
         </ThemeProvider>

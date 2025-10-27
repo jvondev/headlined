@@ -1,0 +1,39 @@
+
+name: Update Daily Posts
+
+on:
+  schedule:
+    - cron: '0 11 * * *' # Runs every day at 11:00 AM UTC
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  update-posts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Fetch daily posts
+        run: npx ts-node scripts/fetch-daily-posts.ts
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'chore: update daily posts - ${{ steps.date.outputs.date }}'
+          file_pattern: public/posts.json

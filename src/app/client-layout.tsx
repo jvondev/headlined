@@ -5,8 +5,6 @@ import { useOnboardingStatus } from '@/hooks/use-onboarding-status';
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow';
 import { FullScreenContext } from '@/context/full-screen-context';
 import { cn } from '@/lib/utils';
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Toaster } from "@/components/ui/toaster";
 import { OnboardingProvider } from '@/context/onboarding-provider';
 
@@ -27,8 +25,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           {children}
           {showOnboarding && <OnboardingFlow onComplete={markOnboardingComplete} />}
         </div>
-        <Analytics />
-        <SpeedInsights />
+        
         <Toaster />
       </FullScreenContext.Provider>
     </OnboardingProvider>
