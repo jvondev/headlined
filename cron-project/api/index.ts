@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
-import { cron } from '@hono/cron';
+import { cron } from 'hono/cron';
 import { HTTPException } from 'hono/http-exception';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import Parser from 'rss-parser';
