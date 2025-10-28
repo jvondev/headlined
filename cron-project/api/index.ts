@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
-import { cron } from 'hono/cron';
 import { HTTPException } from 'hono/http-exception';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import Parser from 'rss-parser';
@@ -169,15 +168,3 @@ app.get('/api/index', async (c) => {
 });
 
 export default app;
-
-// Run the cron job directly if the script is executed from the command line
-if (require.main === module) {
-  console.log("Running cron job directly...");
-  runCronJob().then(() => {
-    console.log("Cron job finished.");
-    process.exit(0);
-  }).catch(error => {
-    console.error("Cron job failed:", error);
-    process.exit(1);
-  });
-}
