@@ -5,6 +5,7 @@
 
 @layer base {
   :root {
+    --radius: 0.5rem;
     --background: 0 0% 94.1%; /* #F0F0F0 */
     --foreground: 0 0% 20%;   /* #333333 */
     --card: 0 0% 94.1%;
@@ -35,6 +36,7 @@
   }
 
   .dark {
+    --radius: 0.5rem;
     --background: 0 0% 10%;    /* Dark Gray */
     --foreground: 0 0% 92%;    /* Light Gray */
     --card: 0 0% 10%;

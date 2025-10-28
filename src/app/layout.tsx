@@ -11,6 +11,7 @@ import { useState, useCallback } from 'react';
 import { FullScreenContext } from '@/context/full-screen-context';
 import { BackgroundSyncProvider } from '@/components/background-sync-provider'; // Import the BackgroundSyncProvider
 import { cn } from '@/lib/utils';
+import Script from 'next/script';
 
 // Metadata can't be client-side, so keep it outside the client component
 // export const metadata: Metadata = {
@@ -50,6 +51,14 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
         <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1a3c52cd54ef44838d0cd99b4bf2f638"}'></script>
+                        {process.env.NODE_ENV === "development" && (
+          <Script
+            src="//unpkg.com/react-grab/dist/index.global.js"
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+            data-enabled="true"
+          />
+        )}
       </head>
       <body className="font-body antialiased h-screen overflow-hidden flex flex-col" suppressHydrationWarning={true}>
         <ThemeProvider

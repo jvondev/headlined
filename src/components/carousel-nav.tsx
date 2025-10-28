@@ -39,7 +39,7 @@ export function CarouselNav({
                     const isActive = selectedIndex === index;
 
                     return (
-                        <div key={item.name} className={cn("flex-[0_0_auto] mr-2 last:mr-0", {
+                        <div key={item.name} className={cn("flex-[0_0_auto] mr-3 last:mr-0", {
                             "pl-4": index === 0,
                             "pr-4": index === allFilterItems.length - 1,
                         })}>
@@ -47,7 +47,7 @@ export function CarouselNav({
                                 variant={isActive ? "secondary" : "outline"}
                                 size={item.isIconOnly ? "icon" : "sm"}
                                 onClick={() => onNavClick(index)}
-                                className={cn("rounded-full", item.isIconOnly ? "" : "px-4")}
+                                className={cn("rounded-lg", item.isIconOnly ? "" : "px-4")}
                             >
                                 {item.icon && <DynamicIcon name={item.icon} className={cn("h-4 w-4", { "mr-2": !item.isIconOnly })} skeletonBgClass={isActive ? "bg-gray-300" : "bg-muted"} />}
                                 {!item.isIconOnly && item.name}
