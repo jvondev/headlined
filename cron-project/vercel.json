@@ -1,13 +1,7 @@
 {
-  "builds": [
-    {
-      "src": "api/index.ts",
-      "use": "@vercel/node"
-    }
-  ],
   "crons": [
     {
-      "path": "/api/index",
+      "path": "/api/route",
       "schedule": "0 8 * * *"
     }
   ]

@@ -1,14 +1,8 @@
-import { Hono } from 'hono';
-import { serve } from '@hono/node-server';
-import { HTTPException } from 'hono/http-exception';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import Parser from 'rss-parser';
 import { parse } from 'node-html-parser';
-import { sourcesData } from '../data/sources';
-import 'dotenv/config';
-
-const app = new Hono();
-const parser = new Parser();
+import { sourcesData } from '../../data/sources';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -19,6 +13,7 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
+const parser = new Parser();
 
 // --- Helper Functions ---
 
@@ -162,9 +157,20 @@ async function runCronJob() {
     };
 }
 
-app.get('/api/index', async (c) => {
-    const result = await runCronJob();
-    return c.json(result);
-});
-
-export default app;
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse
+) {
+    if (req.method === 'GET') {
+        try {
+            const result = await runCronJob();
+            res.status(200).json(result);
+        } catch (error: any) {
+            console.error("Cron job handler error:", error);
+            res.status(500).json({ message: "Internal Server Error", error: error.message });
+        }
+    } else {
+        res.setHeader('Allow', ['GET']);
+        res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
+}
