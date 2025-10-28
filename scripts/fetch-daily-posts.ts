@@ -7,14 +7,15 @@ dotenv.config();
 
 // Define the Post type directly within this file
 export interface Post {
+  id: string; // Assuming 'id' is a string
   slug: string;
   title: string;
   description: string | null;
   link: string;
   thumbnail_url: string | null;
   topic: string | null;
-  created_at: string; // Added as it's used in the script
-  // summaries: Summary[]; // Not used in this script, so omitted for minimalism
+  created_at: string;
+  updated_at: string; // Assuming 'updated_at' is a string
 }
 
 // Minimal Database type definition for Supabase client
@@ -63,7 +64,7 @@ async function fetchDailyPosts() {
     process.exit(0);
   }
 
-  const processedPosts = data.map((post) => {
+  const processedPosts = data.map((post: Post) => {
     const { id, created_at, updated_at, ...postWithoutUnusedFields } = post;
     return postWithoutUnusedFields;
   });

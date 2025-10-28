@@ -23,7 +23,7 @@ jobs:
         run: npm install
 
       - name: Fetch daily posts
-        run: npx ts-node scripts/fetch-daily-posts.ts
+        run: npx tsx scripts/fetch-daily-posts.ts
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
