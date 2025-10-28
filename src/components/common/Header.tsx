@@ -52,7 +52,7 @@ export default function Header() {
             <NavItems items={navItems} />
             <div className="flex items-center gap-4">
               <NavbarButton as={Link} href="/today" variant="primary" className="rounded-lg">
-                Start Reading <ArrowRight className="w-4 h-4 ml-2" />
+                Start Reading <span className="text-xs">(no login)</span>
               </NavbarButton>
             </div>
           </NavBody>
@@ -90,7 +90,7 @@ export default function Header() {
                       variant="primary"
                       className="w-full rounded-lg"
                   >
-                      Start Reading
+                      Start Reading <span className="text-xs">(no login)</span>
                   </NavbarButton>
               </div>
             </MobileNavMenu>

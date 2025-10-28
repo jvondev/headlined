@@ -22,6 +22,8 @@
     --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
+    --benefit: 140 70% 90%;
+    --benefit-foreground: 140 60% 20%;
     --border: 0 0% 85%;
     --input: 0 0% 85%;
     --ring: 0 0% 20%;
@@ -53,6 +55,8 @@
     --accent-foreground: 0 0% 92%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
+    --benefit: 140 60% 25%;
+    --benefit-foreground: 140 50% 95%;
     --border: 0 0% 20%;
     --input: 0 0% 20%;
     --ring: 0 0% 92%;
@@ -61,7 +65,7 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    
+
     --deep-dive-card-background: 0 0% 12%; /* Slightly lighter card */
     --deep-dive-card-foreground: 0 0% 92%;
   }
@@ -84,35 +88,15 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
-}
-
-@layer components {
-    .deep-dive-card-wrapper {
-        @apply bg-background h-full p-4 md:p-8 flex items-center justify-center;
+  @keyframes line-shadow {
+    0% {
+      background-position: 0 0;
     }
-    .deep-dive-card {
-        @apply bg-[hsl(var(--deep-dive-card-background))] text-[hsl(var(--deep-dive-card-foreground))] h-full w-full flex flex-col rounded-xl shadow-lg;
+    100% {
+      background-position: 100% -100%;
     }
-
-    /* Add the shimmer effect for skeletons */
-    .animate-shimmer {
-      background-image: linear-gradient(
-        to right,
-        hsl(var(--muted)) 0%,
-        hsl(var(--muted-foreground) / 0.2) 50%,
-        hsl(var(--muted)) 100%
-      );
-      background-size: 200% 100%;
-    }
-
-    /* Utility to disable only the enter animation */
-    .animate-in-none[data-state=open] {
-       animation-name: none !important;
-    }
-
-    /* Utility to disable all animations */
-    .animation-none, .animation-none * {
-      animation-duration: 0s !important;
-      transition-duration: 0s !important;
-    }
+  }
+  .animate-line-shadow {
+    animation: line-shadow 30s linear infinite;
+  }
 }
