@@ -9,6 +9,8 @@ on:
 jobs:
   update-posts:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Add this line
 
     steps:
       - name: Checkout repository
