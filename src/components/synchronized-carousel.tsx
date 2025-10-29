@@ -20,13 +20,15 @@ type CarouselItem = {
 type SynchronizedCarouselProps = {
     topics: Topic[];
     interests: Interest[];
+    initialFilterType?: "topic" | "interest" | "none";
+    initialFilterValue?: string;
 };
 
-export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests }) => {
+export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, initialFilterType, initialFilterValue }) => {
     const pathname = usePathname();
 
-    const initialFilterValue = "tech";
-    const initialFilterType = "topic";
+    const defaultInitialFilterValue = "tech";
+    const defaultInitialFilterType = "topic";
 
     const allFilterItems: CarouselItem[] = React.useMemo(() => [
         { name: "Saved", type: "none" as const, href: "/saved", icon: "Bookmark", isIconOnly: true },
@@ -48,13 +50,16 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     ], [topics, interests]);
 
     const initialSelectedIndex = React.useMemo(() => {
-        if (pathname === "/") {
+        if (initialFilterValue && initialFilterType) {
+            const index = allFilterItems.findIndex(item => item.name === initialFilterValue && item.type === initialFilterType);
+            return index !== -1 ? index : 0;
+        } else if (pathname === "/") {
             const dashboardIndex = allFilterItems.findIndex(item => item.name === "Dashboard");
             return dashboardIndex !== -1 ? dashboardIndex : 0;
         }
-        const techIndex = allFilterItems.findIndex(item => item.name === initialFilterValue && item.type === initialFilterType);
+        const techIndex = allFilterItems.findIndex(item => item.name === defaultInitialFilterValue && item.type === defaultInitialFilterType);
         return techIndex !== -1 ? techIndex : 0;
-    }, [allFilterItems, pathname]);
+    }, [allFilterItems, pathname, initialFilterValue, initialFilterType]);
 
     const [emblaRef, emblaApi] = useEmblaCarousel({
         loop: false,
@@ -80,10 +85,10 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
 
     const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
     const [activeFilterType, setActiveFilterType] = useState<"topic" | "interest" | "none">(
-        pathname === "/" ? "none" : "topic"
+        initialFilterType || (pathname === "/" ? "none" : "topic")
     );
     const [activeFilterValue, setActiveFilterValue] = useState<string>(
-        pathname === "/" ? "Dashboard" : "tech"
+        initialFilterValue || (pathname === "/" ? "Dashboard" : "tech")
     );
 
     const onSelect = useCallback((emblaMainApi: EmblaCarouselType) => {

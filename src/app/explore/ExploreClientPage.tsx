@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { TopicGrid } from "@/components/TopicGrid";
 import { InterestGrid } from "@/components/InterestGrid";
 import RssFeedSelectionModalContent from "@/components/rss-feed-selection-modal-content";
-import { Topic, Interest, RssFeed } from "@/types";
+import { Topic, Interest } from "@/types";
 import { getClientRssFeeds } from "@/lib/client-rss";
 
 import { useContext, useCallback, useMemo } from "react";
@@ -19,6 +20,7 @@ interface ExploreClientPageProps {
 }
 
 export default function ExploreClientPage({ topics, interests }: ExploreClientPageProps) {
+  const router = useRouter();
   const [feeds, setFeeds] = useState<RssFeed[]>([]);
 
   useEffect(() => {
@@ -29,27 +31,20 @@ export default function ExploreClientPage({ topics, interests }: ExploreClientPa
     fetchFeeds();
   }, []);
 
-
-
   const [searchTerm, setSearchTerm] = useState("");
-
-  const [customSearchQuery, setCustomSearchQuery] = useState(""); // New state for premium custom search
-
+  const [customSearchQuery, setCustomSearchQuery] = useState("");
   const [selectedTopic, setSelectedTopic] = useState("All");
   const [activeTab, setActiveTab] = useState("topics");
   const [translateX, setTranslateX] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
   const startXRef = useRef(0);
-  const currentTranslateXRef = useRef(0); // To store the translateX at the start of a swipe
-  const isClickRef = useRef(true); // New ref to track if the interaction is a click
+  const currentTranslateXRef = useRef(0);
+  const isClickRef = useRef(true);
   const tabs = ["topics", "interests", "sources"];
 
   const handleTopicSelect = useCallback((topicName: string) => {
-    setSelectedTopic(topicName);
-    setActiveTab("interests"); // Switch to interests tab
-    const tabIndex = tabs.indexOf("interests");
-    setTranslateX(-tabIndex * 100); // Explicitly set translateX for animation
-  }, [tabs]);
+    router.push(`/topic?topic=${topicName}`);
+  }, [router]);
 
   // Effect to manage global text selection and cursor
   useEffect(() => {
@@ -142,7 +137,7 @@ export default function ExploreClientPage({ topics, interests }: ExploreClientPa
 
     return interests.filter(interest => {
       const matchesSearch = searchTerm ? interest.name.toLowerCase().includes(searchTerm.toLowerCase()) : true;
-      const matchesTopic = selectedTopic === "All" ? true : interest.topic_id === topics.find(t => t.name === selectedTopic)?.id;
+      const matchesTopic = selectedTopic === "All" ? true : interest.topic === topics.find(t => t.name === selectedTopic)?.id;
       return matchesSearch && matchesTopic;
     });
   }, [interests, searchTerm, selectedTopic, topics]);

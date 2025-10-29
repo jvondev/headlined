@@ -6,9 +6,10 @@ import { DynamicIcon } from "@/components/dynamic-icon";
 
 interface InterestGridProps {
   interests: Interest[];
+  onInterestSelect: (interestName: string) => void;
 }
 
-export function InterestGrid({ interests }: InterestGridProps) {
+export function InterestGrid({ interests, onInterestSelect }: InterestGridProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       {interests.map((interest) => (
@@ -19,6 +20,7 @@ export function InterestGrid({ interests }: InterestGridProps) {
             backgroundColor: interest.background_color || undefined,
             color: interest.text_color || undefined,
           }}
+          onClick={() => onInterestSelect(interest.name)}
         >
           <CardContent className="p-4 flex flex-col h-full items-center justify-center">
             {interest.icon && <DynamicIcon name={interest.icon} className="h-8 w-8 mb-2" />}
