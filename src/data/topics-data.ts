@@ -13,4 +13,12 @@ export const topicsData: Omit<Topic, 'id' | 'created_at'>[] = [
     name: "sports",
     icon: "Goal",
   },
+  {
+    name: "science",
+    icon: "Atom",
+  },
+  {
+    name: "gaming",
+    icon: "Gamepad",
+  },
 ];

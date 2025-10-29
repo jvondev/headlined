@@ -15,7 +15,19 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
 const parser = new Parser();
 
+// Banned keywords for filtering posts
+const bannedKeywords = ['Only Fans', 'porn', 'sex', 'gambling']; // Add more keywords as needed
+
 // --- Helper Functions ---
+
+function cleanCdata(text: string): string {
+    return text.replace(/<!\[CDATA\[|\]\]>/g, '').trim();
+}
+
+// Function to strip HTML tags from a string
+function stripHtml(html: string): string {
+    return parse(html).textContent || '';
+}
 
 async function fetchArticleMetadata(url: string): Promise<{ description: string | null; thumbnail_url: string | null; }> {
     try {
@@ -31,7 +43,7 @@ async function fetchArticleMetadata(url: string): Promise<{ description: string 
         for (const selector of descriptionSelectors) {
             const node = html.querySelector(selector);
             if (node && node.getAttribute('content')) {
-                description = node.getAttribute('content')!;
+                description = stripHtml(node.getAttribute('content')!) || null; // Strip HTML from description
                 break;
             }
         }
@@ -56,26 +68,57 @@ async function fetchArticleMetadata(url: string): Promise<{ description: string 
 // --- Main Cron Job Logic ---
 
 async function processItem(item: any, source: any): Promise<void> {
-    const title = item.title;
-    const link = item.link;
+    let title = item.title ? cleanCdata(item.title) : null;
+    let link = item.link;
+    let description: string | null = null;
+
+    // Special handling for hnrss.org to ensure the correct article link is used
+    // and to prevent using item.contentSnippet as description.
+    if (source.url === 'https://hnrss.org/frontpage.atom') {
+        if (item.content) {
+            const contentHtml = parse(item.content);
+            const articleLinkNode = contentHtml.querySelector('p a');
+            if (articleLinkNode && articleLinkNode.text.startsWith('Article URL:')) {
+                link = articleLinkNode.getAttribute('href');
+            }
+        }
+        // For Hacker News, explicitly set description to null initially
+        // so it relies on fetchArticleMetadata.
+        description = null;
+    } else if (item.contentSnippet) {
+        description = stripHtml(cleanCdata(item.contentSnippet)) || null; // Strip HTML from contentSnippet
+    }
+
+    // For Slashdot, use item.description directly and strip HTML
+    if (source.url === 'https://rss.slashdot.org/Slashdot/slashdot' && item.description) {
+        description = stripHtml(cleanCdata(item.description)) || null;
+    }
 
     if (!title || !link) {
         console.log(`Skipping item due to missing title or link: ${item.guid || 'N/A'}`);
         return;
     }
 
+    // Filter by banned keywords
+    // Use title and potential contentSnippet/description for filtering, but not for final description.
+    const textToFilter = `${title} ${item.contentSnippet ? stripHtml(item.contentSnippet) : ''} ${item.description ? stripHtml(item.description) : ''}`.toLowerCase();
+    if (bannedKeywords.some(keyword => textToFilter.includes(keyword.toLowerCase()))) {
+        console.log(`Skipping item due to banned keyword: ${title}`);
+        return;
+    }
+
     const pub_date = item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString();
 
-    let description = item.contentSnippet;
     let thumbnail_url = item.enclosure ? item.enclosure.url : null;
 
     if (item['media:content'] && item['media:content']['$'] && item['media:content']['$'].url) {
         thumbnail_url = item['media:content']['$'].url;
     }
 
-    if (!description || !thumbnail_url) {
+    // Always fetch metadata if description or thumbnail is missing, or if it's hnrss/slashdot (to get a proper description/thumbnail)
+    if ((!description || !thumbnail_url) || source.url === 'https://hnrss.org/frontpage.atom' || source.url === 'https://rss.slashdot.org/Slashdot/slashdot') {
         const metadata = await fetchArticleMetadata(link);
-        if (!description) {
+        if (!description) { // Only update if description is still null
             description = metadata.description;
         }
         if (!thumbnail_url) {
@@ -83,7 +126,24 @@ async function processItem(item: any, source: any): Promise<void> {
         }
     }
 
-    const slug = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').substring(0, 100);
+    // Slug generation fix:
+    const baseSlug = title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, '') // Remove all non-alphanumeric characters except spaces
+        .trim() // Trim leading/trailing spaces
+        .replace(/\s+/g, '-'); // Replace all spaces with hyphens
+
+    // Truncate and ensure it doesn't end with a hyphen if truncated
+    let slug = baseSlug.substring(0, 60);
+    if (slug.endsWith('-')) {
+        slug = slug.slice(0, -1);
+    }
+    // Ensure slug is not empty if title was problematic
+    if (!slug) {
+        console.warn(`Generated empty slug for title: ${title}. Using a fallback.`);
+        slug = `post-${Date.now()}`;
+    }
+
 
     let topic = source.topic || 'news';
     if (source.name === "Yahoo News" && link) {
@@ -95,6 +155,35 @@ async function processItem(item: any, source: any): Promise<void> {
             topic = "tech";
         } else if (link.includes("health.yahoo.com")) {
             topic = "health";
+        }
+    } else if (source.url === 'https://rss.slashdot.org/Slashdot/slashdot' && link) {
+        const matches = link.match(/https:\/\/([a-z]+)\.slashdot\.org/);
+        if (matches && matches[1]) {
+            const subdomain = matches[1];
+            // Map Slashdot subdomains to topics
+            switch (subdomain) {
+                case 'it':
+                case 'tech':
+                case 'hardware':
+                case 'developers': // Mapped to tech as per user request
+                    topic = 'tech';
+                    break;
+                case 'science':
+                    topic = 'science';
+                    break;
+                case 'games':
+                    topic = 'gaming';
+                    break;
+                // Default case for news and any other unmapped subdomains
+                case 'news':
+                case 'yro': // Your Rights Online
+                case 'books':
+                default:
+                    topic = 'news';
+                    break;
+            }
+        } else {
+            topic = 'news'; // Default if no specific subdomain found
         }
     }
 
