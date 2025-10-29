@@ -16,7 +16,19 @@ const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
 const parser = new Parser();
 
 // Banned keywords for filtering posts
-const bannedKeywords = ['Only Fans', 'porn', 'sex', 'gambling']; // Add more keywords as needed
+const bannedKeywords = ['Only Fans', 'porn', 'sex', 'gambling', 'Form 13F', 'Form 13G', 'Form 144']; // Added 'Form 13G', 'Form 144'
+
+// Phrases to remove from descriptions
+const phrasesToRemoveFromDescription = [
+    '(Source: Bloomberg)',
+    'Read more of this story at Slashdot.'
+];
+
+// Phrases to remove from titles
+const phrasesToRemoveFromTitle = [
+    'Tell HN:',
+    'Show HN:'
+];
 
 // --- Helper Functions ---
 
@@ -28,6 +40,51 @@ function cleanCdata(text: string): string {
 function stripHtml(html: string): string {
     return parse(html).textContent || '';
 }
+
+// Function to remove specific phrases from a string
+function removePhrases(text: string | null, phrases: string[]): string | null {
+    if (!text) return null;
+    let cleanedText = text;
+    for (const phrase of phrases) {
+        cleanedText = cleanedText.replace(phrase, '').trim();
+    }
+    return cleanedText;
+}
+
+// Function to truncate description to max 1 paragraph or 5 sentences
+function truncateDescription(description: string | null): string | null {
+    if (!description) return null;
+
+    // Split into paragraphs (assuming double newline for paragraph breaks)
+    const paragraphs = description.split(/\n\s*\n/);
+    let effectiveDescription = paragraphs[0] || ''; // Take the first paragraph
+
+    // Split the first paragraph into sentences
+    // This regex attempts to split sentences while being mindful of common abbreviations.
+    // It's not perfect but works for many cases.
+    const sentences = effectiveDescription.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+
+    if (sentences.length > 5) {
+        effectiveDescription = sentences.slice(0, 5).join('').trim();
+    } else {
+        effectiveDescription = sentences.join('').trim();
+    }
+
+    // Ensure it ends cleanly if it was truncated
+    if (effectiveDescription.length < description.length && !/[.!?]$/.test(effectiveDescription)) {
+        // Find the last full word and end there
+        const lastSpaceIndex = effectiveDescription.lastIndexOf(' ');
+        if (lastSpaceIndex > -1) {
+            effectiveDescription = effectiveDescription.substring(0, lastSpaceIndex) + '...';
+        } else {
+            effectiveDescription = effectiveDescription + '...';
+        }
+    }
+
+
+    return effectiveDescription.length > 0 ? effectiveDescription : null;
+}
+
 
 async function fetchArticleMetadata(url: string): Promise<{ description: string | null; thumbnail_url: string | null; }> {
     try {
@@ -43,7 +100,9 @@ async function fetchArticleMetadata(url: string): Promise<{ description: string 
         for (const selector of descriptionSelectors) {
             const node = html.querySelector(selector);
             if (node && node.getAttribute('content')) {
-                description = stripHtml(node.getAttribute('content')!) || null; // Strip HTML from description
+                description = stripHtml(node.getAttribute('content')!) || null;
+                description = removePhrases(description, phrasesToRemoveFromDescription); // Remove specific phrases
+                description = truncateDescription(description); // Apply truncation here
                 break;
             }
         }
@@ -69,6 +128,8 @@ async function fetchArticleMetadata(url: string): Promise<{ description: string 
 
 async function processItem(item: any, source: any): Promise<void> {
     let title = item.title ? cleanCdata(item.title) : null;
+    title = removePhrases(title, phrasesToRemoveFromTitle); // Remove specific phrases from title
+
     let link = item.link;
     let description: string | null = null;
 
@@ -86,12 +147,16 @@ async function processItem(item: any, source: any): Promise<void> {
         // so it relies on fetchArticleMetadata.
         description = null;
     } else if (item.contentSnippet) {
-        description = stripHtml(cleanCdata(item.contentSnippet)) || null; // Strip HTML from contentSnippet
+        description = stripHtml(cleanCdata(item.contentSnippet)) || null;
+        description = removePhrases(description, phrasesToRemoveFromDescription); // Remove specific phrases
+        description = truncateDescription(description); // Apply truncation here
     }
 
     // For Slashdot, use item.description directly and strip HTML
     if (source.url === 'https://rss.slashdot.org/Slashdot/slashdot' && item.description) {
         description = stripHtml(cleanCdata(item.description)) || null;
+        description = removePhrases(description, phrasesToRemoveFromDescription); // Remove specific phrases
+        description = truncateDescription(description); // Apply truncation here
     }
 
     if (!title || !link) {
@@ -115,8 +180,8 @@ async function processItem(item: any, source: any): Promise<void> {
         thumbnail_url = item['media:content']['$'].url;
     }
 
-    // Always fetch metadata if description or thumbnail is missing, or if it's hnrss/slashdot (to get a proper description/thumbnail)
-    if ((!description || !thumbnail_url) || source.url === 'https://hnrss.org/frontpage.atom' || source.url === 'https://rss.slashdot.org/Slashdot/slashdot') {
+    // Always fetch metadata if description or thumbnail is missing, or if it's hnrss/slashdot/investing.com (to get a proper description/thumbnail)
+    if ((!description || !thumbnail_url) || source.url === 'https://hnrss.org/frontpage.atom' || source.url === 'https://rss.slashdot.org/Slashdot/slashdot' || source.url === 'https://www.investing.com/rss/news.rss') {
         const metadata = await fetchArticleMetadata(link);
         if (!description) { // Only update if description is still null
             description = metadata.description;

@@ -21,4 +21,8 @@ export const topicsData: Omit<Topic, 'id' | 'created_at'>[] = [
     name: "gaming",
     icon: "Gamepad",
   },
+  {
+    name: "finance",
+    icon: "Banknote",
+  },
 ];
