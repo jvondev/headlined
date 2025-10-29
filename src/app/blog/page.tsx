@@ -132,7 +132,7 @@ export default function BlogPage() {
                         <Badge key={tag} variant="secondary" className="text-xs sm:text-sm">{tag}</Badge>
                       ))}
                     </div>
-                    <Link href={`/blog/${post.slug}`} className="block hover:underline">
+                    <Link href={`/blog/post?slug=${post.slug}`} className="block hover:underline">
                       <h2 className="text-lg sm:text-xl font-bold tracking-tight mb-1 sm:mb-2 leading-snug text-foreground">
                         {post.title}
                       </h2>
