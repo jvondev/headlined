@@ -29,3 +29,33 @@ export function setSubscribedInterests(interests: Interest[]) {
   }
   localStorage.setItem('subscribedInterests', JSON.stringify(interests));
 }
+
+export function subscribeToFeed(feed: Topic | Interest, type: 'topic' | 'interest') {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  if (type === 'topic') {
+    const currentTopics = getSubscribedTopics();
+    if (!currentTopics.some(t => t.name === feed.name)) {
+      setSubscribedTopics([...currentTopics, feed as Topic]);
+    }
+  } else if (type === 'interest') {
+    const currentInterests = getSubscribedInterests();
+    if (!currentInterests.some(i => i.name === feed.name)) {
+      setSubscribedInterests([...currentInterests, feed as Interest]);
+    }
+  }
+}
+
+export function unsubscribeFromFeed(feedName: string, type: 'topic' | 'interest') {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  if (type === 'topic') {
+    const currentTopics = getSubscribedTopics();
+    setSubscribedTopics(currentTopics.filter(t => t.name !== feedName));
+  } else if (type === 'interest') {
+    const currentInterests = getSubscribedInterests();
+    setSubscribedInterests(currentInterests.filter(i => i.name !== feedName));
+  }
+}

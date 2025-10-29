@@ -1,11 +1,18 @@
 'use client';
 
-import { Suspense } from "react";
+import dynamic from 'next/dynamic';
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
 import { topicsData } from "@/data/topics-data";
 import { interestsData } from "@/data/interests-data";
 import { OnboardingProvider } from "@/context/onboarding-provider";
-import { SynchronizedCarousel } from "@/components/synchronized-carousel";
+
+const SynchronizedCarousel = dynamic(
+  () => import('@/components/synchronized-carousel').then(mod => mod.SynchronizedCarousel),
+  {
+    loading: () => <PostPageLoadingSkeleton />,
+    ssr: false,
+  }
+);
 
 export default function HomePage() {
   const topics = topicsData;
@@ -13,14 +20,12 @@ export default function HomePage() {
 
   return (
     <main className="h-screen w-full bg-background">
-      <Suspense fallback={<PostPageLoadingSkeleton />}>
-        <OnboardingProvider>
-          <SynchronizedCarousel
-            topics={topics}
-            interests={interests}
-          />
-        </OnboardingProvider>
-      </Suspense>
+      <OnboardingProvider>
+        <SynchronizedCarousel
+          topics={topics}
+          interests={interests}
+        />
+      </OnboardingProvider>
     </main>
   );
 }

@@ -6,7 +6,7 @@ import { MainContentCarousel } from "@/components/main-content-carousel";
 import type { Topic, Interest } from "@/types";
 import { usePathname } from "next/navigation";
 import { DynamicIcon } from "@/components/dynamic-icon";
-import { getSubscribedTopics, getSubscribedInterests } from "@/lib/local-storage";
+import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds"; // Import the new hook
 
 type CarouselItem = {
     name: string;
@@ -26,13 +26,7 @@ type SynchronizedCarouselProps = {
 export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, initialFilterType, initialFilterValue }) => {
     const pathname = usePathname();
 
-    const [subscribedTopics, setSubscribedTopics] = useState<Topic[]>([]);
-    const [subscribedInterests, setSubscribedInterests] = useState<Interest[]>([]);
-
-    useEffect(() => {
-        setSubscribedTopics(getSubscribedTopics());
-        setSubscribedInterests(getSubscribedInterests());
-    }, []);
+    const { subscribedTopics, subscribedInterests } = useSubscribedFeeds(); // Use the new hook
 
     const allFilterItems: CarouselItem[] = React.useMemo(() => {
         const baseItems: CarouselItem[] = [
@@ -53,7 +47,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 href: `/interest?interest=${interest.name}`,
                 icon: interest.icon,
             }));
-            return [...baseItems, ...subscribedTopicItems, ...subscribedInterests, { name: "Explore", type: "none" as const, href: "/explore", icon: "Compass", isIconOnly: true }, { name: "Search", type: "none" as const, href: "/search", icon: "Search", isIconOnly: true }];
+            return [...baseItems, ...subscribedTopicItems, ...subscribedInterestItems, { name: "Explore", type: "none" as const, href: "/explore", icon: "Compass", isIconOnly: true }, { name: "Search", type: "none" as const, href: "/search", icon: "Search", isIconOnly: true }];
         } else if (initialFilterType && initialFilterValue) {
             // For /topic or /interest pages, add the specific topic/interest from the URL
             let specificItem: CarouselItem | undefined;
