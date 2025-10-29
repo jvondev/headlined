@@ -9,7 +9,7 @@ import { ArrowRight, GalleryVerticalEnd, BookText, Plane, PartyPopper, UserCheck
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import Header from '@/components/common/Header';
+import { Header } from '@/components/common/Header';
 import { ReactElement } from 'react';
 import { LineShadowText } from '@/components/ui/line-shadow-text';
 
@@ -36,7 +36,7 @@ const Mockup = () => (
       <div className="w-full h-full p-4 relative overflow-hidden">
         <motion.div 
           className="w-full h-full absolute top-0"
-          animate={{ y: ['−80%', '80%'] }}
+          animate={{ y: ['-80%', '80%'] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
         >
           <div className="space-y-4">
@@ -261,13 +261,6 @@ export default function LandingPage() {
           </motion.div>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t">
-        <div className="w-full px-4 py-6 text-center text-muted-foreground lg:container lg:mx-auto">
-          <p>&copy; {new Date().getFullYear()} ReadMore. All Rights Reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }

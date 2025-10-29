@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, User } from 'lucide-react';
 
-import Header from '@/components/common/Header';
+import {Header} from '@/components/common/Header';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { LineShadowText } from '@/components/ui/line-shadow-text';
@@ -164,17 +164,6 @@ export default function BlogPage() {
           )}
         </section>
       </main>
-
-      <footer className="border-t">
-        <div className="w-full px-4 sm:px-6 py-6 sm:py-8 text-center text-muted-foreground lg:container lg:mx-auto">
-          <p className="mb-3 sm:mb-4">&copy; {new Date().getFullYear()} ReadMore. All Rights Reserved.</p>
-          <div className="flex justify-center space-x-3 sm:space-x-4 text-xs sm:text-sm">
-            <Link href="/about" className="hover:text-foreground">About Us</Link>
-            <Link href="/contact" className="hover:text-foreground">Contact</Link>
-            <Link href="/privacy" className="hover:text-foreground">Privacy Policy</Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

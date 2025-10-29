@@ -24,23 +24,19 @@ const ReadMoreLogo = () => {
   );
 };
 
-export default function Header() {
+export function Header() {
   const navItems = [
     {
-      name: "Features",
-      link: "#features",
+      name: "About",
+      link: "/about",
     },
     {
-      name: "Topics",
-      link: "#topics",
+      name: "Contact",
+      link: "/contact",
     },
     {
       name: "Blog",
       link: "/blog",
-    },
-    {
-      name: "FAQ",
-      link: "#faq",
     },
   ];
 

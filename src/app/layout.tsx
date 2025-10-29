@@ -1,23 +1,18 @@
 
-"use client"; // Add this line if not already present, as useOnboardingStatus is a client hook
+"use client"; 
 
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
-import { useOnboardingStatus } from '@/hooks/use-onboarding-status'; // Import the hook
-import { OnboardingFlow } from '@/components/onboarding/onboarding-flow'; // Import the OnboardingFlow component
+import { useOnboardingStatus } from '@/hooks/use-onboarding-status'; 
+import { OnboardingFlow } from '@/components/onboarding/onboarding-flow'; 
 import { useState, useCallback } from 'react';
 import { FullScreenContext } from '@/context/full-screen-context';
-import { BackgroundSyncProvider } from '@/components/background-sync-provider'; // Import the BackgroundSyncProvider
+import { BackgroundSyncProvider } from '@/components/background-sync-provider'; 
 import { cn } from '@/lib/utils';
 import Script from 'next/script';
-
-// Metadata can't be client-side, so keep it outside the client component
-// export const metadata: Metadata = {
-//   title: 'ReadMore',
-//   description: 'A new way to discover and consume content.',
-// };
+import { FooterWrapper } from '@/components/common/FooterWrapper';
 
 export default function RootLayout({
   children,
@@ -32,7 +27,7 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="no-scrollbar">
       <head>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-119CNXCR97"></script>
         <script
@@ -60,7 +55,7 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className="font-body antialiased h-screen overflow-hidden flex flex-col" suppressHydrationWarning={true}>
+      <body className="font-body antialiased no-scrollbar" suppressHydrationWarning={true}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -68,11 +63,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FullScreenContext.Provider value={{ isFullScreen, toggleFullScreen }}>
-            <BackgroundSyncProvider /> {/* Render the background sync provider */}
-            <div className="flex-grow overflow-y-auto no-scrollbar">
+            <BackgroundSyncProvider /> 
+            <div>
               {children}
             </div>
-            
+            <FooterWrapper />
             <Toaster />
           </FullScreenContext.Provider>
         </ThemeProvider>
