@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useState, useEffect, use } from 'react'; // Import use
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, useSearchParams } from 'next/navigation';
 import { Calendar, ArrowLeft, Twitter, Linkedin, Facebook } from 'lucide-react';
 
 import Header from '@/components/common/Header';
@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// Define the shape of a full post (from [slug].json)
+// Define the shape of a full post (from blogs.json)
 interface PostData {
   slug: string;
   title: string;
@@ -26,41 +26,38 @@ interface PostData {
   htmlContent: string; // The pre-rendered HTML content
 }
 
-// Helper to get data for a single post on the client-side from its JSON file
+// Helper to get data for a single post on the client-side from blogs.json
 async function getPostClient(slug: string): Promise<PostData | null> {
   try {
-    const res = await fetch(`/blog/${slug}.json`); // Fetch the generated JSON file
+    const res = await fetch(`/blogs.json`); // Fetch the generated JSON file
     if (!res.ok) {
-      if (res.status === 404) {
-        return null; // Post not found
-      }
       throw new Error(`Failed to fetch post JSON: ${res.statusText}`);
     }
-    const postData: PostData = await res.json();
-    return postData;
+    const posts: PostData[] = await res.json();
+    const post = posts.find(p => p.slug === slug);
+    return post || null;
   } catch (error) {
     console.error(`Error fetching or parsing post JSON for "${slug}":`, error);
     return null;
   }
 }
 
-export default function PostPage({ params }: { params: Promise<{ slug: string }> | { slug: string } }) {
-  // Unwrap params if it's a Promise
-  const resolvedParams = 'then' in params ? use(params) : params;
-  const { slug } = resolvedParams;
+export default function PostPage() {
+  const searchParams = useSearchParams();
+  const slug = searchParams.get('slug');
   const [post, setPost] = useState<PostData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPost = async () => {
-      const fetchedPost = await getPostClient(slug);
-      setPost(fetchedPost);
-      setLoading(false);
-    };
-    fetchPost();
+    if (slug) {
+      const fetchPost = async () => {
+        const fetchedPost = await getPostClient(slug);
+        setPost(fetchedPost);
+        setLoading(false);
+      };
+      fetchPost();
+    }
   }, [slug]);
-
-  // Removed client-side document.title update, as generateMetadata in layout.tsx handles this.
 
   if (loading) {
     return (
@@ -95,7 +92,7 @@ export default function PostPage({ params }: { params: Promise<{ slug: string }>
     day: 'numeric',
   });
 
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : `https://your-domain.com/blog/${post.slug}`;
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : `https://readmore.in/blog/post?slug=${post.slug}`;
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-body">

@@ -12,7 +12,7 @@ import { motion } from 'framer-motion';
 import { LineShadowText } from '@/components/ui/line-shadow-text';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// Define the shape of a post (matching what will be in blog-index.json)
+// Define the shape of a post (matching what will be in blogs.json)
 interface PostMetadata {
   slug: string;
   title: string;
@@ -23,19 +23,19 @@ interface PostMetadata {
   tags: string[];
 }
 
-// Helper to get all post metadata from blog-index.json client-side
+// Helper to get all post metadata from blogs.json client-side
 async function getAllPostsMetadata(): Promise<PostMetadata[]> {
   try {
-    const res = await fetch('/blog/blog-index.json'); // Fetch the generated JSON index
+    const res = await fetch('/blogs.json'); // Fetch the generated JSON
     if (!res.ok) {
-      console.error(`Failed to fetch /blog/blog-index.json: ${res.statusText}`);
+      console.error(`Failed to fetch /blogs.json: ${res.statusText}`);
       return [];
     }
     const posts: PostMetadata[] = await res.json();
     // Ensure posts are sorted by date, newest first
     return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   } catch (error) {
-    console.error('Error fetching or parsing /blog/blog-index.json:', error);
+    console.error('Error fetching or parsing /blogs.json:', error);
     return [];
   }
 }
@@ -115,7 +115,7 @@ export default function BlogPage() {
             >
               {posts.map((post) => (
                 <motion.div key={post.slug} variants={fadeIn} className="bg-card border rounded-lg overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300">
-                  <Link href={`/blog/${post.slug}`} className="block">
+                  <Link href={`/blog/post?slug=${post.slug}`} className="block">
                     <div className="relative w-full aspect-video">
                       <Image
                         src={post.image}
