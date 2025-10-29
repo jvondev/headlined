@@ -12,7 +12,7 @@ import type { Topic, Interest } from "@/types";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
 
 type ExploreContentProps = {
-  isLoading: boolean;
+  isLoading?: boolean;
 };
 
 export const ExploreContent: FC<ExploreContentProps> = ({ isLoading }) => {
@@ -76,7 +76,7 @@ export const ExploreContent: FC<ExploreContentProps> = ({ isLoading }) => {
             return (
               <Card key={interest.name} className="flex flex-col items-center justify-between p-4">
                 <DynamicIcon name={interest.icon} className="h-8 w-8 mb-2 text-primary" />
-                <CardTitle className="text-center text-lg font-medium truncate mb-2">
+                <CardTitle className="text-center text-lg font-lg font-medium truncate mb-2">
                   {interest.name}
                 </CardTitle>
                 <Button

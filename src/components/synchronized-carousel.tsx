@@ -1,12 +1,11 @@
-import React, { FC, useEffect, useRef, useState, useCallback } from "react";
+import React, { FC, useEffect, useState, useCallback } from "react";
 import useEmblaCarousel, { EmblaCarouselType } from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { CarouselNav } from "@/components/carousel-nav";
 import { MainContentCarousel } from "@/components/main-content-carousel";
 import type { Topic, Interest } from "@/types";
 import { usePathname } from "next/navigation";
-import { DynamicIcon } from "@/components/dynamic-icon";
-import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds"; // Import the new hook
+import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
 
 type CarouselItem = {
     name: string;
@@ -19,14 +18,11 @@ type CarouselItem = {
 type SynchronizedCarouselProps = {
     topics: Topic[];
     interests: Interest[];
-    initialFilterType?: "topic" | "interest" | "none";
-    initialFilterValue?: string;
 };
 
-export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, initialFilterType, initialFilterValue }) => {
+export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests }) => {
     const pathname = usePathname();
-
-    const { subscribedTopics, subscribedInterests } = useSubscribedFeeds(); // Use the new hook
+    const { subscribedTopics, subscribedInterests } = useSubscribedFeeds();
 
     const allFilterItems: CarouselItem[] = React.useMemo(() => {
         const baseItems: CarouselItem[] = [
@@ -48,72 +44,29 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 icon: interest.icon,
             }));
             return [...baseItems, ...subscribedTopicItems, ...subscribedInterestItems, { name: "Explore", type: "none" as const, href: "/explore", icon: "Compass", isIconOnly: true }, { name: "Search", type: "none" as const, href: "/search", icon: "Search", isIconOnly: true }];
-        } else if (initialFilterType && initialFilterValue) {
-            // For /topic or /interest pages, add the specific topic/interest from the URL
-            let specificItem: CarouselItem | undefined;
-            if (initialFilterType === "topic") {
-                const topic = topics.find(t => t.name === initialFilterValue);
-                if (topic) {
-                    specificItem = { ...topic, type: "topic" as const, href: `/topic?topic=${topic.name}`, icon: topic.icon };
-                }
-            } else if (initialFilterType === "interest") {
-                const interest = interests.find(i => i.name === initialFilterValue);
-                if (interest) {
-                    specificItem = { ...interest, type: "interest" as const, href: `/interest?interest=${interest.name}`, icon: interest.icon };
-                }
-            }
-            return specificItem ? [...baseItems, specificItem] : baseItems;
         }
 
-        return baseItems; // Fallback
-    }, [topics, interests, subscribedTopics, subscribedInterests, pathname, initialFilterType, initialFilterValue]);
+        return baseItems;
+    }, [topics, interests, subscribedTopics, subscribedInterests, pathname]);
 
-    const initialSelectedIndex = React.useMemo(() => {
-        if (pathname === "/today") {
+    const getInitialIndex = useCallback(() => {
+        if (pathname === "/today" || pathname === "/") {
             const dashboardIndex = allFilterItems.findIndex(item => item.name === "Dashboard");
-            return dashboardIndex !== -1 ? dashboardIndex : 0;
-        } else if (initialFilterValue && initialFilterType) {
-            const index = allFilterItems.findIndex(item => item.name === initialFilterValue && item.type === initialFilterType);
-            return index !== -1 ? index : 0;
-        } else if (pathname === "/") {
-            const dashboardIndex = allFilterItems.findIndex(item => item.name === "Dashboard");
-            return dashboardIndex !== -1 ? dashboardIndex : 0;
+            if (dashboardIndex !== -1) return dashboardIndex;
         }
-        const defaultInitialFilterValue = "tech";
-        const defaultInitialFilterType = "topic";
-        const techIndex = allFilterItems.findIndex(item => item.name === defaultInitialFilterValue && item.type === defaultInitialFilterType);
-        return techIndex !== -1 ? techIndex : 0;
-    }, [allFilterItems, pathname, initialFilterValue, initialFilterType]);
+        return 0;
+    }, [allFilterItems, pathname]);
 
-    const [emblaRef, emblaApi] = useEmblaCarousel({
-        loop: false,
-        axis: 'x',
-        align: 'start',
-        duration: 50,
-        startIndex: initialSelectedIndex,
-    }, [WheelGesturesPlugin({
-        forceWheelAxis: 'x',
-        wheelDraggingClass: 'is-wheel-dragging'
-    })]);
+    const [selectedIndex, setSelectedIndex] = useState(getInitialIndex());
+    const [lastSelectedIdentifier, setLastSelectedIdentifier] = useState<{ name: string; type: "topic" | "interest" | "none" } | null>(null);
 
-    const [navEmblaRef, navEmblaApi] = useEmblaCarousel({
-        loop: false,
-        axis: 'x',
-        align: 'start',
-        duration: 50,
-        startIndex: initialSelectedIndex,
-    }, [WheelGesturesPlugin({
-        forceWheelAxis: 'x',
-        wheelDraggingClass: 'is-wheel-dragging'
-    })]);
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 50 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
+    const [navEmblaRef, navEmblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 50 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
 
-    const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
-    const [activeFilterType, setActiveFilterType] = useState<"topic" | "interest" | "none">(
-        initialFilterType || (pathname === "/") ? "none" : "topic"
-    );
-    const [activeFilterValue, setActiveFilterValue] = useState<string>(
-        initialFilterValue || (pathname === "/") ? "Dashboard" : "tech"
-    );
+    // Effect to handle the initial scroll position
+    useEffect(() => {
+        if (emblaApi) emblaApi.scrollTo(getInitialIndex(), true);
+    }, [emblaApi, getInitialIndex]);
 
     const onSelect = useCallback((emblaMainApi: EmblaCarouselType) => {
         if (!emblaMainApi || !navEmblaApi) return;
@@ -122,27 +75,60 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
 
         const currentItem = allFilterItems[newSelectedIndex];
         if (currentItem) {
-            setActiveFilterType(currentItem.type);
-            setActiveFilterValue(currentItem.name);
+            setLastSelectedIdentifier({ name: currentItem.name, type: currentItem.type });
             const targetIndex = Math.max(0, newSelectedIndex - 1);
             navEmblaApi.scrollTo(targetIndex, true);
         }
     }, [navEmblaApi, allFilterItems]);
 
     const onNavClick = useCallback((index: number) => {
-        if (!emblaApi || !navEmblaApi) return;
-        emblaApi.scrollTo(index);
-    }, [emblaApi, navEmblaApi]);
+        if (emblaApi) emblaApi.scrollTo(index);
+    }, [emblaApi]);
 
     useEffect(() => {
-        if (!emblaApi) return;
-        emblaApi.on("select", onSelect);
-        emblaApi.on("reInit", onSelect);
-        return () => {
-            emblaApi.off("select", onSelect);
-            emblaApi.off("reInit", onSelect);
-        };
+        if (emblaApi) {
+            emblaApi.on("select", onSelect);
+            emblaApi.on("reInit", onSelect);
+            return () => {
+                emblaApi.off("select", onSelect);
+                emblaApi.off("reInit", onSelect);
+            };
+        }
     }, [emblaApi, onSelect]);
+
+    // Effect to update lastSelectedIdentifier when selectedIndex changes (e.g., from direct navigation or initial load)
+    useEffect(() => {
+        if (allFilterItems.length > selectedIndex) {
+            const currentItem = allFilterItems[selectedIndex];
+            setLastSelectedIdentifier({ name: currentItem.name, type: currentItem.type });
+        }
+    }, [selectedIndex, allFilterItems]);
+
+    // Effect to handle changes in allFilterItems (e.g., subscriptions changing)
+    useEffect(() => {
+        if (!emblaApi || !navEmblaApi || !allFilterItems.length || lastSelectedIdentifier === null) return;
+
+        let newIndex = -1;
+
+        // Try to find the previously selected item by its identifier in the new list
+        newIndex = allFilterItems.findIndex(
+            item => item.name === lastSelectedIdentifier.name && item.type === lastSelectedIdentifier.type
+        );
+
+        if (newIndex !== -1) {
+            setSelectedIndex(newIndex);
+            emblaApi.scrollTo(newIndex, false); // Smooth scroll to the new position
+        } else {
+            // Fallback to Dashboard or the first item if the previously selected item is not found
+            const dashboardIndex = allFilterItems.findIndex(item => item.name === "Dashboard");
+            const targetIndex = dashboardIndex !== -1 ? dashboardIndex : 0;
+            setSelectedIndex(targetIndex);
+            emblaApi.scrollTo(targetIndex, false); // Smooth scroll
+            setLastSelectedIdentifier({ name: allFilterItems[targetIndex].name, type: allFilterItems[targetIndex].type });
+        }
+
+        navEmblaApi.reInit();
+    }, [allFilterItems, emblaApi, navEmblaApi, lastSelectedIdentifier]);
 
     return (
         <div className="flex flex-col h-full relative">
@@ -160,8 +146,6 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 emblaApi={emblaApi}
                 allFilterItems={allFilterItems}
                 selectedIndex={selectedIndex}
-                activeFilterType={activeFilterType}
-                activeFilterValue={activeFilterValue}
                 topics={topics}
                 interests={interests}
             />
