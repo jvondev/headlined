@@ -1,5 +1,10 @@
 ---
-date: "2023-10-27"
+title: "Your Blog Post Title Here"
+date: "2025-10-20"
+description: "A compelling summary of your blog post, important for SEO."
+author: "Your Name"
+image: "/blog/images/your-banner-image.png" # Path to your featured image
+tags: ["Tech", "Programming", "Tutorial"]
 ---
 
 # This is my first blog post

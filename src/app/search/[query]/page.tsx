@@ -1,12 +1,12 @@
 
-import { Suspense } from 'react';
+import { Suspense, use } from 'react'; // Import use
 import { SearchResultsClient, SearchResultsClientSkeleton } from './client';
 import { SearchHeader } from './header';
 
 type SearchPageProps = {
-    params: {
+    params: Promise<{ // params is now a Promise
         query: string;
-    };
+    }>;
 };
 
 export async function generateStaticParams() {
@@ -15,7 +15,8 @@ export async function generateStaticParams() {
 }
 
 export default function SearchPage({ params }: SearchPageProps) {
-    const currentQuery = params.query;
+    const resolvedParams = use(params); // Unwrap the Promise
+    const currentQuery = resolvedParams.query;
     const query = currentQuery || '';
 
     return (

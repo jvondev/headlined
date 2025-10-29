@@ -1,0 +1,14 @@
+{
+  "slug": "my-first-blog-post",
+  "title": "Your Blog Post Title Here",
+  "date": "2025-10-20T00:00:00.000Z",
+  "description": "A compelling summary of your blog post, important for SEO.",
+  "author": "Your Name",
+  "image": "/blog/images/your-banner-image.png",
+  "tags": [
+    "Tech",
+    "Programming",
+    "Tutorial"
+  ],
+  "htmlContent": "<h1>This is my first blog post</h1>\n<p>This is a paragraph. I can write <strong>bold</strong> text and <em>italic</em> text.</p>\n<h2>This is a subtitle</h2>\n<p>Here&#39;s a list:</p>\n<ul>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ul>\n<p>Here&#39;s a numbered list:</p>\n<ol>\n<li>First item</li>\n<li>Second item</li>\n<li>Third item</li>\n</ol>\n<blockquote>\n<p>This is a blockquote.</p>\n</blockquote>\n<p>Here is some inline code: <code>console.log(&#39;Hello, world!&#39;)</code>.</p>\n<hr>\n<p><a href=\"https://www.google.com\">This is a link to Google</a></p>\n<p><img src=\"https://via.placeholder.com/150\" alt=\"This is an image\"></p>\n"
+}
