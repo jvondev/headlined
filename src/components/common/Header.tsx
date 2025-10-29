@@ -35,6 +35,10 @@ export default function Header() {
       link: "#topics",
     },
     {
+      name: "Blog",
+      link: "/blog",
+    },
+    {
       name: "FAQ",
       link: "#faq",
     },
