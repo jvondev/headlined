@@ -62,8 +62,8 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
                       shouldFetchPaginatedPosts={true}
                       hasSeenOnboarding={hasSeenOnboarding}
                       markOnboardingComplete={markOnboardingComplete}
-                      topicName={item.type === "topic" ? (topics.find(t => t.name === item.name)?.name || "") : undefined}
-                      searchQuery={item.type === "interest" ? (interests.find(i => i.name === item.name)?.name || "") : undefined}
+                      topicName={item.type === "topic" ? item.name : undefined}
+                      searchQuery={item.type === "interest" ? item.name : undefined}
                     />
                   )}
                   {item.name === "Explore" && <ExploreContent />}
