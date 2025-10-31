@@ -112,7 +112,7 @@ export default function PostPage() {
             {/* Post Header */}
             <header className="mb-8">
               <div className="flex flex-wrap gap-1 sm:gap-2 mb-2 sm:mb-4">
-                {post.tags.map(tag => (
+                {post.tags.slice(0, 3).map(tag => (
                   <Badge key={tag} variant="secondary" className="text-xs sm:text-sm">{tag}</Badge>
                 ))}
               </div>

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "generate-blog-data": "tsx scripts/generate-blog-data.ts"
+    "blog": "tsx scripts/generate-blog-data.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",

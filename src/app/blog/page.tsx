@@ -127,9 +127,9 @@ export default function BlogPage() {
                     </div>
                   </Link>
                   <div className="p-4 sm:p-6 flex-1 flex flex-col">
-                    <div className="flex flex-wrap gap-1 sm:gap-2 mb-2 sm:mb-3">
-                      {post.tags.map(tag => (
-                        <Badge key={tag} variant="secondary" className="text-xs sm:text-sm">{tag}</Badge>
+                    <div className="flex flex-nowrap gap-1 sm:gap-2 mb-2 sm:mb-3 overflow-hidden">
+                      {post.tags.slice(0, 3).map(tag => (
+                        <Badge key={tag} variant="secondary" className="text-xs sm:text-sm flex-shrink-0">{tag}</Badge>
                       ))}
                     </div>
                     <Link href={`/blog/post?slug=${post.slug}`} className="block hover:underline">
