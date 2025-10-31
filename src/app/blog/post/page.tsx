@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound, useSearchParams } from 'next/navigation';
@@ -42,7 +42,30 @@ async function getPostClient(slug: string): Promise<PostData | null> {
   }
 }
 
-export default function PostPage() {
+function PostPageLoadingSkeleton() {
+  return (
+    <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
+      <Header />
+      <main className="flex-1 pt-12 w-full px-4 sm:px-6 lg:px-8 lg:mx-auto lg:max-w-7xl">
+        <div className="max-w-prose mx-auto py-8 md:py-12">
+          <Skeleton className="h-8 w-32 mb-6" />
+          <Skeleton className="h-10 w-full mb-3" />
+          <Skeleton className="h-6 w-5/6 mb-4" />
+          <div className="flex items-center space-x-4 mb-8">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <Skeleton className="w-full aspect-video rounded-lg mb-8" />
+          <Skeleton className="h-4 w-full mb-2" />
+          <Skeleton className="h-4 w-full mb-2" />
+          <Skeleton className="h-4 w-11/12" />
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function PostContent() {
   const searchParams = useSearchParams();
   const slug = searchParams.get('slug');
   const [post, setPost] = useState<PostData | null>(null);
@@ -60,26 +83,7 @@ export default function PostPage() {
   }, [slug]);
 
   if (loading) {
-    return (
-      <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
-        <Header />
-        <main className="flex-1 pt-12 w-full px-4 sm:px-6 lg:px-8 lg:mx-auto lg:max-w-7xl">
-          <div className="max-w-prose mx-auto py-8 md:py-12">
-            <Skeleton className="h-8 w-32 mb-6" />
-            <Skeleton className="h-10 w-full mb-3" />
-            <Skeleton className="h-6 w-5/6 mb-4" />
-            <div className="flex items-center space-x-4 mb-8">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-4 w-24" />
-            </div>
-            <Skeleton className="w-full aspect-video rounded-lg mb-8" />
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-11/12" />
-          </div>
-        </main>
-      </div>
-    );
+    return <PostPageLoadingSkeleton />;
   }
 
   if (!post) {
@@ -171,5 +175,13 @@ export default function PostPage() {
         </article>
       </main>
     </div>
+  );
+}
+
+export default function PostPage() {
+  return (
+    <Suspense fallback={<PostPageLoadingSkeleton />}>
+      <PostContent />
+    </Suspense>
   );
 }
