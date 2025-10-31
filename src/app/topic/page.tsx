@@ -8,56 +8,31 @@ import { interestsData } from "@/data/interests-data";
 import { OnboardingProvider } from "@/context/onboarding-provider";
 import { SynchronizedCarousel } from "@/components/synchronized-carousel";
 
-export default function TopicPage() {
+function TopicCarousel() {
   const searchParams = useSearchParams();
   const topic = searchParams.get('topic');
 
   const topics = topicsData;
   const interests = interestsData;
+
+  return (
+    <OnboardingProvider>
+      <SynchronizedCarousel
+        topics={topics}
+        interests={interests}
+        initialFilterType="topic"
+        initialFilterValue={topic || undefined}
+      />
+    </OnboardingProvider>
+  );
+}
+
+export default function TopicPage() {
   return (
     <main className="h-screen w-full bg-background">
       <Suspense fallback={<PostPageLoadingSkeleton />}>
-        <OnboardingProvider>
-          <SynchronizedCarousel
-            topics={topics}
-            interests={interests}
-            initialFilterType="topic"
-            initialFilterValue={topic || undefined}
-          />
-        </OnboardingProvider>
-
-
-
-
-
-
-
+        <TopicCarousel />
       </Suspense>
-
-
-
-
-
-
-
     </main>
-
-
-
-
-
-
-
   );
-
-
-
-
-
-
-
 }
-
-
-
-

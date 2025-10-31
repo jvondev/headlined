@@ -8,7 +8,7 @@ import { interestsData } from "@/data/interests-data";
 import { OnboardingProvider } from "@/context/onboarding-provider";
 import { SynchronizedCarousel } from "@/components/synchronized-carousel";
 
-export default function InterestPage() {
+function InterestCarousel() {
   const searchParams = useSearchParams();
   const interest = searchParams.get('interest');
 
@@ -16,16 +16,22 @@ export default function InterestPage() {
   const interests = interestsData;
 
   return (
+    <OnboardingProvider>
+      <SynchronizedCarousel
+        topics={topics}
+        interests={interests}
+        initialFilterType="interest"
+        initialFilterValue={interest || undefined}
+      />
+    </OnboardingProvider>
+  );
+}
+
+export default function InterestPage() {
+  return (
     <main className="h-screen w-full bg-background">
       <Suspense fallback={<PostPageLoadingSkeleton />}>
-        <OnboardingProvider>
-          <SynchronizedCarousel
-            topics={topics}
-            interests={interests}
-            initialFilterType="interest"
-            initialFilterValue={interest || undefined}
-          />
-        </OnboardingProvider>
+        <InterestCarousel />
       </Suspense>
     </main>
   );
