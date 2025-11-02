@@ -3,9 +3,8 @@ title: "How to Start Reading Again: Rebuilding Attention in a Distracted World"
 date: "2025-08-20"
 description: "Lost your reading habit? Here's a calm, thoughtful guide to rebuilding attention, curiosity, and a sustainable reading rhythm—without guilt or pressure."
 author: "ReadMore"
-image: "https://i.pinimg.com/1200x/cc/d4/8b/ccd48b5a88bbf94391f875f7ca0b38ff.jpg"
-tags: ["Reading Habits", "Attention and Focus", "Mindful Living
-","Digital Minimalism", "Self Improvement"]
+image: "https://i.pinimg.com/736x/8e/bf/f1/8ebff15b2bb9033571a230ff961a05f8.jpg"
+tags: ["Bill Gates","Reading Habits", "Lifelong Learning", "Critical Thinking", "Self Improvement"]
 
 ---
 
@@ -28,7 +27,7 @@ Instead, ask:
 **What do I genuinely want to learn or experience right now?**  
 Not someday. Now.
 
-It could be short fiction. Or a slim book on a topic you're quietly obsessed with. Or even small article-sized pieces, delivered daily, like ReadMore.in offers—gentle touchpoints to reawaken your appetite for knowledge over time. For instance, if you're interested in history, a brief biography of a notable historical figure might be a good starting point. Or if you're into science, a book on a recent scientific discovery could be intriguing.
+It could be short fiction. Or a slim book on a topic you're quietly obsessed with. Or even small article-sized pieces, delivered daily, like [ReadMore.in](https://readmore.in) offers—gentle touchpoints to reawaken your appetite for knowledge over time. For instance, if you're interested in history, a brief biography of a notable historical figure might be a good starting point. Or if you're into science, a book on a recent scientific discovery could be intriguing.
 
 When we start where curiosity already lives, attention follows. And once attention strengthens, harder books stop feeling intimidating and start feeling intriguing.
 
@@ -108,7 +107,7 @@ The reason many reading habits fade is that they're anchored in goals, not ident
 
 When reading becomes an integral part of who you are—curious, expanding, reflective—you stop fighting for discipline and start protecting a meaningful aspect of your life.
 
-Tools, rituals, tiny daily inputs like ReadMore.in—they all support this identity: a person who values growth, stillness, and thought in a noisy world.
+Tools, rituals, tiny daily inputs like [ReadMore.in](https://readmore.in)—they all support this identity: a person who values growth, stillness, and thought in a noisy world.
 
 Don't say "I should read more." Say, "I am someone who returns to ideas."
 
