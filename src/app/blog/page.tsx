@@ -115,7 +115,7 @@ export default function BlogPage() {
             >
               {posts.map((post) => (
                 <motion.div key={post.slug} variants={fadeIn} className="bg-card border rounded-lg overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300">
-                  <Link href={`/blog/post?slug=${post.slug}`} className="block">
+                  <Link href={`/blog/${post.slug}`} className="block">
                     <div className="relative w-full aspect-video">
                       <Image
                         src={post.image}
@@ -132,7 +132,7 @@ export default function BlogPage() {
                         <Badge key={tag} variant="secondary" className="text-xs sm:text-sm flex-shrink-0">{tag}</Badge>
                       ))}
                     </div>
-                    <Link href={`/blog/post?slug=${post.slug}`} className="block hover:underline">
+                    <Link href={`/blog/${post.slug}`} className="block hover:underline">
                       <h2 className="text-lg sm:text-xl font-bold tracking-tight mb-1 sm:mb-2 leading-snug text-foreground">
                         {post.title}
                       </h2>

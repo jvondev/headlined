@@ -42,7 +42,7 @@ Start with writing that feels like a conversation, not an obligation. Quit the i
 We say we want to read more, then expect ourselves to do it in noisy rooms, at the end of long days, surrounded by glowing devices designed to hijack attention. That's like planting a seed in concrete.
 
 The principle here is simple:  
-**Make reading the easiest option, not the most difficult. **
+**Make reading the easiest option, not the most difficult.**
 
 The common mistake? Setting goals like `one hour a day.` Giant leaps create pressure; pressure triggers avoidance; avoidance becomes guilt.
 
