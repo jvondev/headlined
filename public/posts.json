@@ -1,85 +1,5 @@
 [
   {
-    "slug": "writing-freedos-programs-in-c",
-    "title": "Writing FreeDOS Programs in C",
-    "description": null,
-    "link": "https://www.freedos.org/books/cprogramming/",
-    "thumbnail_url": null,
-    "topic": "tech"
-  },
-  {
-    "slug": "using-freebsd-to-make-selfhosting-fun-again",
-    "title": "Using FreeBSD to make self-hosting fun again",
-    "description": "Feeling like a kid in a candy store, once more",
-    "link": "https://jsteuernagel.de/posts/using-freebsd-to-make-self-hosting-fun-again/",
-    "thumbnail_url": null,
-    "topic": "tech"
-  },
-  {
-    "slug": "xorg-security-advisory-multiple-security-issues-xorg-x-serve",
-    "title": "X.org Security Advisory: multiple security issues X.Org X server and Xwayland",
-    "description": null,
-    "link": "https://lists.x.org/archives/xorg-announce/2025-October/003635.html",
-    "thumbnail_url": null,
-    "topic": "tech"
-  },
-  {
-    "slug": "new-design-trend-people-downgrading-smart-homes-to-analog-du",
-    "title": "New Design Trend: People Downgrading 'Smart' Homes to Analog 'Dumb' Homes, Some with Landlines and Offline Appliances",
-    "description": "\"People are creating 'dumb homes,'\" the VP of research at the Global Wellness Institute, tells the web site Axios.",
-    "link": "https://mobile.slashdot.org/story/25/11/02/067245/new-design-trend-people-downgrading-smart-homes-to-analog-dumb-homes-some-with-landlines-and-offline-appliances?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/wireless_64.png",
-    "topic": "news"
-  },
-  {
-    "slug": "i-dont-want-to-worry-about-money-im-64-with-400k-in-savings",
-    "title": "‘I don’t want to worry about money’: I’m 64 with $400K in savings and $700 in Social Security. Can I retire next year?",
-    "description": "“I take in about $2,200 in monthly rent from four properties.”",
-    "link": "https://www.marketwatch.com/story/i-dont-want-to-worry-about-money-im-64-with-400k-in-savings-and-700-in-social-security-can-i-retire-next-year-40011032?mod=mw_rss_topstories",
-    "thumbnail_url": "https://images.mktw.net/im-83231410/social",
-    "topic": "finance"
-  },
-  {
-    "slug": "im-planning-to-retire-at-65-when-my-twins-are-15-how-will-th",
-    "title": "I’m planning to retire at 65 when my twins are 15. How will this impact their healthcare coverage?",
-    "description": "“By retiring when they are in the 10th grade my income will be low when they apply for college scholarships.”",
-    "link": "https://www.marketwatch.com/story/im-planning-to-retire-at-65-when-my-twins-are-15-how-will-this-impact-their-healthcare-coverage-1579c475?mod=mw_rss_topstories",
-    "thumbnail_url": "https://images.mktw.net/im-81689433/social",
-    "topic": "finance"
-  },
-  {
-    "slug": "gas-station-faces-major-backlash-for-unbelievable-notice-pos",
-    "title": "Gas station faces major backlash for unbelievable notice posted on door: 'How could this possibly be legal?'",
-    "description": "\"When you think America can’t get any more ridiculous.\"",
-    "link": "https://www.yahoo.com/news/articles/gas-station-faces-major-backlash-130000392.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/MjXxjeJXKVvmlmKXfglSHw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03NTQ7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/d56521cdf833a3ecb0170491bfc210d8",
-    "topic": "news"
-  },
-  {
-    "slug": "investigating-rumor-that-mike-johnson-and-his-son-are-abstin",
-    "title": "Investigating rumor that Mike Johnson and his son are 'abstinence partners'",
-    "description": "A social media meme appeared to reference a 2023 story about Johnson’s use of an anti-porn app.",
-    "link": "https://www.yahoo.com/news/articles/investigating-rumor-mike-johnson-son-130000819.html",
-    "thumbnail_url": "https://media.zenfs.com/en/snopes_632/a6fb1274201ed8e6dac9fa9530a91b8f",
-    "topic": "news"
-  },
-  {
-    "slug": "notes-by-djb-on-using-filc",
-    "title": "Notes by djb on using Fil-C",
-    "description": null,
-    "link": "https://cr.yp.to/2025/fil-c.html",
-    "thumbnail_url": null,
-    "topic": "tech"
-  },
-  {
-    "slug": "wall-street-says-tokenization-will-change-global-markets-gol",
-    "title": "Wall Street says tokenization will change global markets. Gold is next.",
-    "description": "As gold rallied to all-time highs this quarter, demand for tokenized bullion surged too.",
-    "link": "https://finance.yahoo.com/news/wall-street-says-tokenization-will-change-global-markets-gold-is-next-140049152.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/YGBFajaAQTu0Xb05Qb22hA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MzQ-/https://s.yimg.com/os/creatr-uploaded-images/2025-10/aa67f620-af80-11f0-9ef7-8969ea263fb3",
-    "topic": "finance"
-  },
-  {
     "slug": "my-girlfriend-a-widow-in-her-40s-pays-off-her-credit-card-af",
     "title": "My girlfriend, a widow in her 40s, pays off her credit card after every transaction. Is that weird?",
     "description": "“I saw her transfer $150 after we were done shopping.”",
@@ -88,243 +8,11 @@
     "topic": "finance"
   },
   {
-    "slug": "ice-arrested-361-migrants-at-glass-house-farms-bleak-confine",
-    "title": "ICE arrested 361 migrants at Glass House farms. Bleak confinements, deportations followed",
-    "description": "Local and federal records capture a snapshot of life after one of the largest immigration raids in the country.",
-    "link": "https://www.yahoo.com/news/articles/ice-arrested-361-migrants-glass-110149177.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/5x3UWtEsDg98XYneqzzpew--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03NDg7Y2Y9d2VicA--/https://media.zenfs.com/en/usa_today_news_641/24a850fead975db6d6d50ce9d5e69608",
-    "topic": "news"
-  },
-  {
-    "slug": "men-who-have-gotten-vasectomies-are-sharing-their-stories-an",
-    "title": "Men Who Have Gotten Vasectomies Are Sharing Their Stories And Some Of Them May Surprise You",
-    "description": "\"It was a no-brainer for me.\"",
-    "link": "https://health.yahoo.com/your-body/mens-health/articles/men-gotten-vasectomies-sharing-stories-143102137.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/1V4fyrguYRrmb06BbDuXwA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03OTc-/https://media.zenfs.com/en/buzzfeed_articles_778/7441ba3d7a94749e0b485b043127525a",
-    "topic": "health"
-  },
-  {
     "slug": "billionaire-sylvan-adams-donates-100m-to-rebuild-israeli-hos",
     "title": "Billionaire Sylvan Adams donates $100M to rebuild Israeli hospital struck by Iranian missile",
     "description": "Canadian-Israeli billionaire Sylvan Adams on Sunday said he is donating $100 million to rebuild an Israeli hospital that suffered heavy damage from an Iranian missile in June.  Adams announced the gift to the Soroka University Medical Center during a meeting of the Israeli Cabinet.  “Our answer to Iran is to build back bigger and better,” Adams said.",
     "link": "https://www.yahoo.com/news/articles/billionaire-sylvan-adams-donates-100m-161713790.html",
     "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/uesMh_7cYODORRFxfK05aQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/dcb2489f4e63ef7c3ac4e4db3a3d5aeb",
-    "topic": "news"
-  },
-  {
-    "slug": "soccerforest-owner-marinakis-offers-financial-support-for-an",
-    "title": "Soccer-Forest owner Marinakis offers financial support for any fans caught up in train stabbings",
-    "description": "(Reuters) -Nottingham Forest owner Evangelos Marinakis has pledged financial support for any fans of the Premier League club who were caught up in a mass stabbing incident on a train near Cambridge in",
-    "link": "https://www.yahoo.com/news/articles/soccer-forest-owner-marinakis-offers-030334725.html",
-    "thumbnail_url": "https://media.zenfs.com/en/reuters.com/29e630bc30c0e69b87e0835daf1a922e",
-    "topic": "news"
-  },
-  {
-    "slug": "all-us-postal-locations-closing-for-one-day-mail-wont-run-he",
-    "title": "All U.S. Postal locations closing for one day, mail won’t run. Here’s why",
-    "description": "Folks will want to plan ahead this month.",
-    "link": "https://www.yahoo.com/news/articles/u-postal-locations-closing-one-090047077.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/_WNW9vPlZrqPiirknWlErg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD05MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/pennlive_com_articles_353/9072b9c8102ac324d99ac96e627628d5",
-    "topic": "news"
-  },
-  {
-    "slug": "walk-for-15-minutes-shut-the-toilet-lid-and-try-this-sleep-h",
-    "title": "Walk for 15 minutes, shut the toilet lid and try this sleep hack — plus 7 more health tips to help you have a great week",
-    "description": "Health hacks for the week ahead — including easy ways to cut back on your portion sizes.",
-    "link": "https://health.yahoo.com/article/walk-for-15-minutes-shut-the-toilet-lid-and-try-this-sleep-hack--plus-7-more-health-tips-to-help-you-have-a-great-week-100017166.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/UE4MM_RSE1OlDJt1ArzdQQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://s.yimg.com/os/creatr-uploaded-images/2025-10/e9a62310-b67a-11f0-bf7e-e4a67194d3c6",
-    "topic": "health"
-  },
-  {
-    "slug": "tens-of-thousands-evacuated-to-safety-as-typhoon-approaches",
-    "title": "Tens of thousands evacuated to safety as typhoon approaches eastern Philippines",
-    "description": "Philippine officials ordered tens of thousands of people to evacuate to safer grounds and prohibited fishermen from venturing out to sea in an east-central region Monday as a typhoon approached from the Pacific. Authorities warned of torrential rains and potentially deadly storm surges of up to 3 meters (nearly 10 feet).",
-    "link": "https://www.yahoo.com/news/videos/tens-thousands-evacuated-safety-typhoon-081246644.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/5qKq9NMREiXSsqyqijddIw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://cf-images.us-east-1.prod.boltdns.net/v1/jit/6415665815001/b60abbc2-3437-4301-bf08-6ac0f2ace1d8/main/1280x720/30s176ms/match/image.jpg",
-    "topic": "news"
-  },
-  {
-    "slug": "researcher-stunned-after-catching-needle-in-a-haystack-foota",
-    "title": "Researcher stunned after catching 'needle in a haystack' footage of rare creature: 'Likely the first time anyone has seen this'",
-    "description": "\"I think you're going to need a bigger camera.\"",
-    "link": "https://www.yahoo.com/news/articles/researcher-stunned-catching-needle-haystack-001000084.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/PR8AG2qskX3RxtbJ4S87LQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/fa0ad26300c361c240990165aec9cde2",
-    "topic": "news"
-  },
-  {
-    "slug": "cnn-anchor-confronts-mayor-over-deadly-fire-do-you-bear-any",
-    "title": "CNN Anchor Confronts Mayor Over Deadly Fire: 'Do You Bear Any Responsibility?'",
-    "description": "CNN anchor Elix Michaelson pressed Los Angeles Mayor Karen Bass on her leadership during the deadly wildfires that ravaged LA earlier this year, with Michaelson asking Do you bear any responsibility for what many Angelenos consider the city's slow and inept response to the disaster.",
-    "link": "https://www.yahoo.com/news/videos/cnn-anchor-confronts-mayor-over-183419019.html",
-    "thumbnail_url": "https://media.zenfs.com/en/mediaite_videos_432/b1b6a6c34fe49ce51fa47972f2c58ffc",
-    "topic": "news"
-  },
-  {
-    "slug": "exwhite-house-doctor-calls-out-red-flag-in-trump-health-saga",
-    "title": "Ex-White House Doctor Calls Out Red Flag in Trump Health Saga",
-    "description": "A top doctor to three U.S. presidents is calling BS on the MAGA administration’s claims that 79-year-old Donald Trump is still in the prime of his life. Jeffrey Kuhlman, who served as a White House physician under Bill Clinton, George W. Bush and Barack Obama, sat down with The Hill Sunday to discuss the MAGA leader’s recent trip to the Walter Reed Military Medical Center.",
-    "link": "https://www.yahoo.com/news/articles/ex-white-house-doctor-calls-191431163.html",
-    "thumbnail_url": "https://media.zenfs.com/en/thedailybeast.com/8fb6f484a91f19a920e242356df03b54",
-    "topic": "news"
-  },
-  {
-    "slug": "people-dont-understand-how-dangerous-it-can-be-19-seemingly",
-    "title": "\"People Don't Understand How Dangerous It Can Be\" — 19 Seemingly Safe But Actually Dangerous Things People Do All The Time",
-    "description": "\"Most tourists don't understand how dangerous it can be.\"",
-    "link": "https://health.yahoo.com/your-body/first-aid-safety/articles/people-dont-understand-dangerous-19-121602328.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/oRj2ONM8mzPte8DKK834bg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03OTc-/https://media.zenfs.com/en/buzzfeed_articles_778/b324535edb9a9f02d0fc3e2908b82e53",
-    "topic": "health"
-  },
-  {
-    "slug": "furtherai-series-a-a16z-yc-is-hiring-across-software-and-ai",
-    "title": "FurtherAI (Series A – A16Z, YC) Is Hiring Across Software and AI",
-    "description": null,
-    "link": "https://news.ycombinator.com/item?id=45793652",
-    "thumbnail_url": null,
-    "topic": "tech"
-  },
-  {
-    "slug": "researcher-accidentally-discovers-material-thats-stronger-an",
-    "title": "Researcher accidentally discovers material that's stronger and cheaper than concrete — and its potential is dizzying",
-    "description": "\"Time is on our side.\"",
-    "link": "https://www.yahoo.com/news/articles/researcher-accidentally-discovers-material-stronger-120000930.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/r..UJ8hNwSCqJB_eTMsJlQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDI7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/c3d1a2c295cc3f7456c7afd885ce26d6",
-    "topic": "news"
-  },
-  {
-    "slug": "nba-star-shai-gilgeousalexander-says-loved-ones-are-safe-fol",
-    "title": "NBA star Shai Gilgeous-Alexander says 'loved ones are safe' following Oklahoma home break-in",
-    "description": "The Oklahoma City Thunder’s Shai Gilgeous-Alexander said Sunday he and his family are safe following a break-in at his Oklahoma City-area home last week while the NBA's reigning MVP was playing a home game.  “Long story short, everybody’s safe, and that’s all that really matters in the whole thing,\" Gilgeous-Alexander said Sunday after the Thunder beat the New Orleans Pelicans.  Police in the small enclave of Nichols Hills did not release any new information on the break-in over the weekend, and a telephone message left Sunday with Nichols Hills Police Chief Steven Cox was not immediately returned.",
-    "link": "https://sports.yahoo.com/article/nba-star-shai-gilgeous-alexander-005035051.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/LxneWyNLp458LhxEjNMjEQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/5651d2461b6a4caddb7a1a173303419d",
-    "topic": "news"
-  },
-  {
-    "slug": "scientists-make-alarming-discovery-about-health-impact-of-dr",
-    "title": "Scientists make alarming discovery about health impact of drinking bottled water — here's what you need to know",
-    "description": "We don't yet know the full extent of the potential risks to human health.",
-    "link": "https://www.yahoo.com/news/articles/scientists-alarming-discovery-health-impact-101513788.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/moafmfXkJd60Kc4qeiEEgw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/32fe3c1498c04e0da679973b51d8c434",
-    "topic": "news"
-  },
-  {
-    "slug": "fbi-raid-at-idaho-horse-track-shows-how-immigration-is-a-top",
-    "title": "FBI raid at Idaho horse track shows how immigration is a top focus across law enforcement",
-    "description": "The first sign something was amiss was the thwack of helicopter rotors overhead, followed by screams.  Within moments, Anabel Romero was on the ground with her hands restrained behind her, she said, as law enforcement officers brandishing guns removed her 14-year-old daughter from a nearby truck and zip-tied the teen while her young siblings looked on.  Romero and her daughter, both U.S. citizens, were among about 400 people detained for hours at a privately owned race track about an hour west of Boise as part an FBI-led investigation into illegal gambling that resulted in more than 100 arrests, nearly all for immigration violations.",
-    "link": "https://www.yahoo.com/news/articles/fbi-raid-idaho-horse-track-130719434.html",
-    "thumbnail_url": "https://media.zenfs.com/en/ap.org/8f163fd541cc91bce1613498bdca2080",
-    "topic": "news"
-  },
-  {
-    "slug": "these-two-new-dragonlike-species-have-been-discovered-in-tha",
-    "title": "These Two New Dragon-Like Species Have Been Discovered In Thailand",
-    "description": "In a cave in Thailand, scientists found some stunning species that have never been documented before, providing interesting new avenues for genetic research.",
-    "link": "https://www.yahoo.com/news/articles/two-dragon-species-discovered-thailand-101700146.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/iggfJi_goODImX5TlY_AAg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/bgr_ecomm_183/e3b2a3877ea78faa028d22f2f28e1f68",
-    "topic": "news"
-  },
-  {
-    "slug": "mortgage-and-refinance-interest-rates-today-november-1-2025",
-    "title": "Mortgage and refinance interest rates today, November 1, 2025: Watch the 10-year Treasury",
-    "description": "These are today's mortgage and refinance rates. The 30-year fixed rate has been moving lower since the beginning of October. Lock in your rate today.",
-    "link": "https://finance.yahoo.com/personal-finance/mortgages/article/mortgage-refinance-interest-rates-today-saturday-november-1-2025-100050796.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/fK9okicBoD2VGZ7E4.6v7w--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://s.yimg.com/os/creatr-uploaded-images/2024-04/86ef4c20-03dd-11ef-b7af-5ddf7b57fe6e",
-    "topic": "finance"
-  },
-  {
-    "slug": "popular-sandwich-chain-is-closing-restaurants-bakery-locatio",
-    "title": "Popular sandwich chain is closing restaurants, bakery locations",
-    "description": "The beloved sandwich brand has been under a transition that began more than a year ago.",
-    "link": "https://finance.yahoo.com/news/popular-sandwich-chain-closing-restaurants-100040520.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/r.e.S9S6T4RKrxqjbMvZHg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDg-/https://media.zenfs.com/en/pennlive_com_articles_353/b49bb62db875446be7cf201762dc8183",
-    "topic": "finance"
-  },
-  {
-    "slug": "will-chinairan-ties-help-foster-a-new-asia-envoy-sees-rebala",
-    "title": "Will China-Iran ties help foster a 'new Asia'? Envoy sees rebalance in region",
-    "description": "China and Iran should strengthen \"wise and balanced\" cooperation to jointly counter modern challenges and shape a new world against unilateralism and hegemony, according to Tehran's top envoy in Beijing. Describing ties with China \"decisive\" to regional peace, Abdolreza Rahmani Fazli told a gathering of students and researchers that the strategic partnership between the two countries had gone beyond a bilateral level and could improve the roles of Asian countries in global decision-making. \"From",
-    "link": "https://www.yahoo.com/news/articles/china-iran-ties-help-foster-093000665.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/l1yV_7IkFYiJlvLJl.Xwrw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/south_china_morning_post_us_228/1455aa5c425202747c0fe3ae689b0dc0",
-    "topic": "news"
-  },
-  {
-    "slug": "new-prompt-injection-papers-agents-rule-of-two-and-the-attac",
-    "title": "New prompt injection papers: Agents rule of two and the attacker moves second",
-    "description": "Two interesting new papers regarding LLM security and prompt injection came to my attention this weekend. Agents Rule of Two: A Practical Approach to AI Agent Security The first is …",
-    "link": "https://simonwillison.net/2025/Nov/2/new-prompt-injection-papers/",
-    "thumbnail_url": "https://static.simonwillison.net/static/2025/agents-rule-of-two-card.jpg",
-    "topic": "tech"
-  },
-  {
-    "slug": "why-dont-you-use-dependent-types",
-    "title": "Why don't you use dependent types?",
-    "description": null,
-    "link": "https://lawrencecpaulson.github.io//2025/11/02/Why-not-dependent.html",
-    "thumbnail_url": null,
-    "topic": "tech"
-  },
-  {
-    "slug": "urls-are-state-containers",
-    "title": "URLs are state containers",
-    "description": "A deep dive into how thoughtful URL design can enhance usability, shareability, and performance. Learn what state belongs in URLs, common pitfalls to avoid, and practical patterns for modern web apps.",
-    "link": "https://alfy.blog/2025/10/31/your-url-is-your-state.html",
-    "thumbnail_url": null,
-    "topic": "tech"
-  },
-  {
-    "slug": "bug-in-rustbased-uutils-broke-ubuntu-2510-automatic-update-c",
-    "title": "Bug in Rust-Based Uutils Broke Ubuntu 25.10 Automatic Update Checks",
-    "description": "\"Ubuntu's decision to switch to Rust-based coreutils in 25.10 hasn't been the smoothest ride,\" writes the blog OMG Ubuntu, \"as the latest — albeit now resolved — bug...",
-    "link": "https://news.slashdot.org/story/25/11/03/0049215/bug-in-rust-based-uutils-broke-ubuntu-2510-automatic-update-checks?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/ubuntu_64.png",
-    "topic": "news"
-  },
-  {
-    "slug": "officials-issue-warning-after-hikers-spot-huge-invasive-liza",
-    "title": "Officials issue warning after hikers spot huge invasive lizard lurking in state park: 'If you see it, back away safely'",
-    "description": "The creatures can grow up to 5 feet long.",
-    "link": "https://www.yahoo.com/news/articles/officials-issue-warning-hikers-spot-103039414.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/jsCletdTIV3FUS9NIwWopg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/efbba721a15ba5a207ca1885d4201843",
-    "topic": "news"
-  },
-  {
-    "slug": "government-shutdown-could-become-longest-ever-as-trump-says",
-    "title": "Government shutdown could become longest ever as Trump says he 'won't be extorted' by Democrats",
-    "description": "The government shutdown is poised to become the longest ever this week as the impasse between Democrats and Republicans has dragged into a new month.  Millions of people could lose food aid benefits, health care subsidies are set to expire and there are few real talks between the parties over how to end it.  President Donald Trump said in an interview aired on Sunday that he “won't be extorted” by Democrats who are demanding negotiations to extend the Affordable Care Act subsidies that expire at the end of the year for millions of Americans.",
-    "link": "https://www.yahoo.com/news/articles/government-shutdown-could-become-longest-050955880.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/aPykKTeTbrg2dwZIe7eMHQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/3b2876dde31007f57f2f1ba817222a82",
-    "topic": "news"
-  },
-  {
-    "slug": "ukraine-says-it-hit-a-key-fuel-pipeline-near-moscow-that-sup",
-    "title": "Ukraine says it hit a key fuel pipeline near Moscow that supplies Russian forces",
-    "description": "Ukrainian forces hit an important fuel pipeline in the Moscow region that supplies the Russian army, Ukraine's military intelligence said Saturday, as Russia kept up a sustained campaign of massive drone and missile attacks on Ukraine’s energy infrastructure.  The operation was carried out late Friday, according to a statement on the Telegram messaging channel.  The agency, which is known by its acronym HUR, described it as a “serious blow” to Russia’s military logistics.",
-    "link": "https://www.yahoo.com/news/articles/ukraine-says-hit-key-fuel-102350733.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/vU50YcyeJco.tfR.qsvoOQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/a27e1fb7ba43a3251a1475af6eaf098d",
-    "topic": "news"
-  },
-  {
-    "slug": "nascar-driver-kyle-busch-sues-insurance-company-for-85-milli",
-    "title": "NASCAR driver Kyle Busch sues insurance company for $8.5 million, alleging deceptive practices",
-    "description": "Kyle Busch bought what he thought was a safe life insurance plan that would provide self-funding income for his retirement.  When Pacific Life Insurance Company sent a sixth premium notice on what was supposed to be a five-year payment plan — and most of the money he invested was gone — the two-time NASCAR Cup Series champion knew something was wrong.  “I was like, wait a second, what am I getting a sixth-year premium payment for?” Busch said from Phoenix Raceway on Saturday.",
-    "link": "https://www.yahoo.com/news/articles/nascar-driver-kyle-busch-sues-222826603.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/WybuzZMd5KCNE39iIlt_3g--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/cdc2ea89ad0e717c92149130d0715452",
-    "topic": "news"
-  },
-  {
-    "slug": "these-are-the-4-most-common-covid-symptoms-doctors-are-seein",
-    "title": "These Are the 4 Most Common COVID Symptoms Doctors Are Seeing Right Now",
-    "description": "What's in, what's out and how to stay safe.",
-    "link": "https://www.yahoo.com/news/articles/4-most-common-covid-symptoms-182500971.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/a6vBz.Hie4l2W3vK9UiphQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/parade_250/fe336984066958baeafb2735c0d887ad",
-    "topic": "news"
-  },
-  {
-    "slug": "huge-sticker-shock-floridians-get-first-look-at-obamacare-pr",
-    "title": "‘Huge sticker shock’: Floridians get first look at Obamacare price hikes",
-    "description": "Nathan Sharp is trying to figure out how he’ll pay for health care now that the federal pandemic-era help that made his coverage more affordable is set to end. The 49-year-old Crystal River resident learned this week the monthly cost of his Affordable Care Act, or Obamacare, plan will more than double, jumping from $202 to $450. He said his co-pays are also increasing, and he’s considering ...",
-    "link": "https://www.yahoo.com/news/articles/huge-sticker-shock-floridians-first-211700276.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/dT9DV9WBE.KlTaCV4PRvLg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/orlando_sentinel_national_858/8edc6f21b2de2656bc80260163102ee0",
     "topic": "news"
   },
   {
@@ -336,35 +24,299 @@
     "topic": "finance"
   },
   {
-    "slug": "paris-had-a-moving-sidewalk-in-1900-and-a-thomas-edison-film",
-    "title": "Paris had a moving sidewalk in 1900, and a Thomas Edison film captured it (2020)",
-    "description": "It's fair to say that few of us now marvel at moving walkways, those standard infrastructural elements of such utilitarian spaces as airport terminals, subway stations, and big-box stores. But there was a time when they astounded even residents of one of the most cosmopolitan cities in the world.",
-    "link": "https://www.openculture.com/2020/03/paris-had-a-moving-sidewalk-in-1900.html",
-    "thumbnail_url": "https://cdn8.openculture.com/2020/03/08220330/1900-paris-expo-moving-sidewalk-hand-painted-sm.jpg",
+    "slug": "east-wing-ballroom-donations-by-corporate-owners-create-awkw",
+    "title": "East Wing ballroom donations by corporate owners create awkward moments for news outlets",
+    "description": "President Donald Trump's razing of the White House's East Wing to build a ballroom has put some news organizations following the story in an awkward position, with corporate owners among the contributors to the project — and their reporters covering it vigorously.  Comcast, which owns NBC News and MSNBC, has faced on-air criticism from some of the liberal cable channel's personalities for its donation.  Amazon, whose founder Jeff Bezos owns The Washington Post, is another donor.",
+    "link": "https://www.yahoo.com/news/articles/east-wing-ballroom-donations-corporate-124905772.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/VrTu8xuFa93_kiorYrYOjw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/78eb45fd791b7836d2961d563ecf45f5",
+    "topic": "news"
+  },
+  {
+    "slug": "men-who-have-gotten-vasectomies-are-sharing-their-stories-an",
+    "title": "Men Who Have Gotten Vasectomies Are Sharing Their Stories And Some Of Them May Surprise You",
+    "description": "\"It was a no-brainer for me.\"",
+    "link": "https://health.yahoo.com/your-body/mens-health/articles/men-gotten-vasectomies-sharing-stories-143102137.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/1V4fyrguYRrmb06BbDuXwA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03OTc-/https://media.zenfs.com/en/buzzfeed_articles_778/7441ba3d7a94749e0b485b043127525a",
+    "topic": "health"
+  },
+  {
+    "slug": "the-departments-recruitment-content-has-been-widely-shared-b",
+    "title": "The department’s recruitment content has been widely shared by the Proud Boys and other extremists.",
+    "description": "The Trump administration is recruiting immigration officers using ads that echo neo-Nazi and far right imagery, sparking claims it is dog whistling to extremists. Ten months into President Donald Trump’s mass deportation strategy, the Department of Human Services has been pushing out recruitment and promotional content that critics fear could escalate racial hate and violence towards immigrants. Wendy Via from the Global Project Against Extremism and Hate, which has been tracking the department’s content, said the posts have gone viral among far right groups such as the Proud Boys, who “celebrate the agency’s tone as validation.”",
+    "link": "https://www.yahoo.com/news/videos/faced-footage-ice-tear-gassing-223739037.html",
+    "thumbnail_url": "https://media.zenfs.com/en/video.dailybeast.com/fcbad550ec21223f96e031d4797e8579",
+    "topic": "news"
+  },
+  {
+    "slug": "experts-say-this-common-drink-may-be-harming-your-liver",
+    "title": "Experts Say This Common Drink May Be Harming Your Liver",
+    "description": "Energy drinks may seem like innocent coffee alternatives, yet they’re anything but.",
+    "link": "https://health.yahoo.com/conditions/infectious/fatty-liver/articles/experts-common-drink-may-harming-140000452.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/58EcnBoaggOzel4pP3ufOg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA-/https://media.zenfs.com/en/eating_well_articles_946/e2a7850ae76be50e6a694fea41c38533",
+    "topic": "health"
+  },
+  {
+    "slug": "u2-spy-plane-captured-stunning-image-of-chinese-surveillance",
+    "title": "U-2 Spy Plane Captured Stunning Image Of Chinese Surveillance Balloon",
+    "description": "Footage of a United States U-2 spy plane that captured imagery of the Chinese surveillance balloon that flew over the continental United States which was later shot down over the Atlantic Ocean. Credit: Space.com | photos courtesy: US Department of Defense / Petty Officer 1st Class Tyler Thompson | edited by Steve Spaleta Music: Shifting Angles by Experia / courtesy of Epidemic Sound",
+    "link": "https://www.yahoo.com/news/videos/u-2-spy-plane-captured-150000718.html",
+    "thumbnail_url": "https://media.zenfs.com/en/space_311/6554dbb44cce9eed593e115788bf3aa8",
+    "topic": "news"
+  },
+  {
+    "slug": "researcher-stunned-after-catching-needle-in-a-haystack-foota",
+    "title": "Researcher stunned after catching 'needle in a haystack' footage of rare creature: 'Likely the first time anyone has seen this'",
+    "description": "\"I think you're going to need a bigger camera.\"",
+    "link": "https://www.yahoo.com/news/articles/researcher-stunned-catching-needle-haystack-001000084.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/PR8AG2qskX3RxtbJ4S87LQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/fa0ad26300c361c240990165aec9cde2",
+    "topic": "news"
+  },
+  {
+    "slug": "hawaiian-alaska-airlines-updates-surfboard-policy",
+    "title": "Hawaiian, Alaska Airlines Updates Surfboard Policy",
+    "description": "Going on a surf trip soon? Here's some good news.",
+    "link": "https://www.yahoo.com/news/articles/hawaiian-alaska-airlines-updates-surfboard-225547804.html",
+    "thumbnail_url": "https://media.zenfs.com/en/surfer_magazine_140/b8e2bd949cbee7e4d7d892efa17346d5",
+    "topic": "news"
+  },
+  {
+    "slug": "massive-pasta-recall-tied-to-6-deaths-expands-to-18-stateswh",
+    "title": "Massive Pasta Recall Tied to 6 Deaths Expands to 18 States—What to Know",
+    "description": "Check your freezer.",
+    "link": "https://www.yahoo.com/news/articles/massive-pasta-recall-tied-6-155406842.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/CIQSRXwpWmPVL5WOTFCYxA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD05MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/martha_stewart_living_393/1f812a08fea56923093e57b08f79b39b",
+    "topic": "news"
+  },
+  {
+    "slug": "courts-order-ice-not-to-deport-man-who-spent-43-years-in-pri",
+    "title": "Courts order ICE not to deport man who spent 43 years in prison before murder case overturned",
+    "description": "Two separate courts have ordered immigration officials not to deport a Pennsylvania man who spent four decades in prison before his murder conviction was overturned.  Subramanyam Vedam, 64, is currently detained at a short-term holding center in Alexandria, Louisiana, that’s equipped with an airstrip for deportations.  Vedam, a legal permanent resident known as “Subu,” was transferred there from central Pennsylvania last week, relatives said.",
+    "link": "https://www.yahoo.com/news/articles/courts-order-ice-not-deport-212719117.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/RgEOmPS4QFmCKYNAAQ0tXg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04ODU7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/af9ccedd5b1d97a5f5263cbf3e1894bf",
+    "topic": "news"
+  },
+  {
+    "slug": "downing-renewables-infrastructure-trust-shares-suspended-fro",
+    "title": "Downing Renewables & Infrastructure Trust shares suspended from trading",
+    "description": null,
+    "link": "https://www.investing.com/news/company-news/downing-renewables--infrastructure-trust-shares-suspended-from-trading-93CH-4329195",
+    "thumbnail_url": "https://i-invdn-com.investing.com/news/World_News_8_M_1440052125.jpg",
+    "topic": "finance"
+  },
+  {
+    "slug": "walk-for-15-minutes-shut-the-toilet-lid-and-try-this-sleep-h",
+    "title": "Walk for 15 minutes, shut the toilet lid and try this sleep hack — plus 7 more health tips to help you have a great week",
+    "description": "Health hacks for the week ahead — including easy ways to cut back on your portion sizes.",
+    "link": "https://health.yahoo.com/article/walk-for-15-minutes-shut-the-toilet-lid-and-try-this-sleep-hack--plus-7-more-health-tips-to-help-you-have-a-great-week-100017166.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/UE4MM_RSE1OlDJt1ArzdQQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://s.yimg.com/os/creatr-uploaded-images/2025-10/e9a62310-b67a-11f0-bf7e-e4a67194d3c6",
+    "topic": "health"
+  },
+  {
+    "slug": "mass-murderer-george-banks-spared-from-death-penalty-dies-in",
+    "title": "Mass murderer George Banks, spared from death penalty, dies in prison 43 years after rampage",
+    "description": "George Banks, one of the most notorious mass murderers in the U.S., has died.",
+    "link": "https://www.yahoo.com/news/articles/mass-murderer-george-banks-spared-231015633.html",
+    "thumbnail_url": "https://media.zenfs.com/en/cnn_articles_875/4131a794adead156dac10b61159d0efd",
+    "topic": "news"
+  },
+  {
+    "slug": "titanosaurs-were-the-biggest-land-animals-earths-ever-seen-t",
+    "title": "Titanosaurs were the biggest land animals Earth’s ever seen − these plant-powered dinos combined reptile and mammal traits",
+    "description": "Some of these giant vegetarians were as tall as a 3-story building. Microscopic analysis of their teeth, bones and eggshells reveals how they grew, what they ate and even their body temperature.",
+    "link": "https://www.yahoo.com/news/articles/titanosaurs-were-biggest-land-animals-151103349.html",
+    "thumbnail_url": "https://media.zenfs.com/en/the_conversation_us_articles_815/76469b12bdaeb785f15f9448e19942fc",
+    "topic": "news"
+  },
+  {
+    "slug": "why-sports-franchising-in-africa-is-gaining-momentum",
+    "title": "Why Sports Franchising in Africa Is Gaining Momentum",
+    "description": "The business of sports in Africa is gaining momentum. In recent years, more capital has been flowing into the continent's sport and entertainment industries, as investors explore new models, including sports franchising. Ibrahim Sagna, executive chairman of Silverbacks Holdings, says the potential is enormous. He speaks to Bloomberg's Jennifer Zabasajja.",
+    "link": "https://finance.yahoo.com/video/why-sports-franchising-africa-gaining-070532443.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/Vjei2a5uv0JicmlNmvb58A--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://media.zenfs.com/en/bloomberg_markets_video_2/b1fc8773588e2d2b9d4f20a7063276d9",
+    "topic": "finance"
+  },
+  {
+    "slug": "a-friendly-tour-of-process-memory-on-linux",
+    "title": "A friendly tour of process memory on Linux",
+    "description": "A deep dive into how Linux manages process memory, page tables, and virtual address spaces",
+    "link": "https://www.0xkato.xyz/linux-process-memory/",
+    "thumbnail_url": "/assets/virtual-momory-show-case.png",
     "topic": "tech"
   },
   {
-    "slug": "tongyi-deepresearch-opensource-30b-moe-model-that-rivals-ope",
-    "title": "Tongyi DeepResearch – open-source 30B MoE Model that rivals OpenAI DeepResearch",
-    "description": "GITHUB HUGGINGFACE MODELSCOPE SHOWCASE\nFrom Chatbot to Autonomous Agent We are proud to present Tongyi DeepResearch, the first fully open‑source Web Agent to achieve performance on par with OpenAI’s DeepResearch across a comprehensive suite of benchmarks. Tongyi DeepResearch demonstrates state‑of‑the‑art results, scoring 32.9 on the academic reasoning task Humanity’s Last Exam (HLE), 43.4 on BrowseComp and 46.7 on BrowseComp‑ZH in extremely complex information‑seeking tasks, and achieving a score of 75 on the user‑centric xbench‑DeepSearch benchmark, systematically outperforming all existing proprietary and open‑source Deep Research agents.",
-    "link": "https://tongyi-agent.github.io/blog/introducing-tongyi-deep-research/",
+    "slug": "guideline-has-been-acquired-by-gusto",
+    "title": "Guideline has been acquired by Gusto",
+    "description": "Guideline has been acquired by Gusto. Here are common questions and answers to help you know what to expect.",
+    "link": "https://help.guideline.com/en/articles/12694322-guideline-has-joined-gusto-faqs-about-our-recent-acquisition",
     "thumbnail_url": null,
     "topic": "tech"
   },
   {
-    "slug": "alleged-jabber-zeus-coder-mricq-in-us-custody",
-    "title": "Alleged Jabber Zeus Coder 'MrICQ' in U.S. Custody",
-    "description": "A Ukrainian man indicted in 2012 for conspiring with a prolific hacking group to steal tens of millions of dollars from U.S. businesses was arrested in Italy and is now in custody in the United States, KrebsOnSecurity has learned. Sources…",
-    "link": "https://krebsonsecurity.com/2025/11/alleged-jabber-zeus-coder-mricq-in-u-s-custody/",
-    "thumbnail_url": "https://krebsonsecurity.com/wp-content/uploads/2025/11/rybtsov-lockedup.png",
+    "slug": "australians-to-get-at-least-three-hours-a-day-of-free-solar",
+    "title": "Australians To Get At Least Three Hours a Day of Free Solar Power - Even If They Don't Have Solar Panels",
+    "description": "Australia's new \"solar sharer\" program will give households in NSW, south-east Queensland, and South Australia at least three hours of free solar power each day starting in 2026 -- even for those without rooftop panels. Other areas will potentially follow in 2027. The Guardian reports: The government said Australians could schedule appliances such as washing machines, dishwashers and air conditioners and charge electric vehicles and household batteries during this time. The solar sharer scheme would be implemented through a change to the default market offer that sets the maximum price retailers can charge customers for electricity in parts of the country. The climate change and energy minister, Chris Bowen, said the program would ensure \"every last ray of sunshine was powering our homes\" instead of some solar energy being wasted.",
+    "link": "https://hardware.slashdot.org/story/25/11/04/032244/australians-to-get-at-least-three-hours-a-day-of-free-solar-power---even-if-they-dont-have-solar-panels?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/australia_64.png",
     "topic": "tech"
   },
   {
-    "slug": "millions-may-lose-out-on-snap-benefits-but-why-do-so-many-am",
-    "title": "Millions may lose out on SNAP benefits, but why do so many Americans rely on them?",
-    "description": "While a federal judge ordered the Trump administration to release contingency plan funds for the SNAP food program, it remains to be seen if these funds will be available to help feed Americans this weekend. Rep. Jasmine Crockett (D-TX) joins Christina Ruffini to discuss the government shutdown, her potential 2026 Senate bid, and more.",
-    "link": "https://www.yahoo.com/news/videos/millions-may-lose-snap-benefits-222620537.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/RGsXUXOwxFGoKlon0h45QA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/nbcu_713/fbbcc99993fee0d33d6365df091a7692",
+    "slug": "ukraine-first-to-demo-open-source-security-platform-to-help",
+    "title": "Ukraine First To Demo Open Source Security Platform To Help Secure Power Grid",
+    "description": "concertina226 shares a report from The Register: [A massive power outage in April left tens of millions across Spain, Portugal, and parts of France without electricity for hours due to cascading grid failures, exposing how fragile and interconnected Europe's energy infrastructure is. The incident, though not a cyberattack, reignited concerns about the vulnerability of aging, fragmented, and insecure operational technology systems that could be easily exploited in future cyber or ransomware attacks.] This headache is one the European Commission is focused on. It is funding several projects looking at making electric grids more resilient, such as the eFort framework being developed by cybersecurity researchers at the independent non-profit Netherlands Organisation for Applied Scientific Research (TNO) and the Delft University of Technology (TU Delft).",
+    "link": "https://hardware.slashdot.org/story/25/11/04/000255/ukraine-first-to-demo-open-source-security-platform-to-help-secure-power-grid?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/power_64.png",
+    "topic": "tech"
+  },
+  {
+    "slug": "stocks-retreat-as-wall-street-ceos-issue-warning-markets-wra",
+    "title": "Stocks Retreat as Wall Street CEOs Issue Warning: Markets Wrap",
+    "description": "The global stock rally hit a speed bump as earnings from AI bellwether Palantir Technologies Inc. failed to impress investors and Wall Street chief executives warned of a possible correction due to rich valuations.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-03/stock-market-today-dow-s-p-live-updates",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "aramco-profit-beats-estimates-in-sign-of-easing-pressure",
+    "title": "Aramco Profit Beats Estimates in Sign of Easing Pressure",
+    "description": "Saudi Aramco posted a surprise increase in third-quarter profit as a production boost helped mitigate the impact of lower crude prices and helped the oil giant break a yearslong streak of falling earnings.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/aramco-profit-beats-estimates-in-first-sign-of-easing-pressure",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "ubs-warns-of-systemic-risk-from-weak-us-insurance-regulation",
+    "title": "UBS Warns of Systemic Risk From Weak US Insurance Regulation",
+    "description": "UBS Group AG’s chairman warned against looming risks in the US insurance industry, citing weak and complex regulations amid an unprecedented boom in private financing.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/ubs-chair-warns-switzerland-losing-edge-insurance-systemic-risk",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "sareptas-stock-plummets-as-disappointing-trial-data-raise-qu",
+    "title": "Sarepta’s stock plummets as disappointing trial data raise questions on DMD drug’s success",
+    "description": "Sarepta’s stock sank after studies of Duchenne muscular dystrophy treatments failed their primary endpoints.",
+    "link": "https://www.marketwatch.com/story/sareptas-stock-plummets-as-disappointing-trial-data-raise-questions-on-dmd-drugs-success-6115eace?mod=mw_rss_topstories",
+    "thumbnail_url": "https://images.mktw.net/im-37425345/social",
+    "topic": "finance"
+  },
+  {
+    "slug": "drinking-water-in-tehran-could-run-dry-in-two-weeks-iranian",
+    "title": "Drinking water in Tehran could run dry in two weeks, Iranian official says",
+    "description": "A historic drought in the country has culminated in a ‘100 percent drop in precipitation’ in the Tehran region.",
+    "link": "https://www.yahoo.com/news/articles/drinking-water-tehran-could-run-191615230.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/zjgxTiB_SwUhJZPZPWxlgg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/al_jazeera_289/a431248bc9d2bff7f8532389aa30011c",
+    "topic": "news"
+  },
+  {
+    "slug": "former-news-anchor-charged-with-murder-after-allegedly-stabb",
+    "title": "Former News Anchor Charged with Murder After Allegedly Stabbing and Killing Her 80-Year-Old Mother",
+    "description": "The suspect previously worked as an anchor and a reporter for Fox 2 in St. Louis",
+    "link": "https://www.yahoo.com/news/articles/former-news-anchor-charged-murder-233042921.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/tDa59tX_vQAOxelLD8W56Q--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/people_218/2d336e266d26faf4a5f3c1ba1562e93a",
+    "topic": "news"
+  },
+  {
+    "slug": "six-flags-america-officially-closes-after-50-years-of-operat",
+    "title": "Six Flags America Officially Closes After 50 Years of Operation",
+    "description": "The park first operated as a drive-thru safari park, opening in 1974",
+    "link": "https://www.yahoo.com/news/articles/six-flags-america-officially-closes-155416875.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/UrQXj2SUjy5C6p6d1HkQWg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/people_218/eeb70edb1128dd1bd3890029d12523de",
+    "topic": "news"
+  },
+  {
+    "slug": "ukraine-strikes-elite-russian-unit-on-black-sea-oil-rig",
+    "title": "Ukraine ‘strikes elite Russian unit’ on Black Sea oil rig",
+    "description": "Ukrainian forces claim to have struck an elite Russian special forces unit stationed on an oil drilling platform in the Black Sea.",
+    "link": "https://www.yahoo.com/news/articles/ukraine-strikes-elite-russian-unit-200210696.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/8CUT0h6j9c0pr2LV6pK5ow--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03NTA7Y2Y9d2VicA--/https://media.zenfs.com/en/the_telegraph_258/5136faef048f55c4fade1466335ef85b",
+    "topic": "news"
+  },
+  {
+    "slug": "officials-issue-warning-after-hikers-spot-huge-invasive-liza",
+    "title": "Officials issue warning after hikers spot huge invasive lizard lurking in state park: 'If you see it, back away safely'",
+    "description": "The creatures can grow up to 5 feet long.",
+    "link": "https://www.yahoo.com/news/articles/officials-issue-warning-hikers-spot-103039414.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/jsCletdTIV3FUS9NIwWopg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/efbba721a15ba5a207ca1885d4201843",
+    "topic": "news"
+  },
+  {
+    "slug": "you-cant-curl-a-border",
+    "title": "You can't cURL a Border",
+    "description": "Country borders don't return JSON, they return judgment. So I built a state machine for travel when governments won't expose your state.",
+    "link": "https://drobinin.com/posts/you-cant-curl-a-border/",
+    "thumbnail_url": "https://drobinin.com/assets/previews/you-cant-curl-a-border.png",
+    "topic": "tech"
+  },
+  {
+    "slug": "things-you-can-do-with-diodes",
+    "title": "Things you can do with diodes",
+    "description": "Paying homage to the component we usually don't think about.",
+    "link": "https://lcamtuf.substack.com/p/things-you-can-do-with-diodes",
+    "thumbnail_url": "https://substackcdn.com/image/fetch/$s_!OCaB!,w_1200,h_600,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F03297fe4-2aef-4b79-9d7b-496d9b7978e7_1186x1027.jpeg",
+    "topic": "tech"
+  },
+  {
+    "slug": "internet-archives-legal-fights-are-over-but-its-founder-mour",
+    "title": "Internet Archive's Legal Fights Are Over, But Its Founder Mourns What Was Lost",
+    "description": "The Internet Archive celebrated archiving its trillionth webpage last month and received congratulations from San Francisco, which declared October 22 \"Internet Archive Day.\" Senator Alex Padilla designated the nonprofit a federal depository library. The organization currently faces no major lawsuits and no active threats to its collections. But these victories arrived after years of bruising copyright battles that forced the removal of more than 500,000 books from the Archive's Open Library. \"We survived, but it wiped out the Library,\" founder Brewster Kahle told ArsTechnica.",
+    "link": "https://tech.slashdot.org/story/25/11/03/1930232/internet-archives-legal-fights-are-over-but-its-founder-mourns-what-was-lost?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/internet_64.png",
+    "topic": "tech"
+  },
+  {
+    "slug": "studio-ghibli-bandai-namco-square-enix-demand-openai-stop-us",
+    "title": "Studio Ghibli, Bandai Namco, Square Enix Demand OpenAI Stop Using Their Content To Train AI",
+    "description": "An anonymous reader shares a report: The Content Overseas Distribution Association (CODA), an anti-piracy organization representing Japanese IP holders like Studio Ghibli and Bandai Namco, released a letter last week asking OpenAI to stop using its members' content to train Sora 2, as reported by Automaton. The letter states that \"CODA considers that the act of replication during the machine learning process may constitute copyright infringement,\" since the resulting AI model went on to spit out content with copyrighted characters.",
+    "link": "https://slashdot.org/story/25/11/03/1857255/studio-ghibli-bandai-namco-square-enix-demand-openai-stop-using-their-content-to-train-ai?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/ai_64.png",
+    "topic": "news"
+  },
+  {
+    "slug": "dealmakers-ink-80b-in-a-day-amid-ma-frenzy-insight-with-hasl",
+    "title": "Dealmakers ink $80B in a day amid M&A frenzy | Insight with Haslinda Amin 11/4/2025",
+    "description": "Insight with Haslinda Amin, a daily news program featuring in-depth, high-profile interviews and analysis to give viewers the complete picture on the stories that matter. The show features prominent leaders spanning the worlds of business, finance, politics and culture.",
+    "link": "https://www.bloomberg.com/news/videos/2025-11-04/insight-with-haslinda-amin-11-04-2025-video",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "lg-chem-and-sinopec-team-up-to-make-sodiumion-battery-materi",
+    "title": "LG Chem and Sinopec Team Up to Make Sodium-Ion Battery Materials",
+    "description": "South Korea’s LG Chem Ltd. and China’s Sinopec Group are partnering to develop materials for sodium-ion batteries, which have been touted as one of the most promising next-generation technologies for energy storage.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/lg-chem-and-sinopec-team-up-to-make-sodium-ion-battery-materials",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "novo-nordisks-weightloss-drug-wegovy-could-soon-have-a-new-s",
+    "title": "Novo Nordisk’s weight-loss drug Wegovy could soon have a new sales outlet in the U.S.",
+    "description": "Telehealth company Hims & Hers says it is in “active discussions” with Novo Nordisk about selling Wegovy.",
+    "link": "https://www.marketwatch.com/story/novo-nordisks-wegovy-could-soon-have-a-new-sales-outlet-in-the-u-s-34a323d8?mod=mw_rss_topstories",
+    "thumbnail_url": "https://images.mktw.net/im-28834919/social",
+    "topic": "finance"
+  },
+  {
+    "slug": "aker-asa-posts-strong-q3-results-expands-ai-and-real-estate",
+    "title": "Aker ASA posts strong Q3 results, expands AI and real estate investments",
+    "description": null,
+    "link": "https://www.investing.com/news/earnings/aker-asa-posts-strong-q3-results-expands-ai-and-real-estate-investments-4329200",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "diddy-is-reportedly-hanging-with-former-nba-star-in-prison",
+    "title": "Diddy Is Reportedly Hanging With Former NBA Star In Prison",
+    "description": "Sean \"Diddy\" Combs is hanging with a former professional athlete in prison. The former rap star, 55, is currently imprisoned at FCI Fort Dix in New Jersey. The former music mogul was arrested in September of 2024. He was ultimately found guilty of transportation to engage in prostitution. Diddy was ...",
+    "link": "https://www.yahoo.com/entertainment/celebrity/articles/diddy-reportedly-hanging-former-nba-040000197.html",
+    "thumbnail_url": "https://media.zenfs.com/en/the_spun_articles_751/168f57e7e1cff3fbf6d97d0d2e44c364",
+    "topic": "news"
+  },
+  {
+    "slug": "israel-rocked-by-scandal-as-top-military-lawyer-resigns-goes",
+    "title": "Israel rocked by scandal as top military lawyer resigns, goes missing, is found and thrown into jail",
+    "description": "Until last week, Maj. Gen. Yifat Tomer-Yerushalmi was the Israeli army's top lawyer.  The soap opera-worthy saga was touched off last week by Tomer-Yerushalmi’s explosive admission that she approved the leak of a surveillance video at the center of a politically divisive investigation into allegations of severe abuse against a Palestinian at a notorious Israeli military prison.  The video shows part of an assault in which Israeli soldiers are accused of sexually abusing a Palestinian detainee.",
+    "link": "https://www.yahoo.com/news/articles/israel-rocked-scandal-top-military-212405581.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/B33DfFkj2sDAb2ueOVoOUg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/7025fc140b644725fe2f0dcc26294de6",
     "topic": "news"
   },
   {
@@ -376,211 +328,203 @@
     "topic": "news"
   },
   {
-    "slug": "republican-accidentally-outs-johnsons-bluff-in-shutdown-figh",
-    "title": "Republican Accidentally Outs Johnson’s Bluff in Shutdown Fight",
-    "description": "Jeff Van Drew has been called out for adding yet another unclear qualifier to the riddle of the GOP’s healthcare plans—one which directly contradicts the promises of House Speaker Mike Johnson. The New Jersey representative offered his take on CNN’s Inside Politics Sunday, suggesting that he and his fellow Republicans could knock together a plan that in about a year. “You have to have a plan. And the plan is to come up with something better,” he said.",
-    "link": "https://www.yahoo.com/news/articles/republican-accidentally-outs-johnson-bluff-165510945.html",
-    "thumbnail_url": "https://media.zenfs.com/en/thedailybeast.com/ee4cc709d688cc89533ae9e76ef85c5a",
+    "slug": "the-end-of-federal-food-aid-could-hit-black-americans-hardes",
+    "title": "The end of federal food aid could hit Black Americans hardest",
+    "description": "Willy Hilaire is homeless, unemployed and 63.  On many days, Hilaire’s only food is a hot meal he gets from Holy Apostles in Manhattan's Chelsea neighborhood.  With SNAP at risk, he worries there won't be enough for him and the children, forcing more sacrifice.",
+    "link": "https://www.yahoo.com/news/articles/end-federal-food-aid-could-140818452.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/ClawRVoPdM0368QvdzSjvg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDI7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/aa74378eb747940e893909a643cd5c97",
     "topic": "news"
   },
   {
-    "slug": "veteran-who-traveled-for-granddaughters-college-graduation-a",
-    "title": "Veteran, Who Traveled for Granddaughter’s College Graduation, Allegedly ‘Boiled Alive’ in Hotel Shower: Lawsuit",
-    "description": "The man's family called the incident a “horrific and entirely preventable tragedy”",
-    "link": "https://www.yahoo.com/news/articles/veteran-traveled-granddaughter-college-graduation-120000548.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/yuxvIuDNlFP7qhqxjHwwZg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/people_218/b4bfc712fa0238bda3889feb0d37ea0e",
-    "topic": "news"
-  },
-  {
-    "slug": "watch-out-for-the-can-you-hear-me-phone-scam-happening-now",
-    "title": "Watch Out For The 'Can You Hear Me?' Phone Scam Happening Now",
-    "description": "You can easily get trapped if you are not careful. Here’s what to know.",
-    "link": "https://www.yahoo.com/news/articles/watch-hear-phone-scam-happening-120020929.html",
-    "thumbnail_url": "https://media.zenfs.com/en/huffpost_life_308/50e829c142cfde047e644be8530a40f6",
-    "topic": "news"
-  },
-  {
-    "slug": "malaysia-pm-says-142-million-magnet-plant-to-boost-rare-eart",
-    "title": "Malaysia PM says $142 million magnet plant to boost rare earth sector, state media reports",
-    "description": "KUALA LUMPUR (Reuters) -Malaysian Prime Minister Anwar Ibrahim said the development of a 600 million ringgit ($142 million) super magnet manufacturing facility in the state of Pahang will strengthen",
-    "link": "https://finance.yahoo.com/news/malaysia-pm-says-142-million-024020222.html",
-    "thumbnail_url": "https://media.zenfs.com/en/reuters.com/e57fd9e38f7b47aa8ee9a35e59c1fd5a",
+    "slug": "indias-68-billion-shopping-spree-modis-tax-cut-triggers-fest",
+    "title": "India's $68 Billion Shopping Spree: Modi's Tax Cut Triggers Festival Spending Boom",
+    "description": "A sweeping GST slash turns Diwali season into a nationwide buying frenzy, reviving demand from cars to kitchenware",
+    "link": "https://finance.yahoo.com/news/indias-68-billion-shopping-spree-165113341.html",
+    "thumbnail_url": "https://media.zenfs.com/en/us.finance.gurufocus/0abe6725b55000cf4e7a04d598d4c307",
     "topic": "finance"
   },
   {
-    "slug": "joby-aviation-joby-assessing-valuation-as-new-nvidia-partner",
-    "title": "Joby Aviation (JOBY): Assessing Valuation as New Nvidia Partnership and FAA-Certified Production Accelerate Commercial Launch Prospects",
-    "description": "Joby Aviation has taken two major steps to strengthen its position in the race to commercialize electric air taxis. The company was chosen as Nvidia’s exclusive aviation launch partner for the new IGX Thor platform, and it has started producing FAA-certifiable propeller blades at its Dayton, Ohio facility. See our latest analysis for Joby Aviation. These rapid-fire developments have reignited optimism in Joby Aviation’s prospects, with the share price up over 114% year-to-date and total...",
-    "link": "https://finance.yahoo.com/news/joby-aviation-joby-assessing-valuation-131848408.html",
-    "thumbnail_url": "https://media.zenfs.com/en/simply_wall_st__316/4b379f9ed3f80f55476d72ed08ba4e52",
-    "topic": "finance"
-  },
-  {
-    "slug": "first-recording-of-a-dying-human-brain-shows-waves-similar-t",
-    "title": "First recording of a dying human brain shows waves similar to memory flashbacks",
-    "description": "What happens in our brain as we die?",
-    "link": "https://louisville.edu/medicine/news/first-ever-recording-of-a-dying-human-brain-shows-waves-similar-to-memory-flashbacks",
+    "slug": "state-of-terminal-emulators-in-2025-the-errant-champions",
+    "title": "State of Terminal Emulators in 2025: The Errant Champions",
+    "description": "Software Engineer",
+    "link": "https://www.jeffquast.com/post/state-of-terminal-emulation-2025/",
     "thumbnail_url": null,
     "topic": "tech"
   },
   {
-    "slug": "oxy-is-cloudflares-rustbased-next-generation-proxy-framework",
-    "title": "Oxy is Cloudflare's Rust-based next generation proxy framework (2023)",
-    "description": "In this blog post, we are proud to introduce Oxy - our modern proxy framework, developed using the Rust programming language.",
-    "link": "https://blog.cloudflare.com/introducing-oxy/",
-    "thumbnail_url": "https://cf-assets.www.cloudflare.com/zkvhlag99gkb/6a4A7ANX5eTGdvIiiMs510/283db218668bcb27887ac5b1c7f8e997/introducing-oxy-vebMq9.png",
-    "topic": "tech"
-  },
-  {
-    "slug": "simple-trick-to-increase-coverage-lying-to-users-about-signa",
-    "title": "Simple trick to increase coverage: Lying to users about signal strength",
+    "slug": "ask-hn-who-wants-to-be-hired-november-2025",
+    "title": "Ask HN: Who wants to be hired? (November 2025)",
     "description": null,
-    "link": "https://nickvsnetworking.com/simple-trick-to-increase-coverage-lying-to-users-about-signal-strength/",
+    "link": "https://news.ycombinator.com/item?id=45800464",
     "thumbnail_url": null,
     "topic": "tech"
   },
   {
-    "slug": "openais-sam-altman-defends-1-trillion-spending-commitments-p",
-    "title": "OpenAI's Sam Altman Defends $1 Trillion+ Spending Commitments, Predicts Steep Revenue Growth, More Products",
-    "description": "TechCrunch...",
-    "link": "https://slashdot.org/story/25/11/03/0349255/openais-sam-altman-defends-1-trillion-spending-commitments-predicts-steep-revenue-growth-more-products?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/ai_64.png",
-    "topic": "news"
+    "slug": "waymo-to-expand-robotaxi-service-to-las-vegas-san-diego-and",
+    "title": "Waymo To Expand Robotaxi Service To Las Vegas, San Diego and Detroit Next Year",
+    "description": "In its largest rollout yet, Waymo said it will launch its driverless robotaxi service to Las Vegas, San Diego, and Detroit in 2026. The Alphabet unit will also debut new Zeekr-built vehicles developed with Geely to complement its existing Jaguar I-PACE fleet. Reuters reports: The new Zeekr model, developed with Chinese automaker Geely, are designed specifically for robotaxi use cases and will be rolled out gradually as the company expands its service. [...] Waymo plans to launch the service in Las Vegas next summer, while in San Diego, it is working with local officials and first responders to secure deployment permits.",
+    "link": "https://tech.slashdot.org/story/25/11/03/2134217/waymo-to-expand-robotaxi-service-to-las-vegas-san-diego-and-detroit-next-year?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/transportation_64.png",
+    "topic": "tech"
   },
   {
-    "slug": "daylight-saving-time-still-happening-still-unpopular",
-    "title": "Daylight Saving Time:  Still Happening. Still Unpopular",
-    "description": "Millions will set their clocks back an hour tonight for Daylight Saving Time — only to set them forward an hour six months later.",
-    "link": "https://yro.slashdot.org/story/25/11/02/0626222/daylight-saving-time-still-happening-still-unpopular?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/government_64.png",
-    "topic": "news"
-  },
-  {
-    "slug": "lenskart-ipo-price-sparks-concern-over-indian-startup-valuat",
-    "title": "Lenskart IPO Price Sparks Concern Over Indian Startup Valuations",
-    "description": "Lenskart Solutions Ltd.’s $821 million initial public offering was sold out in less than five hours last week. Yet, the eyewear retailer’s pricing has sparked concern over whether Indian startups are being valued too richly as they go public.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/lenskart-ipo-price-sparks-concern-over-indian-startup-valuations",
+    "slug": "gunvor-ceo-says-deal-for-lukoil-global-assets-is-clean-break",
+    "title": "Gunvor CEO Says Deal for Lukoil Global Assets Is ‘Clean Break’",
+    "description": "Gunvor Group Chief Executive Officer Torbjörn Törnqvist said an agreement to acquire Russian oil producer Lukoil PJSC’s international portfolio represents a “clean break” for the assets.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/gunvor-ceo-says-deal-for-lukoil-global-assets-is-clean-break",
     "thumbnail_url": null,
     "topic": "finance"
   },
   {
-    "slug": "eyeopening-study-reveals-the-home-appliance-that-spews-more",
-    "title": "Eye-opening study reveals the home appliance that spews more benzene than secondhand smoke: 'You're at an elevated risk [of cancer]'",
-    "description": "The research showed indoor concentrations well above recommended health benchmarks.",
-    "link": "https://www.yahoo.com/news/articles/study-reveals-home-appliance-spews-110000657.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/iCN8oXLYz2zI1RxsdDYUwQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/47a5c3a8204d5c6f24fe1729304932d3",
-    "topic": "news"
-  },
-  {
-    "slug": "stephen-schwartz-was-murdered-in-his-florida-mansion-in-2014",
-    "title": "Stephen Schwartz Was Murdered In His Florida Mansion In 2014. Years Later, His Family Found Out the Doctor Had a Dark Past of His Own",
-    "description": "In 2014, Dr. Steven Schwartz was found shot, strangled and stabbed in his Florida home",
-    "link": "https://www.yahoo.com/news/articles/stephen-schwartz-murdered-florida-mansion-113000203.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/.IAsA2hWBpEQZu_26SB6Ag--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/people_218/cffd360b2171a4f3315102c78fe03bf5",
-    "topic": "news"
-  },
-  {
-    "slug": "at-what-point-does-this-cross-a-line-into-international-crim",
-    "title": "‘At What Point Does This Cross a Line Into International Criminality?’",
-    "description": "An expert on international law weighs in on the legality and global implications of the Trump administration’s drug boat killings.",
-    "link": "https://www.yahoo.com/news/articles/watch-space-legal-fallout-trump-135500119.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/TqjAtfW.H7vkT1bCeSVvcw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/politico_453/3014d0884744ed7a4212529388e5c26b",
-    "topic": "news"
-  },
-  {
-    "slug": "19-reasons-strippers-think-we-are-absolutely-without-a-doubt",
-    "title": "19 Reasons Strippers Think We Are Absolutely, Without A Doubt, In A Recession Right Now, Whether People Want To Admit It Or Not",
-    "description": "\"It’s bad. Real bad. Worse than it was in 2008, and that’s saying something. I stopped by my old club last week, and the manager said they made more money during COVID.\"",
-    "link": "https://www.yahoo.com/news/articles/strippers-sharing-business-days-feel-003002371.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/4mteHsrYWQb1T16vzIqJ_w--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03OTc7Y2Y9d2VicA--/https://media.zenfs.com/en/buzzfeed_articles_778/d02109c5f771cfefff7ea46101a888d7",
-    "topic": "news"
-  },
-  {
-    "slug": "east-wing-ballroom-donations-by-corporate-owners-create-awkw",
-    "title": "East Wing ballroom donations by corporate owners create awkward moments for news outlets",
-    "description": "President Donald Trump's razing of the White House's East Wing to build a ballroom has put some news organizations following the story in an awkward position, with corporate owners among the contributors to the project — and their reporters covering it vigorously.  Comcast, which owns NBC News and MSNBC, has faced on-air criticism from some of the liberal cable channel's personalities for its donation.  Amazon, whose founder Jeff Bezos owns The Washington Post, is another donor.",
-    "link": "https://www.yahoo.com/news/articles/east-wing-ballroom-donations-corporate-124905772.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/VrTu8xuFa93_kiorYrYOjw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/78eb45fd791b7836d2961d563ecf45f5",
-    "topic": "news"
-  },
-  {
-    "slug": "mortgage-and-refinance-interest-rates-today-november-2-2025",
-    "title": "Mortgage and refinance interest rates today, November 2, 2025: Moving closer to refinance territory",
-    "description": "These are today's mortgage and refinance rates. Fixed rates have gradually decreased, and the 30-year rate is at its lowest in over a year. Lock in your rate today.",
-    "link": "https://finance.yahoo.com/personal-finance/mortgages/article/mortgage-refinance-rates-today-sunday-november-2-2025-110036179.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/I199q7waIrtuQGBJaPIm2w--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://s.yimg.com/os/creatr-uploaded-images/2024-04/6f016ae0-03e6-11ef-97ff-13785de87be3",
-    "topic": "finance"
-  },
-  {
-    "slug": "america-wasted-22-billion-on-this-failed-operation-out-west",
-    "title": "America Wasted $2.2 Billion On This Failed Operation Out West",
-    "description": "Discover how a project, which received $1.6 billion in federal grants to launch commercial operations in January 2016, is now closing less than a decade later.",
-    "link": "https://finance.yahoo.com/news/america-wasted-2-2-billion-193000297.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/Fd1s.GYddHkToVxoj6S9lg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzQ-/https://media.zenfs.com/en/money_digest_articles_438/a45d632a026c1d1be3af90d56029316d",
-    "topic": "finance"
-  },
-  {
-    "slug": "facts-about-throwing-good-parties",
-    "title": "Facts about throwing good parties",
-    "description": "Parties are a public service; here's how to throw them.",
-    "link": "https://www.atvbt.com/21-facts-about-throwing-good-parties/",
-    "thumbnail_url": "https://www.atvbt.com/content/images/size/w1200/2025/10/host_gathering-1.png",
-    "topic": "tech"
-  },
-  {
-    "slug": "reproducing-the-aws-outage-race-condition-with-a-model-check",
-    "title": "Reproducing the AWS Outage Race Condition with a Model Checker",
-    "description": "Welcome to Waqas' blog",
-    "link": "https://wyounas.github.io/aws/concurrency/2025/10/30/reproducing-the-aws-outage-race-condition-with-model-checker/",
-    "thumbnail_url": null,
-    "topic": "tech"
-  },
-  {
-    "slug": "lisp-notes-on-its-past-and-future-1980",
-    "title": "Lisp: Notes on its Past and Future (1980)",
-    "description": "LISP-NOTES ON ITS PAST AND FUTURE-1980",
-    "link": "https://www-formal.stanford.edu/jmc/lisp20th/lisp20th.html",
-    "thumbnail_url": null,
-    "topic": "tech"
-  },
-  {
-    "slug": "manufacturer-remotely-bricks-smart-vacuum-after-its-owner-bl",
-    "title": "Manufacturer Remotely Bricks Smart Vacuum After Its Owner Blocked It From Collecting Data",
-    "description": "\"An engineer got curious about how his iLife A11 smart vacuum worked and monitored the network traffic coming from the device,\" writes Tom's Hardware.",
-    "link": "https://yro.slashdot.org/story/25/11/02/2241201/manufacturer-remotely-bricks-smart-vacuum-after-its-owner-blocked-it-from-collecting-data?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/privacy_64.png",
-    "topic": "news"
-  },
-  {
-    "slug": "github-announces-agent-hq-letting-copilot-subscribers-run-an",
-    "title": "GitHub Announces 'Agent HQ', Letting Copilot Subscribers Run and Manage Coding Agents from Multiple Vendors",
-    "description": "\"AI isn't just a tool anymore; it's an integral part of the development experience,\" argues GitHub's blog. So \"Agents shouldn't be bolted on. They should work the way you already...",
-    "link": "https://developers.slashdot.org/story/25/11/02/2337254/github-announces-agent-hq-letting-copilot-subscribers-run-and-manage-coding-agents-from-multiple-vendors?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/programming_64.png",
-    "topic": "tech"
-  },
-  {
-    "slug": "campari-drops-after-italy-seizes-shares-in-taxfraud-probe",
-    "title": "Campari Drops After Italy Seizes Shares in Tax-Fraud Probe",
-    "description": "Davide Campari-Milano NV shares fell after Italian prosecutors on Friday ordered the seizure of around €1.3 billion ($1.5 billion) in shares from the holding company that controls the drinks maker.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/campari-drops-after-italy-seizes-shares-in-tax-fraud-probe",
+    "slug": "top-south-african-airlines-flights-normal-despite-work-stopp",
+    "title": "Top South African Airline’s Flights Normal Despite Work Stoppage",
+    "description": "South Africa’s largest airline said its services are operating normally despite some members of its cabin crew starting industrial action overnight after wage talks deadlocked.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-03/top-s-african-airline-to-lockout-some-staff-after-wage-impasse",
     "thumbnail_url": null,
     "topic": "finance"
   },
   {
-    "slug": "maralago-guests-spill-tacky-details-of-trumps-gatsby-bash",
-    "title": "Mar-a-Lago Guests Spill Tacky Details of Trump’s Gatsby Bash",
-    "description": "Details are beginning to emerge about Donald Trump’s opulent, out-of-touch Halloween party at Mar-a-Lago on Friday night. Images from the Great Gatsby-themed soirée show the president beaming and speaking with top members of his administration, political allies, celebrities, and loyal MAGA supporters, all decked out in elaborate Jazz Age costumes and surrounded by Prohibition-era decor. One clip, posted to X by right-wing “monitoring” account PatriotTakes, features burlesque dancers suggestively",
-    "link": "https://www.yahoo.com/entertainment/celebrity/articles/mar-lago-guests-spill-tacky-205305784.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/HdixMJpfqalTNcDgnnkMIg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/thedailybeast.com/32c39b44a58de7c4e53f4f562d5ec694",
+    "slug": "foreign-investors-trim-india-consumer-stocks-despite-tax-cut",
+    "title": "Foreign Investors Trim India Consumer Stocks Despite Tax Cut",
+    "description": "Foreign investors reduced holdings of Indian consumer stocks in the three months through September, even as a consumption tax cut kicked in to help drive spending.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/foreign-investors-trim-india-consumer-stocks-despite-tax-cut",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "starbucks-to-sell-control-of-china-business-to-private-equit",
+    "title": "Starbucks to sell control of China business to private equity. Here’s how much the stake is worth.",
+    "description": "The U.S. coffee-shop chain is forming a joint venture with Boyu Capital, with Boyu holding 60% interest in the company’s retail operations in China. Starbucks will retain the other 40% and continue to own and license the Starbucks brand and intellectual property in the new entity.",
+    "link": "https://www.marketwatch.com/story/starbucks-to-sell-control-of-china-business-to-private-equity-heres-how-much-the-stake-is-worth-2eb3c424?mod=mw_rss_topstories",
+    "thumbnail_url": "https://images.mktw.net/im-94703504/social",
+    "topic": "finance"
+  },
+  {
+    "slug": "uks-dominos-pizza-logs-likeforlike-sales-growth-in-tough-mar",
+    "title": "UK's Domino's Pizza logs like-for-like sales growth in tough market",
+    "description": null,
+    "link": "https://www.investing.com/news/economic-indicators/uks-dominos-pizza-logs-likeforlike-sales-growth-in-tough-market-4329191",
+    "thumbnail_url": "https://i-invdn-com.investing.com/trkd-images/LYNXMPELA30BC_L.jpg",
+    "topic": "finance"
+  },
+  {
+    "slug": "violent-brawl-erupts-in-dominos-as-suspects-hurl-chair-strik",
+    "title": "Violent brawl erupts in Domino’s as suspects hurl chair, strike officer's head",
+    "description": "Glassboro police say two men threw a chair at an officer’s head during a wild Saturday morning Domino’s brawl in New Jersey caught on surveillance video.",
+    "link": "https://www.yahoo.com/news/articles/violent-brawl-erupts-domino-suspects-040704748.html",
+    "thumbnail_url": "https://media.zenfs.com/en/fox_news_text_979/a14effb2f993e54f45656ca41590ab20",
     "topic": "news"
   },
   {
-    "slug": "trump-says-chinas-xi-has-assured-him-that-he-wont-take-actio",
-    "title": "Trump says China's Xi has assured him that he won't take action on Taiwan during Republican's term",
-    "description": "President Donald Trump says that Chinese President Xi Jinping has given him assurances that Beijing would take no action toward its long-stated goal of unifying Taiwan with mainland China while the Republican leader is in office.  Trump said that the long-contentious issue of Taiwan did not come up in his talks with Xi on Thursday in South Korea that largely focused on U.S.-China trade tensions.  “He has openly said, and his people have openly said at meetings, ‘We would never do anything while President Trump is president,’ because they know the consequences,” Trump said in an excerpt of an interview with the CBS' program “60 Minutes” that aired Sunday.",
-    "link": "https://www.yahoo.com/news/articles/trump-says-chinas-xi-assured-171545527.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/Ovrn0aQXOe4UdE2gpz0QAQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/e94010deb7f2b085ea350579d0893aa1",
+    "slug": "a-major-question-for-the-supreme-court-will-it-treat-trump-a",
+    "title": "A major question for the Supreme Court: Will it treat Trump as it did Biden?",
+    "description": "A major question hangs over the Supreme Court's closely watched case on President Donald Trump's far-reaching tariffs: Will the conservative majority hold the Republican president to the same exacting standards it used to limit his Democratic predecessor, Joe Biden?  Key legal principles at the heart of conservative challenges to major initiatives in the Biden years are driving the arguments in the fight against Trump’s tariffs, which is set for arguments at the high court on Wednesday.",
+    "link": "https://www.yahoo.com/news/articles/major-supreme-court-treat-trump-121812282.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/u9NKvH7sQvfMZjMoQ2eWAg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/5fe048a73564ad93e0dc5461ec89c52c",
+    "topic": "news"
+  },
+  {
+    "slug": "experts-issue-urgent-warning-after-discovering-exploding-zom",
+    "title": "Experts issue urgent warning after discovering 'exploding zombie' phenomenon across the country",
+    "description": "The fire in the clip was massive, engulfing a large heap.",
+    "link": "https://www.yahoo.com/news/articles/experts-issue-urgent-warning-discovering-002000272.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/zzQ5QVy1eLjnlIpQr6Us.Q--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/55d83254ebf1be29452a5e52fa2bd4c8",
+    "topic": "news"
+  },
+  {
+    "slug": "victor-conte-who-sold-undetectable-steroids-to-elite-athlete",
+    "title": "Victor Conte, who sold undetectable steroids to elite athletes in baseball and track, has died at 75",
+    "description": "Victor Conte, the architect of a scheme to provide undetectable performance-enhancing drugs to professional athletes including baseball stars Barry Bonds and Jason Giambi and Olympic track champion Marion Jones decades ago, has died.  Conte died Monday, SNAC System, a sports nutrition company he founded, said in a social media post.",
+    "link": "https://www.yahoo.com/news/articles/victor-conte-sold-undetectable-steroids-034609682.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/eeE4IFNZxFmofw_Bgh7Uqg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD05NDU7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/94840514ca687beb821e91db1889ae74",
+    "topic": "news"
+  },
+  {
+    "slug": "microsoft-signs-97-billion-cloud-deal-with-iren-as-ai-demand",
+    "title": "Microsoft signs $9.7 billion cloud deal with IREN as AI demand swells",
+    "description": "The news sent shares of IREN up as much as 24.7% to a record high on Monday, ‌with the stock last up nearly 10%.  AI-server maker Dell was also up about 1%, as it would provide IREN with Nvidia's GB300 chips and other equipment that Microsoft will use for about $5.8 billion.  The five-year Microsoft deal shows the AI industry's growing hunger for ⁠computing power to run applications such ‌as ChatGPT.",
+    "link": "https://finance.yahoo.com/news/microsoft-signs-9-7-billion-110844856.html",
+    "thumbnail_url": "https://media.zenfs.com/en/reuters-finance.com/438eefd29869e0a1d761355992404d25",
+    "topic": "finance"
+  },
+  {
+    "slug": "the-mack-super-pumper-was-a-locomotive-engined-fire-fighter",
+    "title": "The Mack Super Pumper was a locomotive engined fire fighter (2018)",
+    "description": "Mack Super Pumper",
+    "link": "https://bangshift.com/bangshiftxl/mack-super-pumper-system-locomotive-engine-powered-pumper-extinguish-hell-often/",
+    "thumbnail_url": "https://bangshift.com/wp-content/uploads/2014/10/pumper1.jpg",
+    "topic": "tech"
+  },
+  {
+    "slug": "linkers-2007",
+    "title": "Linkers (2007)",
+    "description": null,
+    "link": "https://www.airs.com/blog/archives/38",
+    "thumbnail_url": null,
+    "topic": "tech"
+  },
+  {
+    "slug": "the-curious-case-of-the-bizarre-disappearing-captcha",
+    "title": "The Curious Case of the Bizarre, Disappearing Captcha",
+    "description": "Captchas have largely vanished from the web in 2025, replaced by invisible tracking systems that analyze user behavior rather than asking people to decipher distorted text or identify traffic lights in image grids. Google launched reCaptcha v3 in 2018 to generate risk scores based on behavioral signals during site interactions, making bot-blocking technology \"completely invisible\" for most users, according to Tim Knudsen, a director of product management at Google Cloud.",
+    "link": "https://tech.slashdot.org/story/25/11/03/1916215/the-curious-case-of-the-bizarre-disappearing-captcha?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/it_64.png",
+    "topic": "tech"
+  },
+  {
+    "slug": "australias-first-canola-cargo-to-china-in-years-may-depart-s",
+    "title": "Australia’s First Canola Cargo to China in Years May Depart Soon",
+    "description": "Australia is set to ship its first canola to China in five years, with a vessel hauling a trial cargo of the oilseed expected to depart for Qingdao in less than a week.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/australia-s-first-canola-cargo-to-china-in-years-may-depart-soon",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "malaysian-ringgit-nears-oneyear-high-on-rate-outlook-growth",
+    "title": "Malaysian Ringgit Nears One-Year High on Rate Outlook, Growth Optimism",
+    "description": "Malaysia’s ringgit is hovering near its strongest level in a year, buoyed by expectations that the central bank will keep policy rates steady and by renewed optimism in the nation’s growth outlook.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/myr-usd-malaysia-ringgit-nears-one-year-high-on-rate-outlook-growth-optimism",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "gold-declines-as-traders-parse-fed-comments-on-outlook-for-r",
+    "title": "Gold Declines as Traders Parse Fed Comments on Outlook for Rates",
+    "description": "Gold dropped as a trio of Federal Reserve policymakers stopped short of endorsing another interest-rate reduction next month, with a gauge of the US dollar trading near a multi-month high.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/gold-steadies-below-4-000-as-fed-remarks-parsed-for-rate-clues",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "quality-of-life-even-more-than-affordability-elevates-this-c",
+    "title": "Quality of life, even more than affordability, elevates this city to the best place to retire",
+    "description": "This Midwest locale nabs the top spot for retirees, but Florida and Texas still prove popular.",
+    "link": "https://www.marketwatch.com/story/quality-of-life-even-more-than-affordability-elevates-this-city-to-the-best-place-to-retire-035c04f8?mod=mw_rss_topstories",
+    "thumbnail_url": "https://images.mktw.net/im-81204141/social",
+    "topic": "finance"
+  },
+  {
+    "slug": "mitsubishi-electric-completes-sale-of-insurance-unit-to-mars",
+    "title": "Mitsubishi Electric completes sale of insurance unit to Marsh Japan",
+    "description": null,
+    "link": "https://www.investing.com/news/company-news/mitsubishi-electric-completes-sale-of-insurance-unit-to-marsh-japan-93CH-4329194",
+    "thumbnail_url": "https://i-invdn-com.investing.com/news/news_headline_rolled_108x81.jpg",
+    "topic": "finance"
+  },
+  {
+    "slug": "annie-oakleys-gun-draws-a-blank-at-auction",
+    "title": "Annie Oakley's gun draws a blank at auction",
+    "description": "A £19,000 bid was not high enough to sell the sharpshooter's target gun, the auction house says.",
+    "link": "https://www.yahoo.com/entertainment/celebrity/articles/wild-west-star-annie-oakleys-131632575.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/tS1dCEh5cGfcygJKUfdEaA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/bbc_us_articles_995/ab52618597c370a4373df9bd06cf510f",
+    "topic": "news"
+  },
+  {
+    "slug": "justice-department-defends-trumps-post-as-it-urges-judge-to",
+    "title": "Justice Department defends Trump's post as it urges judge to reject Comey's effort to dismiss case",
+    "description": "The Justice Department urged a federal judge Monday to reject James Comey’s claim that his prosecution amounts to political retribution, arguing the former FBI director has failed to show that he’s being targeted as punishment for his criticism of the Republican president.  Prosecutors defended President Donald Trump’s September social media post demanding that action be taken in the Comey investigation, contending it reflects “legitimate prosecutorial motive” and is no basis to dismiss the indictment accusing Comey of lying to Congress in 2020.  The filing underscores how Trump's comments have put the Justice Department in a difficult position as Comey and other defendants seize on the president's remarks in efforts to have their cases dismissed ahead of trial.",
+    "link": "https://www.yahoo.com/news/articles/justice-department-defends-trumps-post-231148891.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/ddE0dPLACQsh13HHgu7nIA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/511a236b0c5f816f2727cb02c40c8cce",
     "topic": "news"
   },
   {
@@ -592,491 +536,531 @@
     "topic": "news"
   },
   {
-    "slug": "prince-william-burnishes-credentials-as-kinginwaiting-with-e",
-    "title": "Prince William burnishes credentials as king-in-waiting with Earthshot Prize and COP30 in Brazil",
-    "description": "We’ve seen a lot of Prince William recently — and we’re going to see a lot more.  The heir to the British throne will be on the streets of Rio de Janeiro this week to promote his Earthshot Prize, an initiative to find solutions to major environmental issues.  William’s trip to the Brazilian metropolis known for Copacabana Beach and the annual Carnival is the latest installment in the monarchy’s drive to portray the prince as a statesman ready to be king.",
-    "link": "https://www.yahoo.com/news/articles/prince-william-burnishes-credentials-king-040353077.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/BM3JppwNLGjC5LcbDkrKuQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/c1db93a2108f9f4dc7de6ce8d83af163",
-    "topic": "news"
-  },
-  {
-    "slug": "beloved-diner-chain-closing-dozens-of-locations-after-72-yea",
-    "title": "Beloved diner chain closing dozens of locations after 72 years in business",
-    "description": "The chain closed 88 locations in 2024 and planned to close as many as 90 more this year.",
-    "link": "https://finance.yahoo.com/news/beloved-diner-chain-closing-dozens-100049783.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/BGH6lcsEPE3dyS3obHMb3A--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD05MDA-/https://media.zenfs.com/en/pennlive_com_articles_353/ee1a3b2d16acd2eb7b89463d3612f626",
+    "slug": "popular-sporting-equipment-retailer-closing-36-stores-reduci",
+    "title": "Popular sporting equipment retailer closing 36 stores, reducing product inventory due to ‘unprecedented tariff landscape’",
+    "description": "Vermont-based outdoor equipment retailer Orvis will close 31 stores and five outlet locations by early 2026 due to \"unprecedented tariff pressure,\" president Simon Perkins said.",
+    "link": "https://finance.yahoo.com/news/popular-sporting-equipment-retailer-closing-165013796.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/8e1dw5dNoAsCOgH0Pnge7g--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA-/https://media.zenfs.com/en/cleveland_com_articles_529/51d8ac8cecf98108a3f298ac2c95183a",
     "topic": "finance"
   },
   {
-    "slug": "another-european-car-company-gets-knocked-out-by-tariffs",
-    "title": "Another European car company gets knocked out by tariffs",
-    "description": "U.S. tariffs have taken their toll on a myriad of industries as the world continues to navigate the new international trade order instituted under President Donald Trump. But this week, German automakers were in the spotlight as some of the world's best-known Bavarian brands all reported the same ...",
-    "link": "https://finance.yahoo.com/news/another-european-car-company-gets-153700778.html",
-    "thumbnail_url": "https://media.zenfs.com/en/thestreet_881/955a14adf0abdda633a3db9cb1855a90",
-    "topic": "finance"
-  },
-  {
-    "slug": "ethereum-price-will-go-beyond-10000-by-2030-says-bitwise",
-    "title": "Ethereum price will go beyond $10,000 by 2030, says Bitwise",
-    "description": "Ethereum is trading around $3,850. Matt Hougan says Ethereum could double or more by decade’s end. All payments will run on stablecoins, benefiting Ethereum.",
-    "link": "https://finance.yahoo.com/news/ethereum-price-beyond-10-000-121657961.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/pdXA6vmA47L9ao.H4cGRPg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03ODU-/https://media.zenfs.com/en/dlnews_702/8c7f22e6a03ed85657f30c359d00ec67",
-    "topic": "finance"
-  },
-  {
-    "slug": "syllabi-opensource-agentic-ai-with-tools-rag-and-multichanne",
-    "title": "Syllabi – Open-source agentic AI with tools, RAG, and multi-channel deploy",
-    "description": "Build intelligent AI chatbots with RAG, native Python/R code execution, and seamless integrations. Connect to Slack, Discord, Google Drive, and more. Free and open source.",
-    "link": "https://www.syllabi-ai.com/",
-    "thumbnail_url": "https://syllabi-ai.com/images/og-image.jpg",
-    "topic": "tech"
-  },
-  {
-    "slug": "is-your-bluetooth-chip-leaking-secrets-via-rf-signals",
-    "title": "Is Your Bluetooth Chip Leaking Secrets via RF Signals?",
-    "description": null,
-    "link": "https://www.semanticscholar.org/paper/Is-Your-Bluetooth-Chip-Leaking-Secrets-via-RF-Ji-Dubrova/c1d3ceb47ea6f9cc4f29929e2f97d36862a260a2",
+    "slug": "learning-to-read-arthur-whitneys-c-to-become-smart-2024",
+    "title": "Learning to read Arthur Whitney's C to become smart (2024)",
+    "description": "it's not working",
+    "link": "https://needleful.net/blog/2024/01/arthur_whitney.html",
     "thumbnail_url": null,
     "topic": "tech"
   },
   {
-    "slug": "ecl-runs-maxima-in-a-browser",
-    "title": "ECL Runs Maxima in a Browser",
-    "description": null,
-    "link": "https://mailman3.common-lisp.net/hyperkitty/list/ecl-devel@common-lisp.net/thread/T64S5EMVV6WHDPKWZ3AQHEPO3EQE2K5M/",
-    "thumbnail_url": null,
+    "slug": "gallery-of-wonderful-drawings-our-little-thermal-printer-rec",
+    "title": "Gallery of wonderful drawings our little thermal printer received",
+    "description": "This is a gallery of all the wonderful drawings our little printer received.",
+    "link": "https://guestbook.goodenough.us",
+    "thumbnail_url": "https://guestbook.goodenough.us/assets/social-preview-guestbook-8ee2746e0b2758f94c534b9d9350a0caf4a6dbc05b7e9ebc8b71600131078d29.jpg",
     "topic": "tech"
   },
   {
-    "slug": "grand-theft-auto-studio-accused-of-union-busting-after-firin",
-    "title": "'Grand Theft Auto' Studio Accused of Union Busting After Firing Dozens",
-    "description": "\"Rockstar Games fired dozens of employees,\" reports Bloomberg, \"in a move that a British trade union said was designed to prevent the workers from unionizing. The company said they were fired for...",
-    "link": "https://games.slashdot.org/story/25/11/03/0542221/grand-theft-auto-studio-accused-of-union-busting-after-firing-dozens?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/games_64.png",
-    "topic": "gaming"
-  },
-  {
-    "slug": "woman-wrongfully-accused-by-a-license-platereading-camera-th",
-    "title": "Woman Wrongfully Accused by a License Plate-Reading Camera - Then Exonerated By Camera-Equipped Car",
-    "description": "CBS News investigates what happened when police thought they'd tracked down a \"porch pirate\" who'd stolen a package — and accused an innocent woman.",
-    "link": "https://yro.slashdot.org/story/25/11/01/2359245/woman-wrongfully-accused-by-a-license-plate-reading-camera---then-exonerated-by-camera-equipped-car?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/privacy_64.png",
+    "slug": "apple-to-whitelabel-googles-gemini-model-for-nextgeneration",
+    "title": "Apple To White-Label Google's Gemini Model for Next-Generation Siri, Report Says",
+    "description": "Apple is paying Google to create a custom Gemini-based model that will run on the company's private cloud servers and power the next version of Siri, according to Bloomberg. The decision marks a departure from Apple's tradition of building core technologies in-house. The arrangement follows a competition Apple held this year between Anthropic and Google, the report said. Anthropic offered a superior model, but Google made more financial sense because of the tech giants' existing search relationship. Neither company is expected to discuss the partnership publicly, the report added.",
+    "link": "https://apple.slashdot.org/story/25/11/03/2014204/apple-to-white-label-googles-gemini-model-for-next-generation-siri-report-says?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/apple_64.png",
     "topic": "news"
   },
   {
-    "slug": "linux-gamers-on-steam-finally-cross-over-the-3-mark",
-    "title": "Linux Gamers on Steam Finally Cross Over the 3% Mark",
-    "description": "\"It finally happened,\" writes the GamingOnLinux...",
-    "link": "https://linux.slashdot.org/story/25/11/03/048228/linux-gamers-on-steam-finally-cross-over-the-3-mark?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/games_64.png",
-    "topic": "news"
-  },
-  {
-    "slug": "sound-blaster-crowdfunds-linuxpowered-audio-hub-reimagine-fo",
-    "title": "Sound Blaster Crowdfunds Linux-Powered Audio Hub 'Re:Imagine' For Creators and Gamers",
-    "description": "Slashdot reader BrianFagioli summarizes some news from Nerds.xyz: Creative Technology has launched Sound Blaster Re:Imagine, a modular, Linux-powered audio hub that reimagines the classic PC sound card for the modern age. The device acts as both a high-end digital-to-analog converter (DAC) and a customizable control deck that connects PCs, consoles, phones, and tablets in one setup.",
-    "link": "https://news.slashdot.org/story/25/11/02/1758252/sound-blaster-crowdfunds-linux-powered-audio-hub-reimagine-for-creators-and-gamers?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/media_64.png",
-    "topic": "news"
-  },
-  {
-    "slug": "opec-lifts-oil-ryanair-ceo-blasts-reeves-daybreak-europe-110",
-    "title": "OPEC+ Lifts Oil, Ryanair CEO Blasts Reeves | Daybreak Europe 11/03/2025",
-    "description": "Bloomberg Daybreak Europe is your essential morning viewing to stay ahead. Live from London, we set the agenda for your day, catching you up with overnight markets news from the US and Asia. And we'll tell you what matters for investors in Europe, giving you insight before trading begins.",
-    "link": "https://www.bloomberg.com/news/videos/2025-11-03/daybreak-europe-11-03-2025-video",
+    "slug": "copper-drops-with-fed-outlook-and-codelco-supply-relief-in-f",
+    "title": "Copper Drops With Fed Outlook and Codelco Supply Relief in Focus",
+    "description": "Copper extended a decline from a record as Codelco eased concerns about supplies, while traders eyed fresh uncertainty prospects for another US interest-rate cut next month.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/zinc-hovers-near-highest-in-almost-a-year-as-stockpiles-shrink",
     "thumbnail_url": null,
     "topic": "finance"
   },
   {
-    "slug": "oil-rises-after-opec-says-it-will-pause-output-hikes",
-    "title": "Oil Rises After OPEC+ Says It Will Pause Output Hikes",
-    "description": "Oil advanced a fourth day after OPEC+ said it planned to pause output increases in the first quarter of 2026, following another modest hike for next month. Bloomberg’s Stephen Stapczynski reports.",
-    "link": "https://www.bloomberg.com/news/videos/2025-11-03/oil-rises-after-opec-says-it-will-pause-output-hikes-video",
+    "slug": "rba-holds-key-rate-as-bullock-says-board-doesnt-have-a-bias",
+    "title": "RBA Holds Key Rate as Bullock Says Board Doesn’t Have a Bias",
+    "description": "Australia’s central bank held its key interest rate steady in a widely anticipated decision, while Governor Michele Bullock signaled a combination of lingering inflation pressures and a steady job market raised the bar to further easing.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/australia-keeps-key-rate-unchanged-on-renewed-inflation-worries",
     "thumbnail_url": null,
     "topic": "finance"
   },
   {
-    "slug": "hkex-ceo-open-to-revisiting-dual-class-share-rules",
-    "title": "HKEX CEO: Open to Revisiting Dual Class Share Rules",
-    "description": "Bonnie Chan, CEO at HKEX, discusses how the exchange is open to revisiting rules around dual-class shares since the city first accepted this type of companies on the public market in 2018. She speaks with Yvonne Man from the inaugural Women Chief Executives Summit in Hong Kong.",
-    "link": "https://www.bloomberg.com/news/videos/2025-11-03/hkex-ceo-open-to-revisiting-dual-class-share-rules-video",
+    "slug": "new-world-vanke-debt-moves-shake-up-chinas-property-sector",
+    "title": "New World, Vanke Debt Moves Shake Up China’s Property Sector",
+    "description": "New World Development Co. and China Vanke Co., two of the most closely watched distressed Chinese property names, are again forcing investors to reckon with the fallout from the country’s real estate crisis.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/new-world-vanke-debt-moves-shake-up-china-s-property-sector",
     "thumbnail_url": null,
     "topic": "finance"
   },
   {
-    "slug": "stocks-extend-rally-as-traders-await-rate-clues-markets-wrap",
-    "title": "Stocks Extend Rally as Traders Await Rate Clues: Markets Wrap",
-    "description": "The rally in US stocks was set to continue at the start of a week when investors will lean on a run of private data for direction on interest rates after cautious signals from the Federal Reserve.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-02/stocks-set-for-mixed-open-opec-to-pause-hikes-markets-wrap",
-    "thumbnail_url": null,
+    "slug": "palantirs-stock-falls-despite-ai-fueling-another-flurry-of-r",
+    "title": "Palantir’s stock falls despite AI fueling another flurry of records",
+    "description": "The software company is boosting its outlook, and its CEO is cheering gains for retail investors.",
+    "link": "https://www.marketwatch.com/story/palantirs-stock-rises-as-ai-fuels-another-flurry-of-records-9a5a4ca0?mod=mw_rss_topstories",
+    "thumbnail_url": "https://images.mktw.net/im-45311862/social",
     "topic": "finance"
   },
   {
-    "slug": "roblox-faces-scrutiny-in-malaysia-after-child-stabbing-case",
-    "title": "Roblox Faces Scrutiny in Malaysia After Child Stabbing Case",
-    "description": "Roblox Corp. pledged to boost safety measures and is prepared to share data with the Malaysian government, according to a minister, as officials weigh action over the popular video game after it was linked to a stabbing case in the Southeast Asian nation.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/roblox-faces-scrutiny-in-malaysia-after-child-stabbing-case",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "emeis-q3-2025-presentation-occupancy-gains-fuel-7-organic-re",
-    "title": "Emeis Q3 2025 presentation: Occupancy gains fuel 7% organic revenue growth",
+    "slug": "interim-results-advancedadvt-limited-for-4-november",
+    "title": "Interim Results AdvancedAdvT Limited For: 4 November",
     "description": null,
-    "link": "https://www.investing.com/news/company-news/emeis-q3-2025-presentation-occupancy-gains-fuel-7-organic-revenue-growth-93CH-4326185",
-    "thumbnail_url": "https://csv-storage.forexpros.com/slides/d93f0a16871cd68ffce7e5a6c93480858b48646ad215b22bf10176a8460e9f68.png",
-    "topic": "finance"
-  },
-  {
-    "slug": "amazons-deployment-of-rivians-electric-delivery-vans-expand",
-    "title": "Amazon's Deployment of Rivian's Electric Delivery Vans Expand to Canada",
-    "description": "\"Amazon has deployed Rivian's electric delivery vans in Canada for the first time,\" reports CleanTechnica, with 50 now deployed in the Vancouver area.",
-    "link": "https://news.slashdot.org/story/25/11/02/0134230/amazons-deployment-of-rivians-electric-delivery-vans-expand-to-canada?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/canada_64.png",
-    "topic": "news"
-  },
-  {
-    "slug": "gofundme-created-14-million-donation-pages-for-nonprofits-wi",
-    "title": "GoFundMe Created 1.4 Million Donation Pages for Nonprofits Without Their Consent",
-    "description": "San Francisco's local newscast ABC7 runs a consumer advocacy segment called \"7 on Your Side\". They received a disturbing call for help from Dave Dornlas, treasurer of a nonprofit supporting a local...",
-    "link": "https://slashdot.org/story/25/11/02/1728231/gofundme-created-14-million-donation-pages-for-nonprofits-without-their-consent?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/business_64.png",
-    "topic": "news"
-  },
-  {
-    "slug": "swiss-inflation-unexpectedly-slows-to-01-in-blow-to-snb",
-    "title": "Swiss Inflation Unexpectedly Slows to 0.1% in Blow to SNB",
-    "description": "Switzerland’s inflation unexpectedly slowed to near zero, adding pressure on the central bank to push back against the strength of its currency and boost price growth.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/swiss-inflation-unexpectedly-weakens-in-blow-to-snb-officials",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "indian-central-bank-boosts-dollar-shorts-to-rein-in-rupee-sl",
-    "title": "Indian Central Bank Boosts Dollar Shorts to Rein in Rupee Slide",
-    "description": "The Indian central bank’s short dollar book in the offshore derivatives market climbed in September for the first time in seven months, reflecting its efforts to stem the rupee losses.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/indian-central-bank-boosts-dollar-shorts-to-rein-in-rupee-slide",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "ubs-gwms-lo-on-business-investment-outlook",
-    "title": "UBS GWM's Lo on Business & Investment Outlook",
-    "description": "Amy Lo, UBS Global Wealth Management Asia and UBS Hong Kong Head and Chief Executive, discusses her outlook on the bank's wealth management business, its growth outlook and investment strategies for clients. She speaks with Yvonne Man on the sidelines of the Women Chief Executives Summit in Hong Kong on \"Bloomberg: The China Show.\"",
-    "link": "https://www.bloomberg.com/news/videos/2025-11-03/ubs-gwm-s-lo-on-business-investment-outlook-video",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "primavera-capital-on-investment-environment-strategy",
-    "title": "Primavera Capital on Investment Environment & Strategy",
-    "description": "Fred Hu, Group Chairman and CEO of Primavera Capital says the US-China trade truce is great re-assurance for markets and the global economy, and discusses his view on investment opportunities among tech sector in China. He speaks exclusively with Annabelle Droulers on the sidelines of the Hong Kong Fintech Week on \"Bloomberg: The China Show.\"",
-    "link": "https://www.bloomberg.com/news/videos/2025-11-03/primavera-capital-on-investment-environment-strategy-video",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "us-stock-futures-rise-as-wall-street-looks-to-extend-winning",
-    "title": "U.S. stock futures rise as Wall Street looks to extend winning streak in November",
-    "description": "U.S. stock-index futures gained Sunday, after the major equity benchmarks extended their monthly winning streaks in October.",
-    "link": "https://www.marketwatch.com/story/u-s-stock-futures-inch-higher-as-wall-street-looks-to-extend-winning-streak-in-november-b26c2fae?mod=mw_rss_topstories",
-    "thumbnail_url": "https://images.mktw.net/im-92480891/social",
-    "topic": "finance"
-  },
-  {
-    "slug": "earnings-call-transcript-sojitz-q2-2025-sees-growth-in-aeros",
-    "title": "Earnings call transcript: Sojitz Q2 2025 sees growth in aerospace, energy sectors",
-    "description": null,
-    "link": "https://www.investing.com/news/transcripts/earnings-call-transcript-sojitz-q2-2025-sees-growth-in-aerospace-energy-sectors-93CH-4326191",
+    "link": "https://www.investing.com/news/filings/interim-results-advancedadvt-limited-for-4-november-93CH-4329196",
     "thumbnail_url": "https://i-invdn-com.investing.com/news/news_headline_rolled_108x81.jpg",
     "topic": "finance"
   },
   {
-    "slug": "ishares-global-high-yield-bond-fund-changes-to-quarterly-dis",
-    "title": "iShares global high yield bond fund changes to quarterly distributions",
-    "description": null,
-    "link": "https://www.investing.com/news/company-news/ishares-global-high-yield-bond-fund-changes-to-quarterly-distributions-93CH-4326192",
-    "thumbnail_url": "https://i-invdn-com.investing.com/news/news_six_pile_108x81.jpg",
-    "topic": "finance"
-  },
-  {
-    "slug": "cloudflare-raves-about-performance-gains-after-rust-rewrite",
-    "title": "Cloudflare Raves About Performance Gains After Rust Rewrite",
-    "description": "\"We've spent the last year rebuilding major components of our system,\" Cloudflare announced this week, \"and we've just slashed the latency of traffic passing through our network for millions of our customers,\" (There's a 10ms cut in the median time to respond, plus a 25% performance boost as measured by CDN performance tests.) They replaced a 15-year-old system named FL (where they run security and performance features), and \"At the same time, we've made our system more secure, and we've reduced the time it takes for us to build and release new...",
-    "link": "https://developers.slashdot.org/story/25/11/02/0529258/cloudflare-raves-about-performance-gains-after-rust-rewrite?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/programming_64.png",
-    "topic": "tech"
-  },
-  {
-    "slug": "is-openai-becoming-too-big-to-fail",
-    "title": "Is OpenAI Becoming 'Too Big to Fail'?",
-    "description": "OpenAI \"hasn't yet turned a profit,\" notes Wall Street Journal business columnist Tim Higgins. \"Its annual revenue is 2% of Amazon.com's sales.",
-    "link": "https://slashdot.org/story/25/11/02/1945203/is-openai-becoming-too-big-to-fail?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/ai_64.png",
+    "slug": "wildlife-officers-make-disturbing-autopsy-discovery-after-eu",
+    "title": "Wildlife officers make disturbing autopsy discovery after euthanizing sick bear: 'It's a call we wish we never had to make'",
+    "description": "“We could not leave a sick bear like this knowing it was suffering and struggling to survive.”",
+    "link": "https://www.yahoo.com/news/articles/wildlife-officers-disturbing-autopsy-discovery-110000647.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/E7VXAxufJp7XpVH5yxzKpA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03ODA7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/ef6528a8f6b52dbea5d7d1bad68f5dd6",
     "topic": "news"
   },
   {
-    "slug": "gold-steady-around-4000-after-china-ends-some-tax-incentives",
-    "title": "Gold Steady Around $4,000 After China Ends Some Tax Incentives",
-    "description": "Gold held around $4,000 an ounce after a weak start on Monday, as China ended a long-standing tax rebate for some retailers in a change that could weigh on demand in one of the world’s largest precious-metals markets.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-02/gold-drops-back-below-4-000-after-china-ends-tax-incentive",
-    "thumbnail_url": null,
+    "slug": "videos-show-orcas-flipping-great-white-sharks-and-eating-the",
+    "title": "Videos show orcas flipping great white sharks and eating their livers",
+    "description": "New research suggests that a pod in the Gulf of California specializes in hunting sharks.",
+    "link": "https://www.yahoo.com/news/articles/videos-show-orcas-flipping-great-173758184.html",
+    "thumbnail_url": "https://media.zenfs.com/en/cbs_news_897/e46ce069c48845982ed06322e2e069ae",
+    "topic": "news"
+  },
+  {
+    "slug": "worried-trump-79-makes-total-supreme-court-uturn",
+    "title": "Worried Trump, 79, Makes Total Supreme Court U-Turn",
+    "description": "President Donald Trump has abandoned his controversial plan to attend oral arguments for the Supreme Court case that will decide the fate of his signature economic policy. The president originally claimed he was “obligated” to be there Wednesday when the justices weigh whether or not the president can unilaterally impose sweeping tariffs on products from dozens of U.S. trading partners. But after his own allies warned that the move could backfire, Trump has decided to skip the arguments, he anno",
+    "link": "https://www.yahoo.com/news/articles/worried-trump-79-makes-total-153539281.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/J6MHhBofH9jZHLGtLY2CEg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/thedailybeast.com/a357f1e051b96a1dd2c12af0a1626717",
+    "topic": "news"
+  },
+  {
+    "slug": "a-little-concerning-2-crucial-consumer-groups-under-pressure",
+    "title": "'A little concerning': 2 crucial consumer groups under pressure are a warning sign for US economy",
+    "description": "Warnings of a bifurcated US economy are emerging from Wall Street to corporate America as younger and lower-income consumers feel the strain.",
+    "link": "https://finance.yahoo.com/news/a-little-concerning-2-crucial-consumer-groups-under-pressure-are-a-warning-sign-for-us-economy-143058867.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/pwO5GpPIhir4UZiczM3aYQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MzM-/https://s.yimg.com/os/creatr-uploaded-images/2025-11/c2d6a1a0-b7f2-11f0-afbe-3996a2ee7700",
     "topic": "finance"
   },
   {
-    "slug": "indias-rbi-is-back-defending-rupee-after-october-gains-fizzl",
-    "title": "India’s RBI Is Back Defending Rupee After October Gains Fizzle",
-    "description": "The Indian rupee is inching closer to a new low again, with the central bank’s recent interventions providing only a limited respite for Asia’s worst-performing currency this year.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/india-s-rbi-is-back-defending-rupee-low-as-october-gains-fizzle",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "new-world-plans-19-billion-debt-swap-with-creditor-haircuts",
-    "title": "New World Plans $1.9 Billion Debt Swap With Creditor Haircuts",
-    "description": "New World Development Co. plans to issue up to $1.9 billion of new debt in an exchange offer that includes haircuts of as much as 50% on perpetual bonds, the embattled property firm’s latest attempt to shore up liquidity amid persistent losses.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/new-world-to-issue-up-to-1-9-billion-of-new-securities-notes",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "soybeans-extend-rally-as-us-says-china-halts-retaliatory-tar",
-    "title": "Soybeans Extend Rally as US Says China Halts Retaliatory Tariffs",
-    "description": "Soybeans extended gains after the US said China agreed to halt retaliatory tariffs following a key summit last week, and reiterated the Asian nation will ramp up purchases this year.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/soybeans-extend-rally-as-us-says-china-halts-retaliatory-tariffs",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "opec-to-pause-output-hikes-in-first-quarter-to-ease-fears-of",
-    "title": "OPEC+ to pause output hikes in first quarter to ease fears of glut, after one more boost in December",
-    "description": "The eight nations of OPEC+ announced Sunday they will pause oil-production hikes in the first quarter of 2026, following a modest increase in December, as part of an effort to avoid a glut of crude.",
-    "link": "https://www.marketwatch.com/story/opec-to-pause-output-hikes-in-first-quarter-to-ease-fears-of-glut-after-one-more-boost-in-december-b04efd32?mod=mw_rss_topstories",
-    "thumbnail_url": "https://images.mktw.net/im-90374076/social",
-    "topic": "finance"
-  },
-  {
-    "slug": "mindflairbacked-fund-invests-in-oxford-ai-military-decision",
-    "title": "Mindflair-backed fund invests in Oxford AI military decision platform",
-    "description": null,
-    "link": "https://www.investing.com/news/company-news/mindflairbacked-fund-invests-in-oxford-ai-military-decision-platform-93CH-4326188",
-    "thumbnail_url": "https://i-invdn-com.investing.com/news/news_six_pile_108x81.jpg",
-    "topic": "finance"
-  },
-  {
-    "slug": "ishares-high-yield-corp-bond-ucits-etf-shifts-to-quarterly-p",
-    "title": "iShares € High Yield Corp Bond UCITS ETF shifts to quarterly payouts",
-    "description": null,
-    "link": "https://www.investing.com/news/company-news/ishares--high-yield-corp-bond-ucits-etf-shifts-to-quarterly-payouts-93CH-4326189",
-    "thumbnail_url": "https://i-invdn-com.investing.com/news/news_pile_108x81.jpg",
-    "topic": "finance"
-  },
-  {
-    "slug": "do-ai-browsers-exist-for-you-or-to-give-ai-companies-data",
-    "title": "Do AI Browsers Exist For You - or To Give AI Companies Data?",
-    "description": "\"It's been hard for me to understand why Atlas exists,\" writes MIT Technology Review. \" Who is this browser for, exactly? Who is its customer? And the answer I have come to there is that Atlas is for OpenAI. The real customer, the true end user of Atlas, is not the person browsing websites, it is the company collecting data about what and how that person is browsing.",
-    "link": "https://tech.slashdot.org/story/25/11/01/0514222/do-ai-browsers-exist-for-you---or-to-give-ai-companies-data?utm_source=rss1.0mainlinkanon&utm_medium=feed",
-    "thumbnail_url": "https://a.fsdn.com/sd/topics/ai_64.png",
+    "slug": "skyfallgs-synthesizing-immersive-3d-urban-scenes-from-satell",
+    "title": "Skyfall-GS – Synthesizing Immersive 3D Urban Scenes from Satellite Imagery",
+    "description": "Skyfall-GS converts satellite images to explorable 3D urban scenes using diffusion models, with real-time rendering performance.",
+    "link": "https://skyfall-gs.jayinnn.dev/",
+    "thumbnail_url": "./static/images/skyfall_gs_logo.png",
     "topic": "tech"
   },
   {
-    "slug": "white-house-says-us-to-pause-port-fees-on-china-ships-next-w",
-    "title": "White House Says US to Pause Port Fees on China Ships Next Week",
-    "description": "The US is expected to suspend port fees for a year on China-linked vessels starting next week, as the two countries deescalate a maritime contest that had become a sticking point in the trade war.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/white-house-says-us-to-pause-port-fees-on-china-ships-next-week",
+    "slug": "the-case-that-ai-is-thinking",
+    "title": "The Case That A.I. Is Thinking",
+    "description": "ChatGPT does not have an inner life. Yet it seems to know what it’s talking about.",
+    "link": "https://www.newyorker.com/magazine/2025/11/10/the-case-that-ai-is-thinking",
+    "thumbnail_url": "https://media.newyorker.com/photos/6903f253c112f653fd376249/16:9/w_1280,c_limit/r47764.jpg",
+    "topic": "tech"
+  },
+  {
+    "slug": "antarctic-glacier-saw-the-fastest-retreat-in-modern-history",
+    "title": "Antarctic Glacier Saw the Fastest Retreat In Modern History",
+    "description": "An anonymous reader quotes a report from CNN: An Antarctic glacier shrunk by nearly 50% in just two months, the fastest retreat recorded in modern history, according to a new study -- and the way it retreated could have big implications for global sea level rise. The Hektoria Glacier, roughly the size of Philadelphia, is on the Antarctic Peninsula, a spindly chain of mountains sticking off the continent like a thumb pointing toward South America. It is one of the fastest warming regions on Earth.",
+    "link": "https://news.slashdot.org/story/25/11/04/0026217/antarctic-glacier-saw-the-fastest-retreat-in-modern-history?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/earth_64.png",
+    "topic": "news"
+  },
+  {
+    "slug": "wall-street-ceos-warn-of-market-pullback-from-rich-valuation",
+    "title": "Wall Street CEOs Warn of Market Pullback From Rich Valuations",
+    "description": "Wall Street chief executives said investors should brace for an equity market drop of more than 10% in the next 12 to 24 months, and that such a correction may be a positive development.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/wall-street-ceos-warn-of-market-pullback-from-rich-valuations",
     "thumbnail_url": null,
     "topic": "finance"
   },
   {
-    "slug": "oil-climbs-as-opec-plans-to-pause-hikes-amid-surplus-forecas",
-    "title": "Oil Climbs as OPEC+ Plans to Pause Hikes Amid Surplus Forecasts",
-    "description": "Oil rose after OPEC+ signaled that it’ll pause output increases next quarter, following a modest hike for next month.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-02/latest-oil-market-news-and-analysis-for-nov-3",
+    "slug": "daiwa-beats-estimates-as-mampa-dealmaking-equity-trading-jum",
+    "title": "Daiwa Beats Estimates as M&amp;A Dealmaking, Equity Trading Jump",
+    "description": "Daiwa Securities Group Inc.’s profit beat estimates as dealmaking in mergers and acquisitions surged while retail clients traded more.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/daiwa-earnings-beat-estimates-as-m-a-dealmaking-surges",
     "thumbnail_url": null,
     "topic": "finance"
   },
   {
-    "slug": "aluminum-heads-for-threeyear-high-as-uschina-tensions-ease",
-    "title": "Aluminum Heads for Three-Year High as US-China Tensions Ease",
-    "description": "Aluminum headed for the highest close since May 2022, as base metals rose along with other risks assets after an easing in US-China tensions.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/copper-declines-for-third-day-on-concerns-over-china-s-economy",
+    "slug": "sk-hynixs-240-rally-prompts-korea-exchange-to-warn-investors",
+    "title": "SK Hynix’s 240% Rally Prompts Korea Exchange to Warn Investors",
+    "description": "A 240% rally in SK Hynix Inc.’s shares this year has sparked an unusual exchange caution to investors, in a possible sign that the shares may be overheated.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/sk-hynix-s-240-rally-prompts-korea-exchange-to-warn-investors",
     "thumbnail_url": null,
     "topic": "finance"
   },
   {
-    "slug": "what-tariffs-europe-inc-adapts-as-many-firms-post-gains-in-u",
-    "title": "What Tariffs? Europe Inc. Adapts as Many Firms Post Gains in US",
-    "description": "European companies’ results show they’re navigating US tariffs a lot better than anticipated — a good omen for next year when they’re expected to deliver double-digit profit growth.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/what-tariffs-europe-inc-adapts-as-many-firms-post-gains-in-us",
+    "slug": "top-india-broker-groww-starts-taking-orders-for-747-million",
+    "title": "Top India Broker Groww Starts Taking Orders for $747 Million IPO",
+    "description": "The parent of Groww, India’s largest online broker, began taking investor orders Tuesday for an initial public offering that may fetch 66.3 billion rupees ($747 million), helping the country’s hot IPO market approach last year’s record.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/top-indian-broker-groww-to-take-orders-for-747-million-ipo",
     "thumbnail_url": null,
     "topic": "finance"
   },
   {
-    "slug": "white-house-says-china-to-suspend-some-rareearth-curbs-the-c",
-    "title": "White House Says China to Suspend Some Rare-Earth Curbs | The China Show 11/3/2025",
+    "slug": "this-media-and-internet-company-says-googles-ai-has-been-a-r",
+    "title": "This media and internet company says Google’s AI has been a revenue killer",
+    "description": "IAC’s media brands include instantly recognizable names such as People magazine, and its advertising side got hurt in part because of Google AI Overviews.",
+    "link": "https://www.marketwatch.com/story/this-media-and-internet-company-says-googles-ai-has-been-a-revenue-killer-8ff5623b?mod=mw_rss_topstories",
+    "thumbnail_url": "https://images.mktw.net/im-73233622/social",
+    "topic": "finance"
+  },
+  {
+    "slug": "nintendo-hikes-switch-2-forecast-to-19-million-units",
+    "title": "Nintendo hikes Switch 2 forecast to 19 million units",
+    "description": null,
+    "link": "https://www.investing.com/news/stock-market-news/nintendo-hikes-operating-forecast-by-16-4329116",
+    "thumbnail_url": "https://i-invdn-com.investing.com/trkd-images/LYNXMPELA309I_L.jpg",
+    "topic": "finance"
+  },
+  {
+    "slug": "eyeopening-study-reveals-the-home-appliance-that-spews-more",
+    "title": "Eye-opening study reveals the home appliance that spews more benzene than secondhand smoke: 'You're at an elevated risk [of cancer]'",
+    "description": "The research showed indoor concentrations well above recommended health benchmarks.",
+    "link": "https://www.yahoo.com/news/articles/study-reveals-home-appliance-spews-110000657.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/iCN8oXLYz2zI1RxsdDYUwQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/47a5c3a8204d5c6f24fe1729304932d3",
+    "topic": "news"
+  },
+  {
+    "slug": "dumb-fcks-thousands-had-brutal-reactions-to-these-maga-voter",
+    "title": "\"Dumb F*cks\" — Thousands Had Brutal Reactions To These MAGA Voters' Posts Complaining About Their Grocery Bills",
+    "description": "Grocery prices are rising...and MAGA is feeling the pressure.",
+    "link": "https://www.yahoo.com/news/articles/5-tweets-trump-supporters-going-165201457.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/NW7VDMC35Kq8UfxaNDtlzw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03OTc7Y2Y9d2VicA--/https://media.zenfs.com/en/buzzfeed_articles_778/8f647acddad3029cefc742e9a54104ba",
+    "topic": "news"
+  },
+  {
+    "slug": "chinese-buyers-purchase-brazilian-soybeans-as-prices-ease-ov",
+    "title": "Chinese buyers purchase Brazilian soybeans as prices ease over US-China trade thaw",
+    "description": "SINGAPORE/BEIJING (Reuters) -Chinese soybean importers have stepped up purchases of Brazilian cargoes in recent days as South American prices eased on expectations a U.-China trade deal will lead to a resumption of U.",
+    "link": "https://finance.yahoo.com/news/chinese-buyers-purchase-brazilian-soybeans-104925351.html",
+    "thumbnail_url": "https://media.zenfs.com/en/reuters.com/f3903fc5dc692b95caefe3a9b0556c36",
+    "topic": "finance"
+  },
+  {
+    "slug": "why-ac-is-cheap-but-ac-repair-is-a-luxury",
+    "title": "Why AC is cheap, but AC repair is a luxury",
+    "description": "The Baumol Effect and Jevons paradox are related",
+    "link": "https://a16z.substack.com/p/why-ac-is-cheap-but-ac-repair-is",
+    "thumbnail_url": "https://substackcdn.com/image/fetch/$s_!AODD!,w_1200,h_600,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8b662b70-b507-4c1d-ab6b-e55cc77513cd_2844x1600.png",
+    "topic": "tech"
+  },
+  {
+    "slug": "ask-hn-who-is-hiring-november-2025",
+    "title": "Ask HN: Who is hiring? (November 2025)",
+    "description": null,
+    "link": "https://news.ycombinator.com/item?id=45800465",
+    "thumbnail_url": null,
+    "topic": "tech"
+  },
+  {
+    "slug": "cocacolas-new-ai-holiday-ad-is-a-sloppy-eyesore",
+    "title": "Coca-Cola's New AI Holiday Ad Is a Sloppy Eyesore",
+    "description": "Coca-Cola has doubled down on AI-generated holiday ads despite widespread criticism of last year's uncanny results. This year the beverage company is replacing human actors with oddly animated animals in a visually inconsistent campaign. The Verge reports: There's no consistent style, switching between attempted realism and a bug-eyed toony look, and the polar bears, panda, and sloth move unnaturally, like flat images that have been sloppily animated rather than rigged 3D models in CG. Compared to the convincing deepfake videos being generated by tools like OpenAI's Sora 2 or Google's Veo 3, the videos produced for this Coke ad feel extremely dated.",
+    "link": "https://slashdot.org/story/25/11/03/2129227/coca-colas-new-ai-holiday-ad-is-a-sloppy-eyesore?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/advertising_64.png",
+    "topic": "news"
+  },
+  {
+    "slug": "surgeryimaging-firm-ultragreenai-starts-gauging-interest-for",
+    "title": "Surgery-Imaging Firm Ultragreen.ai Starts Gauging Interest for Singapore IPO",
+    "description": "UltraGreen.ai, a provider of fluorescence technology used in surgical imaging, has started gauging investor interest for its initial public offering in Singapore.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/surgery-imaging-firm-ultragreen-ai-starts-gauging-interest-for-singapore-ipo",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "ubp-is-latest-private-bank-setting-up-office-in-saudi-arabia",
+    "title": "UBP Is Latest Private Bank Setting Up Office in Saudi Arabia",
+    "description": "Union Bancaire Privee UBP SA opened an office in Saudi Arabia, joining other private banks in building a presence in one of the world’s hotspots for wealth management.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/ubp-is-latest-private-bank-setting-up-office-in-saudi-arabia",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "franklin-templeton-ceo-sees-volatility-ahead",
+    "title": "Franklin Templeton CEO Sees Volatility Ahead",
+    "description": "Franklin Templeton CEO Jenny Johnson expects short-term volatility ahead for markets as retail money have been concentrated in thematic ETFs. She speaks exclusively with David Ingles and Yvonne Man on the sidelines of the Global Financial Leaders’ Investment Summit in Hong Kong.",
+    "link": "https://www.bloomberg.com/news/videos/2025-11-04/franklin-templeton-ceo-sees-volatility-ahead-video",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "strategy-plans-to-offer-35-million-shares-of-preferred-stock",
+    "title": "Strategy plans to offer 3.5 million shares of preferred stock",
+    "description": null,
+    "link": "https://www.investing.com/news/company-news/strategy-plans-to-offer-35-million-shares-of-preferred-stock-93CH-4329192",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "pregnant-british-teen-arrested-for-drug-smuggling-in-georgia",
+    "title": "Pregnant British teen arrested for drug smuggling in Georgia released after guilty verdict",
+    "description": "British teenager Bella May Culley, who was arrested in Georgia on drug smuggling charges earlier this year, was released from prison Monday as part of a plea deal.  Culley, 19, who is pregnant, was arrested in May at Tbilisi Airport and accused of attempting to smuggle 12 kilograms (26.5 pounds) of marijuana and 2 kilograms (4.4 pounds) of hashish into the country.  Culley and her mother, Lyanne Kennedy, both cried as the verdict was read and embraced when the hearing finished.",
+    "link": "https://www.yahoo.com/news/articles/pregnant-british-teen-accused-drug-100601407.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/.bJRm8nAEt_MjEB_aU9uVQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/a519a067167d0a11cd680e0a3e32ab12",
+    "topic": "news"
+  },
+  {
+    "slug": "5-1970s-fighter-jets-that-are-still-in-service",
+    "title": "5 1970s Fighter Jets That Are Still In Service",
+    "description": "It's really hard to get a new fighter jet design off the ground. Given design challenges and costs it involves, it's amazing these ones have lasted so long.",
+    "link": "https://www.yahoo.com/news/articles/5-1970s-fighter-jets-still-173000757.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/Vfn_f0irHA9OykklxXLszw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzM7Y2Y9d2VicA--/https://media.zenfs.com/en/slash_gear_112/22bcd6856155c5bde5c64a57830c590f",
+    "topic": "news"
+  },
+  {
+    "slug": "us-official-under-fire-after-newly-surfaced-documents-reveal",
+    "title": "US official under fire after newly surfaced documents reveal 'incredibly selfish' purchase: 'Definitely not a good look'",
+    "description": "Questionable uses of funding by governments and high-power people are not unheard of.",
+    "link": "https://www.yahoo.com/news/articles/us-official-under-fire-newly-000000715.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/MuA.9e9EexsRrktCUexWHw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/bf38225a6509e87e1e3d55956f487ed4",
+    "topic": "news"
+  },
+  {
+    "slug": "mytimersapp-offlinefirst-pwa-with-no-build-step-and-zero-dep",
+    "title": "MyTimers.app offline-first PWA with no build step and zero dependencies",
+    "description": null,
+    "link": "https://mytimers.app/",
+    "thumbnail_url": null,
+    "topic": "tech"
+  },
+  {
+    "slug": "when-stick-figures-fought",
+    "title": "When stick figures fought",
+    "description": "A story about Flash, plus news.",
+    "link": "https://animationobsessive.substack.com/p/when-stick-figures-fought",
+    "thumbnail_url": "https://substackcdn.com/image/fetch/$s_!x4F1!,w_1200,h_600,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa4b2517f-6154-4aac-a06e-d852f4ea46b4_1728x950.png",
+    "topic": "tech"
+  },
+  {
+    "slug": "ladwp-says-it-will-shift-its-largest-gas-power-plant-to-hydr",
+    "title": "LADWP Says It Will Shift Its Largest Gas Power Plant To Hydrogen",
+    "description": "Bruce66423 shares a report from the Los Angeles Times: The board of the Los Angeles Department of Water and Power on Tuesday approved a controversial plan to convert part of the city's largest natural gas-fired power plant into one that also can burn hydrogen. In a 3-0 vote, the DWP board signed off on the final environmental impact report for an $800-million modernization of Units 1 and 2 of the Scattergood Generating Station in Playa del Rey. The power plant dates to the late 1950s and both units are legally required to be shut down by the end of 2029. In their place, the DWP will install new combined-cycle turbines that are expected to operate on a mixture of natural gas and at least 30% hydrogen with the ultimate goal of running entirely on hydrogen as more supply becomes available.",
+    "link": "https://hardware.slashdot.org/story/25/11/03/2351252/ladwp-says-it-will-shift-its-largest-gas-power-plant-to-hydrogen?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/power_64.png",
+    "topic": "tech"
+  },
+  {
+    "slug": "windows-7-squeezed-to-69mb-in-proofofconcept-build",
+    "title": "Windows 7 Squeezed To 69MB in Proof-of-Concept Build",
+    "description": "A developer operating under the handle @XenoPanther has stripped Windows 7 down to 69MB. The OS boots but runs almost nothing because critical files like common dialog boxes and common controls are missing. @XenoPanther described the project on X as \"more of a fun proof of concept rather than something usable.\" The desktop appears and the genuine check remains intact.",
+    "link": "https://tech.slashdot.org/story/25/11/03/1816216/windows-7-squeezed-to-69mb-in-proof-of-concept-build?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/windows_64.png",
+    "topic": "tech"
+  },
+  {
+    "slug": "oil-dips-as-market-weighs-opec-pause-and-oversupply-concerns",
+    "title": "Oil Dips as Market Weighs OPEC+ Pause and Oversupply Concerns",
+    "description": "Oil dipped after a four-day run of gains as the market weighed OPEC+’s decision to pause output hikes early next year.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-03/latest-oil-market-news-and-analysis-for-nov-4",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "ai-fintech-optasia-surges-in-jse-debut-eyes-asia-expansion",
+    "title": "AI Fintech Optasia Surges in JSE Debut, Eyes Asia Expansion",
+    "description": "AI-powered fintech firm Optasia Group rallied in its debut on the Johannesburg bourse that marked the nation’s biggest initial public offering this year.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/ai-fintech-optasia-eyes-asian-expansion-after-south-african-ipo",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "state-street-ceo-labels-trump-immigration-policy-antigrowth",
+    "title": "State Street CEO Labels Trump Immigration Policy ‘Anti-Growth’",
+    "description": "The chief of one of the world’s largest asset managers labeled President Donald Trump’s immigration policy “anti-growth,” as the US administration pushes ahead with an unprecedented crackdown, spurring chaos among skilled foreign workers.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/state-street-ceo-labels-trump-immigration-policy-anti-growth",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "my-fathers-estate-was-awarded-50k-in-a-classaction-lawsuit-m",
+    "title": "My father’s estate was awarded $50K in a class-action lawsuit. My brother, as executor, kept the money. What can we do?",
+    "description": "“My brother retains the money awarded to my father to this day. My mom is still alive.”",
+    "link": "https://www.marketwatch.com/story/my-fathers-estate-was-awarded-50k-in-a-class-action-lawsuit-my-brother-as-executor-kept-the-money-what-can-we-do-10c360ee?mod=mw_rss_topstories",
+    "thumbnail_url": "https://images.mktw.net/im-36664334/social",
+    "topic": "finance"
+  },
+  {
+    "slug": "eos-falls-10-in-selloff",
+    "title": "EOS Falls 10% In Selloff",
+    "description": null,
+    "link": "https://www.investing.com/news/cryptocurrency-news/eos-falls-10-in-selloff-4329199",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "head-of-nasa-threatens-to-ground-every-single-commercial-fli",
+    "title": "Head of NASA Threatens to Ground Every Single Commercial Flight Before Thanksgiving",
+    "description": "\"We won't let people travel.\"",
+    "link": "https://www.yahoo.com/news/articles/head-nasa-threatens-ground-every-202642670.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/ed7Et.4Ptdpixn25wMCzhg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02MzA7Y2Y9d2VicA--/https://media.zenfs.com/en/futurism_981/daf23312b4e9b949d64c061ede0c4581",
+    "topic": "news"
+  },
+  {
+    "slug": "dividend-stocks-that-can-help-you-become-a-millionaire",
+    "title": "Dividend Stocks That Can Help You Become a Millionaire",
+    "description": "Companies that continually raise dividends can make you quite wealthy over the long haul.",
+    "link": "https://finance.yahoo.com/news/dividend-stocks-help-become-millionaire-003500218.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/4T_hDq49KPWVlbgFj0SQsA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03NjY-/https://media.zenfs.com/en/motleyfool.com/4b36b58ec76dc1b9b1dc8d2d1a5e614a",
+    "topic": "finance"
+  },
+  {
+    "slug": "pain-points-of-ocaml",
+    "title": "Pain Points of OCaml",
+    "description": null,
+    "link": "https://quamserena.com/2025-11-03/pain-points-of-ocaml",
+    "thumbnail_url": null,
+    "topic": "tech"
+  },
+  {
+    "slug": "ais-dialup-era",
+    "title": "AI's Dial-Up Era",
+    "description": "It is 1995.",
+    "link": "https://www.wreflection.com/p/ai-dial-up-era",
+    "thumbnail_url": "https://substackcdn.com/image/fetch/$s_!zH50!,w_1200,h_600,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fba0eaf69-eff7-4b03-9604-ed204521e640_1920x1080.jpeg",
+    "topic": "tech"
+  },
+  {
+    "slug": "spotify-sued-over-billions-of-fraudulent-drake-streams",
+    "title": "Spotify Sued Over 'Billions' of Fraudulent Drake Streams",
+    "description": "A new class-action lawsuit accuses Spotify of allowing billions of fraudulent Drake streams generated by bots between 2022 and 2025, allegedly inflating his royalties at the expense of other artists. \"Spotify pays streaming royalties using a 'pro-rata' model based on an artist's market share,\" notes Consequence. \"Each month, revenue from subscriptions and ads is collected into a single, fixed 'pot' of money, which is then distributed to rights holders based on their percentage of the platform's total streams. Because this pot is fixed, an artist who artificially inflates their numbers through bots would dilute the value of every legitimate stream. This allows them to take a larger share of the pot than they earned, effectively siphoning royalties that should have gone to other artists.",
+    "link": "https://yro.slashdot.org/story/25/11/04/0011221/spotify-sued-over-billions-of-fraudulent-drake-streams?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/court_64.png",
+    "topic": "news"
+  },
+  {
+    "slug": "amd-will-continue-game-optimization-support-for-older-radeon",
+    "title": "AMD Will Continue Game Optimization Support For Older Radeon GPU's After All",
+    "description": "An anonymous reader quotes a report from Tom's Hardware: After a turbulent weekend of updates and clarifications, AMD has published an entire web page to assuage user backlash and reaffirm its commitment to continued support for its RDNA 1 and RDNA 2-based drives, following a spate of confusion surrounding its recent decision to put Radeon RX 5000 and 6000 series cards in \"maintenance mode.\" This comes after AMD had to deny that the RX 7900 cards were losing USB-C power supply moving forward, even though the drive changelog said something quite different.",
+    "link": "https://tech.slashdot.org/story/25/11/03/2142220/amd-will-continue-game-optimization-support-for-older-radeon-gpus-after-all?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/amd_64.png",
+    "topic": "tech"
+  },
+  {
+    "slug": "ftse-100-poised-to-drop-as-global-stocks-wobble",
+    "title": "FTSE 100 Poised to Drop as Global Stocks Wobble",
+    "description": null,
+    "link": "https://www.bloomberg.com/news/live-blog/2025-11-04/ftse-100-live-bp-ab-foods-pound-trump-trade-usd-oil-prices-what-s-moving-uk-markets-right-now-markets-today-mhk7djio",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "interesting-tradeoffs-on-trade-await-the-supremes",
+    "title": "Interesting Trade-offs on Trade Await the Supremes",
+    "description": "Prediction markets think the court won’t rubber-stamp the tariffs as Trump imposed them.",
+    "link": "https://www.bloomberg.com/opinion/newsletters/2025-11-04/trade-offs-on-trade-await-the-supreme-court",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "morgan-stanley-ceo-on-business-strategy-in-asia",
+    "title": "Morgan Stanley CEO on Business Strategy in Asia",
+    "description": "Ted Pick, Chairman and CEO at Morgan Stanley, discusses the bank’s business strategy in Asia and the opportunities ahead. He speaks with David Ingles and Yvonne Man from the sidelines of the Hong Kong Monetary Authority’s Global Financial Leaders’ Investment Summit.",
+    "link": "https://www.bloomberg.com/news/videos/2025-11-04/morgan-stanley-ceo-on-business-strategy-in-asia-video",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "biotech-stocks-are-coming-back-heres-whats-driving-the-secto",
+    "title": "Biotech stocks are coming back. Here’s what’s driving the sector higher.",
+    "description": "The volatile sector is seeing greater stability, and these four stocks can profit.",
+    "link": "https://www.marketwatch.com/story/biotech-is-back-heres-why-these-rallying-stocks-belong-in-your-portfolio-now-62ef2a38?mod=mw_rss_topstories",
+    "thumbnail_url": "https://images.mktw.net/im-61771962/social",
+    "topic": "finance"
+  },
+  {
+    "slug": "kore-potash-launches-formal-sale-process-after-receiving-app",
+    "title": "Kore Potash launches formal sale process after receiving approaches",
+    "description": null,
+    "link": "https://www.investing.com/news/company-news/kore-potash-launches-formal-sale-process-after-receiving-approaches-93CH-4329193",
+    "thumbnail_url": "https://i-invdn-com.investing.com/news/World_News_10_M_1440052130.jpg",
+    "topic": "finance"
+  },
+  {
+    "slug": "government-makes-sweeping-move-to-eliminate-common-item-from",
+    "title": "Government makes sweeping move to eliminate common item from store shelves: 'We are urging local businesses to plan accordingly'",
+    "description": "\"They are a waste of valuable resources and are often discarded improperly.\"",
+    "link": "https://www.yahoo.com/news/articles/government-makes-sweeping-move-eliminate-101535173.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/bVu4iBRrez0Ch8VCET0dfQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03NDE7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/c6378bf8ea25b2d9e92a53fa5b5bdf5b",
+    "topic": "news"
+  },
+  {
+    "slug": "libyan-delegation-in-beirut-seeks-release-of-the-son-of-late",
+    "title": "Libyan delegation in Beirut seeks release of the son of late Libyan leader Moammar Gadhafi",
+    "description": "A Libyan delegation in Lebanon made progress in talks Monday with judicial officials over the possible release of late Libyan leader Moammar Gadhafi 's son, who has been jailed without trial in Lebanon for a decade.  The five-member Libyan delegation held talks on the fate of Hannibal Gadhafi with three senior judicial officials, including prosecutor Jamal Hajar, four Lebanese judicial officials told The Associated Press.",
+    "link": "https://www.yahoo.com/news/articles/libyan-delegation-beirut-seeks-release-154402896.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/4r9jxoxa5W1Ha7Xo.uLTmg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD0xMDQwO2NmPXdlYnA-/https://media.zenfs.com/en/ap.org/a727cb01bb77a9567521962cde0d56a5",
+    "topic": "news"
+  },
+  {
+    "slug": "popular-sandwich-chain-is-closing-restaurants-bakery-locatio",
+    "title": "Popular sandwich chain is closing restaurants, bakery locations",
+    "description": "The beloved sandwich brand has been under a transition that began more than a year ago.",
+    "link": "https://finance.yahoo.com/news/popular-sandwich-chain-closing-restaurants-100040520.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/r.e.S9S6T4RKrxqjbMvZHg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDg-/https://media.zenfs.com/en/pennlive_com_articles_353/b49bb62db875446be7cf201762dc8183",
+    "topic": "finance"
+  },
+  {
+    "slug": "my-truck-desk",
+    "title": "My Truck Desk",
+    "description": "October 29, 2025 – “Now that I had my Truck Desk, that vehicle was my very own rolling cubicle.”",
+    "link": "https://www.theparisreview.org/blog/2025/10/29/truck-desk/",
+    "thumbnail_url": "https://www.theparisreview.org/blog/wp-content/uploads/2025/10/image0-4-scaled.jpeg",
+    "topic": "tech"
+  },
+  {
+    "slug": "lessons-from-70-interviews-on-deploying-ai-agents-in-product",
+    "title": "Lessons from 70 interviews on deploying AI Agents in production",
+    "description": "Discover how agentic AI startups are scaling in the enterprise — with data, pricing insights, and lessons from 70+ founders and practitioners.",
+    "link": "https://mmc.vc/research/state-of-agentic-ai-founders-edition/",
+    "thumbnail_url": "https://mmc.vc/wp-content/uploads/2025/11/State-of-Agentic-AI-v2.png",
+    "topic": "tech"
+  },
+  {
+    "slug": "a-fight-over-credit-scores-turns-into-allout-war",
+    "title": "A Fight Over Credit Scores Turns Into All-Out War",
+    "description": "A long-simmering battle over who controls credit scoring in America has erupted into open warfare. Fair Isaac, whose FICO score is used in about 90% of consumer-lending decisions in the U.S., announced it will double the price of its mortgage credit score to $10 next year. The company also said it will bypass the three credit-reporting firms that have supplied the data feeding into its algorithm for decades.",
+    "link": "https://news.slashdot.org/story/25/11/03/2018216/a-fight-over-credit-scores-turns-into-all-out-war?utm_source=rss1.0mainlinkanon&utm_medium=feed",
+    "thumbnail_url": "https://a.fsdn.com/sd/topics/business_64.png",
+    "topic": "news"
+  },
+  {
+    "slug": "rbi-intervenes-again-lifting-indian-rupee-from-near-record-l",
+    "title": "RBI Intervenes Again, Lifting Indian Rupee From Near Record Low",
+    "description": "The rupee gained sharply, pulling back from a near-record low after intervention by the Reserve Bank of India.",
+    "link": "https://www.bloomberg.com/news/articles/2025-11-04/rbi-intervenes-again-as-indian-rupee-approaches-fresh-record-low",
+    "thumbnail_url": null,
+    "topic": "finance"
+  },
+  {
+    "slug": "worlds-top-bankers-fund-managers-gather-in-hong-kong-the-chi",
+    "title": "World's Top Bankers, Fund Managers Gather in Hong Kong | The China Show 11/4/2025",
     "description": "“Bloomberg: The China Show” is your definitive source for news and analysis on the world's second-biggest economy. From politics and policy to tech and trends, David Ingles and Yvonne Man give global investors unique insight, delivering in-depth discussions with the newsmakers who matter.",
-    "link": "https://www.bloomberg.com/news/videos/2025-11-03/the-china-show-11-03-2025-video",
+    "link": "https://www.bloomberg.com/news/videos/2025-11-04/the-china-show-11-04-2025-video",
     "thumbnail_url": null,
     "topic": "finance"
   },
   {
-    "slug": "this-stockmarket-rally-isnt-letting-up-could-it-be-making-in",
-    "title": "This stock-market rally isn’t letting up. Could it be making investors too greedy ahead of year’s end?",
-    "description": "Stocks just logged their best midyear stretch since 1950. Is it time to take some profits?",
-    "link": "https://www.marketwatch.com/story/this-stock-market-rally-isnt-letting-up-could-it-be-making-investors-too-greedy-ahead-of-year-end-68245a95?mod=mw_rss_topstories",
-    "thumbnail_url": "https://images.mktw.net/im-99916481/social",
+    "slug": "eni-ceo-future-demand-for-gas-will-be-higher",
+    "title": "Eni CEO: Future Demand for Gas Will Be Higher",
+    "description": "Eni CEO, Claudio Descalzi spoke to Bloomberg’s Horizons Middle East and Africa anchor Joumanna Bercetche on the sidelines of ADIPEC in Abu Dhabi following their deal with Petronas which will establish an independent company combining respective upstream assets in Indonesia and Malaysia.",
+    "link": "https://www.bloomberg.com/news/videos/2025-11-04/eni-ceo-future-demand-for-gas-will-be-higher-video",
+    "thumbnail_url": null,
     "topic": "finance"
   },
   {
-    "slug": "heres-whats-worth-streaming-in-november-2025-on-netflix-hulu",
-    "title": "Here’s what’s worth streaming in November 2025 on Netflix, Hulu, HBO Max and more",
-    "description": "Netflix’s ‘Stranger Things’ kicks off its final season, ‘Pluribus’ is revealed on Apple, and ‘Landman’ returns to Paramount+",
-    "link": "https://www.marketwatch.com/story/heres-whats-worth-streaming-in-november-2025-on-netflix-hulu-hbo-max-and-more-149f086e?mod=mw_rss_topstories",
-    "thumbnail_url": "https://images.mktw.net/im-13501946/social",
+    "slug": "my-siblings-dont-earn-nearly-as-much-as-me-should-my-parents",
+    "title": "My siblings don’t earn nearly as much as me. Should my parents leave me less money in their will?",
+    "description": "“I’m concerned that my parents are going to strike me from any will.”",
+    "link": "https://www.marketwatch.com/story/i-go-on-too-many-vacations-my-parents-say-im-a-reckless-spender-is-this-enough-to-cut-me-out-of-their-will-f9477df6?mod=mw_rss_topstories",
+    "thumbnail_url": "https://images.mktw.net/im-85558996/social",
     "topic": "finance"
   },
   {
-    "slug": "ote-acquires-14141-own-shares-as-part-of-2025-buyback-progra",
-    "title": "OTE acquires 14,141 own shares as part of 2025 buyback program",
+    "slug": "bp-profit-beats-expectations-helped-by-refining-margins",
+    "title": "BP profit beats expectations, helped by refining margins",
     "description": null,
-    "link": "https://www.investing.com/news/company-news/ote-acquires-14141-own-shares-as-part-of-2025-buyback-program-93CH-4326186",
-    "thumbnail_url": "https://i-invdn-com.investing.com/news/World_News_8_M_1440052125.jpg",
-    "topic": "finance"
-  },
-  {
-    "slug": "troubled-nations-return-to-debt-markets-amid-yield-hunt",
-    "title": "Troubled Nations Return to Debt Markets Amid Yield Hunt",
-    "description": "Some of the world’s riskiest sovereign borrowers are returning to international debt markets, taking advantage of increasing appetite for yield to sell bonds.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-02/troubled-nations-mount-comeback-to-debt-markets-amid-yield-hunt",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "ecbs-nagel-says-outlook-holding-but-options-open-in-december",
-    "title": "ECB’s Nagel Says Outlook Holding But Options Open in December",
-    "description": "Euro-zone economic data aren’t diverging from the European Central Bank’s outlook but policymakers are keeping their options open, according to Governing Council member Joachim Nagel.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/ecb-s-nagel-says-outlook-holding-but-options-open-in-december",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "trump-signals-china-wont-get-nvidias-latest-blackwell-chips",
-    "title": "Trump Signals China Won't Get Nvidia's Latest Blackwell Chips | Insight with Haslinda Amin 11/3/2025",
-    "description": "Insight with Haslinda Amin, a daily news program featuring in-depth, high-profile interviews and analysis to give viewers the complete picture on the stories that matter. The show features prominent leaders spanning the worlds of business, finance, politics and culture.",
-    "link": "https://www.bloomberg.com/news/videos/2025-11-03/insight-with-haslinda-amin-11-3-2025-video",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "ryanairs-oleary-on-boeing-737-max-passenger-growth",
-    "title": "Ryanair’s O’Leary on Boeing 737 Max, Passenger Growth",
-    "description": "Ryanair Holdings Plc Chief Executive Officer Michael O’Leary talks with Bloomberg after reporting profit after tax which rose to €1.72 billion ($2 billion) in the second quarter from €1.43 billion the previous year. The Irish budget airline also said it expects to exceed its passenger growth target for the full year as the airline receives aircraft early from Boeing Co. and demand for travel remains strong.",
-    "link": "https://www.bloomberg.com/news/videos/2025-11-03/ryanair-s-o-leary-on-boeing-737-max-passenger-growth-video",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "nvidia-is-the-biggest-winner-from-earnings-season-and-it-has",
-    "title": "Nvidia is the biggest winner from earnings season — and it hasn’t even reported yet",
-    "description": "The swelling AI budgets at Amazon, Meta and other Big Tech players bode well for Nvidia in the near term.",
-    "link": "https://www.marketwatch.com/story/nvidia-is-the-biggest-winner-from-earnings-season-and-it-hasnt-even-reported-yet-0131f39e?mod=mw_rss_topstories",
-    "thumbnail_url": "https://images.mktw.net/im-24893376/social",
-    "topic": "finance"
-  },
-  {
-    "slug": "haunted-by-war-some-israelis-hesitate-to-return-to-kibbutz-a",
-    "title": "Haunted by war, some Israelis hesitate to return to kibbutz attacked by Hamas",
-    "description": null,
-    "link": "https://www.investing.com/news/world-news/haunted-by-war-some-israelis-hesitate-to-return-to-kibbutz-attacked-by-hamas-4326190",
-    "thumbnail_url": "https://i-invdn-com.investing.com/trkd-images/LYNXMPELA209Q_L.jpg",
-    "topic": "finance"
-  },
-  {
-    "slug": "exclusiveexxonmobil-warns-eu-law-could-force-exit-from-europ",
-    "title": "Exclusive-ExxonMobil warns EU law could force exit from Europe",
-    "description": null,
-    "link": "https://www.investing.com/news/commodities-news/exclusiveexxonmobil-ceo-warns-eu-sustainability-law-could-end-europe-operations-4326014",
-    "thumbnail_url": "https://i-invdn-com.investing.com/trkd-images/LYNXMPELA204R_L.jpg",
-    "topic": "finance"
-  },
-  {
-    "slug": "thai-union-cuts-sales-outlook-on-tariffs-currency-volatility",
-    "title": "Thai Union Cuts Sales Outlook on Tariffs, Currency Volatility",
-    "description": "Packaged food company Thai Union Pcl lowered its sales growth outlook, citing nagging macroeconomic factors including US tariffs and currency headwinds.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/thai-union-cuts-sales-outlook-on-tariffs-currency-volatility",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "korean-stocks-build-on-best-month-since-2001-on-nvidia-effec",
-    "title": "Korean Stocks Build on Best Month Since 2001 on Nvidia Effect",
-    "description": "South Korea’s equity benchmark is building on its strongest monthly rally in over two decades, underscoring the market’s rising prominence in the global AI race following Nvidia Corp.’s recent deals with local firms.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/korea-s-kospi-extends-rally-as-ai-momentum-rises-on-nvidia-ties",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "qiming-ventures-kuang-on-chinas-ai-opportunities",
-    "title": "Qiming Venture's Kuang On China's AI Opportunities",
-    "description": "Qiming Venture Partners Founding Managing Partner Duane Kuang discusses the outlook for fund-raising in Chinese technology companies, plus his thoughts on China's artificial intelligence landscape. He speaks with Annabelle Droulers and Haslinda Amin on \"Insight with Haslinda Amin.\"",
-    "link": "https://www.bloomberg.com/news/videos/2025-11-03/qiming-venture-s-kuang-on-china-s-ai-opportunities-video",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "is-big-techs-soaring-ai-spending-creating-a-bubble-heres-wha",
-    "title": "Is Big Tech’s soaring AI spending creating a bubble? Here’s what it means for stocks.",
-    "description": "Bulls say the tech rally can keep going, while bears warn of a repeat of the early-2000s dot-com crash.",
-    "link": "https://www.marketwatch.com/story/is-big-techs-soaring-ai-spending-creating-a-bubble-heres-what-it-means-for-stocks-39fdd0d3?mod=mw_rss_topstories",
-    "thumbnail_url": "https://images.mktw.net/im-27928540/social",
-    "topic": "finance"
-  },
-  {
-    "slug": "after-notching-a-164-win-our-list-of-aipicked-stocks-for-nov",
-    "title": "After notching a 164%+ win - Our list of AI-picked stocks for November IS NOW LIVE",
-    "description": null,
-    "link": "https://www.investing.com/news/stock-market-news/after-notching-a-164-win--our-list-of-aipicked-stocks-for-november-is-now-live-4326181",
-    "thumbnail_url": "https://d1-invdn-com.investing.com/content/pica19341e28d4b145fd7c3fc283e8ae7c3.png",
-    "topic": "finance"
-  },
-  {
-    "slug": "chinese-jewelers-to-bear-the-brunt-of-gold-tax-change",
-    "title": "Chinese Jewelers to Bear the Brunt of Gold Tax Change",
-    "description": "Chinese jewelers and smaller firms in the gold sector look set to be hardest hit by tax changes announced over the weekend that got rid of long-standing incentives for some retailers of the metal.",
-    "link": "https://www.bloomberg.com/news/articles/2025-11-03/chinese-jewelers-to-bear-the-brunt-of-tax-changes-for-gold",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "ftse-100-rises-as-energy-stocks-rally",
-    "title": "FTSE 100 Rises as Energy Stocks Rally",
-    "description": null,
-    "link": "https://www.bloomberg.com/news/live-blog/2025-11-03/ftse-100-live-pound-boe-gold-oil-prices-trump-tariffs-bonds-what-s-moving-uk-markets-right-now-markets-today-mhirvry8",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "chinas-massive-african-mine-threatens-to-upend-iron-ore-mark",
-    "title": "China’s Massive African Mine Threatens to Upend Iron Ore Market",
-    "description": "The size and richness of the Simandou deposit in Guinea could shift the industry’s power dynamics and help transform the nation’s economy.",
-    "link": "https://www.bloomberg.com/news/features/2025-11-03/china-s-massive-iron-mine-in-africa-threatens-to-upend-a-market",
-    "thumbnail_url": null,
-    "topic": "finance"
-  },
-  {
-    "slug": "corporate-americas-hefty-profit-streak-continues-amid-worrie",
-    "title": "Corporate America’s hefty profit streak continues amid worries over job market",
-    "description": "Earnings Watch: Even as fretting over the economy remains a pastime on Wall Street, third-quarter corporate profit growth has held up, helped by big banks and big tech.",
-    "link": "https://www.marketwatch.com/story/corporate-americas-hefty-profit-streak-continues-amid-worries-over-job-market-e2a81764?mod=mw_rss_topstories",
-    "thumbnail_url": "https://images.mktw.net/im-80902768/social",
-    "topic": "finance"
-  },
-  {
-    "slug": "european-shares-steady-as-earnings-season-takes-focus-italys",
-    "title": "European shares steady as earnings season takes focus; Italy’s Campari slides",
-    "description": null,
-    "link": "https://www.investing.com/news/stock-market-news/european-shares-steady-as-earnings-season-takes-focus-italys-campari-slides-4326187",
-    "thumbnail_url": "https://i-invdn-com.investing.com/trkd-images/LYNXMPELA209L_L.jpg",
+    "link": "https://www.investing.com/news/stock-market-news/bp-thirdquarter-profit-beats-expectations-at-221-billion-4329135",
+    "thumbnail_url": "https://i-invdn-com.investing.com/trkd-images/LYNXMPELA30AV_L.jpg",
     "topic": "finance"
   }
 ]
