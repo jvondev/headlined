@@ -3,8 +3,8 @@ title: "How to Start Reading Again: Rebuilding Attention in a Distracted World"
 date: "2025-08-20"
 description: "Lost your reading habit? Here's a calm, thoughtful guide to rebuilding attention, curiosity, and a sustainable reading rhythm—without guilt or pressure."
 author: "ReadMore"
-image: "https://i.pinimg.com/736x/8e/bf/f1/8ebff15b2bb9033571a230ff961a05f8.jpg"
-tags: ["Bill Gates","Reading Habits", "Lifelong Learning", "Critical Thinking", "Self Improvement"]
+image: "https://i.pinimg.com/1200x/cc/d4/8b/ccd48b5a88bbf94391f875f7ca0b38ff.jpg"
+tags: ["Reading Habits", "Attention and Focus", "Mindful Living","Digital Minimalism", "Self Improvement"]
 
 ---
 

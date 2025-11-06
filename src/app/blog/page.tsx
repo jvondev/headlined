@@ -26,7 +26,7 @@ interface PostMetadata {
 // Helper to get all post metadata from blogs.json client-side
 async function getAllPostsMetadata(): Promise<PostMetadata[]> {
   try {
-    const res = await fetch('/blogs.json'); // Fetch the generated JSON
+    const res = await fetch('/blogs-list.json'); // Fetch the generated JSON
     if (!res.ok) {
       console.error(`Failed to fetch /blogs.json: ${res.statusText}`);
       return [];
@@ -74,19 +74,16 @@ export default function BlogPage() {
       <main className="flex-1 w-full px-4 sm:px-6 lg:px-8 pt-12 lg:mx-auto lg:max-w-7xl">
         {/* Hero Section for Blog */}
         <section className="relative py-16 md:py-24 text-center">
-          <motion.div
+          <div
             className="relative w-full lg:container lg:mx-auto"
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
           >
-            <motion.h1 variants={fadeIn} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-4 sm:mb-6 font-headline leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-4 sm:mb-6 font-headline leading-tight">
               <LineShadowText as="span">Our</LineShadowText> <LineShadowText as="span">Latest</LineShadowText> <LineShadowText as="span">Articles</LineShadowText>
-            </motion.h1>
-            <motion.p variants={fadeIn} className="max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-10 px-2">
+            </h1>
+            <p className="max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-10 px-2">
               Dive into our collection of insightful posts, covering a wide range of topics to keep you informed and inspired.
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
         </section>
 
         {/* Blog Posts Grid */}
@@ -106,15 +103,11 @@ export default function BlogPage() {
               ))}
             </div>
           ) : (
-            <motion.div
+            <div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true, amount: 0.3 }}
             >
               {posts.map((post) => (
-                <motion.div key={post.slug} variants={fadeIn} className="bg-card border rounded-lg overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300">
+                <div key={post.slug} className="bg-card border rounded-lg overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300">
                   <Link href={`/blog/${post.slug}`} className="block">
                     <div className="relative w-full aspect-video">
                       <Image
@@ -153,9 +146,9 @@ export default function BlogPage() {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           )}
            {posts.length === 0 && !loading && (
             <div className="text-center py-10 md:py-20 text-muted-foreground">

@@ -67,9 +67,17 @@ async function generateBlogData() {
 
   allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
+  // Create a list version without htmlContent
+  const allPostsList = allPosts.map(post => {
+    const { htmlContent, ...listData } = post;
+    return listData;
+  });
+
   fs.writeFileSync(outputFilePath, JSON.stringify(allPosts, null, 2));
+  fs.writeFileSync(path.join(process.cwd(), 'public/blogs-list.json'), JSON.stringify(allPostsList, null, 2));
 
   console.log(`Successfully generated blogs.json with ${allPosts.length} posts.`);
+  console.log(`Successfully generated blogs-list.json with ${allPostsList.length} posts.`);
 }
 
 generateBlogData();
