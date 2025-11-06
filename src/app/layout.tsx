@@ -30,6 +30,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className="no-scrollbar">
       <head>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-119CNXCR97"></script>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8017511184262813"
+     crossOrigin="anonymous"></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
