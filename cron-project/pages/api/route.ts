@@ -119,7 +119,6 @@ async function fetchArticleMetadata(url: string): Promise<{ description: string 
 
         return { description, thumbnail_url };
     } catch (e: any) {
-        console.error(`Error fetching metadata for ${url}: ${e.message}`);
         return { description: null, thumbnail_url: null };
     }
 }
@@ -160,7 +159,6 @@ async function processItem(item: any, source: any): Promise<void> {
     }
 
     if (!title || !link) {
-        console.log(`Skipping item due to missing title or link: ${item.guid || 'N/A'}`);
         return;
     }
 
@@ -168,7 +166,6 @@ async function processItem(item: any, source: any): Promise<void> {
     // Use title and potential contentSnippet/description for filtering, but not for final description.
     const textToFilter = `${title} ${item.contentSnippet ? stripHtml(item.contentSnippet) : ''} ${item.description ? stripHtml(item.description) : ''}`.toLowerCase();
     if (bannedKeywords.some(keyword => textToFilter.includes(keyword.toLowerCase()))) {
-        console.log(`Skipping item due to banned keyword: ${title}`);
         return;
     }
 
@@ -205,7 +202,6 @@ async function processItem(item: any, source: any): Promise<void> {
     }
     // Ensure slug is not empty if title was problematic
     if (!slug) {
-        console.warn(`Generated empty slug for title: ${title}. Using a fallback.`);
         slug = `post-${Date.now()}`;
     }
 
@@ -266,20 +262,17 @@ async function processItem(item: any, source: any): Promise<void> {
         const { error } = await supabase.from("posts").upsert(post_data, { onConflict: 'link' });
         if (error) throw error;
     } catch (e: any) {
-        console.error(`Error upserting post for ${link}: ${e.message}`);
         throw e;
     }
 }
 
 async function runCronJob() {
     const start_time = Date.now();
-    console.log("Starting RSS feed generation...");
     let processed_count = 0;
     let error_count = 0;
 
     for (const source of sourcesData) {
         try {
-            console.log(`Fetching feed for source: ${source.name}`);
             const feed = await parser.parseURL(source.url);
             const items_to_process = feed.items.slice(0, source.max_items || feed.items.length);
 
@@ -289,7 +282,6 @@ async function runCronJob() {
             results.forEach(result => {
                 if (result.status === 'rejected') {
                     error_count++;
-                    console.error(`Error processing item: ${result.reason}`);
                 } else {
                     processed_count++;
                 }
@@ -297,13 +289,11 @@ async function runCronJob() {
 
         } catch (e: any) {
             error_count++;
-            console.error(`Failed to process feed for ${source.name}: ${e.message}`);
         }
     }
 
     const end_time = Date.now();
     const duration = (end_time - start_time) / 1000;
-    console.log(`RSS feed generation finished in ${duration.toFixed(2)} seconds. Processed: ${processed_count}, Errors: ${error_count}`);
 
     return {
         message: `Cron job finished. Processed: ${processed_count}, Errors: ${error_count}`,
@@ -320,7 +310,6 @@ export default async function handler(
             const result = await runCronJob();
             res.status(200).json(result);
         } catch (error: any) {
-            console.error("Cron job handler error:", error);
             res.status(500).json({ message: "Internal Server Error", error: error.message });
         }
     } else {

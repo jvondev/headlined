@@ -45,8 +45,6 @@ const supabase = createClient<Database>(supabaseUrl, supabaseServiceRoleKey, {
 });
 
 async function fetchDailyPosts() {
-  console.log('Fetching daily posts...');
-
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
   const { data, error } = await supabase
@@ -55,12 +53,10 @@ async function fetchDailyPosts() {
     .gte('created_at', twentyFourHoursAgo);
 
   if (error) {
-    console.error('Error fetching posts:', error);
     process.exit(1);
   }
 
   if (!data || data.length === 0) {
-    console.log('No new posts in the last 24 hours.');
     process.exit(0);
   }
 
@@ -72,9 +68,7 @@ async function fetchDailyPosts() {
   const filePath = 'public/posts.json';
   try {
     fs.writeFileSync(filePath, JSON.stringify(processedPosts, null, 2));
-    console.log(`Successfully wrote ${processedPosts.length} posts to ${filePath}`);
   } catch (writeError) {
-    console.error(`Error writing to ${filePath}:`, writeError);
     process.exit(1);
   }
 

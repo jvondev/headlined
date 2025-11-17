@@ -171,7 +171,6 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
 
   const loadMorePosts = useCallback(async () => {
-    console.log('loadMorePosts called');
     if (isLoading || !hasMore) return;
     
     setIsLoading(true);
