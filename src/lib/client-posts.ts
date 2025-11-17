@@ -13,23 +13,16 @@ const CLEANUP_INTERVAL_HOURS = 1;
 
 let allPosts: Post[] = [];
 let isFetchingAllPosts = false;
-let fetchedAllPostsFromNetwork = false; // Track if network fetch has completed
 
 export const fetchAllPosts = async (): Promise<Post[]> => {
-  // 1. Try to load from IndexedDB first for fast initial load
+  console.log("fetchAllPosts called");
+  // 1. Try to load from in-memory cache first for fast initial load
   if (allPosts.length > 0) {
+    console.log("fetchAllPosts: Returning from in-memory cache", allPosts.length, "posts");
     return allPosts;
   }
 
-  const indexedDBPosts = await getAllPostsFromIndexedDB();
-  if (indexedDBPosts.length > 0) {
-    allPosts = indexedDBPosts;
-    // Trigger background sync without awaiting it
-    synchronizePostsInBackground();
-    return allPosts;
-  }
-
-  // 2. If no posts in IndexedDB, fetch from network and then sync
+  // 2. Otherwise, trigger background sync (which will handle IndexedDB or network fetch)
   return await synchronizePostsInBackground();
 };
 
@@ -46,23 +39,31 @@ const shouldTriggerFullSync = (): boolean => {
 
   if (!lastSyncTimestamp) {
     // Never synced before, or localStorage was cleared, so trigger full sync
+    console.log("shouldTriggerFullSync: No last sync timestamp, triggering full sync.");
     return true;
   }
 
   const lastSyncDate = new Date(lastSyncTimestamp);
 
   // If current time is past cleanup threshold AND last sync was before cleanup threshold
-  return now > cleanupThresholdTime && lastSyncDate < cleanupThresholdTime;
+  const trigger = now > cleanupThresholdTime && lastSyncDate < cleanupThresholdTime;
+  console.log("shouldTriggerFullSync:", trigger ? "Triggering full sync" : "Not triggering full sync");
+  return trigger;
 };
 
 const synchronizePostsInBackground = async (): Promise<Post[]> => {
+  console.log("synchronizePostsInBackground called.");
   if (isFetchingAllPosts) {
-    // Wait for the ongoing fetch to complete
+    console.log("synchronizePostsInBackground: Already fetching, waiting for completion.");
+    // If a fetch is already in progress, wait for it to complete
     return new Promise((resolve) => {
       const checkInterval = setInterval(() => {
-        if (fetchedAllPostsFromNetwork) {
+        if (!isFetchingAllPosts && allPosts.length > 0) { // Check if fetching is done and posts are available
           clearInterval(checkInterval);
           resolve(allPosts);
+        } else if (!isFetchingAllPosts) { // If fetching is done but no posts, resolve empty
+            clearInterval(checkInterval);
+            resolve([]);
         }
       }, 100);
     });
@@ -70,28 +71,45 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
 
   isFetchingAllPosts = true;
   try {
-    let postsToStore: Post[] = [];
+    let postsToReturn: Post[] = [];
+    let fetchedFromNetwork = false;
 
-    if (shouldTriggerFullSync()) {
-      const response = await fetch('/posts.json');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    // Always attempt to fetch from network if no posts in memory or a full sync is needed
+    if (allPosts.length === 0 || shouldTriggerFullSync()) {
+      console.log("synchronizePostsInBackground: Attempting to fetch from network /posts.json");
+      try {
+        const response = await fetch('/posts.json');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const networkPosts = await response.json();
+        console.log("synchronizePostsInBackground: Fetched", networkPosts.length, "posts from network.");
+
+        // Clear all existing posts and add new ones from network
+        await clearAllPosts();
+        await addPosts(networkPosts);
+        localStorage.setItem(LAST_SYNC_TIMESTAMP_KEY, new Date().toISOString());
+        postsToReturn = networkPosts; // Use network data
+        fetchedFromNetwork = true;
+        console.log("synchronizePostsInBackground: Posts cleared and added to IndexedDB from network.");
+      } catch (networkError) {
+        console.error('synchronizePostsInBackground: Error fetching from network:', networkError);
+        // Fallback to IndexedDB if network fetch fails
       }
-      postsToStore = await response.json();
-
-      // Clear all existing posts and add new ones
-      await clearAllPosts();
-      await addPosts(postsToStore);
-      localStorage.setItem(LAST_SYNC_TIMESTAMP_KEY, new Date().toISOString());
-    } else {
-      postsToStore = await getAllPostsFromIndexedDB();
     }
 
-    allPosts = postsToStore; // Update in-memory cache
-    fetchedAllPostsFromNetwork = true;
+    // If not fetched from network (either skipped or failed), try IndexedDB
+    if (!fetchedFromNetwork) {
+      console.log("synchronizePostsInBackground: Network fetch skipped or failed. Loading from IndexedDB.");
+      const indexedDBPosts = await getAllPostsFromIndexedDB();
+      postsToReturn = indexedDBPosts;
+      console.log("synchronizePostsInBackground: Loaded", indexedDBPosts.length, "posts from IndexedDB.");
+    }
+
+    allPosts = postsToReturn; // Update in-memory cache
     return allPosts;
   } catch (error) {
-    console.error('Error synchronizing posts:', error);
+    console.error('Error synchronizing posts (outer catch):', error);
     return [];
   } finally {
     isFetchingAllPosts = false;
@@ -99,12 +117,15 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
 };
 
 export const getPaginatedPosts = async ({ page, topic_name, search_query }: { page: number; topic_name?: string; search_query?: string }): Promise<{ posts: Post[], hasMore: boolean }> => {
+  console.log(`getPaginatedPosts called for page ${page}, topic: ${topic_name}, search: ${search_query}`);
   const posts = await fetchAllPosts();
+  console.log("getPaginatedPosts: Total posts fetched:", posts.length);
 
   let filteredPosts = posts;
 
   if (topic_name) {
     filteredPosts = filteredPosts.filter(post => post.topic === topic_name);
+    console.log(`getPaginatedPosts: Filtered by topic '${topic_name}', found ${filteredPosts.length} posts.`);
   }
 
   if (search_query) {
@@ -114,6 +135,7 @@ export const getPaginatedPosts = async ({ page, topic_name, search_query }: { pa
       post.description?.toLowerCase().includes(lowerCaseSearchQuery) ||
       post.slug.toLowerCase().includes(lowerCaseSearchQuery)
     );
+    console.log(`getPaginatedPosts: Filtered by search query '${search_query}', found ${filteredPosts.length} posts.`);
   }
 
   const startIndex = (page - 1) * PAGE_SIZE;
@@ -121,7 +143,20 @@ export const getPaginatedPosts = async ({ page, topic_name, search_query }: { pa
   const paginatedPosts = filteredPosts.slice(startIndex, endIndex);
   const hasMore = filteredPosts.length > endIndex;
 
+  console.log("getPaginatedPosts: Returning", paginatedPosts.length, "posts, hasMore:", hasMore);
+  console.log("Paginated Posts:", paginatedPosts);
+
   return { posts: paginatedPosts, hasMore };
+};
+
+export const checkIfFeedHasPosts = async (type: 'topic' | 'interest', name: string): Promise<boolean> => {
+  const { posts } = await getPaginatedPosts({
+    page: 1,
+    topic_name: type === 'topic' ? name : undefined,
+    search_query: type === 'interest' ? name : undefined,
+  });
+  console.log(`checkIfFeedHasPosts for type '${type}', name '${name}': Has posts? ${posts.length > 0}`);
+  return posts.length > 0;
 };
 
 export const getPostBySlug = async (slug: string): Promise<Post | undefined> => {
