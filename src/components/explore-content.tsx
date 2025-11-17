@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
 import { topicsData } from "@/data/topics-data";
 import { interestsData } from "@/data/interests-data";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Topic, Interest } from "@/types";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
+import { checkIfFeedHasPosts } from "@/lib/client-posts";
 
 type ExploreContentProps = {
   isLoading?: boolean;
@@ -17,6 +18,35 @@ type ExploreContentProps = {
 
 export const ExploreContent: FC<ExploreContentProps> = ({ isLoading }) => {
   const { subscribedTopics, subscribedInterests, subscribe, unsubscribe } = useSubscribedFeeds();
+  const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
+  const [availableInterests, setAvailableInterests] = useState<Interest[]>([]);
+  const [loadingFeeds, setLoadingFeeds] = useState(true);
+
+  useEffect(() => {
+    const filterFeeds = async () => {
+      setLoadingFeeds(true);
+      const filteredTopics: Topic[] = [];
+      for (const topic of topicsData) {
+        const hasPosts = await checkIfFeedHasPosts("topic", topic.name);
+        if (hasPosts) {
+          filteredTopics.push(topic as Topic);
+        }
+      }
+      setAvailableTopics(filteredTopics);
+
+      const filteredInterests: Interest[] = [];
+      for (const interest of interestsData) {
+        const hasPosts = await checkIfFeedHasPosts("interest", interest.name);
+        if (hasPosts) {
+          filteredInterests.push(interest as Interest);
+        }
+      }
+      setAvailableInterests(filteredInterests);
+      setLoadingFeeds(false);
+    };
+
+    filterFeeds();
+  }, []);
 
   const handleTopicSubscribe = (topic: Topic) => {
     const isSubscribed = subscribedTopics.some(t => t.name === topic.name);
@@ -36,7 +66,7 @@ export const ExploreContent: FC<ExploreContentProps> = ({ isLoading }) => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || loadingFeeds) {
     return <PostPageLoadingSkeleton />;
   }
 
@@ -47,7 +77,7 @@ export const ExploreContent: FC<ExploreContentProps> = ({ isLoading }) => {
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-4">Topics</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {topicsData.map((topic) => {
+          {availableTopics.map((topic) => {
             const isSubscribed = subscribedTopics.some(t => t.name === topic.name);
             return (
               <Card key={topic.name} className="flex flex-col items-center justify-between p-4">
@@ -71,7 +101,7 @@ export const ExploreContent: FC<ExploreContentProps> = ({ isLoading }) => {
       <section>
         <h2 className="text-2xl font-semibold mb-4">Interests</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {interestsData.map((interest) => {
+          {availableInterests.map((interest) => {
             const isSubscribed = subscribedInterests.some(i => i.name === interest.name);
             return (
               <Card key={interest.name} className="flex flex-col items-center justify-between p-4">
