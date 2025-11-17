@@ -5,10 +5,12 @@ import type { Topic, Interest } from '@/types';
 export const useSubscribedFeeds = () => {
     const [subscribedTopics, setSubscribedTopics] = useState<Topic[]>([]);
     const [subscribedInterests, setSubscribedInterests] = useState<Interest[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const updateFeeds = () => {
         setSubscribedTopics(getSubscribedTopics());
         setSubscribedInterests(getSubscribedInterests());
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -51,5 +53,5 @@ export const useSubscribedFeeds = () => {
         window.dispatchEvent(new Event('feedChange'));
     };
 
-    return { subscribedTopics, subscribedInterests, subscribe, unsubscribe };
+    return { subscribedTopics, subscribedInterests, subscribe, unsubscribe, loading };
 };
