@@ -1,181 +1,142 @@
-// src/components/onboarding/onboarding-flow.tsx
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { FC, useState, useEffect } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, ArrowLeft, X } from "lucide-react";
-import { useOnboardingContext } from "@/context/onboarding-context"; // Import the context
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { DynamicIcon } from "@/components/dynamic-icon";
+import { Topic, Interest } from "@/types";
+import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
 
 interface OnboardingFlowProps {
-  onComplete: () => void;
+  isOpen: boolean;
+  onClose: () => void;
+  availableTopics: Topic[];
+  availableInterests: Interest[];
 }
 
-const steps = [
-  {
-    id: "welcome",
-    title: "Welcome to ReadMore!",
-    description: "Here’s a quick guide to get you started.",
-    action: null,
-    delay: 1500,
-  },
-  {
-    id: "next-post",
-    title: "Discover New Posts",
-    description: "Swipe up to see your next post.",
-    action: "scrollDown",
-    delay: 2000,
-  },
-  {
-    id: "deep-dive",
-    title: "Explore Deeper",
-    description: "Swipe left to explore more details.",
-    action: "none",
-    delay: 2000,
-  },
-  {
-    id: "full-article",
-    title: "Read the Full Article",
-    description: "Keep swiping left to open the full article.",
-    action: "scrollRight",
-    delay: 2000,
-  },
-];
-
-export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [isBlocked, setIsBlocked] = useState(true); // New state for blocking touch
-  const { triggerScrollDown, triggerScrollRight, setOnboardingActive, isEmblaApiReady } = useOnboardingContext();
-  const currentStep = steps[currentStepIndex];
-
-  const handleAdvanceStep = useCallback(() => {
-
-    // Trigger movement before advancing the step
-    if (currentStep.action === "scrollDown") {
-      triggerScrollDown();
-    } else if (currentStep.action === "scrollRight") {
-      triggerScrollRight();
-    }
-
-    if (currentStepIndex < steps.length - 1) {
-      setCurrentStepIndex((prev) => prev + 1);
-    } else {
-      setOnboardingActive(false); // Re-enable user input
-      onComplete();
-    }
-  }, [currentStepIndex, steps.length, onComplete, setOnboardingActive, currentStep.action, triggerScrollDown, triggerScrollRight]);
+export const OnboardingFlow: FC<OnboardingFlowProps> = ({
+  isOpen,
+  onClose,
+  availableTopics,
+  availableInterests,
+}) => {
+  const { subscribedTopics, subscribedInterests, subscribe } = useSubscribedFeeds();
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!isEmblaApiReady) return; // Wait for Embla API to be ready
+    // Pre-select already subscribed items
+    setSelectedTopics(subscribedTopics.map(topic => topic.name));
+    setSelectedInterests(subscribedInterests.map(interest => interest.name));
+  }, [subscribedTopics, subscribedInterests]);
 
-    setOnboardingActive(true); // Disable user input on carousel
-    setIsBlocked(true); // Block touch at the start of each step
+  const handleTopicClick = (topic: Topic) => {
+    setSelectedTopics((prev) =>
+      prev.includes(topic.name)
+        ? prev.filter((name) => name !== topic.name)
+        : [...prev, topic.name]
+    );
+  };
 
-    const unblockTimer = setTimeout(() => {
-      setIsBlocked(false); // Unblock touch after 500ms
-    }, 500);
+  const handleInterestClick = (interest: Interest) => {
+    setSelectedInterests((prev) =>
+      prev.includes(interest.name)
+        ? prev.filter((name) => name !== interest.name)
+        : [...prev, interest.name]
+    );
+  };
 
-    const advanceTimer = setTimeout(() => {
-      // Movement is now handled by handleAdvanceStep, so only advance the step here
-      handleAdvanceStep();
-    }, currentStep.delay);
-
-    return () => {
-      clearTimeout(unblockTimer);
-      clearTimeout(advanceTimer);
-    };
-  }, [currentStepIndex, isEmblaApiReady, setOnboardingActive, currentStep.delay, handleAdvanceStep]);
-
-  // No skip button for automated flow, it progresses automatically
-  // No "Next" button, it progresses automatically
+  const handleSaveSelections = () => {
+    selectedTopics.forEach(topicName => {
+      const topic = availableTopics.find(t => t.name === topicName);
+      if (topic) {
+        subscribe(topic, 'topic');
+      }
+    });
+    selectedInterests.forEach(interestName => {
+      const interest = availableInterests.find(i => i.name === interestName);
+      if (interest) {
+        subscribe(interest, 'interest');
+      }
+    });
+    onClose();
+  };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" // Dark transparent background for readability
-      onClick={!isBlocked ? handleAdvanceStep : undefined} // Only allow click if not blocked
-    >
-      {isBlocked && (
-        <div className="absolute inset-0 z-50 cursor-not-allowed bg-transparent" />
-      )}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentStep.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.5 }}
-          className="relative text-center pointer-events-auto max-w-md px-4" // Make relative for arrow positioning, ensure no overflow, and has padding
-        >
-          <h2 className="text-4xl font-bold font-headline text-white mb-4 drop-shadow-lg">
-            {currentStep.title}
-          </h2>
-          <p className="text-xl text-white/90 mb-8 drop-shadow-md">
-            {currentStep.description}
-          </p>
+    <AlertDialog open={isOpen} onOpenChange={onClose}>
+      <AlertDialogContent className="max-w-xl h-[80vh] flex flex-col p-6">
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-3xl font-bold text-center mb-2">
+            Welcome to ReadMore!
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-center text-lg text-muted-foreground">
+            To get started, please tell us what you're interested in.
+            You can pick multiple topics and interests.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
 
-          {/* Visual cues for automated actions */}
-          {currentStep.id === "next-post" && (
-            <motion.div
-              initial={{ opacity: 0, y: 50, scale: 1 }}
-              animate={{
-                opacity: [0, 1, 1, 0],
-                y: [50, 0, -30, -60], // Start low, move up, then further up and out
-                scale: [1, 1.1, 1], // Subtle pulse
-              }}
-              transition={{
-                duration: 1.2, // Slightly faster
-                ease: "easeOut", // More natural for a swipe
-                repeat: Infinity,
-                repeatDelay: 0.8, // Longer pause between repeats
-              }}
-              className="absolute top-3/4 left-1/2 -translate-x-1/2" // Position relative to text container's bottom
-            >
-              <ArrowUp className="w-16 h-16 text-white" />
-            </motion.div>
-          )}
-          {currentStep.id === "deep-dive" && (
-            <motion.div
-              initial={{ opacity: 0, x: 50, scale: 1 }}
-              animate={{
-                opacity: [0, 1, 1, 0],
-                x: [50, 0, -30, -60], // Start right, move left, then further left and out
-                scale: [1, 1.1, 1], // Subtle pulse
-              }}
-              transition={{
-                duration: 1.2, // Slightly faster
-                ease: "easeOut", // More natural for a swipe
-                repeat: Infinity,
-                repeatDelay: 0.8, // Longer pause between repeats
-              }}
-              className="absolute top-3/4 left-1/2 -translate-x-1/2" // Position relative to text container's right
-            >
-              <ArrowLeft className="w-16 h-16 text-white" />
-            </motion.div>
-          )}
-          {currentStep.id === "full-article" && ( // Add ArrowLeft for full-article
-            <motion.div
-              initial={{ opacity: 0, x: 50, scale: 1 }}
-              animate={{
-                opacity: [0, 1, 1, 0],
-                x: [50, 0, -30, -60], // Start right, move left, then further left and out
-                scale: [1, 1.1, 1], // Subtle pulse
-              }}
-              transition={{
-                duration: 1.2, // Slightly faster
-                ease: "easeOut", // More natural for a swipe
-                repeat: Infinity,
-                repeatDelay: 0.8, // Longer pause between repeats
-              }}
-              className="absolute top-3/4 left-1/2 -translate-x-1/2" // Position relative to text container's right
-            >
-              <ArrowLeft className="w-16 h-16 text-white" />
-            </motion.div>
-          )}
-        </motion.div>
-      </AnimatePresence>
-    </motion.div>
+        <div className="flex-1 overflow-hidden py-4">
+          <ScrollArea className="h-full pr-4">
+            <h3 className="text-xl font-semibold mb-3 text-primary">Topics</h3>
+            <div className="flex flex-wrap gap-3 mb-8">
+              {availableTopics.length > 0 ? (
+                availableTopics.map((topic) => (
+                  <Badge
+                    key={topic.name}
+                    variant={selectedTopics.includes(topic.name) ? "default" : "secondary"}
+                    className="cursor-pointer px-4 py-2 text-base flex items-center"
+                    onClick={() => handleTopicClick(topic)}
+                  >
+                    <DynamicIcon name={topic.icon} className="w-5 h-5 mr-2" />
+                    {topic.name}
+                  </Badge>
+                ))
+              ) : (
+                <p className="text-muted-foreground">No topics available.</p>
+              )}
+            </div>
+
+            <h3 className="text-xl font-semibold mb-3 text-primary">Interests</h3>
+            <div className="flex flex-wrap gap-3">
+              {availableInterests.length > 0 ? (
+                availableInterests.map((interest) => (
+                  <Badge
+                    key={interest.name}
+                    variant={selectedInterests.includes(interest.name) ? "default" : "secondary"}
+                    className="cursor-pointer px-4 py-2 text-base flex items-center"
+                    onClick={() => handleInterestClick(interest)}
+                  >
+                    <DynamicIcon name={interest.icon} className="w-5 h-5 mr-2" />
+                    {interest.name}
+                  </Badge>
+                ))
+              ) : (
+                <p className="text-muted-foreground">No interests available.</p>
+              )}
+            </div>
+          </ScrollArea>
+        </div>
+
+        <AlertDialogFooter className="pt-4">
+          <Button
+            onClick={handleSaveSelections}
+            disabled={selectedTopics.length === 0 && selectedInterests.length === 0}
+            className="w-full text-lg py-3"
+          >
+            Get Started
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
-}
+};
