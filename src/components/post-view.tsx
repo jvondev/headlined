@@ -94,9 +94,9 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
           className="absolute w-full h-full [backface-visibility:hidden]"
           onClick={handleCardClick}
         >
-          <Card className="h-full w-full flex flex-col overflow-hidden relative">
+          <Card className="h-full w-full flex flex-col overflow-hidden relative shadow-lg border border-primary/30">
             <div
-              className="relative w-full h-2/5 overflow-hidden flex-shrink-0" // Reduced height
+              className="relative w-full h-2/5 overflow-hidden flex-shrink-0 rounded-lg" // Reduced height
               ref={imageContainerRef}
             >
               {post.thumbnail_url && (
