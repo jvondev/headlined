@@ -10,7 +10,7 @@ import { SummaryView } from "./summary-view";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, RotateCcw } from "lucide-react";
+import { ArrowLeft, RotateCcw, ArrowDown, ArrowRight, Info, ScanText } from "lucide-react";
 
 interface PostViewProps {
   post: Post;
@@ -113,15 +113,22 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
               "flex flex-col justify-center p-6 md:p-8 flex-grow",
               "bg-card text-card-foreground"
             )}>
-                                          <div className="flex flex-col items-start text-left h-full">
-                                            <h1 className="font-headline text-2xl md:text-3xl font-bold leading-tight">                  {post.title}
+                                          <div className="flex flex-col items-center h-full">
+                                            <h1 className="font-headline text-2xl md:text-3xl font-bold leading-tight mt-auto mb-4">                  {post.title}
                 </h1>
-                <Button
-                  className="mt-6 px-6 py-3 text-lg font-semibold rounded-full self-start"
-                  onClick={handleReadMoreClick}
-                >
-                  Read Full Article
-                </Button>
+                {summaries.length > 0 ? (
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="mt-auto mb-4 rounded-full"
+                    onClick={handleCardClick}
+                  >
+                    <ScanText className="h-5 w-5" />
+                    <span className="sr-only">View Summary</span>
+                  </Button>
+                ) : (
+                  <div className="h-10 w-10 mt-auto mb-4 rounded-full invisible"></div>
+                )}
               </div>
             </div>
           </Card>
@@ -137,7 +144,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
               <div className="relative h-full w-full">
                 <SummaryView summary={summaries[0]} />
                 <Button variant="ghost" size="icon" className="absolute top-4 right-4 rounded-full">
-                    <RotateCcw className="h-5 w-5" />
+                    <ScanText className="h-5 w-5" />
                     <span className="sr-only">Flip back</span>
                 </Button>
               </div>
