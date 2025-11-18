@@ -22,8 +22,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
   const router = useRouter();
   const { theme } = useTheme();
   const [isFlipped, setIsFlipped] = useState(false);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
-  const [offsetY, setOffsetY] = useState(0);
+  const [dominantColor, setDominantColor] = useState<string | null>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   // Reset flip state when the slide changes
   useEffect(() => {
@@ -33,20 +33,35 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
     }
   }, [isActive]);
 
-
   useEffect(() => {
-    if (!emblaApi) return;
+    if (post.thumbnail_url && imageRef.current) {
+      const img = imageRef.current;
+      img.crossOrigin = "Anonymous";
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        if (context) {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          context.drawImage(img, 0, 0, img.width, img.height);
+          const imageData = context.getImageData(0, 0, img.width, img.height).data;
+          // Simple average color calculation
+          let r = 0, g = 0, b = 0;
+          for (let i = 0; i < imageData.length; i += 4) {
+            r += imageData[i];
+            g += imageData[i + 1];
+            b += imageData[i + 2];
+          }
+          const count = imageData.length / 4;
+          r = Math.floor(r / count);
+          g = Math.floor(g / count);
+b = Math.floor(b / count);
+          setDominantColor(`rgba(${r}, ${g}, ${b}, 0.5)`);
+        }
+      };
+    }
+  }, [post.thumbnail_url]);
 
-    const handleScroll = () => {
-      if (!imageContainerRef.current) return;
-      const scrollProgress = emblaApi.scrollProgress();
-      // ... (parallax logic)
-    };
-    emblaApi.on("scroll", handleScroll);
-    return () => {
-      emblaApi.off("scroll", handleScroll);
-    };
-  }, [emblaApi]);
 
   const summaries = useMemo(() => {
     if (post.summaries && post.summaries.length > 0) return post.summaries;
@@ -76,11 +91,6 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
     }
   };
 
-  const handleReadMoreClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    window.open(post.link, "_blank");
-  };
-
   return (
     <div className="w-full h-full [perspective:1000px]">
       <div
@@ -94,44 +104,34 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
           className="absolute w-full h-full [backface-visibility:hidden]"
           onClick={handleCardClick}
         >
-          <Card className="h-full w-full flex flex-col overflow-hidden relative shadow-lg border border-primary/30">
-            <div
-              className="relative w-full h-2/5 overflow-hidden flex-shrink-0 rounded-lg" // Reduced height
-              ref={imageContainerRef}
+          <div
+            className="h-full w-full rounded-[48px] overflow-hidden p-2"
+          >
+            <div className="relative h-full w-full rounded-[40px] overflow-hidden glass-card shadow-2xl"
+              style={{
+                boxShadow: dominantColor ? `0 20px 50px -10px ${dominantColor}` : '0 20px 50px -10px rgba(0,0,0,0.5)',
+              }}
             >
               {post.thumbnail_url && (
                 <img
+                  ref={imageRef}
                   src={post.thumbnail_url}
                   alt={post.title}
-                  className="absolute top-1/2 left-1/2 w-full h-full object-cover will-change-transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 ease-in-out"
+                  className="absolute top-0 left-0 w-full h-full object-cover"
                   loading="lazy"
-                  style={{ transform: `translate(-50%, -50%) scale(1.2) translateY(${offsetY}px)` }}
                 />
               )}
-            </div>
-            <div className={cn(
-              "flex flex-col justify-center p-6 md:p-8 flex-grow",
-              "bg-card text-card-foreground"
-            )}>
-                                          <div className="flex flex-col items-center h-full">
-                                            <h1 className="font-headline text-2xl sm:text-3xl font-bold leading-tight mt-auto mb-4">                  {post.title}
+              <div className="absolute top-0 left-0 w-full h-full flex flex-col p-8"
+                style={{
+                  background: dominantColor ? `linear-gradient(to bottom, ${dominantColor} 0%, transparent 100%)` : 'linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 100%)'
+                }}
+              >
+                <h1 className="font-headline text-3xl font-bold text-white">
+                  {post.title}
                 </h1>
-                {summaries.length > 0 ? (
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="mt-auto mb-4 rounded-full"
-                    onClick={handleCardClick}
-                  >
-                    <ScanText className="h-5 w-5" />
-                    <span className="sr-only">View Summary</span>
-                  </Button>
-                ) : (
-                  <div className="h-10 w-10 mt-auto mb-4 rounded-full invisible"></div>
-                )}
               </div>
             </div>
-          </Card>
+          </div>
         </div>
 
         {/* Back of the card */}
