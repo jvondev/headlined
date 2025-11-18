@@ -20,7 +20,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 
 import { SaveDialog } from "./save-dialog";
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
-import { useCarouselState } from "@/context/carousel-state-context";
 
 
 
@@ -46,7 +45,6 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const returnToSlug = searchParams.get("returnTo");
   const action = searchParams.get("action");
 
-  const { getCarouselState, setCarouselState } = useCarouselState();
 
   const currentKey = useMemo(() => {
     if (topicName) return `topic-${topicName}`;
@@ -54,29 +52,20 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return "default";
   }, [topicName, searchQuery]);
 
-  const savedState = getCarouselState(currentKey);
 
-  const [posts, setPosts] = useState<Post[]>(savedState?.posts || []);
-  const [hasMore, setHasMore] = useState(savedState?.hasMore || false);
+
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const page = useRef(savedState?.page || 1);
+  const page = useRef(1);
 
   useEffect(() => {
-    if (savedState) {
-      setPosts(savedState.posts);
-      setHasMore(savedState.hasMore);
-      page.current = savedState.page;
-      setActiveSlideIndex(savedState.activeSlideIndex);
-      setIsLoading(false);
-      setError(null);
-    } else {
-      setPosts([]);
-      setHasMore(false);
-      page.current = 1;
-      setActiveSlideIndex(0);
-      fetchPosts();
-    }
+    setPosts([]);
+    setHasMore(false);
+    page.current = 1;
+    setActiveSlideIndex(0);
+    fetchPosts();
   }, [currentKey]);
 
   const fetchPosts = useCallback(async () => {
@@ -95,18 +84,17 @@ export const PostCarousel: FC<PostCarouselProps> = ({
       setPosts(newPosts);
       setHasMore(newHasMore);
       page.current = 1;
-      setCarouselState(currentKey, { posts: newPosts, hasMore: newHasMore, page: 1, activeSlideIndex: 0 });
     } catch (err: any) {
       console.error("Error fetching posts:", err.message);
       setError("Failed to load posts.");
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, topicName, searchQuery, currentKey, setCarouselState]);
+  }, [isLoading, topicName, searchQuery]);
 
   const initialSlide = useMemo(() => {
-    return savedState ? savedState.activeSlideIndex : 0;
-  }, [savedState]);
+    return 0;
+  }, []);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
@@ -184,13 +172,12 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     if (newPosts.length > 0) {
         setPosts(prev => {
             const updatedPosts = [...prev, ...newPosts];
-            setCarouselState(currentKey, { ...getCarouselState(currentKey)!, posts: updatedPosts, hasMore: newHasMore, page: page.current });
             return updatedPosts;
         });
     }
     setHasMore(newHasMore);
     setIsLoading(false);
-  }, [isLoading, hasMore, topicName, searchQuery, currentKey, getCarouselState, setCarouselState]);
+  }, [isLoading, hasMore, topicName, searchQuery]);
   
 
 
@@ -232,7 +219,6 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     const onSettle = (api: UseEmblaCarouselType[1]) => {
         const newIndex = api!.selectedScrollSnap();
         setActiveSlideIndex(newIndex);
-        setCarouselState(currentKey, { ...getCarouselState(currentKey)!, activeSlideIndex: newIndex });
         
         if (hasMore && !isLoading && newIndex >= posts.length - 3) {
             loadMorePosts();
@@ -244,7 +230,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return () => {
       emblaApi.off("settle", onSettle);
     };
-  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery, currentKey, getCarouselState, setCarouselState]);
+  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery]);
 
 
 

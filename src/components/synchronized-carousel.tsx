@@ -58,7 +58,6 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     }, [allFilterItems, pathname]);
 
     const [selectedIndex, setSelectedIndex] = useState(getInitialIndex());
-    const [lastSelectedIdentifier, setLastSelectedIdentifier] = useState<{ name: string; type: "topic" | "interest" | "none" } | null>(null);
     const [slideStyles, setSlideStyles] = useState<React.CSSProperties[]>([]);
 
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 25 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
@@ -76,7 +75,6 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
 
         const currentItem = allFilterItems[newSelectedIndex];
         if (currentItem) {
-            setLastSelectedIdentifier({ name: currentItem.name, type: currentItem.type });
             const targetIndex = Math.max(0, newSelectedIndex - 1);
             navEmblaApi.scrollTo(targetIndex, true);
         }
@@ -126,39 +124,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         }
     }, [emblaApi, onSelect]);
 
-    // Effect to update lastSelectedIdentifier when selectedIndex changes (e.g., from direct navigation or initial load)
-    useEffect(() => {
-        if (allFilterItems.length > selectedIndex) {
-            const currentItem = allFilterItems[selectedIndex];
-            setLastSelectedIdentifier({ name: currentItem.name, type: currentItem.type });
-        }
-    }, [selectedIndex, allFilterItems]);
 
-    // Effect to handle changes in allFilterItems (e.g., subscriptions changing)
-    useEffect(() => {
-        if (!emblaApi || !navEmblaApi || !allFilterItems.length || lastSelectedIdentifier === null) return;
-
-        let newIndex = -1;
-
-        // Try to find the previously selected item by its identifier in the new list
-        newIndex = allFilterItems.findIndex(
-            item => item.name === lastSelectedIdentifier.name && item.type === lastSelectedIdentifier.type
-        );
-
-        if (newIndex !== -1) {
-            setSelectedIndex(newIndex);
-            emblaApi.scrollTo(newIndex, false); // Smooth scroll to the new position
-        } else {
-            // Fallback to Dashboard or the first item if the previously selected item is not found
-            const dashboardIndex = allFilterItems.findIndex(item => item.name === "Dashboard");
-            const targetIndex = dashboardIndex !== -1 ? dashboardIndex : 0;
-            setSelectedIndex(targetIndex);
-            emblaApi.scrollTo(targetIndex, false); // Smooth scroll
-            setLastSelectedIdentifier({ name: allFilterItems[targetIndex].name, type: allFilterItems[targetIndex].type });
-        }
-
-        navEmblaApi.reInit();
-    }, [allFilterItems, emblaApi, navEmblaApi, lastSelectedIdentifier]);
 
     return (
         <div className="flex flex-col h-full relative">
