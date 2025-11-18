@@ -44,7 +44,7 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
           {allFilterItems.map((item, index) => (
             <div
               key={item.name}
-              className="flex-[0_0_100%] h-full"
+              className="flex-[0_0_100%] h-full will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
               style={slideStyles[index]}
             >
               {item.name === "Saved" && <SavedContent />}

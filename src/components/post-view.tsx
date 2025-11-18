@@ -1,7 +1,7 @@
 "use client";
 
 import type { Post } from "@/types";
-import { useEffect, type FC, useMemo, useState, useRef } from "react";
+import React, { useEffect, type FC, useMemo, useState, useRef } from "react";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { useTheme } from "next-themes";
 import { Card } from "./ui/card";
@@ -18,7 +18,7 @@ interface PostViewProps {
   emblaApi?: UseEmblaCarouselType[1];
 }
 
-export const PostView: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
+const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
   const router = useRouter();
   const { theme } = useTheme();
   const [isFlipped, setIsFlipped] = useState(false);
@@ -150,3 +150,5 @@ export const PostView: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
     </div>
   );
 };
+
+export const PostView = React.memo(PostViewComponent);

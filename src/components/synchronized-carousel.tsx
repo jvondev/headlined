@@ -98,12 +98,11 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 const diffToTarget = snap - scrollProgress;
                                                                 const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
                                                                 const translateX = diffToTarget * 300; // Adjust horizontal position
-                                                                newSlideStyles[snapIndex] = {
-                                                                    transform: `scale(${scale}) translateX(${translateX}px)`,
-                                                                    opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely                    transition: 'transform 0.2s ease-out, opacity 0.2s ease-out', // Smooth transition
-                    zIndex: slidesInView.includes(snapIndex) ? 1 : 0, // Bring active slides to front
-                };
-            });
+                                                                                newSlideStyles[snapIndex] = {
+                                                                                    transform: `scale(${scale}) translateX(${translateX}px)`,
+                                                                                    opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely
+                                                                                    zIndex: slidesInView.includes(snapIndex) ? 1 : 0, // Bring active slides to front
+                                                                                };            });
             setSlideStyles(newSlideStyles);
         };
 

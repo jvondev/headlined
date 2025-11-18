@@ -210,7 +210,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                                 const translateY = diffToTarget * 300; // Adjust vertical position
                                 newSlideStyles[snapIndex] = {
                                   transform: `scale(${scale}) translateY(${translateY}px)`,
-                                  opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely          transition: 'transform 0.2s ease-out, opacity 0.2s ease-out', // Smooth transition
+                                  opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely
           zIndex: slidesInView.includes(snapIndex) ? 1 : 0, // Bring active slides to front
         };
       });
@@ -342,9 +342,8 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return (
       <>
         {posts.map((post, index) => (
-          <div 
-            className="relative min-w-0 flex-[0_0_100%] h-full flex items-center justify-center p-4 md:p-8"
-            key={`${post.slug}-${index}-${topicName || searchQuery}`}
+                      <div
+                        className="relative min-w-0 flex-[0_0_100%] h-full flex items-center justify-center p-4 md:p-8 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"            key={`${post.slug}-${index}-${topicName || searchQuery}`}
             role="group"
             aria-roledescription="slide"
             aria-label={`Post ${index + 1} of ${posts.length}`}
