@@ -114,7 +114,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
               "bg-card text-card-foreground"
             )}>
                                           <div className="flex flex-col items-center h-full">
-                                            <h1 className="font-headline text-2xl md:text-3xl font-bold leading-tight mt-auto mb-4">                  {post.title}
+                                            <h1 className="font-headline text-2xl sm:text-3xl font-bold leading-tight mt-auto mb-4">                  {post.title}
                 </h1>
                 {summaries.length > 0 ? (
                   <Button
@@ -139,7 +139,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
           className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]"
           onClick={handleCardClick}
         >
-          <Card className="h-full w-full flex flex-col overflow-hidden relative bg-card text-card-foreground">
+          <Card className="h-full w-full flex flex-col overflow-hidden relative bg-card text-card-foreground shadow-lg border border-primary/30">
             {summaries.length > 0 ? (
               <div className="relative h-full w-full">
                 <SummaryView summary={summaries[0]} />
