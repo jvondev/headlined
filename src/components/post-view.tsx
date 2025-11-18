@@ -132,7 +132,7 @@ export const PostView: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
           className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]"
           onClick={handleCardClick}
         >
-          <Card className="h-full w-full flex flex-col overflow-hidden relative bg-muted text-muted-foreground">
+          <Card className="h-full w-full flex flex-col overflow-hidden relative bg-card text-card-foreground">
             {summaries.length > 0 ? (
               <div className="relative h-full w-full">
                 <SummaryView summary={summaries[0]} />
