@@ -97,7 +97,7 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({
                     className="cursor-pointer px-4 py-2 text-base flex items-center"
                     onClick={() => handleTopicClick(topic)}
                   >
-                    <DynamicIcon name={topic.icon} className="w-5 h-5 mr-2" />
+                    <DynamicIcon name={topic.icon || "File"} className="w-5 h-5 mr-2" />
                     {topic.name}
                   </Badge>
                 ))
@@ -116,7 +116,7 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({
                     className="cursor-pointer px-4 py-2 text-base flex items-center"
                     onClick={() => handleInterestClick(interest)}
                   >
-                    <DynamicIcon name={interest.icon} className="w-5 h-5 mr-2" />
+                    <DynamicIcon name={interest.icon || "File"} className="w-5 h-5 mr-2" />
                     {interest.name}
                   </Badge>
                 ))

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState, useCallback } from "react";
-import useEmblaCarousel, { EmblaCarouselType } from "embla-carousel-react";
+import useEmblaCarousel, { UseEmblaCarouselType } from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { CarouselNav } from "@/components/carousel-nav";
 import { MainContentCarousel } from "@/components/main-content-carousel";
@@ -59,6 +59,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
 
     const [selectedIndex, setSelectedIndex] = useState(getInitialIndex());
     const [lastSelectedIdentifier, setLastSelectedIdentifier] = useState<{ name: string; type: "topic" | "interest" | "none" } | null>(null);
+    const [slideStyles, setSlideStyles] = useState<React.CSSProperties[]>([]);
 
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 50 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
     const [navEmblaRef, navEmblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 50 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
@@ -84,6 +85,37 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     const onNavClick = useCallback((index: number) => {
         if (emblaApi) emblaApi.scrollTo(index);
     }, [emblaApi]);
+
+    useEffect(() => {
+        if (!emblaApi) return;
+
+        const applyTransforms = () => {
+            const scrollProgress = emblaApi.scrollProgress();
+            const slidesInView = emblaApi.slidesInView(true);
+            const newSlideStyles: React.CSSProperties[] = [];
+
+            emblaApi.scrollSnapList().forEach((snap, snapIndex) => {
+                const diffToTarget = snap - scrollProgress;
+                                                                const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
+                                                                const translateX = diffToTarget * 300; // Adjust horizontal position
+                                                                newSlideStyles[snapIndex] = {
+                                                                    transform: `scale(${scale}) translateX(${translateX}px)`,
+                                                                    opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely                    transition: 'transform 0.2s ease-out, opacity 0.2s ease-out', // Smooth transition
+                    zIndex: slidesInView.includes(snapIndex) ? 1 : 0, // Bring active slides to front
+                };
+            });
+            setSlideStyles(newSlideStyles);
+        };
+
+        emblaApi.on("scroll", applyTransforms);
+        emblaApi.on("reInit", applyTransforms);
+        applyTransforms(); // Apply initial transforms
+
+        return () => {
+            emblaApi.off("scroll", applyTransforms);
+            emblaApi.off("reInit", applyTransforms);
+        };
+    }, [emblaApi, allFilterItems.length]);
 
     useEffect(() => {
         if (emblaApi) {
@@ -148,6 +180,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 selectedIndex={selectedIndex}
                 topics={topics}
                 interests={interests}
+                slideStyles={slideStyles}
             />
         </div>
     );

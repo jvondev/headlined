@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
-import { EmblaCarouselType } from "embla-carousel-react";
+import { UseEmblaCarouselType } from "embla-carousel-react";
 import { PostCarousel } from "@/components/post-carousel";
 import { SavedContent } from "@/components/saved-content";
 import { ExploreContent } from "@/components/explore-content";
@@ -25,6 +25,7 @@ type MainContentCarouselProps = {
   selectedIndex: number;
   topics: Topic[];
   interests: Interest[];
+  slideStyles: React.CSSProperties[];
 };
 
 export const MainContentCarousel: FC<MainContentCarouselProps> = ({
@@ -34,6 +35,7 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
   selectedIndex,
   topics,
   interests,
+  slideStyles,
 }) => {
   return (
     <div className="flex-1 overflow-hidden" ref={emblaRef}>
@@ -43,6 +45,7 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
             <div
               key={item.name}
               className="flex-[0_0_100%] h-full"
+              style={slideStyles[index]}
             >
               {item.name === "Saved" && <SavedContent />}
               {item.name === "Dashboard" && <DashboardContent />}
@@ -54,7 +57,7 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
                 />
               )}
               {item.name === "Explore" && <ExploreContent />}
-              {item.name === "Search" && <SearchContent />}
+              {item.name === "Search" && <SearchContent isLoading={false} />}
             </div>
           ))}
         </CarouselStateProvider>

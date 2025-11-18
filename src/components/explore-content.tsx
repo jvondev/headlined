@@ -81,7 +81,7 @@ export const ExploreContent: FC<ExploreContentProps> = ({ isLoading }) => {
             const isSubscribed = subscribedTopics.some(t => t.name === topic.name);
             return (
               <Card key={topic.name} className="flex flex-col items-center justify-between p-4">
-                <DynamicIcon name={topic.icon} className="h-8 w-8 mb-2 text-primary" />
+                <DynamicIcon name={topic.icon || "File"} className="h-8 w-8 mb-2 text-primary" />
                 <CardTitle className="text-center text-lg font-medium truncate mb-2">
                   {topic.name}
                 </CardTitle>
@@ -105,7 +105,7 @@ export const ExploreContent: FC<ExploreContentProps> = ({ isLoading }) => {
             const isSubscribed = subscribedInterests.some(i => i.name === interest.name);
             return (
               <Card key={interest.name} className="flex flex-col items-center justify-between p-4">
-                <DynamicIcon name={interest.icon} className="h-8 w-8 mb-2 text-primary" />
+                <DynamicIcon name={interest.icon || "File"} className="h-8 w-8 mb-2 text-primary" />
                 <CardTitle className="text-center text-lg font-lg font-medium truncate mb-2">
                   {interest.name}
                 </CardTitle>

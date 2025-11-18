@@ -100,7 +100,7 @@ export function SearchResultsClient({ query }: SearchResultsClientProps) {
                             <CardHeader>
                                 <div className="flex items-center gap-2">
                                     <Badge variant="secondary">{result.type}</Badge>
-                                    {result.topic_id && <span className="text-sm text-muted-foreground">{result.topic_id}</span>}
+                                    {result.topic && <span className="text-sm text-muted-foreground">{result.topic}</span>}
                                 </div>
                                 <CardTitle className="mt-2">
                                     <Link href={getResultUrl(result)} className="hover:underline">

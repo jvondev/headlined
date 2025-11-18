@@ -23,7 +23,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <FullScreenContext.Provider value={{ isFullScreen, toggleFullScreen }}>
         <div className="flex-grow overflow-y-auto no-scrollbar">
           {children}
-          {showOnboarding && <OnboardingFlow onComplete={markOnboardingComplete} />}
+          {showOnboarding && <OnboardingFlow onClose={markOnboardingComplete} />}
         </div>
         
         <Toaster />

@@ -20,8 +20,6 @@ function TopicCarousel() {
       <SynchronizedCarousel
         topics={topics}
         interests={interests}
-        initialFilterType="topic"
-        initialFilterValue={topic || undefined}
       />
     </OnboardingProvider>
   );

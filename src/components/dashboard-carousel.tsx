@@ -29,8 +29,6 @@ export const DashboardCarousel: FC<DashboardCarouselProps> = ({ topics, interest
                 emblaApi={emblaApi}
                 allFilterItems={allFilterItems}
                 selectedIndex={0}
-                activeFilterType={"none"}
-                activeFilterValue={"Dashboard"}
                 topics={topics}
                 interests={interests}
             />

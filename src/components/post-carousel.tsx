@@ -26,8 +26,7 @@ import { useCarouselState } from "@/context/carousel-state-context";
 
 type PostCarouselProps = {
   shouldFetchPaginatedPosts?: boolean,
-  hasSeenOnboarding: boolean,
-  markOnboardingComplete: () => void,
+
   topicName?: string;
   searchQuery?: string;
 }
@@ -36,8 +35,7 @@ const PAGE_SIZE = 10; // Define page size for client-side pagination
 
 export const PostCarousel: FC<PostCarouselProps> = ({
   shouldFetchPaginatedPosts = false,
-  hasSeenOnboarding,
-  markOnboardingComplete,
+
   topicName,
   searchQuery,
 }) => {
@@ -121,6 +119,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(initialSlide);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [slideStyles, setSlideStyles] = useState<React.CSSProperties[]>([]);
   
   const currentPost = posts[activeSlideIndex];
 
@@ -196,6 +195,37 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
 
 
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const applyTransforms = () => {
+      const scrollProgress = emblaApi.scrollProgress();
+      const slidesInView = emblaApi.slidesInView(true); // Get all slides currently in view
+      const newSlideStyles: React.CSSProperties[] = [];
+
+      emblaApi.scrollSnapList().forEach((snap, snapIndex) => {
+        const diffToTarget = snap - scrollProgress;
+                                const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
+                                const translateY = diffToTarget * 300; // Adjust vertical position
+                                newSlideStyles[snapIndex] = {
+                                  transform: `scale(${scale}) translateY(${translateY}px)`,
+                                  opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely          transition: 'transform 0.2s ease-out, opacity 0.2s ease-out', // Smooth transition
+          zIndex: slidesInView.includes(snapIndex) ? 1 : 0, // Bring active slides to front
+        };
+      });
+      setSlideStyles(newSlideStyles);
+    };
+
+    emblaApi.on("scroll", applyTransforms);
+    emblaApi.on("reInit", applyTransforms);
+    applyTransforms(); // Apply initial transforms
+
+    return () => {
+      emblaApi.off("scroll", applyTransforms);
+      emblaApi.off("reInit", applyTransforms);
+    };
+  }, [emblaApi, posts.length]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -318,6 +348,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
             role="group"
             aria-roledescription="slide"
             aria-label={`Post ${index + 1} of ${posts.length}`}
+            style={slideStyles[index]}
           >
               {post.slug === "home" ? (
                 <HomepagePostSlide />

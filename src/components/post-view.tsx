@@ -61,7 +61,7 @@ export const PostView: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
           originalArticleUrl: post.link,
           slug: post.slug,
         },
-      }));
+      }) as const);
     }
     return [];
   }, [post.description, post.summaries, post.link, post.slug]);
@@ -114,9 +114,9 @@ export const PostView: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
               "bg-card text-card-foreground"
             )}>
               <div className="max-w-3xl flex flex-col items-start text-left h-full">
-                {post.source_name && (
+                {post.topic && (
                   <Badge variant="secondary" className="mb-4 px-3 py-1 text-sm">
-                    {post.source_name}
+                    {post.topic}
                   </Badge>
                 )}
                 <h1 className="font-headline text-2xl md:text-3xl font-bold leading-tight flex-grow">
