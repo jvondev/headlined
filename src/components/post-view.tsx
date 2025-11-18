@@ -95,11 +95,11 @@ export const PostView: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
           onClick={handleCardClick}
         >
           <Card className="h-full w-full flex flex-col overflow-hidden relative">
-            {post.thumbnail_url && (
-              <div
-                className="relative w-full h-2/5 overflow-hidden flex-shrink-0" // Reduced height
-                ref={imageContainerRef}
-              >
+            <div
+              className="relative w-full h-2/5 overflow-hidden flex-shrink-0" // Reduced height
+              ref={imageContainerRef}
+            >
+              {post.thumbnail_url && (
                 <img
                   src={post.thumbnail_url}
                   alt={post.title}
@@ -107,16 +107,14 @@ export const PostView: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
                   loading="lazy"
                   style={{ transform: `translate(-50%, -50%) scale(1.2) translateY(${offsetY}px)` }}
                 />
-              </div>
-            )}
+              )}
+            </div>
             <div className={cn(
               "flex flex-col justify-center p-6 md:p-8 flex-grow",
               "bg-card text-card-foreground"
             )}>
-              <div className="max-w-3xl flex flex-col items-start text-left h-full">
-
-                <h1 className="font-headline text-2xl md:text-3xl font-bold leading-tight flex-grow">
-                  {post.title}
+                                          <div className="max-w-3xl flex flex-col items-start text-left h-full">
+                                            <h1 className="font-headline text-2xl md:text-3xl font-bold leading-tight">                  {post.title}
                 </h1>
                 <Button
                   className="mt-6 px-6 py-3 text-lg font-semibold rounded-full self-start"
