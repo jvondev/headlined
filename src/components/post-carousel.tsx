@@ -391,32 +391,9 @@ export const PostCarousel: FC<PostCarouselProps> = ({
           </div>
         </div>
         
-                <div className={cn("fixed bottom-20 right-4 z-20 flex flex-col items-center gap-2")}>            <div className="relative">
-                <Button
-                  onClick={handleSaveClick}
-                  variant="outline"
-                  size="icon"
-                  aria-label="Save"
-                  className="bg-background/50 backdrop-blur-sm rounded-full"
-                  disabled={!currentPost}
-                >
-                  <SaveIcon className={cn("h-4 w-4", saveIconClassName)} />
-                </Button>
-            </div>
-            
-        </div>
 
-        <div className={cn("fixed bottom-0 left-0 right-0 z-20 flex justify-center mb-16")}>            <Button 
-              onClick={scrollDown} 
-              variant="outline" 
-              size="icon" 
-              aria-label="Next Post" 
-              className="min-w-[3rem] w-auto h-auto py-2 px-4 bg-background/50 mb-0 mt-0 backdrop-blur-sm rounded-t-[1rem] rounded-b-none text-sm font-semibold flex items-center gap-2 text-muted-foreground"
-              
-            >
-              Next<ArrowDown className="h-5 w-5" />
-            </Button>
-        </div>
+
+
         
         {itemToSave && (
           <SaveDialog
