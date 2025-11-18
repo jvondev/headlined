@@ -60,7 +60,7 @@ export default function RootLayout({
       <body className="font-body antialiased no-scrollbar h-full" suppressHydrationWarning={true}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
