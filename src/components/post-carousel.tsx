@@ -211,7 +211,6 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                                 newSlideStyles[snapIndex] = {
                                   transform: `scale(${scale}) translateY(${translateY}px)`,
                                   opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely
-          zIndex: slidesInView.includes(snapIndex) ? 1 : 0, // Bring active slides to front
         };
       });
       setSlideStyles(newSlideStyles);
