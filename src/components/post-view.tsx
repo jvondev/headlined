@@ -113,7 +113,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
               "flex flex-col justify-center p-6 md:p-8 flex-grow",
               "bg-card text-card-foreground"
             )}>
-                                          <div className="max-w-3xl flex flex-col items-start text-left h-full">
+                                          <div className="flex flex-col items-start text-left h-full">
                                             <h1 className="font-headline text-2xl md:text-3xl font-bold leading-tight">                  {post.title}
                 </h1>
                 <Button

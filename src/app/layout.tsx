@@ -27,7 +27,7 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="en" suppressHydrationWarning className="no-scrollbar">
+    <html lang="en" suppressHydrationWarning className="no-scrollbar h-full">
       <head>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-119CNXCR97"></script>
         <script
@@ -57,7 +57,7 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className="font-body antialiased no-scrollbar" suppressHydrationWarning={true}>
+      <body className="font-body antialiased no-scrollbar h-full" suppressHydrationWarning={true}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -66,7 +66,7 @@ export default function RootLayout({
         >
           <FullScreenContext.Provider value={{ isFullScreen, toggleFullScreen }}>
             <BackgroundSyncProvider /> 
-            <div>
+            <div className="h-full">
               {children}
             </div>
             <FooterWrapper />

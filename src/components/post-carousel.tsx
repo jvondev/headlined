@@ -341,24 +341,23 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return (
       <>
         {posts.map((post, index) => (
-                      <div
-                        className="relative min-w-0 flex-[0_0_100%] h-full flex items-center justify-center p-4 md:p-8 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"            key={`${post.slug}-${index}-${topicName || searchQuery}`}
-            role="group"
-            aria-roledescription="slide"
-            aria-label={`Post ${index + 1} of ${posts.length}`}
-            style={slideStyles[index]}
-          >
-              {post.slug === "home" ? (
+                                                                                                                                    <div
+                                                                                                                                      className="relative min-w-0 flex-[0_0_100%] h-full flex items-center justify-center py-16 px-16 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
+                                                                                                                          key={`${post.slug}-${index}-${topicName || searchQuery}`}
+                                                                                                                          role="group"
+                                                                                                                          aria-roledescription="slide"
+                                                                                                                          aria-label={`Post ${index + 1} of ${posts.length}`}
+                                                                                                                          style={slideStyles[index]}
+                                                                                                                        >              {post.slug === "home" ? (
                 <HomepagePostSlide />
               ) : (
-                <div className="w-full max-w-sm md:max-w-xl lg:max-w-2xl h-full max-h-[80vh] md:max-h-[85vh]">
-                  <PostView 
-                    post={post} 
-                    isActive={index === activeSlideIndex}
-                    emblaApi={emblaApi}
-                  />
-                </div>
-              )}
+                                                                                                                                                                <div className="w-full h-full max-h-[80vh]">
+                                                                                                                                                                  <PostView
+                                                                                                                                                                    post={post}
+                                                                                                                                                                    isActive={index === activeSlideIndex}
+                                                                                                                                                                    emblaApi={emblaApi}
+                                                                                                                                                                  />
+                                                                                                                                                                </div>              )}
           </div>
         ))}
          {isLoading && (
@@ -381,7 +380,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   return (
       <CarouselContext.Provider value={{ currentPostSlug: currentPost?.slug }}>
-      <div className="relative flex h-screen w-full flex-col items-center justify-center">
+      <div className="relative flex h-full w-full flex-col items-center justify-center">
 
         <div className="overflow-hidden h-full w-full" ref={emblaRef} role="region" aria-roledescription="carousel" aria-label="Posts Carousel">
           <div className="flex flex-col h-full">

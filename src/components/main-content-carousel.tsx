@@ -9,6 +9,7 @@ import { SearchContent } from "@/components/search-content";
 import { DashboardContent } from "@/components/dashboard-content";
 import { CarouselStateProvider } from "@/context/carousel-state-context";
 import type { Topic, Interest } from "@/types";
+import { cn } from "@/lib/utils";
 
 type CarouselItem = {
   name: string;
@@ -26,6 +27,7 @@ type MainContentCarouselProps = {
   topics: Topic[];
   interests: Interest[];
   slideStyles: React.CSSProperties[];
+  className?: string;
 };
 
 const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
@@ -36,9 +38,10 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
   topics,
   interests,
   slideStyles,
+  className,
 }) => {
   return (
-    <div className="flex-1 overflow-hidden" ref={emblaRef}>
+    <div className={cn("flex-1 overflow-hidden", className)} ref={emblaRef}>
       <div className="flex h-full">
         <CarouselStateProvider>
           {allFilterItems.map((item, index) => {
