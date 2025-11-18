@@ -61,8 +61,8 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     const [lastSelectedIdentifier, setLastSelectedIdentifier] = useState<{ name: string; type: "topic" | "interest" | "none" } | null>(null);
     const [slideStyles, setSlideStyles] = useState<React.CSSProperties[]>([]);
 
-    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 50 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
-    const [navEmblaRef, navEmblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 50 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 25 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
+    const [navEmblaRef, navEmblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 25 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
 
     // Effect to handle the initial scroll position
     useEffect(() => {
@@ -98,11 +98,10 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 const diffToTarget = snap - scrollProgress;
                                                                 const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
                                                                 const translateX = diffToTarget * 300; // Adjust horizontal position
-                                                                                newSlideStyles[snapIndex] = {
-                                                                                    transform: `scale(${scale}) translateX(${translateX}px)`,
-                                                                                    opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely
-                                                                                    zIndex: slidesInView.includes(snapIndex) ? 1 : 0, // Bring active slides to front
-                                                                                };            });
+                                                                                                newSlideStyles[snapIndex] = {
+                                                                                                    transform: `scale(${scale}) translateX(${translateX}px)`,
+                                                                                                    opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely
+                                                                                                };            });
             setSlideStyles(newSlideStyles);
         };
 

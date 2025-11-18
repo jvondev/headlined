@@ -28,7 +28,7 @@ type MainContentCarouselProps = {
   slideStyles: React.CSSProperties[];
 };
 
-export const MainContentCarousel: FC<MainContentCarouselProps> = ({
+const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
   emblaRef,
   emblaApi,
   allFilterItems,
@@ -41,27 +41,43 @@ export const MainContentCarousel: FC<MainContentCarouselProps> = ({
     <div className="flex-1 overflow-hidden" ref={emblaRef}>
       <div className="flex h-full">
         <CarouselStateProvider>
-          {allFilterItems.map((item, index) => (
-            <div
-              key={item.name}
-              className="flex-[0_0_100%] h-full will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
-              style={slideStyles[index]}
-            >
-              {item.name === "Saved" && <SavedContent />}
-              {item.name === "Dashboard" && <DashboardContent />}
-              {(item.type === "topic" || item.type === "interest") && (
-                <PostCarousel
-                  shouldFetchPaginatedPosts={selectedIndex === index}
-                  topicName={item.type === "topic" ? item.name : undefined}
-                  searchQuery={item.type === "interest" ? item.name : undefined}
-                />
-              )}
-              {item.name === "Explore" && <ExploreContent />}
-              {item.name === "Search" && <SearchContent isLoading={false} />}
-            </div>
-          ))}
+          {allFilterItems.map((item, index) => {
+            const renderThreshold = 1; // Render current, previous, and next slide
+            const shouldRender =
+              index >= selectedIndex - renderThreshold &&
+              index <= selectedIndex + renderThreshold;
+
+            return (
+              <div
+                key={item.name}
+                className="flex-[0_0_100%] h-full will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
+                style={slideStyles[index]}
+              >
+                {shouldRender ? (
+                  <>
+                    {item.name === "Saved" && <SavedContent />}
+                    {item.name === "Dashboard" && <DashboardContent />}
+                    {(item.type === "topic" || item.type === "interest") && (
+                      <PostCarousel
+                        shouldFetchPaginatedPosts={selectedIndex === index}
+                        topicName={item.type === "topic" ? item.name : undefined}
+                        searchQuery={item.type === "interest" ? item.name : undefined}
+                      />
+                    )}
+                    {item.name === "Explore" && <ExploreContent />}
+                    {item.name === "Search" && <SearchContent isLoading={false} />}
+                  </>
+                ) : (
+                  // Render a lightweight placeholder when not in view
+                  <div className="h-full w-full bg-transparent" />
+                )}
+              </div>
+            );
+          })}
         </CarouselStateProvider>
       </div>
     </div>
   );
 };
+
+export const MainContentCarousel = React.memo(MainContentCarouselComponent);
