@@ -312,15 +312,23 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return (
       <>
         {posts.map((post, index) => (
-          <div className="relative min-w-0 flex-[0_0_100%] h-full" key={`${post.slug}-${index}-${topicName || searchQuery}`} role="group" aria-roledescription="slide" aria-label={`Post ${index + 1} of ${posts.length}`}>
+          <div 
+            className="relative min-w-0 flex-[0_0_100%] h-full flex items-center justify-center p-4 md:p-8"
+            key={`${post.slug}-${index}-${topicName || searchQuery}`}
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`Post ${index + 1} of ${posts.length}`}
+          >
               {post.slug === "home" ? (
                 <HomepagePostSlide />
               ) : (
-                <PostView 
-                  post={post} 
-                  isActive={index === activeSlideIndex}
-                  emblaApi={emblaApi}
-                />
+                <div className="w-full max-w-sm md:max-w-xl lg:max-w-2xl h-full max-h-[80vh] md:max-h-[85vh]">
+                  <PostView 
+                    post={post} 
+                    isActive={index === activeSlideIndex}
+                    emblaApi={emblaApi}
+                  />
+                </div>
               )}
           </div>
         ))}
