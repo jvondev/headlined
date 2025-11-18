@@ -179,6 +179,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 topics={topics}
                 interests={interests}
                 slideStyles={slideStyles}
+                className="pt-[52px]"
             />
         </div>
     );

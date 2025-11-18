@@ -341,23 +341,23 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return (
       <>
         {posts.map((post, index) => (
-                                                                                                                                    <div
-                                                                                                                                      className="relative min-w-0 flex-[0_0_100%] h-full flex items-center justify-center py-16 px-16 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
-                                                                                                                          key={`${post.slug}-${index}-${topicName || searchQuery}`}
-                                                                                                                          role="group"
-                                                                                                                          aria-roledescription="slide"
-                                                                                                                          aria-label={`Post ${index + 1} of ${posts.length}`}
-                                                                                                                          style={slideStyles[index]}
-                                                                                                                        >              {post.slug === "home" ? (
+                                                                                                                                                                                <div
+                                                                                                                                                                                  className="relative min-w-0 flex-[0_0_100%] h-full flex justify-center py-2 px-4 md:py-4 md:px-8 lg:py-8 lg:px-16 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
+                                                                                                                                                                      key={`${post.slug}-${index}-${topicName || searchQuery}`}
+                                                                                                                                                                      role="group"
+                                                                                                                                                                      aria-roledescription="slide"
+                                                                                                                                                                      aria-label={`Post ${index + 1} of ${posts.length}`}
+                                                                                                                                                                      style={slideStyles[index]}
+                                                                                                                                                                    >              {post.slug === "home" ? (
                 <HomepagePostSlide />
               ) : (
-                                                                                                                                                                <div className="w-full h-full max-h-[80vh]">
-                                                                                                                                                                  <PostView
-                                                                                                                                                                    post={post}
-                                                                                                                                                                    isActive={index === activeSlideIndex}
-                                                                                                                                                                    emblaApi={emblaApi}
-                                                                                                                                                                  />
-                                                                                                                                                                </div>              )}
+                <div className="w-full h-full max-h-[85vh] md:max-h-[75vh] lg:max-h-[65vh] lg:max-w-3xl">
+                  <PostView
+                    post={post}
+                    isActive={index === activeSlideIndex}
+                    emblaApi={emblaApi}
+                  />
+                </div>              )}
           </div>
         ))}
          {isLoading && (
