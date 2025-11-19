@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Share2, ExternalLink, X, Sparkles, Clock, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
+import { addToReadHistory } from "@/lib/indexeddb";
 
 interface PostViewProps {
   post: Post;
@@ -61,6 +62,12 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
       router.push(post.link);
       return;
     }
+
+    if (!isExpanded) {
+      // Track read history when expanding
+      addToReadHistory(post).catch(console.error);
+    }
+
     setIsExpanded(!isExpanded);
   };
 

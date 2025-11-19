@@ -1,8 +1,9 @@
 import { Post } from '@/types';
 
 const DB_NAME = 'ReadMoreDB';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE_NAME = 'posts';
+const READ_HISTORY_STORE_NAME = 'read_history';
 
 let db: IDBDatabase | null = null;
 
@@ -24,6 +25,11 @@ const openDatabase = (): Promise<IDBDatabase> => {
       }
       if (store && !store.indexNames.contains('topic')) {
         store.createIndex('topic', 'topic', { unique: false });
+      }
+
+      if (!db.objectStoreNames.contains(READ_HISTORY_STORE_NAME)) {
+        const historyStore = db.createObjectStore(READ_HISTORY_STORE_NAME, { keyPath: 'slug' });
+        historyStore.createIndex('readAt', 'readAt', { unique: false });
       }
     };
 
@@ -83,6 +89,63 @@ export const clearAllPosts = async (): Promise<void> => {
     request.onerror = (event) => {
       console.error('Clear all posts transaction error:', (event.target as IDBRequest).error);
       reject((event.target as IDBRequest).error);
+    };
+  });
+};
+
+export const addToReadHistory = async (post: Post): Promise<void> => {
+  const database = await openDatabase();
+  const transaction = database.transaction(READ_HISTORY_STORE_NAME, 'readwrite');
+  const store = transaction.objectStore(READ_HISTORY_STORE_NAME);
+
+  const historyItem = {
+    ...post,
+    readAt: new Date().toISOString(),
+  };
+
+  store.put(historyItem);
+
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = (event) => {
+      console.error('Add to read history transaction error:', (event.target as IDBTransaction).error);
+      reject((event.target as IDBTransaction).error);
+    };
+  });
+};
+
+export const getReadHistory = async (): Promise<(Post & { readAt: string })[]> => {
+  const database = await openDatabase();
+  const transaction = database.transaction(READ_HISTORY_STORE_NAME, 'readonly');
+  const store = transaction.objectStore(READ_HISTORY_STORE_NAME);
+  const index = store.index('readAt');
+
+  return new Promise((resolve, reject) => {
+    const request = index.getAll();
+    request.onsuccess = () => {
+      // Sort by readAt descending (newest first)
+      const results = request.result as (Post & { readAt: string })[];
+      resolve(results.reverse());
+    };
+    request.onerror = (event) => {
+      console.error('Get read history transaction error:', (event.target as IDBRequest).error);
+      reject((event.target as IDBRequest).error);
+    };
+  });
+};
+
+export const removeFromReadHistory = async (slug: string): Promise<void> => {
+  const database = await openDatabase();
+  const transaction = database.transaction(READ_HISTORY_STORE_NAME, 'readwrite');
+  const store = transaction.objectStore(READ_HISTORY_STORE_NAME);
+
+  store.delete(slug);
+
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = (event) => {
+      console.error('Remove from read history transaction error:', (event.target as IDBTransaction).error);
+      reject((event.target as IDBTransaction).error);
     };
   });
 };

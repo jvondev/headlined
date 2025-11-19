@@ -9,8 +9,9 @@ interface GreetingProps {
 
 export const Greeting = ({ onComplete }: GreetingProps) => {
     const [greeting, setGreeting] = useState("");
+    const [dateStr, setDateStr] = useState("");
     const [text, setText] = useState("");
-    const [showCursor, setShowCursor] = useState(true);
+    const [showDate, setShowDate] = useState(false);
 
     useEffect(() => {
         const date = new Date();
@@ -20,42 +21,50 @@ export const Greeting = ({ onComplete }: GreetingProps) => {
         else if (hour < 12) greet = "Good Morning";
         else if (hour < 18) greet = "Good Afternoon";
 
-        const dateStr = date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-        setGreeting(`${greet}, it's ${dateStr}.`);
+        setGreeting(greet);
+        setDateStr(date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
     }, []);
 
     useEffect(() => {
         if (!greeting) return;
 
-        setText(""); // Reset text when greeting changes
+        setText("");
         let i = 0;
 
         const timer = setInterval(() => {
             if (i < greeting.length) {
-                // Use functional update to ensure we append to the latest state
-                // and access the character at the current index 'i'
-                const char = greeting.charAt(i);
-                setText((prev) => prev + char);
+                setText((prev) => prev + greeting.charAt(i));
                 i++;
             } else {
                 clearInterval(timer);
-                if (onComplete) setTimeout(onComplete, 1000); // Wait a bit before triggering complete
+                setShowDate(true);
+                if (onComplete) setTimeout(onComplete, 1500); // Wait for date to show
             }
-        }, 80); // Slightly faster typing
+        }, 80);
 
         return () => clearInterval(timer);
     }, [greeting]);
 
     return (
-        <div className="flex items-center justify-center">
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight font-headline text-foreground text-center">
+        <div className="flex flex-col items-center justify-center text-center">
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight font-headline text-foreground">
                 {text}
-                <motion.span
-                    animate={{ opacity: [1, 0] }}
-                    transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-                    className="inline-block w-[3px] h-[0.8em] bg-primary ml-1 align-middle rounded-full"
-                />
+                {!showDate && (
+                    <motion.span
+                        animate={{ opacity: [1, 0] }}
+                        transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
+                        className="inline-block w-[3px] h-[0.8em] bg-primary ml-1 align-middle rounded-full"
+                    />
+                )}
             </h1>
+            <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: showDate ? 1 : 0, y: showDate ? 0 : 10 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-lg md:text-xl text-muted-foreground mt-2 font-medium"
+            >
+                {dateStr}
+            </motion.p>
         </div>
     );
 };
