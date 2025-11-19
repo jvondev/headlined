@@ -108,7 +108,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const [activeSlideIndex, setActiveSlideIndex] = useState(initialSlide);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [slideStyles, setSlideStyles] = useState<React.CSSProperties[]>([]);
-  
+
   const currentPost = posts[activeSlideIndex];
 
   const { toast } = useToast();
@@ -125,7 +125,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   const { isSaved, getSavedItem, addSavedItem, removeSavedItem, hasSaved, setHasSaved } = useSavedItems();
 
-  
+
   const scrollUp = useCallback(() => {
     if (emblaApi && emblaApi!.canScrollPrev()) {
       emblaApi.scrollPrev();
@@ -159,10 +159,10 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   const loadMorePosts = useCallback(async () => {
     if (isLoading || !hasMore) return;
-    
+
     setIsLoading(true);
     page.current += 1;
-    
+
     const { posts: newPosts, hasMore: newHasMore } = await getPaginatedPosts({
       page: page.current,
       topic_name: topicName, // Use topicName prop
@@ -170,15 +170,15 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     });
 
     if (newPosts.length > 0) {
-        setPosts(prev => {
-            const updatedPosts = [...prev, ...newPosts];
-            return updatedPosts;
-        });
+      setPosts(prev => {
+        const updatedPosts = [...prev, ...newPosts];
+        return updatedPosts;
+      });
     }
     setHasMore(newHasMore);
     setIsLoading(false);
   }, [isLoading, hasMore, topicName, searchQuery]);
-  
+
 
 
 
@@ -193,11 +193,11 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
       emblaApi.scrollSnapList().forEach((snap, snapIndex) => {
         const diffToTarget = snap - scrollProgress;
-                                const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
-                                const translateY = diffToTarget * 300; // Adjust vertical position
-                                newSlideStyles[snapIndex] = {
-                                  transform: `scale(${scale}) translateY(${translateY}px)`,
-                                  opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely
+        const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
+        const translateY = diffToTarget * 300; // Adjust vertical position
+        newSlideStyles[snapIndex] = {
+          transform: `scale(${scale}) translateY(${translateY}px)`,
+          opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely
         };
       });
       setSlideStyles(newSlideStyles);
@@ -217,16 +217,16 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     if (!emblaApi) return;
 
     const onSettle = (api: UseEmblaCarouselType[1]) => {
-        const newIndex = api!.selectedScrollSnap();
-        setActiveSlideIndex(newIndex);
-        
-        if (hasMore && !isLoading && newIndex >= posts.length - 3) {
-            loadMorePosts();
-        }
+      const newIndex = api!.selectedScrollSnap();
+      setActiveSlideIndex(newIndex);
+
+      if (hasMore && !isLoading && newIndex >= posts.length - 3) {
+        loadMorePosts();
+      }
     };
 
     emblaApi.on("settle", onSettle);
-    
+
     return () => {
       emblaApi.off("settle", onSettle);
     };
@@ -236,7 +236,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
 
   const handleCategoryChange = (category: string) => {
-    
+
   };
 
   const currentItemId = useMemo(() => {
@@ -258,18 +258,18 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     addSavedItem(item);
     toast({ title: "Saved!", description: "Your item and note have been saved." });
     if (!hasSaved(item.id)) {
-        setHasSaved(item.id, true);
+      setHasSaved(item.id, true);
     }
   };
-  
+
   const handleRemoveFromSaved = (id: string) => {
     removeSavedItem(id);
     toast({ title: "Removed", description: "Removed from your saved items." });
     if (hasSaved(id)) {
-        setHasSaved(id, false);
+      setHasSaved(id, false);
     }
   }
-  
+
   const isCurrentItemSaved = isSaved(currentItemId);
   const currentSavedItem = getSavedItem(currentItemId);
 
@@ -294,13 +294,13 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     fullItemData = { ...itemToSave, postData: currentPost };
 
     if (isCurrentItemSaved) {
-        setIsSaveDialogOpen(true);
+      setIsSaveDialogOpen(true);
     } else {
-        addSavedItem(fullItemData);
-        toast({ title: "Saved!", description: "Added to your saved items." });
-        if (!hasSaved(fullItemData.id)) {
-            setHasSaved(fullItemData.id, true);
-        }
+      addSavedItem(fullItemData);
+      toast({ title: "Saved!", description: "Added to your saved items." });
+      if (!hasSaved(fullItemData.id)) {
+        setHasSaved(fullItemData.id, true);
+      }
     }
   };
 
@@ -327,26 +327,26 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return (
       <>
         {posts.map((post, index) => (
-                                                                                                                                                                                <div
-                                                                                                                                                                                  className="relative min-w-0 flex-[0_0_100%] h-full flex justify-center py-2 px-4 md:py-4 md:px-8 lg:py-8 lg:px-16 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
-                                                                                                                                                                      key={`${post.slug}-${index}-${topicName || searchQuery}`}
-                                                                                                                                                                      role="group"
-                                                                                                                                                                      aria-roledescription="slide"
-                                                                                                                                                                      aria-label={`Post ${index + 1} of ${posts.length}`}
-                                                                                                                                                                      style={slideStyles[index]}
-                                                                                                                                                                    >              {post.slug === "home" ? (
-                <HomepagePostSlide />
-              ) : (
-                <div className="w-full h-full max-h-[85vh] md:max-h-[75vh] lg:max-h-[65vh] lg:max-w-3xl">
-                  <PostView
-                    post={post}
-                    isActive={index === activeSlideIndex}
-                    emblaApi={emblaApi}
-                  />
-                </div>              )}
+          <div
+            className="relative min-w-0 flex-[0_0_100%] h-full flex justify-center py-2 px-4 md:py-4 md:px-8 lg:py-8 lg:px-16 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
+            key={`${post.slug}-${index}-${topicName || searchQuery}`}
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`Post ${index + 1} of ${posts.length}`}
+            style={slideStyles[index]}
+          >              {post.slug === "home" ? (
+            <HomepagePostSlide />
+          ) : (
+            <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh] lg:max-w-4xl">
+              <PostView
+                post={post}
+                isActive={index === activeSlideIndex}
+                emblaApi={emblaApi}
+              />
+            </div>)}
           </div>
         ))}
-         {isLoading && (
+        {isLoading && (
           <div className="relative min-w-0 flex-[0_0_100%] h-full flex items-center justify-center">
             <div className="text-center">
               <p className="text-lg text-muted-foreground">Loading more...</p>
@@ -358,14 +358,14 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   }
 
   if (!currentPost && posts.length > 0) {
-    return null; 
+    return null;
   }
 
   const SaveIcon = isCurrentItemSaved ? Pencil : Bookmark;
   const saveIconClassName = isCurrentItemSaved ? 'fill-current' : '';
 
   return (
-      <CarouselContext.Provider value={{ currentPostSlug: currentPost?.slug }}>
+    <CarouselContext.Provider value={{ currentPostSlug: currentPost?.slug }}>
       <div className="relative flex h-full w-full flex-col items-center justify-center">
 
         <div className="overflow-hidden h-full w-full" ref={emblaRef} role="region" aria-roledescription="carousel" aria-label="Posts Carousel">
@@ -373,11 +373,11 @@ export const PostCarousel: FC<PostCarouselProps> = ({
             {renderContent()}
           </div>
         </div>
-        
 
 
 
-        
+
+
         {itemToSave && (
           <SaveDialog
             open={isSaveDialogOpen}

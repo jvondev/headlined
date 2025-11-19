@@ -4,7 +4,7 @@ import type { Post } from "@/types";
 import React, { useEffect, type FC, useMemo, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Share2, ExternalLink, X, Sparkles, Clock, ChevronRight } from "lucide-react";
@@ -35,14 +35,14 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
           onComplete?.();
         }
       }
-    }, 10); // Slightly faster for better reading flow
+    }, 10);
     return () => clearInterval(timer);
   }, [text, onComplete]);
 
   return (
-    <p className="text-base md:text-lg leading-relaxed font-sans text-neutral-200/90">
+    <p className="text-base md:text-lg leading-relaxed font-sans text-foreground">
       {displayedText}
-      {!hasCompleted.current && <span className="inline-block w-[2px] h-5 ml-1 bg-blue-400 animate-pulse align-middle" />}
+      {!hasCompleted.current && <span className="inline-block w-[2px] h-5 ml-1 bg-primary animate-pulse align-middle" />}
     </p>
   );
 };
@@ -89,144 +89,176 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
     return `${minutes} min read`;
   }, [summaryText]);
 
+  const handleDragEnd = (event: any, info: PanInfo) => {
+    if (info.offset.y > 150 || info.velocity.y > 500) {
+      setIsExpanded(false);
+    }
+  };
+
   return (
     <>
       <motion.div
         className={cn(
-          "relative w-full h-full rounded-[32px] overflow-hidden cursor-pointer bg-neutral-900 group",
+          "relative w-full h-full rounded-[40px] overflow-hidden cursor-pointer bg-card border border-border/50 shadow-sm group",
           isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
         )}
         layoutId={`card-container-${uniqueId}`}
         onClick={handleCardClick}
-        whileHover={{ scale: 0.98 }}
+        whileHover={{ scale: 0.99 }}
         transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
       >
-        {/* Background Image with Zoom Effect */}
+        {/* Background Image with Blur & Zoom Effect */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.img
             src={post.thumbnail_url || ""}
             alt={post.title}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 opacity-80"
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 opacity-90"
             layoutId={`image-${uniqueId}`}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/80" />
         </div>
 
-        {/* Card Content */}
-        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
-          <motion.div layoutId={`header-${uniqueId}`} className="space-y-3">
-            {/* Meta Tags */}
-            <div className="flex items-center gap-3 text-xs font-medium tracking-wider text-neutral-400 uppercase">
-              <span className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/5 text-white">
+        {/* Card Content - Neo-Minimalist Layout */}
+        <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
+          <motion.div layoutId={`header-${uniqueId}`} className="space-y-4">
+            {/* Meta Tags - Glass Pill */}
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-medium text-white/90 tracking-wide uppercase">
                 News
               </span>
-              <span>•</span>
-              <span>{new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+              <span className="text-xs font-medium text-white/70 tracking-wide uppercase">
+                {new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+              </span>
             </div>
 
-            {/* Title */}
-            <h2 className="font-serif text-2xl md:text-3xl font-medium text-white leading-tight line-clamp-3 text-balance drop-shadow-sm">
+            {/* Title - Clean Sans-Serif */}
+            <h2 className="font-sans text-3xl md:text-4xl font-bold text-white leading-tight tracking-tight text-balance drop-shadow-lg">
               {post.title}
             </h2>
           </motion.div>
 
-          {/* Subtle "Read" Indicator on Hover */}
-          <div className="h-0 overflow-hidden group-hover:h-8 transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 mt-0 group-hover:mt-4">
-            <div className="flex items-center gap-2 text-sm font-medium text-white/80">
-              <span>Read Summary</span>
-              <ChevronRight className="w-4 h-4" />
+          {/* Subtle Interaction Hint */}
+          <div className="h-0 overflow-hidden group-hover:h-10 transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 mt-0 group-hover:mt-6">
+            <div className="flex items-center gap-2 text-sm font-medium text-white/90">
+              <span className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                <ChevronRight className="w-4 h-4" />
+              </span>
+              <span>View Details</span>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Expanded View Portal */}
-      {mounted && isExpanded && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4">
-          {/* Backdrop */}
-          <motion.div
-            className="absolute inset-0 bg-black/60 backdrop-blur-md"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsExpanded(false)}
-          />
-
-          {/* Main Card Container */}
-          <motion.div
-            className="relative w-full h-[92vh] md:h-[85vh] md:max-w-2xl md:rounded-[40px] rounded-t-[32px] overflow-hidden bg-neutral-900 shadow-2xl flex flex-col"
-            layoutId={`card-container-${uniqueId}`}
-          >
-            {/* Close Button */}
-            <button
-              onClick={(e) => { e.stopPropagation(); setIsExpanded(false); }}
-              className="absolute top-6 right-6 z-50 p-2 rounded-full bg-black/20 backdrop-blur-xl border border-white/10 text-white hover:bg-white/20 transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Top Image Section */}
-            <div className="relative h-[40%] md:h-[45%] w-full shrink-0">
-              <motion.img
-                src={post.thumbnail_url || ""}
-                alt={post.title}
-                className="w-full h-full object-cover"
-                layoutId={`image-${uniqueId}`}
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-neutral-900" />
-            </div>
-
-            {/* Content Section */}
+      {/* Expanded View Portal - Raycast-inspired Floating Modal */}
+      {mounted && createPortal(
+        <AnimatePresence>
+          {isExpanded && (
             <motion.div
-              className="flex-1 relative bg-neutral-900 -mt-12 px-6 md:px-10 pb-8 overflow-y-auto no-scrollbar"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              {/* Header */}
-              <motion.div layoutId={`header-${uniqueId}`} className="mb-8 pt-4">
-                <div className="flex items-center gap-3 text-xs font-medium tracking-wider text-neutral-400 uppercase mb-4">
-                  <span className="text-blue-400 font-bold">AI Briefing</span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {readingTime}</span>
-                </div>
-                <h1 className="font-serif text-3xl md:text-4xl font-medium text-white leading-tight text-balance">
-                  {post.title}
-                </h1>
-              </motion.div>
+              {/* Backdrop with Blur */}
+              <motion.div
+                className="absolute inset-0 bg-background/60 backdrop-blur-3xl"
+                onClick={() => setIsExpanded(false)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
 
-              {/* AI Summary Box */}
-              <div className="relative mb-8">
-                <div className="absolute -left-3 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full opacity-70" />
-                <div className="pl-4">
-                  <div className="flex items-center gap-2 mb-3 text-blue-300/80 text-sm font-medium">
-                    <Sparkles className="w-4 h-4" />
-                    <span>Key Insights</span>
-                  </div>
-                  <TypewriterText text={summaryText} />
+              {/* Modal Container */}
+              <motion.div
+                className="relative w-full h-[92vh] md:h-[85vh] md:max-w-4xl bg-card/90 backdrop-blur-2xl border border-white/20 md:rounded-[40px] rounded-t-[40px] shadow-2xl overflow-hidden flex flex-col"
+                layoutId={`card-container-${uniqueId}`}
+                drag="y"
+                dragConstraints={{ top: 0, bottom: 0 }}
+                dragElastic={0.2}
+                onDragEnd={handleDragEnd}
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              >
+                {/* Drag Handle / Header */}
+                <div className="absolute top-0 left-0 right-0 h-14 flex justify-center items-center z-50 bg-gradient-to-b from-card/50 to-transparent pointer-events-none">
+                  <div className="w-12 h-1.5 bg-foreground/20 rounded-full backdrop-blur-md" />
                 </div>
-              </div>
 
-              {/* Actions */}
-              <div className="mt-auto pt-4 flex flex-col gap-3">
-                <Button
-                  className="w-full h-14 rounded-2xl bg-white text-neutral-900 hover:bg-neutral-200 font-semibold text-lg shadow-lg shadow-white/5 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-                  onClick={() => window.open(post.link, "_blank")}
+                {/* Close Button (Desktop Hover / Mobile Tap) */}
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  className="absolute top-6 right-6 z-50 p-2 rounded-full bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 transition-colors backdrop-blur-md"
                 >
-                  Read Full Story
-                  <ExternalLink className="w-5 h-5 opacity-60" />
-                </Button>
+                  <X className="w-5 h-5 text-foreground/70" />
+                </button>
 
-                <div className="flex items-center justify-center gap-4 mt-2">
-                  <Button variant="ghost" size="sm" className="text-neutral-400 hover:text-white hover:bg-white/5 rounded-full">
-                    <Share2 className="w-4 h-4 mr-2" />
-                    Share
-                  </Button>
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar">
+                  {/* Hero Section */}
+                  <div className="relative h-[40vh] w-full">
+                    <motion.img
+                      src={post.thumbnail_url || ""}
+                      alt={post.title}
+                      className="w-full h-full object-cover"
+                      layoutId={`image-${uniqueId}`}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+
+                    {/* Floating Title on Image */}
+                    <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
+                      <motion.div layoutId={`header-${uniqueId}`}>
+                        <div className="flex items-center gap-3 mb-4">
+                          <span className="px-3 py-1 rounded-full bg-background/30 backdrop-blur-xl border border-white/10 text-xs font-medium text-foreground/90 tracking-wide uppercase shadow-sm">
+                            AI Briefing
+                          </span>
+                          <span className="flex items-center gap-1.5 text-xs font-medium text-foreground/80 backdrop-blur-md px-2 py-1 rounded-full bg-background/20">
+                            <Clock className="w-3 h-3" />
+                            {readingTime}
+                          </span>
+                        </div>
+                        <h1 className="font-sans text-3xl md:text-5xl font-bold text-foreground leading-tight tracking-tight text-balance drop-shadow-sm">
+                          {post.title}
+                        </h1>
+                      </motion.div>
+                    </div>
+                  </div>
+
+                  {/* Content Body */}
+                  <div className="px-8 md:px-12 pb-24 max-w-3xl mx-auto">
+                    {/* AI Summary Block - Raycast Style */}
+                    <div className="mb-10 p-6 rounded-3xl bg-primary/5 border border-primary/10 backdrop-blur-sm">
+                      <div className="flex items-center gap-3 mb-4">
+                        <Sparkles className="w-5 h-5 text-primary" />
+                        <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">Key Insights</h3>
+                      </div>
+                      <div className="text-lg leading-relaxed text-foreground/90 font-sans">
+                        <TypewriterText text={summaryText} />
+                      </div>
+                    </div>
+
+                    {/* Action Bar */}
+                    <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-8 border-t border-border/50">
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm" className="rounded-full border-border/50 bg-transparent hover:bg-accent">
+                          <Share2 className="w-4 h-4 mr-2" /> Share
+                        </Button>
+                      </div>
+                      <Button
+                        className="w-full sm:w-auto rounded-full px-8 h-12 font-medium text-base shadow-lg shadow-primary/20"
+                        onClick={() => window.open(post.link, "_blank")}
+                      >
+                        Read Full Story <ExternalLink className="w-4 h-4 ml-2" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        </div>,
+          )}
+        </AnimatePresence>,
         document.body
       )}
     </>
