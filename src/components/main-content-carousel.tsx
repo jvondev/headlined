@@ -21,7 +21,7 @@ type CarouselItem = {
 
 type MainContentCarouselProps = {
   emblaRef: (instance: HTMLElement | null) => void;
-  emblaApi: EmblaCarouselType | undefined;
+  emblaApi: UseEmblaCarouselType[1] | undefined;
   allFilterItems: CarouselItem[];
   selectedIndex: number;
   topics: Topic[];
@@ -45,35 +45,23 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
       <div className="flex h-full">
         <CarouselStateProvider>
           {allFilterItems.map((item, index) => {
-            const renderThreshold = 1; // Render current, previous, and next slide
-            const shouldRender =
-              index >= selectedIndex - renderThreshold &&
-              index <= selectedIndex + renderThreshold;
-
             return (
               <div
                 key={item.name}
                 className="flex-[0_0_100%] h-full will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
                 style={slideStyles[index]}
               >
-                {shouldRender ? (
-                  <>
-                    {item.name === "Saved" && <SavedContent />}
-                    {item.name === "Dashboard" && <DashboardContent />}
-                    {(item.type === "topic" || item.type === "interest") && (
-                      <PostCarousel
-                        shouldFetchPaginatedPosts={selectedIndex === index}
-                        topicName={item.type === "topic" ? item.name : undefined}
-                        searchQuery={item.type === "interest" ? item.name : undefined}
-                      />
-                    )}
-                    {item.name === "Explore" && <ExploreContent />}
-                    {item.name === "Search" && <SearchContent isLoading={false} />}
-                  </>
-                ) : (
-                  // Render a lightweight placeholder when not in view
-                  <div className="h-full w-full bg-transparent" />
+                {item.name === "Saved" && <SavedContent />}
+                {item.name === "Dashboard" && <DashboardContent />}
+                {(item.type === "topic" || item.type === "interest") && (
+                  <PostCarousel
+                    shouldFetchPaginatedPosts={selectedIndex === index}
+                    topicName={item.type === "topic" ? item.name : undefined}
+                    searchQuery={item.type === "interest" ? item.name : undefined}
+                  />
                 )}
+                {item.name === "Explore" && <ExploreContent />}
+                {item.name === "Search" && <SearchContent isLoading={false} />}
               </div>
             );
           })}

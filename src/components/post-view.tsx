@@ -35,12 +35,12 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
           onComplete?.();
         }
       }
-    }, 10);
+    }, 30); // Slower typing speed for more natural feel
     return () => clearInterval(timer);
   }, [text, onComplete]);
 
   return (
-    <p className="text-base md:text-lg leading-relaxed font-sans text-foreground">
+    <p className="text-base md:text-lg leading-relaxed font-sans text-primary-foreground">
       {displayedText}
       {!hasCompleted.current && <span className="inline-block w-[2px] h-5 ml-1 bg-primary animate-pulse align-middle" />}
     </p>
@@ -90,7 +90,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   }, [summaryText]);
 
   const handleDragEnd = (event: any, info: PanInfo) => {
-    if (info.offset.y > 150 || info.velocity.y > 500) {
+    // Allow swipe up or down to dismiss
+    if (Math.abs(info.offset.y) > 150 || Math.abs(info.velocity.y) > 500) {
       setIsExpanded(false);
     }
   };
@@ -99,7 +100,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
     <>
       <motion.div
         className={cn(
-          "relative w-full h-full rounded-[40px] overflow-hidden cursor-pointer bg-card border border-border/50 shadow-sm group",
+          "relative w-full h-full rounded-[24px] overflow-hidden cursor-pointer bg-card border border-border/50 shadow-sm group",
           isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
         )}
         layoutId={`card-container-${uniqueId}`}
@@ -108,19 +109,26 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
         transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
       >
         {/* Background Image with Blur & Zoom Effect */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.img
-            src={post.thumbnail_url || ""}
-            alt={post.title}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 opacity-90"
-            layoutId={`image-${uniqueId}`}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/80" />
+        <div className="absolute inset-0 overflow-hidden bg-muted/30 dark:bg-muted/10">
+          {post.thumbnail_url ? (
+            <motion.img
+              src={post.thumbnail_url}
+              alt=""
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 opacity-90"
+              layoutId={`image-${uniqueId}`}
+            />
+          ) : (
+            <motion.div
+              className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-zinc-800 dark:to-zinc-900"
+              layoutId={`image-${uniqueId}`}
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/60" />
         </div>
 
         {/* Card Content - Neo-Minimalist Layout */}
-        <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
-          <motion.div layoutId={`header-${uniqueId}`} className="space-y-4">
+        <div className="absolute inset-0 flex flex-col justify-between p-8 md:p-10">
+          <motion.div layoutId={`header-${uniqueId}`} className="space-y-4 pt-4">
             {/* Meta Tags - Glass Pill */}
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-medium text-white/90 tracking-wide uppercase">
@@ -131,7 +139,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
               </span>
             </div>
 
-            {/* Title - Clean Sans-Serif */}
+            {/* Title - Clean Sans-Serif - Moved to Top for better readability */}
             <h2 className="font-sans text-3xl md:text-4xl font-bold text-white leading-tight tracking-tight text-balance drop-shadow-lg">
               {post.title}
             </h2>
@@ -169,14 +177,21 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
                 onDragEnd={handleDragEnd}
               >
                 {/* Full Screen Morphing Image */}
-                <div className="absolute inset-0 overflow-hidden">
-                  <motion.img
-                    src={post.thumbnail_url || ""}
-                    alt={post.title}
-                    className="w-full h-full object-cover"
-                    layoutId={`image-${uniqueId}`}
-                    transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
-                  />
+                <div className="absolute inset-0 overflow-hidden bg-muted/30 dark:bg-muted/10">
+                  {post.thumbnail_url ? (
+                    <motion.img
+                      src={post.thumbnail_url}
+                      alt=""
+                      className="w-full h-full object-cover"
+                      layoutId={`image-${uniqueId}`}
+                      transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+                    />
+                  ) : (
+                    <motion.div
+                      className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-zinc-800 dark:to-zinc-900"
+                      layoutId={`image-${uniqueId}`}
+                    />
+                  )}
                   {/* Gradient Overlay for Text Readability - Calibrated for Productivity/Focus */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent opacity-90" />
                 </div>
@@ -226,7 +241,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
                         <span className="text-xs font-semibold uppercase tracking-wider">AI Summary</span>
                       </div>
 
-                      <div className="text-lg md:text-xl leading-relaxed text-white/90 font-sans font-light border-l-2 border-white/20 pl-4">
+                      <div className="text-lg md:text-xl leading-relaxed text-primary-foreground font-sans font-light border-l-2 border-white/80 pl-4">
                         <TypewriterText text={summaryText} />
                       </div>
                     </div>
