@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 interface GreetingProps {
@@ -25,6 +25,12 @@ export const Greeting = ({ onComplete }: GreetingProps) => {
         setDateStr(date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
     }, []);
 
+    const onCompleteRef = useRef(onComplete);
+
+    useEffect(() => {
+        onCompleteRef.current = onComplete;
+    }, [onComplete]);
+
     useEffect(() => {
         if (!greeting) return;
 
@@ -39,12 +45,12 @@ export const Greeting = ({ onComplete }: GreetingProps) => {
             } else {
                 clearInterval(timer);
                 setShowDate(true);
-                if (onComplete) setTimeout(onComplete, 1500);
+                if (onCompleteRef.current) setTimeout(onCompleteRef.current, 1500);
             }
         }, 80);
 
         return () => clearInterval(timer);
-    }, [greeting, onComplete]);
+    }, [greeting]);
 
     return (
         <div className="flex flex-col items-center justify-center text-center">
