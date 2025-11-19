@@ -1,33 +1,34 @@
-'use client';
+"use client";
 
 import { useState, useCallback } from 'react';
-import { useOnboardingStatus } from '@/hooks/use-onboarding-status';
-import { OnboardingFlow } from '@/components/onboarding/onboarding-flow';
-import { FullScreenContext } from '@/context/full-screen-context';
-import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/toaster";
-import { OnboardingProvider } from '@/context/onboarding-provider';
+import { ThemeProvider } from '@/components/theme-provider';
+import { FullScreenContext } from '@/context/full-screen-context';
+import { BackgroundSyncProvider } from '@/components/background-sync-provider';
+import { FooterWrapper } from '@/components/common/FooterWrapper';
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  const { hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus();
+export function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   const toggleFullScreen = useCallback(() => {
     setIsFullScreen(prev => !prev);
   }, []);
 
-  const showOnboarding = hasSeenOnboarding === false;
-
   return (
-    <OnboardingProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="light"
+      enableSystem
+      disableTransitionOnChange
+    >
       <FullScreenContext.Provider value={{ isFullScreen, toggleFullScreen }}>
-        <div className="flex-grow overflow-y-auto no-scrollbar">
+        <BackgroundSyncProvider />
+        <div className="h-full">
           {children}
-          {showOnboarding && <OnboardingFlow onClose={markOnboardingComplete} />}
         </div>
-        
+        <FooterWrapper />
         <Toaster />
       </FullScreenContext.Provider>
-    </OnboardingProvider>
+    </ThemeProvider>
   );
 }
