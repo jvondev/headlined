@@ -1,12 +1,12 @@
 "use client"
 
-import { motion, MotionProps } from "motion/react"
+import { motion, MotionProps } from "framer-motion"
 
 import { cn } from "@/lib/utils"
 
 interface LineShadowTextProps
   extends Omit<React.HTMLAttributes<HTMLElement>, keyof MotionProps>,
-    MotionProps {
+  MotionProps {
   shadowColor?: string
   as?: React.ElementType
 }
