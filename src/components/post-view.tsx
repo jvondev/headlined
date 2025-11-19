@@ -40,7 +40,12 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
     return () => clearInterval(timer);
   }, [text, onComplete]);
 
-  return <p className="text-lg leading-relaxed font-serif text-foreground/90">{displayedText}</p>;
+  return (
+    <p className="text-lg leading-relaxed font-serif text-slate-700">
+      {displayedText}
+      {!hasCompleted.current && <span className="inline-block w-[2px] h-5 ml-1 bg-slate-400 animate-pulse align-middle" />}
+    </p>
+  );
 };
 
 const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
@@ -53,29 +58,6 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  // Parallax Logic
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseX = useSpring(x, { stiffness: 300, damping: 30 });
-  const mouseY = useSpring(y, { stiffness: 300, damping: 30 });
-
-  const imageX = useTransform(mouseX, [-0.5, 0.5], ["-5%", "5%"]);
-  const imageY = useTransform(mouseY, [-0.5, 0.5], ["-5%", "5%"]);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isExpanded) return;
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-    const xPct = (e.clientX - left) / width - 0.5;
-    const yPct = (e.clientY - top) / height - 0.5;
-    x.set(xPct);
-    y.set(yPct);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
 
   // Peek Logic
   const handlePointerDown = () => {
@@ -127,48 +109,46 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
     <>
       <motion.div
         className={cn(
-          "relative w-full h-full rounded-[32px] overflow-hidden cursor-pointer transition-all duration-500 shadow-2xl hover:shadow-3xl",
+          "relative w-full h-full rounded-2xl overflow-hidden cursor-pointer shadow-xl",
           isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
         )}
-        layoutId={`card-${uniqueId}`}
+        layoutId={`card-container-${uniqueId}`}
         onClick={handleCardClick}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
         style={{
           backgroundImage: paperNoise,
           backgroundColor: '#fdfbf7',
           ...paperStyle,
         }}
       >
-        {/* Card Content (Collapsed) - Full Image Focus */}
+        {/* Card Content (Collapsed) */}
         <motion.div className="relative w-full h-full overflow-hidden bg-neutral-900">
           <motion.img
             src={post.thumbnail_url}
             alt={post.title}
             className="absolute inset-0 w-full h-full object-cover opacity-90"
-            style={{ x: imageX, y: imageY, scale: 1.1 }}
             layoutId={`image-${uniqueId}`}
           />
-          {/* Strong Gradient for Title Readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          {/* Gradient for Title Readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent" />
 
-          <motion.div className="absolute bottom-0 left-0 p-6 md:p-8 w-full" layoutId={`header-${uniqueId}`}>
-            <div className="flex items-center space-x-2 text-[10px] font-bold tracking-widest uppercase text-white/70 mb-3">
-              <span className="bg-white/10 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 shadow-sm">News</span>
+          {/* Title at TOP */}
+          <motion.div className="absolute top-0 left-0 p-6 w-full" layoutId={`header-${uniqueId}`}>
+            <div className="flex items-center space-x-2 text-[10px] font-bold tracking-widest uppercase text-white/80 mb-3">
+              <span className="bg-white/20 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 shadow-sm">News</span>
               <span>•</span>
               <span>{new Date().toLocaleDateString()}</span>
             </div>
-            <h1 className="font-headline font-bold text-white drop-shadow-xl leading-[1.1] text-3xl md:text-4xl line-clamp-3 tracking-tight">
+            <h1 className="font-headline font-bold text-white drop-shadow-md leading-tight text-2xl line-clamp-3 tracking-tight">
               {post.title}
             </h1>
           </motion.div>
 
-          {/* Subtle "Tap to expand" hint */}
-          <div className="absolute top-6 right-6">
-            <div className="bg-white/10 backdrop-blur-md p-2 rounded-full border border-white/10 text-white/80 shadow-lg">
+          {/* Hint Icon */}
+          <div className="absolute bottom-6 right-6">
+            <div className="bg-white/20 backdrop-blur-md p-2 rounded-full border border-white/10 text-white/90 shadow-lg">
               <Maximize2 className="w-4 h-4" />
             </div>
           </div>
@@ -181,25 +161,24 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
               initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
               animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
               exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-              className="absolute inset-0 z-40 bg-black/60 flex flex-col justify-center items-center text-center p-8"
+              className="absolute inset-0 z-40 bg-black/40 flex flex-col justify-center items-center text-center p-8"
             >
-              <div className="bg-white/10 backdrop-blur-2xl p-8 rounded-3xl shadow-2xl max-w-sm mx-auto border border-white/10 text-white">
-                <h3 className="font-headline text-xl font-bold mb-4">{post.title}</h3>
-                <p className="text-white/80 line-clamp-6 font-serif leading-relaxed text-sm">
+              <div className="bg-white/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl max-w-xs mx-auto border border-white/50 text-slate-900">
+                <h3 className="font-headline text-lg font-bold mb-3">{post.title}</h3>
+                <p className="text-slate-700 line-clamp-5 font-serif leading-relaxed text-sm">
                   {summaryText}
                 </p>
-                <p className="mt-6 text-[10px] text-white/60 font-bold uppercase tracking-widest">Release to close</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
 
-      {/* Expanded View Portal - Immersive Story Mode */}
+      {/* Expanded View Portal - Premium Light Glass */}
       {mounted && isExpanded && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
           <motion.div
-            className="absolute inset-0 bg-black/90 backdrop-blur-xl"
+            className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -207,84 +186,78 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
           />
           <motion.div
             className="relative w-full h-full md:w-[90vw] md:h-[90vh] md:max-w-[500px] md:rounded-[40px] overflow-hidden shadow-2xl bg-black"
-            layoutId={`card-${uniqueId}`}
+            layoutId={`card-container-${uniqueId}`}
           >
-            {/* Full Screen Background Image */}
+            {/* Full Screen Image */}
             <motion.img
               src={post.thumbnail_url}
               alt={post.title}
-              className="absolute inset-0 w-full h-full object-cover opacity-60"
+              className="absolute inset-0 w-full h-full object-cover"
               layoutId={`image-${uniqueId}`}
+              initial={{ scale: 1 }}
+              animate={{ scale: 1.05 }}
+              transition={{ duration: 10, ease: "linear" }}
             />
 
-            {/* Gradient Blur Overlay - "Story" Style */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/90" />
-            <div className="absolute inset-0 backdrop-blur-[2px]" />
+            {/* Header Actions (Top) */}
+            <div className="absolute top-6 left-6 right-6 z-20 flex items-center justify-between">
+              {/* AI Briefing Label */}
+              <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/90">AI Briefing</span>
+              </div>
 
-            {/* Content Container */}
-            <div className="absolute inset-0 flex flex-col p-8">
-              {/* Header Actions */}
-              <div className="flex items-center justify-between mb-6 pt-4">
-                <div className="flex items-center space-x-3">
-                  <div className="h-8 w-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10">
-                    <span className="font-bold text-white text-xs">AI</span>
-                  </div>
-                  <span className="text-white/90 text-sm font-medium tracking-wide">Briefing</span>
-                </div>
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full" onClick={() => setIsExpanded(false)}>
+              {/* Actions */}
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full bg-black/20 backdrop-blur-md">
+                  <Share2 className="h-5 w-5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full bg-black/20 backdrop-blur-md" onClick={() => setIsExpanded(false)}>
                   <X className="h-6 w-6" />
                 </Button>
               </div>
-
-              {/* Main Content Block */}
-              <div className="relative z-10 my-auto flex flex-col justify-center">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="space-y-2"
-                >
-                  {/* Title */}
-                  <motion.div layoutId={`header-${uniqueId}`} className="mb-6">
-                    <h1 className="font-headline font-bold text-3xl md:text-4xl leading-tight text-white drop-shadow-lg text-center">
-                      {post.title}
-                    </h1>
-                  </motion.div>
-
-                  {/* Quote Block with Dividers */}
-                  <div className="relative py-8">
-                    {/* Decorative Quote Icon */}
-                    <div className="absolute -top-4 left-0 text-white/20 text-6xl font-serif leading-none">“</div>
-
-                    {/* Top Divider */}
-                    <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent mb-6" />
-
-                    {/* Text Content */}
-                    <div className="relative px-4">
-                      <div className="prose prose-invert prose-lg max-w-none font-serif leading-relaxed text-white/95 text-center">
-                        <TypewriterText text={summaryText} />
-                      </div>
-                    </div>
-
-                    {/* Bottom Divider */}
-                    <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent mt-6" />
-                  </div>
-                </motion.div>
-              </div>
-
-              {/* Footer Actions */}
-              <div className="mt-auto pt-8 pb-4">
-                <div className="flex items-center justify-between gap-4">
-                  <Button className="flex-1 rounded-full h-14 text-lg font-bold bg-white text-black hover:bg-white/90 border-0 shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-shadow" onClick={() => window.open(post.link, "_blank")}>
-                    Read Full Story
-                    <ExternalLink className="ml-2 h-5 w-5" />
-                  </Button>
-                  <Button variant="outline" size="icon" className="rounded-full h-14 w-14 border-white/20 bg-white/10 text-white hover:bg-white/20 backdrop-blur-md">
-                    <Share2 className="h-6 w-6" />
-                  </Button>
-                </div>
-              </div>
             </div>
+
+            {/* Floating Glass Panel */}
+            <motion.div
+              className="absolute bottom-0 left-0 right-0 p-4 z-20"
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200, delay: 0.1 }}
+            >
+              <div className="bg-white/85 backdrop-blur-2xl rounded-[32px] p-8 shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/50 flex flex-col gap-6">
+
+                {/* Header inside Glass */}
+                <motion.div layoutId={`header-${uniqueId}`}>
+                  <div className="flex items-center space-x-2 text-[10px] font-bold tracking-widest uppercase text-slate-500 mb-2">
+                    <span className="bg-slate-200/50 px-2 py-1 rounded-full">News</span>
+                    <span>•</span>
+                    <span>{new Date().toLocaleDateString()}</span>
+                  </div>
+                  <h1 className="font-headline font-bold text-2xl md:text-3xl leading-tight text-slate-900">
+                    {post.title}
+                  </h1>
+                </motion.div>
+
+                {/* Divider */}
+                <div className="w-full h-[1px] bg-slate-200" />
+
+                {/* Summary Text */}
+                <div className="prose prose-lg max-w-none font-serif leading-relaxed text-slate-700">
+                  <TypewriterText text={summaryText} />
+                </div>
+
+                {/* Action Button */}
+                <Button
+                  className="w-full rounded-full h-14 text-lg font-bold bg-slate-900 text-white hover:bg-slate-800 shadow-lg hover:shadow-xl transition-all active:scale-95"
+                  onClick={() => window.open(post.link, "_blank")}
+                >
+                  Read Full Story
+                  <ExternalLink className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
+            </motion.div>
+
           </motion.div>
         </div>,
         document.body
