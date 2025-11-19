@@ -9,7 +9,7 @@ import { Post } from "@/types";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
-import { TrendingUp, Newspaper, Bookmark, Search, Compass, ArrowUpRight, History, X } from "lucide-react";
+import { TrendingUp, Newspaper, Bookmark, Search, Compass, ArrowUpRight, History, X, PieChart, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -64,6 +64,22 @@ export const DashboardContent: FC = () => {
     setViewState("dashboard");
   };
 
+  // Group history by topic
+  const groupedHistory = readHistory.reduce((acc, post) => {
+    const topic = post.topic || 'Other';
+    if (!acc[topic]) acc[topic] = [];
+    acc[topic].push(post);
+    return acc;
+  }, {} as Record<string, (Post & { readAt: string })[]>);
+
+  const topicStats = Object.entries(groupedHistory)
+    .map(([topic, posts]) => ({
+      topic,
+      count: posts.length,
+      percentage: (posts.length / readHistory.length) * 100
+    }))
+    .sort((a, b) => b.count - a.count);
+
   // Animation Variants
   const containerVariants = {
     intro: {
@@ -74,8 +90,8 @@ export const DashboardContent: FC = () => {
     dashboard: {
       justifyContent: "flex-start",
       alignItems: "stretch",
-      gap: "0.5rem", // Reduced gap
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+      gap: "0.5rem",
+      transition: { duration: 0.8, ease: "easeInOut" }
     }
   };
 
@@ -133,57 +149,117 @@ export const DashboardContent: FC = () => {
               animate="visible"
               className="w-full max-w-6xl mx-auto mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[180px] md:auto-rows-[220px]"
             >
-              {/* Read History Widget (Main Focus) */}
+              {/* Read History Widget (Main Focus - Enhanced) */}
               <motion.div variants={cardVariants} className="col-span-2 row-span-2 relative group">
-                <Card className="h-full w-full overflow-hidden bg-card/50 backdrop-blur-xl border-white/10 dark:border-white/5 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02]">
+                <Card className="h-full w-full overflow-hidden bg-card/50 backdrop-blur-xl border-white/10 dark:border-white/5 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] flex flex-col">
                   <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="p-6 h-full flex flex-col">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="p-3 bg-primary/10 rounded-2xl text-primary">
-                          <History className="w-6 h-6" />
-                        </div>
-                        <div>
-                          <h2 className="text-2xl font-bold">Read Today</h2>
-                          <p className="text-xs text-muted-foreground">Your daily digest</p>
-                        </div>
+
+                  {/* Widget Header */}
+                  <div className="p-6 pb-2 flex items-center justify-between shrink-0 z-10">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
+                        <History className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold tracking-tight">Read Today</h2>
+                        <p className="text-xs text-muted-foreground font-medium">
+                          {readHistory.length} articles • {topicStats.length} topics
+                        </p>
                       </div>
                     </div>
+                    {readHistory.length > 3 && (
+                      <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-muted-foreground">
+                        <BarChart3 className="w-3 h-3" />
+                        <span>Insight Available</span>
+                      </div>
+                    )}
+                  </div>
 
-                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
-                      {readHistory.length > 0 ? (
-                        <div className="space-y-3">
-                          {readHistory.map(post => (
-                            <div key={post.slug} className="group/item flex gap-3 items-start p-3 rounded-xl hover:bg-accent/50 transition-colors relative">
-                              {post.thumbnail_url && (
-                                <img src={post.thumbnail_url} className="w-16 h-16 rounded-lg object-cover bg-muted shrink-0" />
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <h3 className="font-medium line-clamp-2 text-sm leading-snug">{post.title}</h3>
-                                <div className="flex items-center gap-2 mt-1">
-                                  <span className="text-[10px] font-medium uppercase tracking-wider text-primary/60 bg-primary/5 px-1.5 py-0.5 rounded">
-                                    {post.topic || 'Article'}
-                                  </span>
-                                  <span className="text-[10px] text-muted-foreground">
-                                    {new Date(post.readAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </span>
+                  {/* Content Area */}
+                  <div className="flex-1 min-h-0 flex flex-col md:flex-row gap-6 p-6 pt-2">
+
+                    {/* Left: Insights / Graph (Visible if data exists) */}
+                    {readHistory.length > 0 && (
+                      <div className="w-full md:w-1/3 shrink-0 flex flex-col gap-4">
+                        <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-3">
+                          <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                            <PieChart className="w-4 h-4" />
+                            <span>Topic Distribution</span>
+                          </div>
+                          <div className="space-y-2">
+                            {topicStats.slice(0, 4).map((stat) => (
+                              <div key={stat.topic} className="space-y-1">
+                                <div className="flex justify-between text-[10px] uppercase tracking-wider font-medium opacity-70">
+                                  <span>{stat.topic}</span>
+                                  <span>{Math.round(stat.percentage)}%</span>
+                                </div>
+                                <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${stat.percentage}%` }}
+                                    transition={{ duration: 1, delay: 0.5 }}
+                                    className="h-full bg-primary/80 rounded-full"
+                                  />
                                 </div>
                               </div>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-6 w-6 opacity-0 group-hover/item:opacity-100 transition-opacity absolute top-2 right-2"
-                                onClick={(e) => handleRemoveFromHistory(e, post.slug)}
-                              >
-                                <X className="w-3 h-3" />
-                              </Button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {readHistory.length > 5 && (
+                          <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/10">
+                            <p className="text-xs font-medium text-primary mb-1">Daily Insight</p>
+                            <p className="text-sm text-muted-foreground leading-snug">
+                              You're diving deep into <span className="font-bold text-foreground">{topicStats[0].topic}</span> today. Great progress!
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Right: Grouped List */}
+                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 -mr-2">
+                      {readHistory.length > 0 ? (
+                        <div className="space-y-6">
+                          {Object.entries(groupedHistory).map(([topic, posts]) => (
+                            <div key={topic} className="space-y-2">
+                              <h3 className="sticky top-0 bg-card/95 backdrop-blur-md py-2 z-10 text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary/50" />
+                                {topic}
+                              </h3>
+                              <div className="space-y-2">
+                                {posts.map(post => (
+                                  <div key={post.slug} className="group/item flex gap-3 items-start p-2 rounded-xl hover:bg-white/5 transition-colors relative">
+                                    {post.thumbnail_url && (
+                                      <img src={post.thumbnail_url} className="w-12 h-12 rounded-lg object-cover bg-muted shrink-0" />
+                                    )}
+                                    <div className="flex-1 min-w-0 py-0.5">
+                                      <h4 className="font-medium text-sm leading-snug line-clamp-2 text-foreground/90 group-hover/item:text-primary transition-colors">
+                                        {post.title}
+                                      </h4>
+                                      <p className="text-[10px] text-muted-foreground mt-1">
+                                        {new Date(post.readAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                      </p>
+                                    </div>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-6 w-6 opacity-0 group-hover/item:opacity-100 transition-opacity absolute top-2 right-2 hover:bg-destructive/10 hover:text-destructive"
+                                      onClick={(e) => handleRemoveFromHistory(e, post.slug)}
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           ))}
                         </div>
                       ) : (
                         <div className="h-full flex flex-col items-center justify-center text-muted-foreground opacity-50">
-                          <History className="w-12 h-12 mb-2 stroke-1" />
-                          <p>No articles read yet.</p>
+                          <History className="w-12 h-12 mb-3 stroke-1" />
+                          <p className="font-medium">No articles read yet</p>
+                          <p className="text-xs">Tap an article to start tracking</p>
                         </div>
                       )}
                     </div>
