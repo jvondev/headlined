@@ -9,13 +9,12 @@ import { Post } from "@/types";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
-import { TrendingUp, Newspaper, Bookmark, Search, History, X, PieChart, BarChart3, Calendar, Layers, ArrowRight, Sparkles, Command, Zap, Grid } from "lucide-react";
+import { TrendingUp, Newspaper, Bookmark, Search, History, PieChart, Calendar, Layers, ArrowRight, Sparkles, Grid } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 export const DashboardContent: FC = () => {
-  const { subscribedTopics, loading: feedsLoading } = useSubscribedFeeds();
+  const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
   const [readHistory, setReadHistory] = useState<(Post & { readAt: string })[]>([]);
@@ -60,29 +59,68 @@ export const DashboardContent: FC = () => {
     return () => window.removeEventListener('read-history-updated', handleHistoryUpdate);
   }, [subscribedTopics, feedsLoading]);
 
-  const handleRemoveFromHistory = async (e: React.MouseEvent, slug: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    await removeFromReadHistory(slug);
-  };
-
   const handleIntroComplete = useCallback(() => {
     setViewState("dashboard");
   }, []);
 
-  // Group history by topic
-  const groupedHistory = readHistory.reduce((acc, post) => {
-    const topic = post.topic || 'Other';
-    if (!acc[topic]) acc[topic] = [];
-    acc[topic].push(post);
+  // Group history by Topics (based on post.topic field)
+  const groupedTopics = readHistory.reduce((acc, post) => {
+    const topicName = post.topic;
+    if (topicName && subscribedTopics.some(t => t.name === topicName)) {
+      if (!acc[topicName]) acc[topicName] = [];
+      acc[topicName].push(post);
+    }
     return acc;
   }, {} as Record<string, (Post & { readAt: string })[]>);
 
-  const topicStats = Object.entries(groupedHistory)
+  // Get all post slugs that are already in topics
+  const topicPostSlugs = new Set(
+    Object.values(groupedTopics).flat().map(post => post.slug)
+  );
+
+  // Group history by Interests (based on content matching with aliases)
+  // Exclude posts that are already categorized under topics
+  const groupedInterests = readHistory.reduce((acc, post) => {
+    // Skip if this post is already in a topic
+    if (topicPostSlugs.has(post.slug)) {
+      return acc;
+    }
+
+    subscribedInterests.forEach(interest => {
+      const searchTerms = [interest.name, ...(interest.aliases || [])];
+      const content = `${post.title} ${post.description || ''}`.toLowerCase();
+
+      const isMatch = searchTerms.some(term => content.includes(term.toLowerCase()));
+
+      if (isMatch) {
+        if (!acc[interest.name]) acc[interest.name] = [];
+        if (!acc[interest.name].some(p => p.slug === post.slug)) {
+          acc[interest.name].push(post);
+        }
+      }
+    });
+    return acc;
+  }, {} as Record<string, (Post & { readAt: string })[]>);
+
+  // Calculate stats for topics only
+  const topicStats = Object.entries(groupedTopics)
     .map(([topic, posts]) => ({
       topic,
       count: posts.length,
-      percentage: (posts.length / readHistory.length) * 100
+      percentage: Object.values(groupedTopics).flat().length > 0
+        ? (posts.length / Object.values(groupedTopics).flat().length) * 100
+        : 0
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  // Calculate stats for interests only
+  const interestStats = Object.entries(groupedInterests)
+    .map(([interest, posts]) => ({
+      interest,
+      count: posts.length,
+      percentage: Object.values(groupedInterests).flat().length > 0
+        ? (posts.length / Object.values(groupedInterests).flat().length) * 100
+        : 0
     }))
     .sort((a, b) => b.count - a.count);
 
@@ -97,7 +135,7 @@ export const DashboardContent: FC = () => {
       justifyContent: "flex-start",
       alignItems: "stretch",
       gap: "1rem",
-      transition: { duration: 0.8, ease: "circOut" }
+      transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
     }
   };
 
@@ -110,7 +148,7 @@ export const DashboardContent: FC = () => {
         delay: 0.3,
         staggerChildren: 0.1,
         duration: 0.6,
-        ease: "easeOut"
+        ease: [0.4, 0, 0.2, 1]
       }
     }
   };
@@ -189,7 +227,7 @@ export const DashboardContent: FC = () => {
                       <PieChart className="w-4 h-4" />
                       <span className="text-[10px] font-bold uppercase tracking-wider">Topics</span>
                     </div>
-                    <div className="flex-1 space-y-3 overflow-y-auto custom-scrollbar pr-1">
+                    <div className="flex-1 space-y-3 overflow-y-auto pr-1">
                       {topicStats.slice(0, 3).map((stat) => (
                         <div key={stat.topic} className="space-y-1.5">
                           <div className="flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -213,82 +251,140 @@ export const DashboardContent: FC = () => {
                   </Card>
                 </motion.div>
 
-                {/* Stats: Total Count (Small) */}
+                {/* Stats: Interest Distribution */}
                 <motion.div className="col-span-1 md:col-span-1">
-                  <Card className="h-full p-5 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-center items-center text-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
-                    <History className="w-6 h-6 text-primary mb-2 opacity-80" />
-                    <span className="text-4xl font-bold tabular-nums tracking-tight text-foreground">{readHistory.length}</span>
-                    <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">Articles Read</span>
+                  <Card className="h-full p-5 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-4">
+                      <Grid className="w-4 h-4" />
+                      <span className="text-[10px] font-bold uppercase tracking-wider">Interests</span>
+                    </div>
+                    <div className="flex-1 space-y-3 overflow-y-auto pr-1">
+                      {interestStats.slice(0, 3).map((stat) => (
+                        <div key={stat.interest} className="space-y-1.5">
+                          <div className="flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                            <span className="line-clamp-1">{stat.interest}</span>
+                            <span className="opacity-70">{Math.round(stat.percentage)}%</span>
+                          </div>
+                          <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${stat.percentage}%` }}
+                              transition={{ duration: 1, delay: 0.5 }}
+                              className="h-full bg-primary rounded-full"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                      {interestStats.length === 0 && (
+                        <div className="h-full flex items-center justify-center text-muted-foreground text-xs font-medium">No data yet</div>
+                      )}
+                    </div>
                   </Card>
                 </motion.div>
               </div>
 
-              {/* SECTION 2: TIMELINE & TOPIC CARDS */}
+              {/* SECTION 2: TIMELINE & TOPIC/INTEREST CARDS */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Timeline (Left Column) */}
-                <div className="col-span-1 md:col-span-1 space-y-4">
-                  <div className="flex items-center gap-2 px-1">
-                    <Calendar className="w-4 h-4 text-primary" />
-                    <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Timeline</h3>
-                  </div>
-                  <div className="relative border-l border-border/50 ml-2 pl-6 space-y-8 py-2">
-                    {readHistory.length > 0 ? (
-                      readHistory.map((post) => (
-                        <div key={post.slug} className="relative group">
-                          <span className="absolute -left-[29px] top-1.5 w-2.5 h-2.5 rounded-full bg-background border-2 border-primary z-10 group-hover:scale-125 transition-transform duration-300" />
-                          <div className="flex flex-col gap-1">
-                            <span className="text-[10px] text-muted-foreground font-mono font-medium">
-                              {new Date(post.readAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                            <h4 className="font-medium text-sm leading-snug text-foreground/90 hover:text-primary transition-colors cursor-pointer">
-                              {post.title}
-                            </h4>
+                <div className="col-span-1 md:col-span-1">
+                  <Card className="h-full p-5 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+                    <div className="flex items-center gap-2 mb-6">
+                      <Calendar className="w-4 h-4 text-primary" />
+                      <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Timeline</h3>
+                    </div>
+                    <div className="relative border-l border-border/50 ml-2 pl-6 space-y-8 py-2 flex-1">
+                      {readHistory.length > 0 ? (
+                        readHistory.map((post) => (
+                          <div key={post.slug} className="relative group">
+                            <span className="absolute -left-[29px] top-1.5 w-2.5 h-2.5 rounded-full bg-background border-2 border-primary z-10 group-hover:scale-125 transition-transform duration-300" />
+                            <div className="flex flex-col gap-1">
+                              <span className="text-[10px] text-muted-foreground font-mono font-medium">
+                                {new Date(post.readAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                              <h4 className="font-medium text-sm leading-snug text-foreground/90 hover:text-primary transition-colors cursor-pointer">
+                                {post.title}
+                              </h4>
+                            </div>
                           </div>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-sm text-muted-foreground italic">No reading activity yet.</p>
-                    )}
-                  </div>
+                        ))
+                      ) : (
+                        <p className="text-sm text-muted-foreground italic">No reading activity yet.</p>
+                      )}
+                    </div>
+                  </Card>
                 </div>
 
-                {/* Topic Cards (Right Column - Grid) */}
-                <div className="col-span-1 md:col-span-2 space-y-4">
-                  <div className="flex items-center gap-2 px-1">
-                    <Grid className="w-4 h-4 text-primary" />
-                    <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Interests</h3>
-                  </div>
+                {/* Right Column: Topics & Interests */}
+                <div className="col-span-1 md:col-span-2 space-y-8">
 
-                  {Object.entries(groupedHistory).length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {Object.entries(groupedHistory).map(([topic, posts]) => (
-                        <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
-                          <div className="flex items-center justify-between border-b border-border/50 pb-2">
-                            <div className="flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-primary" />
-                              <span className="font-bold text-sm uppercase tracking-wider">{topic}</span>
-                            </div>
-                            <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
-                          </div>
-                          <div className="space-y-2">
-                            {posts.slice(0, 3).map(post => (
-                              <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
-                                {post.thumbnail_url && (
-                                  <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" />
-                                )}
-                                <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
+                  {/* Topics Section */}
+                  {Object.keys(groupedTopics).length > 0 && (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 px-1">
+                        <Layers className="w-4 h-4 text-primary" />
+                        <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Topics</h3>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {Object.entries(groupedTopics).map(([topic, posts]) => (
+                          <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
+                            <div className="flex items-center justify-between border-b border-border/50 pb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-primary" />
+                                <span className="font-bold text-sm uppercase tracking-wider">{topic}</span>
                               </div>
-                            ))}
-                            {posts.length > 3 && (
-                              <p className="text-[10px] text-muted-foreground pl-9">+ {posts.length - 3} more</p>
-                            )}
-                          </div>
-                        </Card>
-                      ))}
+                              <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
+                            </div>
+                            <div className="space-y-2">
+                              {posts.slice(0, 3).map(post => (
+                                <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
+                                  {post.thumbnail_url && (
+                                    <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
+                                  )}
+                                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
                     </div>
-                  ) : (
-                    <div className="p-8 border border-dashed border-border/50 rounded-xl flex flex-col items-center justify-center text-muted-foreground">
+                  )}
+
+                  {/* Interests Section */}
+                  {Object.keys(groupedInterests).length > 0 && (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 px-1">
+                        <Grid className="w-4 h-4 text-primary" />
+                        <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Interests</h3>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {Object.entries(groupedInterests).map(([topic, posts]) => (
+                          <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
+                            <div className="flex items-center justify-between border-b border-border/50 pb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-primary" />
+                                <span className="font-bold text-sm uppercase tracking-wider">{topic}</span>
+                              </div>
+                              <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
+                            </div>
+                            <div className="space-y-2">
+                              {posts.slice(0, 3).map(post => (
+                                <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
+                                  {post.thumbnail_url && (
+                                    <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
+                                  )}
+                                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {Object.keys(groupedTopics).length === 0 && Object.keys(groupedInterests).length === 0 && (
+                    <div className="p-8 border border-dashed border-border/50 rounded-xl flex flex-col items-center justify-center text-muted-foreground h-full">
                       <Layers className="w-8 h-8 mb-2 opacity-50" />
                       <p className="text-sm">Read articles to see them grouped here.</p>
                     </div>
