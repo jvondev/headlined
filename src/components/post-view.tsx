@@ -4,11 +4,10 @@ import type { Post } from "@/types";
 import React, { useEffect, type FC, useMemo, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Share2, ExternalLink, X, Maximize2, Minimize2 } from "lucide-react";
-import { paperNoise, getPaperStyles } from "@/lib/paper-texture";
+import { Share2, ExternalLink, X, Sparkles, Clock, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
 
 interface PostViewProps {
@@ -36,44 +35,28 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
           onComplete?.();
         }
       }
-    }, 15); // Fast typing speed
+    }, 10); // Slightly faster for better reading flow
     return () => clearInterval(timer);
   }, [text, onComplete]);
 
   return (
-    <p className="text-lg leading-relaxed font-serif text-slate-700">
+    <p className="text-base md:text-lg leading-relaxed font-sans text-neutral-200/90">
       {displayedText}
-      {!hasCompleted.current && <span className="inline-block w-[2px] h-5 ml-1 bg-slate-400 animate-pulse align-middle" />}
+      {!hasCompleted.current && <span className="inline-block w-[2px] h-5 ml-1 bg-blue-400 animate-pulse align-middle" />}
     </p>
   );
 };
 
-const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
+const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isPeeking, setIsPeeking] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const peekTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Peek Logic
-  const handlePointerDown = () => {
-    if (isExpanded) return;
-    peekTimeoutRef.current = setTimeout(() => {
-      setIsPeeking(true);
-    }, 300);
-  };
-
-  const handlePointerUp = () => {
-    if (peekTimeoutRef.current) clearTimeout(peekTimeoutRef.current);
-    setIsPeeking(false);
-  };
-
   const handleCardClick = () => {
-    if (isPeeking) return;
     if (post.slug === "home") {
       router.push(post.link);
       return;
@@ -85,14 +68,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
   useEffect(() => {
     if (!isActive) {
       setIsExpanded(false);
-      setIsPeeking(false);
     }
   }, [isActive]);
-
-  const paperStyle = useMemo(() => {
-    const styles = getPaperStyles(post.slug || post.title || "default");
-    return { ...styles, transform: 'none' };
-  }, [post.slug, post.title]);
 
   const summaryText = useMemo(() => {
     if (post.summaries && post.summaries.length > 0 && post.summaries[0].content) {
@@ -105,159 +82,149 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, emblaApi }) => {
 
   const uniqueId = post.slug || post.title || Math.random().toString();
 
+  // Calculate reading time (approximate)
+  const readingTime = useMemo(() => {
+    const words = summaryText.split(/\s+/).length;
+    const minutes = Math.ceil(words / 200);
+    return `${minutes} min read`;
+  }, [summaryText]);
+
   return (
     <>
       <motion.div
         className={cn(
-          "relative w-full h-full rounded-2xl overflow-hidden cursor-pointer shadow-xl",
+          "relative w-full h-full rounded-[32px] overflow-hidden cursor-pointer bg-neutral-900 group",
           isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
         )}
         layoutId={`card-container-${uniqueId}`}
         onClick={handleCardClick}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        onPointerLeave={handlePointerUp}
-        style={{
-          backgroundImage: paperNoise,
-          backgroundColor: '#fdfbf7',
-          ...paperStyle,
-        }}
+        whileHover={{ scale: 0.98 }}
+        transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
       >
-        {/* Card Content (Collapsed) */}
-        <motion.div className="relative w-full h-full overflow-hidden bg-neutral-900">
+        {/* Background Image with Zoom Effect */}
+        <div className="absolute inset-0 overflow-hidden">
           <motion.img
-            src={post.thumbnail_url}
+            src={post.thumbnail_url || ""}
             alt={post.title}
-            className="absolute inset-0 w-full h-full object-cover opacity-90"
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 opacity-80"
             layoutId={`image-${uniqueId}`}
           />
-          {/* Gradient for Title Readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        </div>
 
-          {/* Title at TOP */}
-          <motion.div className="absolute top-0 left-0 p-6 w-full" layoutId={`header-${uniqueId}`}>
-            <div className="flex items-center space-x-2 text-[10px] font-bold tracking-widest uppercase text-white/80 mb-3">
-              <span className="bg-white/20 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 shadow-sm">News</span>
+        {/* Card Content */}
+        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+          <motion.div layoutId={`header-${uniqueId}`} className="space-y-3">
+            {/* Meta Tags */}
+            <div className="flex items-center gap-3 text-xs font-medium tracking-wider text-neutral-400 uppercase">
+              <span className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/5 text-white">
+                News
+              </span>
               <span>•</span>
-              <span>{new Date().toLocaleDateString()}</span>
+              <span>{new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
             </div>
-            <h1 className="font-headline font-bold text-white drop-shadow-md leading-tight text-2xl line-clamp-3 tracking-tight">
+
+            {/* Title */}
+            <h2 className="font-serif text-2xl md:text-3xl font-medium text-white leading-tight line-clamp-3 text-balance drop-shadow-sm">
               {post.title}
-            </h1>
+            </h2>
           </motion.div>
 
-          {/* Hint Icon */}
-          <div className="absolute bottom-6 right-6">
-            <div className="bg-white/20 backdrop-blur-md p-2 rounded-full border border-white/10 text-white/90 shadow-lg">
-              <Maximize2 className="w-4 h-4" />
+          {/* Subtle "Read" Indicator on Hover */}
+          <div className="h-0 overflow-hidden group-hover:h-8 transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 mt-0 group-hover:mt-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-white/80">
+              <span>Read Summary</span>
+              <ChevronRight className="w-4 h-4" />
             </div>
           </div>
-        </motion.div>
-
-        {/* Peek Overlay */}
-        <AnimatePresence>
-          {isPeeking && (
-            <motion.div
-              initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-              animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
-              exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-              className="absolute inset-0 z-40 bg-black/40 flex flex-col justify-center items-center text-center p-8"
-            >
-              <div className="bg-white/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl max-w-xs mx-auto border border-white/50 text-slate-900">
-                <h3 className="font-headline text-lg font-bold mb-3">{post.title}</h3>
-                <p className="text-slate-700 line-clamp-5 font-serif leading-relaxed text-sm">
-                  {summaryText}
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        </div>
       </motion.div>
 
-      {/* Expanded View Portal - Premium Light Glass */}
+      {/* Expanded View Portal */}
       {mounted && isExpanded && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4">
+          {/* Backdrop */}
           <motion.div
-            className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-black/60 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsExpanded(false)}
           />
+
+          {/* Main Card Container */}
           <motion.div
-            className="relative w-full h-full md:w-[90vw] md:h-[90vh] md:max-w-[500px] md:rounded-[40px] overflow-hidden shadow-2xl bg-black"
+            className="relative w-full h-[92vh] md:h-[85vh] md:max-w-2xl md:rounded-[40px] rounded-t-[32px] overflow-hidden bg-neutral-900 shadow-2xl flex flex-col"
             layoutId={`card-container-${uniqueId}`}
           >
-            {/* Full Screen Image */}
-            <motion.img
-              src={post.thumbnail_url}
-              alt={post.title}
-              className="absolute inset-0 w-full h-full object-cover"
-              layoutId={`image-${uniqueId}`}
-              initial={{ scale: 1 }}
-              animate={{ scale: 1.05 }}
-              transition={{ duration: 10, ease: "linear" }}
-            />
+            {/* Close Button */}
+            <button
+              onClick={(e) => { e.stopPropagation(); setIsExpanded(false); }}
+              className="absolute top-6 right-6 z-50 p-2 rounded-full bg-black/20 backdrop-blur-xl border border-white/10 text-white hover:bg-white/20 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
 
-            {/* Header Actions (Top) */}
-            <div className="absolute top-6 left-6 right-6 z-20 flex items-center justify-between">
-              {/* AI Briefing Label */}
-              <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/90">AI Briefing</span>
+            {/* Top Image Section */}
+            <div className="relative h-[40%] md:h-[45%] w-full shrink-0">
+              <motion.img
+                src={post.thumbnail_url || ""}
+                alt={post.title}
+                className="w-full h-full object-cover"
+                layoutId={`image-${uniqueId}`}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-neutral-900" />
+            </div>
+
+            {/* Content Section */}
+            <motion.div
+              className="flex-1 relative bg-neutral-900 -mt-12 px-6 md:px-10 pb-8 overflow-y-auto no-scrollbar"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              {/* Header */}
+              <motion.div layoutId={`header-${uniqueId}`} className="mb-8 pt-4">
+                <div className="flex items-center gap-3 text-xs font-medium tracking-wider text-neutral-400 uppercase mb-4">
+                  <span className="text-blue-400 font-bold">AI Briefing</span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {readingTime}</span>
+                </div>
+                <h1 className="font-serif text-3xl md:text-4xl font-medium text-white leading-tight text-balance">
+                  {post.title}
+                </h1>
+              </motion.div>
+
+              {/* AI Summary Box */}
+              <div className="relative mb-8">
+                <div className="absolute -left-3 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full opacity-70" />
+                <div className="pl-4">
+                  <div className="flex items-center gap-2 mb-3 text-blue-300/80 text-sm font-medium">
+                    <Sparkles className="w-4 h-4" />
+                    <span>Key Insights</span>
+                  </div>
+                  <TypewriterText text={summaryText} />
+                </div>
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full bg-black/20 backdrop-blur-md">
-                  <Share2 className="h-5 w-5" />
-                </Button>
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full bg-black/20 backdrop-blur-md" onClick={() => setIsExpanded(false)}>
-                  <X className="h-6 w-6" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Floating Glass Panel */}
-            <motion.div
-              className="absolute bottom-0 left-0 right-0 p-4 z-20"
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ type: "spring", damping: 25, stiffness: 200, delay: 0.1 }}
-            >
-              <div className="bg-white/85 backdrop-blur-2xl rounded-[32px] p-8 shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/50 flex flex-col gap-6">
-
-                {/* Header inside Glass */}
-                <motion.div layoutId={`header-${uniqueId}`}>
-                  <div className="flex items-center space-x-2 text-[10px] font-bold tracking-widest uppercase text-slate-500 mb-2">
-                    <span className="bg-slate-200/50 px-2 py-1 rounded-full">News</span>
-                    <span>•</span>
-                    <span>{new Date().toLocaleDateString()}</span>
-                  </div>
-                  <h1 className="font-headline font-bold text-2xl md:text-3xl leading-tight text-slate-900">
-                    {post.title}
-                  </h1>
-                </motion.div>
-
-                {/* Divider */}
-                <div className="w-full h-[1px] bg-slate-200" />
-
-                {/* Summary Text */}
-                <div className="prose prose-lg max-w-none font-serif leading-relaxed text-slate-700">
-                  <TypewriterText text={summaryText} />
-                </div>
-
-                {/* Action Button */}
+              <div className="mt-auto pt-4 flex flex-col gap-3">
                 <Button
-                  className="w-full rounded-full h-14 text-lg font-bold bg-slate-900 text-white hover:bg-slate-800 shadow-lg hover:shadow-xl transition-all active:scale-95"
+                  className="w-full h-14 rounded-2xl bg-white text-neutral-900 hover:bg-neutral-200 font-semibold text-lg shadow-lg shadow-white/5 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                   onClick={() => window.open(post.link, "_blank")}
                 >
                   Read Full Story
-                  <ExternalLink className="ml-2 h-5 w-5" />
+                  <ExternalLink className="w-5 h-5 opacity-60" />
                 </Button>
+
+                <div className="flex items-center justify-center gap-4 mt-2">
+                  <Button variant="ghost" size="sm" className="text-neutral-400 hover:text-white hover:bg-white/5 rounded-full">
+                    <Share2 className="w-4 h-4 mr-2" />
+                    Share
+                  </Button>
+                </div>
               </div>
             </motion.div>
-
           </motion.div>
         </div>,
         document.body
