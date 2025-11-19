@@ -85,13 +85,22 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   // Calculate reading time (approximate)
   const readingTime = useMemo(() => {
     const words = summaryText.split(/\s+/).length;
-    const minutes = Math.ceil(words / 200);
+    const minutes = Math.ceil(words / 3); // User requested / 3
     return `${minutes} min read`;
   }, [summaryText]);
 
   const handleDragEnd = (event: any, info: PanInfo) => {
-    // Allow swipe up or down to dismiss
-    if (Math.abs(info.offset.y) > 150 || Math.abs(info.velocity.y) > 500) {
+    // Allow swipe in any direction to dismiss (mobile friendly)
+    // Lower thresholds for better sensitivity
+    const threshold = 80;
+    const velocityThreshold = 400;
+
+    if (
+      Math.abs(info.offset.y) > threshold ||
+      Math.abs(info.velocity.y) > velocityThreshold ||
+      Math.abs(info.offset.x) > threshold ||
+      Math.abs(info.velocity.x) > velocityThreshold
+    ) {
       setIsExpanded(false);
     }
   };
@@ -171,8 +180,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
               {/* Main Container with Drag to Dismiss */}
               <motion.div
                 className="relative w-full h-full flex flex-col"
-                drag="y"
-                dragConstraints={{ top: 0, bottom: 0 }}
+                drag
+                dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
                 dragElastic={0.7}
                 onDragEnd={handleDragEnd}
               >
@@ -230,7 +239,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
                     </div>
 
                     {/* Title - Clean & Impactful */}
-                    <h1 className="font-sans text-3xl md:text-5xl font-bold text-white leading-tight tracking-tight text-balance">
+                    <h1 className="font-sans text-3xl md:text-2xl font-bold text-white leading-tight tracking-tight text-balance">
                       {post.title}
                     </h1>
 
