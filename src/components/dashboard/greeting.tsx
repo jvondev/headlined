@@ -28,22 +28,23 @@ export const Greeting = ({ onComplete }: GreetingProps) => {
     useEffect(() => {
         if (!greeting) return;
 
-        setText("");
-        let i = 0;
+        let currentIndex = 0;
+        const targetText = greeting;
+        setText(""); // Ensure clear start
 
         const timer = setInterval(() => {
-            if (i < greeting.length) {
-                setText((prev) => prev + greeting.charAt(i));
-                i++;
+            if (currentIndex < targetText.length) {
+                setText(targetText.slice(0, currentIndex + 1));
+                currentIndex++;
             } else {
                 clearInterval(timer);
                 setShowDate(true);
-                if (onComplete) setTimeout(onComplete, 1500); // Wait for date to show
+                if (onComplete) setTimeout(onComplete, 1500);
             }
         }, 80);
 
         return () => clearInterval(timer);
-    }, [greeting]);
+    }, [greeting, onComplete]);
 
     return (
         <div className="flex flex-col items-center justify-center text-center">

@@ -106,7 +106,10 @@ export const addToReadHistory = async (post: Post): Promise<void> => {
   store.put(historyItem);
 
   return new Promise((resolve, reject) => {
-    transaction.oncomplete = () => resolve();
+    transaction.oncomplete = () => {
+      window.dispatchEvent(new Event('read-history-updated'));
+      resolve();
+    };
     transaction.onerror = (event) => {
       console.error('Add to read history transaction error:', (event.target as IDBTransaction).error);
       reject((event.target as IDBTransaction).error);
@@ -142,7 +145,10 @@ export const removeFromReadHistory = async (slug: string): Promise<void> => {
   store.delete(slug);
 
   return new Promise((resolve, reject) => {
-    transaction.oncomplete = () => resolve();
+    transaction.oncomplete = () => {
+      window.dispatchEvent(new Event('read-history-updated'));
+      resolve();
+    };
     transaction.onerror = (event) => {
       console.error('Remove from read history transaction error:', (event.target as IDBTransaction).error);
       reject((event.target as IDBTransaction).error);
