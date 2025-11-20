@@ -170,10 +170,10 @@ export const DashboardContent: FC = () => {
           variants={containerVariants as any}
           className="flex flex-col items-center relative z-20 shrink-0 mb-8"
         >
-          <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "origin-top -mb-40 scale-[0.5]" : "")}>
+          <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "origin-top  scale-[0.5]" : "")}>
             <Clock variant="stacked" className={cn(
               "transition-all duration-1000 ease-in-out",
-              viewState === "intro" ? "text-[8rem] md:text-[12rem] opacity-90" : "text-[8rem] opacity-80"
+              viewState === "intro" ? "text-[12rem] md:text-[8rem] opacity-90" : "text-[4rem] md:text-[4rem] opacity-80"
             )} />
           </motion.div>
 
@@ -186,7 +186,7 @@ export const DashboardContent: FC = () => {
         <AnimatePresence>
           {viewState === "dashboard" && (
             <motion.div
-              variants={contentVariants}
+              variants={contentVariants as any}
               initial="hidden"
               animate="visible"
               className="w-full max-w-6xl mx-auto space-y-12"

@@ -25,7 +25,7 @@ export const Clock = ({ className, variant = "default" }: ClockProps) => {
     if (variant === "stacked") {
         return (
             <div className={cn("flex flex-col items-center justify-center leading-[0.75] font-bold tracking-tighter text-foreground select-none", className)}>
-                <span className="-mb-12">{hours}</span>
+                <span className="-mb-[0.375em]">{hours}</span>
                 <span>{minutes}</span>
             </div>
         );
