@@ -2,7 +2,7 @@
   "name": "ReadMore",
   "short_name": "ReadMore",
   "description": "Online Daily Updates (free & no login) with UI/UX like TikTok scrolling.",
-  "start_url": "/",
+  "start_url": "/today",
   "display": "standalone",
   "background_color": "#f0f0f0",
   "theme_color": "#0a0a0a",
