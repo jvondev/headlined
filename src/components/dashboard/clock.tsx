@@ -17,7 +17,7 @@ export const Clock = ({ className, variant = "default" }: ClockProps) => {
         return () => clearInterval(timer);
     }, []);
 
-    if (!time) return <div className={cn("animate-pulse bg-muted rounded", className)} />;
+    if (!time) return <div className={cn("animate-pulse", className)} />;
 
     const hours = time.getHours().toString().padStart(2, '0');
     const minutes = time.getMinutes().toString().padStart(2, '0');
@@ -25,7 +25,7 @@ export const Clock = ({ className, variant = "default" }: ClockProps) => {
     if (variant === "stacked") {
         return (
             <div className={cn("flex flex-col items-center justify-center leading-[0.75] font-bold tracking-tighter text-foreground select-none", className)}>
-                <span className="-mb-16">{hours}</span>
+                <span className="-mb-12">{hours}</span>
                 <span>{minutes}</span>
             </div>
         );

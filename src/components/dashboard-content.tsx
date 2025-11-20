@@ -7,7 +7,6 @@ import { getAllPostsFromIndexedDB, getReadHistory, removeFromReadHistory } from 
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
 import { Post } from "@/types";
 import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 import { TrendingUp, Newspaper, Bookmark, Search, History, PieChart, Calendar, Layers, ArrowRight, Sparkles, Grid } from "lucide-react";
 import Link from "next/link";
@@ -156,7 +155,7 @@ export const DashboardContent: FC = () => {
   if (loading) return null;
 
   return (
-    <ScrollArea className="h-full w-full">
+    <div className="h-full w-full overflow-y-auto no-scrollbar">
       <div className={cn(
         "min-h-full w-full p-4 md:p-8 transition-all duration-1000 flex flex-col",
         viewState === "intro" ? "justify-center" : "justify-start"
@@ -173,7 +172,7 @@ export const DashboardContent: FC = () => {
           <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "origin-top -mb-40 scale-[0.5]" : "")}>
             <Clock variant="stacked" className={cn(
               "transition-all duration-1000 ease-in-out",
-              viewState === "intro" ? "text-[8rem] md:text-[12rem] opacity-90" : "text-[8rem] opacity-90"
+              viewState === "intro" ? "text-[8rem] md:text-[12rem] opacity-90" : "text-[8rem] opacity-80"
             )} />
           </motion.div>
 
@@ -475,6 +474,6 @@ export const DashboardContent: FC = () => {
           )}
         </AnimatePresence>
       </div>
-    </ScrollArea>
+    </div>
   );
 };

@@ -337,7 +337,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
           >              {post.slug === "home" ? (
             <HomepagePostSlide />
           ) : (
-            <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh] lg:max-w-4xl">
+            <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
               <PostView
                 post={post}
                 isActive={index === activeSlideIndex}

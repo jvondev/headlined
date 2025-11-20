@@ -254,7 +254,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-primary-foreground/80">
                         <Sparkles className="w-4 h-4" />
-                        <span className="text-xs font-semibold uppercase tracking-wider">AI Summary</span>
+                        <span className="text-xs font-semibold uppercase tracking-wider">Summary</span>
                       </div>
 
                       <div className="text-lg md:text-xl leading-relaxed text-primary-foreground font-sans font-light border-l-2 border-white/80 pl-4">
