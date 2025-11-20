@@ -112,7 +112,7 @@ export function Search({ className }: { className?: string }) {
                   <div className="flex flex-col">
                     <span className="font-medium">{result.title}</span>
                     <span className="text-xs text-muted-foreground">
-                      {result.topic_id && `${result.topic_id} / `}
+                      {result.topic && `${result.topic} / `}
                       {result.type}
                     </span>
                   </div>

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState, useCallback } from "react";
-import useEmblaCarousel, { EmblaCarouselType } from "embla-carousel-react";
+import useEmblaCarousel, { UseEmblaCarouselType } from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { CarouselNav } from "@/components/carousel-nav";
 import { MainContentCarousel } from "@/components/main-content-carousel";
@@ -58,10 +58,10 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     }, [allFilterItems, pathname]);
 
     const [selectedIndex, setSelectedIndex] = useState(getInitialIndex());
-    const [lastSelectedIdentifier, setLastSelectedIdentifier] = useState<{ name: string; type: "topic" | "interest" | "none" } | null>(null);
+    const [slideStyles, setSlideStyles] = useState<React.CSSProperties[]>([]);
 
-    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 50 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
-    const [navEmblaRef, navEmblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 50 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 25 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
+    const [navEmblaRef, navEmblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 25 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
 
     // Effect to handle the initial scroll position
     useEffect(() => {
@@ -75,7 +75,6 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
 
         const currentItem = allFilterItems[newSelectedIndex];
         if (currentItem) {
-            setLastSelectedIdentifier({ name: currentItem.name, type: currentItem.type });
             const targetIndex = Math.max(0, newSelectedIndex - 1);
             navEmblaApi.scrollTo(targetIndex, true);
         }
@@ -84,6 +83,35 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     const onNavClick = useCallback((index: number) => {
         if (emblaApi) emblaApi.scrollTo(index);
     }, [emblaApi]);
+
+    useEffect(() => {
+        if (!emblaApi) return;
+
+        const applyTransforms = () => {
+            const scrollProgress = emblaApi.scrollProgress();
+            const slidesInView = emblaApi.slidesInView(true);
+            const newSlideStyles: React.CSSProperties[] = [];
+
+            emblaApi.scrollSnapList().forEach((snap, snapIndex) => {
+                const diffToTarget = snap - scrollProgress;
+                                                                const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
+                                                                const translateX = diffToTarget * 300; // Adjust horizontal position
+                                                                                                newSlideStyles[snapIndex] = {
+                                                                                                    transform: `scale(${scale}) translateX(${translateX}px)`,
+                                                                                                    opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely
+                                                                                                };            });
+            setSlideStyles(newSlideStyles);
+        };
+
+        emblaApi.on("scroll", applyTransforms);
+        emblaApi.on("reInit", applyTransforms);
+        applyTransforms(); // Apply initial transforms
+
+        return () => {
+            emblaApi.off("scroll", applyTransforms);
+            emblaApi.off("reInit", applyTransforms);
+        };
+    }, [emblaApi, allFilterItems.length]);
 
     useEffect(() => {
         if (emblaApi) {
@@ -96,43 +124,11 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         }
     }, [emblaApi, onSelect]);
 
-    // Effect to update lastSelectedIdentifier when selectedIndex changes (e.g., from direct navigation or initial load)
-    useEffect(() => {
-        if (allFilterItems.length > selectedIndex) {
-            const currentItem = allFilterItems[selectedIndex];
-            setLastSelectedIdentifier({ name: currentItem.name, type: currentItem.type });
-        }
-    }, [selectedIndex, allFilterItems]);
 
-    // Effect to handle changes in allFilterItems (e.g., subscriptions changing)
-    useEffect(() => {
-        if (!emblaApi || !navEmblaApi || !allFilterItems.length || lastSelectedIdentifier === null) return;
-
-        let newIndex = -1;
-
-        // Try to find the previously selected item by its identifier in the new list
-        newIndex = allFilterItems.findIndex(
-            item => item.name === lastSelectedIdentifier.name && item.type === lastSelectedIdentifier.type
-        );
-
-        if (newIndex !== -1) {
-            setSelectedIndex(newIndex);
-            emblaApi.scrollTo(newIndex, false); // Smooth scroll to the new position
-        } else {
-            // Fallback to Dashboard or the first item if the previously selected item is not found
-            const dashboardIndex = allFilterItems.findIndex(item => item.name === "Dashboard");
-            const targetIndex = dashboardIndex !== -1 ? dashboardIndex : 0;
-            setSelectedIndex(targetIndex);
-            emblaApi.scrollTo(targetIndex, false); // Smooth scroll
-            setLastSelectedIdentifier({ name: allFilterItems[targetIndex].name, type: allFilterItems[targetIndex].type });
-        }
-
-        navEmblaApi.reInit();
-    }, [allFilterItems, emblaApi, navEmblaApi, lastSelectedIdentifier]);
 
     return (
         <div className="flex flex-col h-full relative">
-            <div className="absolute top-0 left-0 right-0 z-20 bg-transparent py-2">
+            <div className="fixed top-0 left-0 right-0 z-20 w-full bg-background py-2">
                 <CarouselNav
                     emblaRef={navEmblaRef}
                     emblaApi={navEmblaApi}
@@ -148,6 +144,8 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 selectedIndex={selectedIndex}
                 topics={topics}
                 interests={interests}
+                slideStyles={slideStyles}
+                className="pt-[52px]"
             />
         </div>
     );

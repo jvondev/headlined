@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { EmblaCarouselType } from "embla-carousel-react";
+import { UseEmblaCarouselType } from "embla-carousel-react";
 import { DynamicIcon } from "@/components/dynamic-icon";
 
 type CarouselItem = {

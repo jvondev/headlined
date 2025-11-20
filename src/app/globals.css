@@ -99,4 +99,10 @@
   .animate-line-shadow {
     animation: line-shadow 30s linear infinite;
   }
+  .glass-card {
+    @apply bg-white/30 backdrop-blur-lg border border-white/50;
+  }
+  .dark .glass-card {
+    @apply bg-black/30 backdrop-blur-lg border border-black/50;
+  }
 }

@@ -20,14 +20,12 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 
 import { SaveDialog } from "./save-dialog";
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
-import { useCarouselState } from "@/context/carousel-state-context";
 
 
 
 type PostCarouselProps = {
   shouldFetchPaginatedPosts?: boolean,
-  hasSeenOnboarding: boolean,
-  markOnboardingComplete: () => void,
+
   topicName?: string;
   searchQuery?: string;
 }
@@ -36,8 +34,7 @@ const PAGE_SIZE = 10; // Define page size for client-side pagination
 
 export const PostCarousel: FC<PostCarouselProps> = ({
   shouldFetchPaginatedPosts = false,
-  hasSeenOnboarding,
-  markOnboardingComplete,
+
   topicName,
   searchQuery,
 }) => {
@@ -48,7 +45,6 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const returnToSlug = searchParams.get("returnTo");
   const action = searchParams.get("action");
 
-  const { getCarouselState, setCarouselState } = useCarouselState();
 
   const currentKey = useMemo(() => {
     if (topicName) return `topic-${topicName}`;
@@ -56,29 +52,20 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return "default";
   }, [topicName, searchQuery]);
 
-  const savedState = getCarouselState(currentKey);
 
-  const [posts, setPosts] = useState<Post[]>(savedState?.posts || []);
-  const [hasMore, setHasMore] = useState(savedState?.hasMore || false);
+
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const page = useRef(savedState?.page || 1);
+  const page = useRef(1);
 
   useEffect(() => {
-    if (savedState) {
-      setPosts(savedState.posts);
-      setHasMore(savedState.hasMore);
-      page.current = savedState.page;
-      setActiveSlideIndex(savedState.activeSlideIndex);
-      setIsLoading(false);
-      setError(null);
-    } else {
-      setPosts([]);
-      setHasMore(false);
-      page.current = 1;
-      setActiveSlideIndex(0);
-      fetchPosts();
-    }
+    setPosts([]);
+    setHasMore(false);
+    page.current = 1;
+    setActiveSlideIndex(0);
+    fetchPosts();
   }, [currentKey]);
 
   const fetchPosts = useCallback(async () => {
@@ -97,18 +84,17 @@ export const PostCarousel: FC<PostCarouselProps> = ({
       setPosts(newPosts);
       setHasMore(newHasMore);
       page.current = 1;
-      setCarouselState(currentKey, { posts: newPosts, hasMore: newHasMore, page: 1, activeSlideIndex: 0 });
     } catch (err: any) {
       console.error("Error fetching posts:", err.message);
       setError("Failed to load posts.");
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, topicName, searchQuery, currentKey, setCarouselState]);
+  }, [isLoading, topicName, searchQuery]);
 
   const initialSlide = useMemo(() => {
-    return savedState ? savedState.activeSlideIndex : 0;
-  }, [savedState]);
+    return 0;
+  }, []);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
@@ -121,7 +107,8 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(initialSlide);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
-  
+  const [slideStyles, setSlideStyles] = useState<React.CSSProperties[]>([]);
+
   const currentPost = posts[activeSlideIndex];
 
   const { toast } = useToast();
@@ -138,7 +125,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   const { isSaved, getSavedItem, addSavedItem, removeSavedItem, hasSaved, setHasSaved } = useSavedItems();
 
-  
+
   const scrollUp = useCallback(() => {
     if (emblaApi && emblaApi!.canScrollPrev()) {
       emblaApi.scrollPrev();
@@ -172,10 +159,10 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   const loadMorePosts = useCallback(async () => {
     if (isLoading || !hasMore) return;
-    
+
     setIsLoading(true);
     page.current += 1;
-    
+
     const { posts: newPosts, hasMore: newHasMore } = await getPaginatedPosts({
       page: page.current,
       topic_name: topicName, // Use topicName prop
@@ -183,16 +170,15 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     });
 
     if (newPosts.length > 0) {
-        setPosts(prev => {
-            const updatedPosts = [...prev, ...newPosts];
-            setCarouselState(currentKey, { ...getCarouselState(currentKey)!, posts: updatedPosts, hasMore: newHasMore, page: page.current });
-            return updatedPosts;
-        });
+      setPosts(prev => {
+        const updatedPosts = [...prev, ...newPosts];
+        return updatedPosts;
+      });
     }
     setHasMore(newHasMore);
     setIsLoading(false);
-  }, [isLoading, hasMore, topicName, searchQuery, currentKey, getCarouselState, setCarouselState]);
-  
+  }, [isLoading, hasMore, topicName, searchQuery]);
+
 
 
 
@@ -200,28 +186,57 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   useEffect(() => {
     if (!emblaApi) return;
 
+    const applyTransforms = () => {
+      const scrollProgress = emblaApi.scrollProgress();
+      const slidesInView = emblaApi.slidesInView(true); // Get all slides currently in view
+      const newSlideStyles: React.CSSProperties[] = [];
+
+      emblaApi.scrollSnapList().forEach((snap, snapIndex) => {
+        const diffToTarget = snap - scrollProgress;
+        const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
+        const translateY = diffToTarget * 300; // Adjust vertical position
+        newSlideStyles[snapIndex] = {
+          transform: `scale(${scale}) translateY(${translateY}px)`,
+          opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely
+        };
+      });
+      setSlideStyles(newSlideStyles);
+    };
+
+    emblaApi.on("scroll", applyTransforms);
+    emblaApi.on("reInit", applyTransforms);
+    applyTransforms(); // Apply initial transforms
+
+    return () => {
+      emblaApi.off("scroll", applyTransforms);
+      emblaApi.off("reInit", applyTransforms);
+    };
+  }, [emblaApi, posts.length]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
     const onSettle = (api: UseEmblaCarouselType[1]) => {
-        const newIndex = api!.selectedScrollSnap();
-        setActiveSlideIndex(newIndex);
-        setCarouselState(currentKey, { ...getCarouselState(currentKey)!, activeSlideIndex: newIndex });
-        
-        if (hasMore && !isLoading && newIndex >= posts.length - 3) {
-            loadMorePosts();
-        }
+      const newIndex = api!.selectedScrollSnap();
+      setActiveSlideIndex(newIndex);
+
+      if (hasMore && !isLoading && newIndex >= posts.length - 3) {
+        loadMorePosts();
+      }
     };
 
     emblaApi.on("settle", onSettle);
-    
+
     return () => {
       emblaApi.off("settle", onSettle);
     };
-  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery, currentKey, getCarouselState, setCarouselState]);
+  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery]);
 
 
 
 
   const handleCategoryChange = (category: string) => {
-    
+
   };
 
   const currentItemId = useMemo(() => {
@@ -243,18 +258,18 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     addSavedItem(item);
     toast({ title: "Saved!", description: "Your item and note have been saved." });
     if (!hasSaved(item.id)) {
-        setHasSaved(item.id, true);
+      setHasSaved(item.id, true);
     }
   };
-  
+
   const handleRemoveFromSaved = (id: string) => {
     removeSavedItem(id);
     toast({ title: "Removed", description: "Removed from your saved items." });
     if (hasSaved(id)) {
-        setHasSaved(id, false);
+      setHasSaved(id, false);
     }
   }
-  
+
   const isCurrentItemSaved = isSaved(currentItemId);
   const currentSavedItem = getSavedItem(currentItemId);
 
@@ -279,13 +294,13 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     fullItemData = { ...itemToSave, postData: currentPost };
 
     if (isCurrentItemSaved) {
-        setIsSaveDialogOpen(true);
+      setIsSaveDialogOpen(true);
     } else {
-        addSavedItem(fullItemData);
-        toast({ title: "Saved!", description: "Added to your saved items." });
-        if (!hasSaved(fullItemData.id)) {
-            setHasSaved(fullItemData.id, true);
-        }
+      addSavedItem(fullItemData);
+      toast({ title: "Saved!", description: "Added to your saved items." });
+      if (!hasSaved(fullItemData.id)) {
+        setHasSaved(fullItemData.id, true);
+      }
     }
   };
 
@@ -312,19 +327,26 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return (
       <>
         {posts.map((post, index) => (
-          <div className="relative min-w-0 flex-[0_0_100%] h-full" key={`${post.slug}-${index}-${topicName || searchQuery}`} role="group" aria-roledescription="slide" aria-label={`Post ${index + 1} of ${posts.length}`}>
-              {post.slug === "home" ? (
-                <HomepagePostSlide />
-              ) : (
-                <PostView 
-                  post={post} 
-                  isActive={index === activeSlideIndex}
-                  emblaApi={emblaApi}
-                />
-              )}
+          <div
+            className="relative min-w-0 flex-[0_0_100%] h-full flex justify-center py-2 px-4 md:py-4 md:px-8 lg:py-8 lg:px-16 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
+            key={`${post.slug}-${index}-${topicName || searchQuery}`}
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`Post ${index + 1} of ${posts.length}`}
+            style={slideStyles[index]}
+          >              {post.slug === "home" ? (
+            <HomepagePostSlide />
+          ) : (
+            <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
+              <PostView
+                post={post}
+                isActive={index === activeSlideIndex}
+                emblaApi={emblaApi}
+              />
+            </div>)}
           </div>
         ))}
-         {isLoading && (
+        {isLoading && (
           <div className="relative min-w-0 flex-[0_0_100%] h-full flex items-center justify-center">
             <div className="text-center">
               <p className="text-lg text-muted-foreground">Loading more...</p>
@@ -336,49 +358,26 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   }
 
   if (!currentPost && posts.length > 0) {
-    return null; 
+    return null;
   }
 
   const SaveIcon = isCurrentItemSaved ? Pencil : Bookmark;
   const saveIconClassName = isCurrentItemSaved ? 'fill-current' : '';
 
   return (
-      <CarouselContext.Provider value={{ currentPostSlug: currentPost?.slug }}>
-      <div className="relative flex h-screen w-full flex-col items-center justify-center">
+    <CarouselContext.Provider value={{ currentPostSlug: currentPost?.slug }}>
+      <div className="relative flex h-full w-full flex-col items-center justify-center">
 
         <div className="overflow-hidden h-full w-full" ref={emblaRef} role="region" aria-roledescription="carousel" aria-label="Posts Carousel">
           <div className="flex flex-col h-full">
             {renderContent()}
           </div>
         </div>
-        
-                <div className={cn("fixed bottom-20 right-4 z-20 flex flex-col items-center gap-2")}>            <div className="relative">
-                <Button
-                  onClick={handleSaveClick}
-                  variant="outline"
-                  size="icon"
-                  aria-label="Save"
-                  className="bg-background/50 backdrop-blur-sm rounded-full"
-                  disabled={!currentPost}
-                >
-                  <SaveIcon className={cn("h-4 w-4", saveIconClassName)} />
-                </Button>
-            </div>
-            
-        </div>
 
-        <div className={cn("fixed bottom-0 left-0 right-0 z-20 flex justify-center mb-16")}>            <Button 
-              onClick={scrollDown} 
-              variant="outline" 
-              size="icon" 
-              aria-label="Next Post" 
-              className="min-w-[3rem] w-auto h-auto py-2 px-4 bg-background/50 mb-0 mt-0 backdrop-blur-sm rounded-t-[1rem] rounded-b-none text-sm font-semibold flex items-center gap-2 text-muted-foreground"
-              
-            >
-              Next<ArrowDown className="h-5 w-5" />
-            </Button>
-        </div>
-        
+
+
+
+
         {itemToSave && (
           <SaveDialog
             open={isSaveDialogOpen}

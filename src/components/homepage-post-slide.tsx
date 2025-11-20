@@ -6,15 +6,12 @@ import { FC } from "react";
 
 // Define readmoreHomepagePost here for use in this component
 const readmoreHomepagePost: Post = {
-  id: "home",
   slug: "home",
   title: "Free No-Login RSS Feeds & News Reader that Scroll like TikTok",
   description: "Start reading instantly — no signup.",
   link: "/",
   thumbnail_url: null,
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-  topic_id: null,
+  topic: null,
   summaries: [],
 };
 
