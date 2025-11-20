@@ -19,31 +19,32 @@ interface PostViewProps {
 
 const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () => void }) => {
   const [displayedText, setDisplayedText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
   const hasCompleted = useRef(false);
 
   useEffect(() => {
     setDisplayedText("");
+    setCurrentIndex(0);
     hasCompleted.current = false;
-    let i = 0;
-    const timer = setInterval(() => {
-      if (i < text.length) {
-        setDisplayedText((prev) => prev + text.charAt(i));
-        i++;
-      } else {
-        clearInterval(timer);
-        if (!hasCompleted.current) {
-          hasCompleted.current = true;
-          onComplete?.();
-        }
-      }
-    }, 30); // Slower typing speed for more natural feel
-    return () => clearInterval(timer);
-  }, [text, onComplete]);
+  }, [text]);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timer = setTimeout(() => {
+        setDisplayedText((prev) => prev + text.charAt(currentIndex));
+        setCurrentIndex((prev) => prev + 1);
+      }, 30); // Slower typing speed for more natural feel
+      return () => clearTimeout(timer);
+    } else if (currentIndex === text.length && !hasCompleted.current) {
+      hasCompleted.current = true;
+      onComplete?.();
+    }
+  }, [currentIndex, text, onComplete]);
 
   return (
     <p className="text-base md:text-lg leading-relaxed font-sans text-primary-foreground">
       {displayedText}
-      {!hasCompleted.current && <span className="inline-block w-[2px] h-5 ml-1 bg-primary animate-pulse align-middle" />}
+      {currentIndex < text.length && <span className="inline-block w-[2px] h-5 ml-1 bg-primary animate-pulse align-middle" />}
     </p>
   );
 };
