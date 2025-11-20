@@ -20,6 +20,7 @@ export const DashboardContent: FC = () => {
   const [savedCount, setSavedCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [viewState, setViewState] = useState<"intro" | "dashboard">("intro");
+  const [timelineItemsToShow, setTimelineItemsToShow] = useState(4);
 
   const fetchData = async () => {
     try {
@@ -293,19 +294,29 @@ export const DashboardContent: FC = () => {
                     </div>
                     <div className="relative border-l border-border/50 ml-2 pl-6 space-y-8 py-2 flex-1">
                       {readHistory.length > 0 ? (
-                        readHistory.map((post) => (
-                          <div key={post.slug} className="relative group">
-                            <span className="absolute -left-[29px] top-1.5 w-2.5 h-2.5 rounded-full bg-background border-2 border-primary z-10 group-hover:scale-125 transition-transform duration-300" />
-                            <div className="flex flex-col gap-1">
-                              <span className="text-[10px] text-muted-foreground font-mono font-medium">
-                                {new Date(post.readAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              </span>
-                              <h4 className="font-medium text-sm leading-snug text-foreground/90 hover:text-primary transition-colors cursor-pointer">
-                                {post.title}
-                              </h4>
+                        <>
+                          {readHistory.slice(0, timelineItemsToShow).map((post) => (
+                            <div key={post.slug} className="relative group">
+                              <span className="absolute -left-[29px] top-1.5 w-2.5 h-2.5 rounded-full bg-background border-2 border-primary z-10 group-hover:scale-125 transition-transform duration-300" />
+                              <div className="flex flex-col gap-1">
+                                <span className="text-[10px] text-muted-foreground font-mono font-medium">
+                                  {new Date(post.readAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                                <h4 className="font-medium text-sm leading-snug text-foreground/90 hover:text-primary transition-colors cursor-pointer">
+                                  {post.title}
+                                </h4>
+                              </div>
                             </div>
-                          </div>
-                        ))
+                          ))}
+                          {readHistory.length > timelineItemsToShow && (
+                            <button
+                              onClick={() => setTimelineItemsToShow(readHistory.length)}
+                              className="w-full py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors border border-border/50 rounded-md hover:bg-primary/5"
+                            >
+                              Show More ({readHistory.length - timelineItemsToShow} more)
+                            </button>
+                          )}
+                        </>
                       ) : (
                         <p className="text-sm text-muted-foreground italic">No reading activity yet.</p>
                       )}

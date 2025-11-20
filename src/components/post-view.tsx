@@ -93,7 +93,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   // Calculate reading time (approximate)
   const readingTime = useMemo(() => {
     const words = summaryText.split(/\s+/).length;
-    const minutes = Math.ceil(words / 3); // User requested / 3
+    const minutes = Math.ceil(words / 4);
     return `${minutes} min read`;
   }, [summaryText]);
 
