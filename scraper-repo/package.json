@@ -1,0 +1,20 @@
+{
+    "name": "daily-job",
+    "version": "1.0.0",
+    "description": "Daily data update job",
+    "main": "dist/job.js",
+    "scripts": {
+        "build": "tsc && javascript-obfuscator dist --output dist --target node",
+        "start": "node dist/job.js"
+    },
+    "dependencies": {
+        "node-html-parser": "^6.1.12",
+        "rss-parser": "^3.13.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "javascript-obfuscator": "^4.1.0",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.3.2"
+    }
+}
