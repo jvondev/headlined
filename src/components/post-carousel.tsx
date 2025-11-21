@@ -69,11 +69,11 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     fetchPosts();
   }, [currentKey]);
 
-  // Prevent iOS bounce on body
+  // Prevent iOS bounce on body and browser navigation swipes
   useEffect(() => {
-    document.body.style.overscrollBehaviorY = 'none';
+    document.body.style.overscrollBehavior = 'none';
     return () => {
-      document.body.style.overscrollBehaviorY = '';
+      document.body.style.overscrollBehavior = '';
     };
   }, []);
 

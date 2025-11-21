@@ -178,22 +178,23 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
     if (isInsideScrollable && isScrollable) {
       // Dragging down from top
       if (touchStart.current.scrollTop <= 0 && deltaY > 0) {
-        y.set(deltaY * 0.5); // Resistance
+        y.set(deltaY * 0.75); // Reduced Resistance (easier to drag)
       }
       // Dragging up from bottom
       else if (Math.abs(scrollContainer.scrollHeight - touchStart.current.scrollTop - scrollContainer.clientHeight) < 2 && deltaY < 0) {
-        y.set(deltaY * 0.5); // Resistance
+        y.set(deltaY * 0.75); // Reduced Resistance
       }
     } else {
       // Outside scrollable area
-      y.set(deltaY * 0.8);
+      y.set(deltaY * 0.85); // Reduced Resistance
     }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     e.stopPropagation();
     touchStart.current = null;
-    if (Math.abs(y.get()) > 100) {
+    // Lower threshold for easier closing
+    if (Math.abs(y.get()) > 60) {
       setIsExpanded(false);
     } else {
       animate(y, 0, { type: "spring", stiffness: 300, damping: 30 });
@@ -231,8 +232,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
         wheelAccumulator.current += e.deltaY;
       }
 
-      // Threshold for closing (adjust as needed, 100 is reasonable for trackpad swipe)
-      if (Math.abs(wheelAccumulator.current) > 100) {
+      // Threshold for closing (adjust as needed, 60 is easier than 100)
+      if (Math.abs(wheelAccumulator.current) > 60) {
         setIsExpanded(false);
         wheelAccumulator.current = 0;
       }
