@@ -61,21 +61,14 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const [error, setError] = useState<string | null>(null);
   const page = useRef(1);
 
-  useEffect(() => {
-    setPosts([]);
-    setHasMore(false);
-    page.current = 1;
-    setActiveSlideIndex(0);
-    fetchPosts();
-  }, [currentKey]);
+  // Lazy Loading State
+  const [hasActivated, setHasActivated] = useState(shouldFetchPaginatedPosts);
 
-  // Prevent iOS bounce on body and browser navigation swipes
   useEffect(() => {
-    document.body.style.overscrollBehavior = 'none';
-    return () => {
-      document.body.style.overscrollBehavior = '';
-    };
-  }, []);
+    if (shouldFetchPaginatedPosts) {
+      setHasActivated(true);
+    }
+  }, [shouldFetchPaginatedPosts]);
 
   const fetchPosts = useCallback(async () => {
     if (isLoading) return;
@@ -101,6 +94,25 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     }
   }, [isLoading, topicName, searchQuery]);
 
+  useEffect(() => {
+    if (hasActivated) {
+      setPosts([]);
+      setHasMore(false);
+      page.current = 1;
+      setActiveSlideIndex(0);
+      fetchPosts();
+    }
+  }, [currentKey, hasActivated]); // Removed fetchPosts from deps to avoid loops, currentKey is stable enough
+
+  // Prevent iOS bounce on body and browser navigation swipes
+  useEffect(() => {
+    if (!hasActivated) return;
+    document.body.style.overscrollBehavior = 'none';
+    return () => {
+      document.body.style.overscrollBehavior = '';
+    };
+  }, [hasActivated]);
+
   const initialSlide = useMemo(() => {
     return 0;
   }, []);
@@ -116,7 +128,6 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(initialSlide);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
-  // Removed slideStyles state for performance
 
   const currentPost = posts[activeSlideIndex];
 
@@ -124,13 +135,13 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const { setVerticalEmblaApi } = useOnboardingContext();
 
   useEffect(() => {
-    if (emblaApi) {
+    if (emblaApi && hasActivated) {
       setVerticalEmblaApi(emblaApi);
     }
     return () => {
       setVerticalEmblaApi(null);
     };
-  }, [emblaApi, setVerticalEmblaApi]);
+  }, [emblaApi, setVerticalEmblaApi, hasActivated]);
 
   const { isSaved, getSavedItem, addSavedItem, removeSavedItem, hasSaved, setHasSaved } = useSavedItems();
 
@@ -149,6 +160,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
 
   useEffect(() => {
+    if (!hasActivated) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       switch (event.key) {
         case "ArrowDown":
@@ -163,7 +175,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [scrollDown, scrollUp, currentPost]);
+  }, [scrollDown, scrollUp, currentPost, hasActivated]);
 
 
   const loadMorePosts = useCallback(async () => {
@@ -189,11 +201,8 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   }, [isLoading, hasMore, topicName, searchQuery]);
 
 
-
-
-
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!emblaApi || !hasActivated) return;
 
     const applyTransforms = () => {
       const scrollProgress = emblaApi.scrollProgress();
@@ -222,10 +231,10 @@ export const PostCarousel: FC<PostCarouselProps> = ({
       emblaApi.off("scroll", applyTransforms);
       emblaApi.off("reInit", applyTransforms);
     };
-  }, [emblaApi, posts.length]);
+  }, [emblaApi, posts.length, hasActivated]);
 
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!emblaApi || !hasActivated) return;
 
     const onSettle = (api: UseEmblaCarouselType[1]) => {
       const newIndex = api!.selectedScrollSnap();
@@ -241,7 +250,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return () => {
       emblaApi.off("settle", onSettle);
     };
-  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery]);
+  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery, hasActivated]);
 
 
 
@@ -366,6 +375,11 @@ export const PostCarousel: FC<PostCarouselProps> = ({
         )}
       </>
     );
+  }
+
+  // Lazy Loading Placeholder
+  if (!hasActivated) {
+    return <div className="w-full h-full" />;
   }
 
   if (!currentPost && posts.length > 0) {
