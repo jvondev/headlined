@@ -95,6 +95,22 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
     setMounted(true);
   }, []);
 
+  // Lock body scroll and reset state when expanded
+  useEffect(() => {
+    if (isExpanded) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      y.set(0);
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [isExpanded, y]);
+
   const handleCardClick = () => {
     if (post.slug === "home") {
       router.push(post.link);
@@ -135,6 +151,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   }, [summaryText]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
     const scrollContainer = scrollContainerRef.current;
     touchStart.current = {
       y: e.touches[0].clientY,
@@ -143,6 +160,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    e.stopPropagation();
     if (!touchStart.current) return;
 
     const currentY = e.touches[0].clientY;
@@ -160,19 +178,20 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
     if (isInsideScrollable && isScrollable) {
       // Dragging down from top
       if (touchStart.current.scrollTop <= 0 && deltaY > 0) {
-        y.set(deltaY);
+        y.set(deltaY * 0.5); // Resistance
       }
       // Dragging up from bottom
       else if (Math.abs(scrollContainer.scrollHeight - touchStart.current.scrollTop - scrollContainer.clientHeight) < 2 && deltaY < 0) {
-        y.set(deltaY);
+        y.set(deltaY * 0.5); // Resistance
       }
     } else {
       // Outside scrollable area
-      y.set(deltaY);
+      y.set(deltaY * 0.8);
     }
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.stopPropagation();
     touchStart.current = null;
     if (Math.abs(y.get()) > 100) {
       setIsExpanded(false);

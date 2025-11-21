@@ -20,6 +20,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 
 import { SaveDialog } from "./save-dialog";
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
+import { Post, SavedItem } from "@/types";
 
 
 
@@ -67,6 +68,14 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     setActiveSlideIndex(0);
     fetchPosts();
   }, [currentKey]);
+
+  // Prevent iOS bounce on body
+  useEffect(() => {
+    document.body.style.overscrollBehaviorY = 'none';
+    return () => {
+      document.body.style.overscrollBehaviorY = '';
+    };
+  }, []);
 
   const fetchPosts = useCallback(async () => {
     if (isLoading) return;
