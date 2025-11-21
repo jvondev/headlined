@@ -179,7 +179,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
         <AnimatePresence>
           {isExpanded && (
             <motion.div
-              className="fixed inset-0 z-[100] flex flex-col bg-black"
+              className="fixed inset-0 z-[100] flex flex-col bg-black overscroll-none"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -187,10 +187,10 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
             >
               {/* Main Container with Drag to Dismiss */}
               <motion.div
-                className="relative w-full h-full flex flex-col"
+                className="relative w-full h-full flex flex-col will-change-transform"
                 drag
                 dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
-                dragElastic={0.7}
+                dragElastic={0.2}
                 onDragEnd={handleDragEnd}
               >
                 {/* Full Screen Morphing Image */}
