@@ -74,6 +74,25 @@ function truncateDescription(description: string | null): string | null {
     return effectiveDescription.length > 0 ? effectiveDescription : null;
 }
 
+async function isImageLargeEnough(url: string): Promise<boolean> {
+    try {
+        const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(2000) });
+        if (!response.ok) {
+            if (response.status === 404) return false;
+            return true;
+        }
+
+        const contentLength = response.headers.get('content-length');
+        if (contentLength) {
+            const size = parseInt(contentLength, 10);
+            if (size < 15000) return false; // Filter < 15KB
+        }
+        return true;
+    } catch (e) {
+        return true;
+    }
+}
+
 async function fetchArticleMetadata(url: string): Promise<{ description: string | null; thumbnail_url: string | null; }> {
     try {
         const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
@@ -162,14 +181,26 @@ async function processItem(item: any, source: any): Promise<any | null> {
 
     if (item['media:content']) {
         if (Array.isArray(item['media:content'])) {
-            const found = item['media:content'].find((m: any) => m['$'] && m['$'].url);
-            if (found) thumbnail_url = found['$'].url;
-            else if (item['media:content'][0] && item['media:content'][0].url) thumbnail_url = item['media:content'][0].url;
-            else if (item['media:content'][0] && item['media:content'][0]['$'] && item['media:content'][0]['$'].url) thumbnail_url = item['media:content'][0]['$'].url;
-        } else if (item['media:content']['$'] && item['media:content']['$'].url) {
-            thumbnail_url = item['media:content']['$'].url;
-        } else if (item['media:content'].url) {
-            thumbnail_url = item['media:content'].url;
+            const sorted = item['media:content'].sort((a: any, b: any) => {
+                const wA = a['$'] && a['$'].width ? parseInt(a['$'].width, 10) : 0;
+                const wB = b['$'] && b['$'].width ? parseInt(b['$'].width, 10) : 0;
+                return wB - wA;
+            });
+            const best = sorted[0];
+            if (best) {
+                const width = best['$'] && best['$'].width ? parseInt(best['$'].width, 10) : 0;
+                if (width === 0 || width >= 300) {
+                    if (best['$'] && best['$'].url) thumbnail_url = best['$'].url;
+                    else if (best.url) thumbnail_url = best.url;
+                }
+            }
+        } else {
+            const m = item['media:content'];
+            const width = m['$'] && m['$'].width ? parseInt(m['$'].width, 10) : (m.width ? parseInt(m.width, 10) : 0);
+            if (width === 0 || width >= 300) {
+                if (m['$'] && m['$'].url) thumbnail_url = m['$'].url;
+                else if (m.url) thumbnail_url = m.url;
+            }
         }
     }
 
@@ -188,6 +219,13 @@ async function processItem(item: any, source: any): Promise<any | null> {
         }
         if (!thumbnail_url) {
             thumbnail_url = metadata.thumbnail_url;
+        }
+    }
+
+    if (thumbnail_url) {
+        const isLargeEnough = await isImageLargeEnough(thumbnail_url);
+        if (!isLargeEnough) {
+            thumbnail_url = null;
         }
     }
 
