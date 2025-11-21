@@ -195,9 +195,13 @@ export const PostCarousel: FC<PostCarouselProps> = ({
         const diffToTarget = snap - scrollProgress;
         const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
         const translateY = diffToTarget * 300; // Adjust vertical position
+        const zIndex = Math.round(100 - Math.abs(diffToTarget * 100)); // Higher z-index for centered slide
+
         newSlideStyles[snapIndex] = {
-          transform: `scale(${scale}) translateY(${translateY}px)`,
+          transform: `scale(${scale}) translateY(${translateY}px) translateZ(0)`, // Force hardware acceleration
           opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely
+          zIndex: zIndex,
+          position: 'relative',
         };
       });
       setSlideStyles(newSlideStyles);
@@ -368,15 +372,11 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     <CarouselContext.Provider value={{ currentPostSlug: currentPost?.slug }}>
       <div className="relative flex h-full w-full flex-col items-center justify-center">
 
-        <div className="overflow-hidden h-full w-full" ref={emblaRef} role="region" aria-roledescription="carousel" aria-label="Posts Carousel">
-          <div className="flex flex-col h-full">
+        <div className="overflow-hidden h-full w-full touch-none overscroll-y-none" ref={emblaRef} role="region" aria-roledescription="carousel" aria-label="Posts Carousel">
+          <div className="flex flex-col h-full backface-visibility-hidden">
             {renderContent()}
           </div>
         </div>
-
-
-
-
 
         {itemToSave && (
           <SaveDialog

@@ -4,7 +4,7 @@ import type { Post } from "@/types";
 import React, { useEffect, type FC, useMemo, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
-import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform, animate } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Share2, ExternalLink, X, Sparkles, Clock, ChevronRight } from "lucide-react";
@@ -85,6 +85,12 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   const wheelAccumulator = useRef(0);
   const wheelTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Manual Touch Handling State
+  const y = useMotionValue(0);
+  const opacityScale = useTransform(y, [-200, 0, 200], [0.5, 1, 0.5]);
+  const scaleAnim = useTransform(y, [-200, 0, 200], [0.95, 1, 0.95]);
+  const touchStart = useRef<{ y: number; scrollTop: number } | null>(null);
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -128,16 +134,50 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
     return `${minutes} min read`;
   }, [summaryText]);
 
-  const handleDragEnd = (event: any, info: PanInfo) => {
-    // Allow swipe up or down to dismiss
-    const threshold = 100;
-    const velocityThreshold = 500;
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const scrollContainer = scrollContainerRef.current;
+    touchStart.current = {
+      y: e.touches[0].clientY,
+      scrollTop: scrollContainer ? scrollContainer.scrollTop : 0,
+    };
+  };
 
-    if (
-      Math.abs(info.offset.y) > threshold ||
-      Math.abs(info.velocity.y) > velocityThreshold
-    ) {
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStart.current) return;
+
+    const currentY = e.touches[0].clientY;
+    const deltaY = currentY - touchStart.current.y;
+    const scrollContainer = scrollContainerRef.current;
+
+    if (!scrollContainer) {
+      y.set(deltaY);
+      return;
+    }
+
+    const isInsideScrollable = scrollContainer.contains(e.target as Node);
+    const isScrollable = scrollContainer.scrollHeight > scrollContainer.clientHeight;
+
+    if (isInsideScrollable && isScrollable) {
+      // Dragging down from top
+      if (touchStart.current.scrollTop <= 0 && deltaY > 0) {
+        y.set(deltaY);
+      }
+      // Dragging up from bottom
+      else if (Math.abs(scrollContainer.scrollHeight - touchStart.current.scrollTop - scrollContainer.clientHeight) < 2 && deltaY < 0) {
+        y.set(deltaY);
+      }
+    } else {
+      // Outside scrollable area
+      y.set(deltaY);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStart.current = null;
+    if (Math.abs(y.get()) > 100) {
       setIsExpanded(false);
+    } else {
+      animate(y, 0, { type: "spring", stiffness: 300, damping: 30 });
     }
   };
 
@@ -266,11 +306,11 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
             >
               {/* Main Container with Drag to Dismiss */}
               <motion.div
-                className="relative w-full h-full flex flex-col will-change-transform"
-                drag="y"
-                dragConstraints={{ top: 0, bottom: 0 }}
-                dragElastic={0.7}
-                onDragEnd={handleDragEnd}
+                className="relative w-full h-full flex flex-col will-change-transform touch-pan-y"
+                style={{ y, opacity: opacityScale, scale: scaleAnim }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               >
                 {/* Full Screen Morphing Image */}
                 <div className="absolute inset-0 overflow-hidden bg-muted/30 dark:bg-muted/10">
@@ -312,7 +352,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
                 {/* Content Overlay - Bottom Aligned */}
                 <div
                   ref={scrollContainerRef}
-                  className="relative flex-1 flex flex-col justify-end p-6 md:p-12 pb-10 md:pb-16 overflow-y-auto no-scrollbar"
+                  className="relative flex-1 flex flex-col justify-end p-6 md:p-12 pb-10 md:pb-16 overflow-y-auto no-scrollbar overscroll-contain"
+                  onScroll={(e) => e.stopPropagation()}
                 >
                   <motion.div
                     layoutId={`header-${uniqueId}`}
