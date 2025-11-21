@@ -20,32 +20,60 @@ interface PostViewProps {
 const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () => void }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isSpeedingUp, setIsSpeedingUp] = useState(false);
   const hasCompleted = useRef(false);
 
   useEffect(() => {
     setDisplayedText("");
     setCurrentIndex(0);
+    setIsSpeedingUp(false);
     hasCompleted.current = false;
   }, [text]);
 
   useEffect(() => {
     if (currentIndex < text.length) {
+      let delay = 0;
+      let charsToAdd = 1;
+
+      if (isSpeedingUp) {
+        delay = 5; // Super fast tick
+        charsToAdd = 5; // Add multiple chars to speed up significantly
+      } else {
+        // Calculate delay based on progress: slower at start, faster at end
+        const progress = currentIndex / text.length;
+        const baseDelay = 30;
+        const minDelay = 5;
+        delay = Math.max(minDelay, baseDelay * (1 - progress));
+      }
+
       const timer = setTimeout(() => {
-        setDisplayedText((prev) => prev + text.charAt(currentIndex));
-        setCurrentIndex((prev) => prev + 1);
-      }, 30); // Slower typing speed for more natural feel
+        const nextIndex = Math.min(currentIndex + charsToAdd, text.length);
+        setDisplayedText(text.substring(0, nextIndex));
+        setCurrentIndex(nextIndex);
+      }, delay);
       return () => clearTimeout(timer);
     } else if (currentIndex === text.length && !hasCompleted.current) {
       hasCompleted.current = true;
       onComplete?.();
     }
-  }, [currentIndex, text, onComplete]);
+  }, [currentIndex, text, onComplete, isSpeedingUp]);
 
   return (
-    <p className="text-base md:text-lg leading-relaxed font-sans text-primary-foreground">
-      {displayedText}
-      {currentIndex < text.length && <span className="inline-block w-[2px] h-5 ml-1 bg-primary animate-pulse align-middle" />}
-    </p>
+    <div className="relative">
+      {currentIndex < text.length && (
+        <div
+          className="fixed inset-0 z-[150] cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsSpeedingUp(true);
+          }}
+        />
+      )}
+      <p className="text-base md:text-lg leading-relaxed font-sans text-primary-foreground">
+        {displayedText}
+        {currentIndex < text.length && <span className="inline-block w-[2px] h-5 ml-1 bg-primary animate-pulse align-middle" />}
+      </p>
+    </div>
   );
 };
 
