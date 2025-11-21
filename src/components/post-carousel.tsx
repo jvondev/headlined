@@ -204,7 +204,8 @@ export const PostCarousel: FC<PostCarouselProps> = ({
         const diffToTarget = snap - scrollProgress;
         const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
         const translateY = diffToTarget * 300; // Adjust vertical position
-        const zIndex = Math.round(100 - Math.abs(diffToTarget * 100)); // Higher z-index for centered slide
+        // Lower z-index to prevent overlap with Nav (was 100)
+        const zIndex = Math.round(20 - Math.abs(diffToTarget * 10));
 
         newSlideStyles[snapIndex] = {
           transform: `scale(${scale}) translateY(${translateY}px) translateZ(0)`, // Force hardware acceleration
@@ -381,7 +382,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     <CarouselContext.Provider value={{ currentPostSlug: currentPost?.slug }}>
       <div className="relative flex h-full w-full flex-col items-center justify-center">
 
-        <div className="overflow-hidden h-full w-full touch-none overscroll-y-none" ref={emblaRef} role="region" aria-roledescription="carousel" aria-label="Posts Carousel">
+        <div className="overflow-hidden h-full w-full touch-none overscroll-y-none overscroll-contain" ref={emblaRef} role="region" aria-roledescription="carousel" aria-label="Posts Carousel">
           <div className="flex flex-col h-full backface-visibility-hidden">
             {renderContent()}
           </div>

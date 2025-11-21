@@ -285,9 +285,9 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
         {/* Card Content - Neo-Minimalist Layout */}
         <div className="absolute inset-0 flex flex-col justify-between p-8 md:p-10">
           <motion.div layoutId={`header-${uniqueId}`} className="space-y-4 pt-4">
-            {/* Meta Tags - Glass Pill */}
+            {/* Meta Tags - Glass Pill - Optimized: Removed backdrop-blur-md */}
             <div className="flex items-center gap-3">
-              <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-medium text-white/90 tracking-wide uppercase">
+              <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 border border-white/10 text-xs font-medium text-white/90 tracking-wide uppercase">
                 News
               </span>
               <span className="text-xs font-medium text-white/70 tracking-wide uppercase">
@@ -304,7 +304,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
           {/* Subtle Interaction Hint */}
           <div className="h-0 overflow-hidden group-hover:h-10 transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 mt-0 group-hover:mt-6">
             <div className="flex items-center gap-2 text-sm font-medium text-white/90">
-              <span className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+              <span className="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center">
                 <ChevronRight className="w-4 h-4" />
               </span>
               <span>View Details</span>
@@ -356,14 +356,14 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
                 <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-50">
                   <motion.button
                     onClick={() => setIsExpanded(false)}
-                    className="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-white/90 hover:bg-white/20 transition-colors"
+                    className="p-2 rounded-full bg-black/40 border border-white/10 text-white/90 hover:bg-white/20 transition-colors"
                     whileTap={{ scale: 0.9 }}
                   >
                     <X className="w-5 h-5" />
                   </motion.button>
 
-                  {/* Reading Time Badge */}
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-medium text-white/90">
+                  {/* Reading Time Badge - Optimized: Removed backdrop-blur-md */}
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 border border-white/10 text-xs font-medium text-white/90">
                     <Clock className="w-3 h-3" />
                     {readingTime}
                   </div>
