@@ -26,7 +26,6 @@ type MainContentCarouselProps = {
   selectedIndex: number;
   topics: Topic[];
   interests: Interest[];
-  slideStyles: React.CSSProperties[];
   className?: string;
 };
 
@@ -37,7 +36,6 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
   selectedIndex,
   topics,
   interests,
-  slideStyles,
   className,
 }) => {
   return (
@@ -49,7 +47,6 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
               <div
                 key={item.name}
                 className="flex-[0_0_100%] h-full will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
-                style={slideStyles[index]}
               >
                 {item.name === "Saved" && <SavedContent />}
                 {item.name === "Dashboard" && <DashboardContent />}

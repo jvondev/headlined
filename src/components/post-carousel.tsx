@@ -102,7 +102,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
       setActiveSlideIndex(0);
       fetchPosts();
     }
-  }, [currentKey, hasActivated]); // Removed fetchPosts from deps to avoid loops, currentKey is stable enough
+  }, [currentKey, hasActivated]);
 
   // Prevent iOS bounce on body and browser navigation swipes
   useEffect(() => {
@@ -236,19 +236,21 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   useEffect(() => {
     if (!emblaApi || !hasActivated) return;
 
-    const onSettle = (api: UseEmblaCarouselType[1]) => {
+    const onSelect = (api: UseEmblaCarouselType[1]) => {
       const newIndex = api!.selectedScrollSnap();
       setActiveSlideIndex(newIndex);
 
-      if (hasMore && !isLoading && newIndex >= posts.length - 3) {
+      if (hasMore && !isLoading && newIndex >= posts.length - 5) {
         loadMorePosts();
       }
     };
 
-    emblaApi.on("settle", onSettle);
+    emblaApi.on("select", onSelect);
+    // Initial check
+    onSelect(emblaApi);
 
     return () => {
-      emblaApi.off("settle", onSettle);
+      emblaApi.off("select", onSelect);
     };
   }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery, hasActivated]);
 
@@ -346,26 +348,37 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     }
     return (
       <>
-        {posts.map((post, index) => (
-          <div
-            className="relative min-w-0 flex-[0_0_100%] h-full flex justify-center py-2 px-4 md:py-4 md:px-8 lg:py-8 lg:px-16 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
-            key={`${post.slug}-${index}-${topicName || searchQuery}`}
-            role="group"
-            aria-roledescription="slide"
-            aria-label={`Post ${index + 1} of ${posts.length}`}
-          // Removed style prop as it's now handled directly via DOM manipulation
-          >              {post.slug === "home" ? (
-            <HomepagePostSlide />
-          ) : (
-            <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
-              <PostView
-                post={post}
-                isActive={index === activeSlideIndex}
-                emblaApi={emblaApi}
-              />
-            </div>)}
-          </div>
-        ))}
+        {posts.map((post, index) => {
+          // Virtualization: Only render slides within a buffer of the active index
+          // This drastically reduces DOM weight and React reconciliation cost
+          const shouldRender = Math.abs(index - activeSlideIndex) <= 5;
+
+          return (
+            <div
+              className="relative min-w-0 flex-[0_0_100%] h-full flex justify-center py-2 px-4 md:py-4 md:px-8 lg:py-8 lg:px-16 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
+              key={`${post.slug}-${index}-${topicName || searchQuery}`}
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`Post ${index + 1} of ${posts.length}`}
+            >
+              {shouldRender ? (
+                post.slug === "home" ? (
+                  <HomepagePostSlide />
+                ) : (
+                  <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
+                    <PostView
+                      post={post}
+                      isActive={index === activeSlideIndex}
+                      emblaApi={emblaApi}
+                    />
+                  </div>
+                )
+              ) : (
+                <div className="w-full h-full" /> // Lightweight placeholder
+              )}
+            </div>
+          );
+        })}
         {isLoading && (
           <div className="relative min-w-0 flex-[0_0_100%] h-full flex items-center justify-center">
             <div className="text-center">
