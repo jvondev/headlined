@@ -12,6 +12,7 @@ import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { PostView } from "@/components/post-view";
+import { PostCardSkeleton } from "./post-card-skeleton";
 import { HomepagePostSlide } from "@/components/homepage-post-slide";
 import { getPaginatedPosts } from "@/lib/client-posts";
 import { useSavedItems } from "@/hooks/use-saved-items";
@@ -374,7 +375,9 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                   </div>
                 )
               ) : (
-                <div className="w-full h-full" /> // Lightweight placeholder
+                <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
+                  <PostCardSkeleton />
+                </div>
               )}
             </div>
           );
