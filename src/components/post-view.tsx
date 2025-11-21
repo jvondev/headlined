@@ -87,9 +87,22 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
 
   // Manual Touch Handling State
   const y = useMotionValue(0);
-  const opacityScale = useTransform(y, [-200, 0, 200], [0.5, 1, 0.5]);
-  const scaleAnim = useTransform(y, [-200, 0, 200], [0.95, 1, 0.95]);
-  const touchStart = useRef<{ y: number; scrollTop: number } | null>(null);
+  const x = useMotionValue(0);
+  const opacityScale = useTransform(
+    [y, x],
+    ([latestY, latestX]) => {
+      const distance = Math.sqrt((latestY as number) ** 2 + (latestX as number) ** 2);
+      return Math.max(0.5, 1 - distance / 400);
+    }
+  );
+  const scaleAnim = useTransform(
+    [y, x],
+    ([latestY, latestX]) => {
+      const distance = Math.sqrt((latestY as number) ** 2 + (latestX as number) ** 2);
+      return Math.max(0.95, 1 - distance / 4000);
+    }
+  );
+  const touchStart = useRef<{ x: number; y: number; scrollTop: number } | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -101,6 +114,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
       document.body.style.overflow = 'hidden';
       document.body.style.touchAction = 'none';
       y.set(0);
+      x.set(0);
     } else {
       document.body.style.overflow = '';
       document.body.style.touchAction = '';
@@ -109,7 +123,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
       document.body.style.overflow = '';
       document.body.style.touchAction = '';
     };
-  }, [isExpanded, y]);
+  }, [isExpanded, y, x]);
 
   const handleCardClick = () => {
     if (post.slug === "home") {
@@ -154,6 +168,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
     e.stopPropagation();
     const scrollContainer = scrollContainerRef.current;
     touchStart.current = {
+      x: e.touches[0].clientX,
       y: e.touches[0].clientY,
       scrollTop: scrollContainer ? scrollContainer.scrollTop : 0,
     };
@@ -164,7 +179,10 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
     if (!touchStart.current) return;
 
     const currentY = e.touches[0].clientY;
+    const currentX = e.touches[0].clientX;
     const deltaY = currentY - touchStart.current.y;
+    const deltaX = currentX - touchStart.current.x;
+    x.set(deltaX * 0.85);
     const scrollContainer = scrollContainerRef.current;
 
     if (!scrollContainer) {
@@ -191,13 +209,17 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    e.stopPropagation();
-    touchStart.current = null;
-    // Lower threshold for easier closing
-    if (Math.abs(y.get()) > 60) {
+    e.stopPropagation();           // ← ADD THIS
+    touchStart.current = null;      // ← ADD THIS
+    // Lower threshold for easier closing - now checks both vertical AND horizontal movement
+    const verticalDistance = Math.abs(y.get());
+    const horizontalDistance = Math.abs(x.get());
+
+    if (verticalDistance > 60 || horizontalDistance > 60) {
       setIsExpanded(false);
     } else {
       animate(y, 0, { type: "spring", stiffness: 300, damping: 30 });
+      animate(x, 0, { type: "spring", stiffness: 300, damping: 30 });
     }
   };
 
@@ -327,7 +349,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
               {/* Main Container with Drag to Dismiss */}
               <motion.div
                 className="relative w-full h-full flex flex-col will-change-transform touch-pan-y"
-                style={{ y, opacity: opacityScale, scale: scaleAnim }}
+                style={{ x, y, opacity: opacityScale, scale: scaleAnim }}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
