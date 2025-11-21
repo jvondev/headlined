@@ -35,6 +35,16 @@ const openDatabase = (): Promise<IDBDatabase> => {
 
     request.onsuccess = (event) => {
       db = (event.target as IDBOpenDBRequest).result;
+
+      db.onversionchange = () => {
+        db?.close();
+        db = null;
+      };
+
+      db.onclose = () => {
+        db = null;
+      };
+
       resolve(db);
     };
 

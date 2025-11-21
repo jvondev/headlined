@@ -4,7 +4,7 @@ import type { Post } from "@/types";
 import React, { useEffect, type FC, useMemo, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
-import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform, animate } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Share2, ExternalLink, X, Sparkles, Clock, ChevronRight } from "lucide-react";
