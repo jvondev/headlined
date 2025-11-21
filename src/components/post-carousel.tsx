@@ -116,7 +116,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(initialSlide);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
-  const [slideStyles, setSlideStyles] = useState<React.CSSProperties[]>([]);
+  // Removed slideStyles state for performance
 
   const currentPost = posts[activeSlideIndex];
 
@@ -197,24 +197,21 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
     const applyTransforms = () => {
       const scrollProgress = emblaApi.scrollProgress();
-      const slidesInView = emblaApi.slidesInView(true); // Get all slides currently in view
-      const newSlideStyles: React.CSSProperties[] = [];
+      const slides = emblaApi.slideNodes();
+      const snapList = emblaApi.scrollSnapList();
 
-      emblaApi.scrollSnapList().forEach((snap, snapIndex) => {
+      slides.forEach((slide, index) => {
+        const snap = snapList[index];
         const diffToTarget = snap - scrollProgress;
         const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
         const translateY = diffToTarget * 300; // Adjust vertical position
-        // Lower z-index to prevent overlap with Nav (was 100)
         const zIndex = Math.round(20 - Math.abs(diffToTarget * 10));
 
-        newSlideStyles[snapIndex] = {
-          transform: `scale(${scale}) translateY(${translateY}px) translateZ(0)`, // Force hardware acceleration
-          opacity: Math.max(0, 1 - Math.abs(diffToTarget * 1.5)), // Fade out completely
-          zIndex: zIndex,
-          position: 'relative',
-        };
+        slide.style.transform = `scale(${scale}) translateY(${translateY}px) translateZ(0)`;
+        slide.style.opacity = Math.max(0, 1 - Math.abs(diffToTarget * 1.5)).toString();
+        slide.style.zIndex = zIndex.toString();
+        slide.style.position = 'relative';
       });
-      setSlideStyles(newSlideStyles);
     };
 
     emblaApi.on("scroll", applyTransforms);
@@ -347,7 +344,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
             role="group"
             aria-roledescription="slide"
             aria-label={`Post ${index + 1} of ${posts.length}`}
-            style={slideStyles[index]}
+          // Removed style prop as it's now handled directly via DOM manipulation
           >              {post.slug === "home" ? (
             <HomepagePostSlide />
           ) : (
