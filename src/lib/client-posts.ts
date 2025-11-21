@@ -56,8 +56,8 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
           clearInterval(checkInterval);
           resolve(allPosts);
         } else if (!isFetchingAllPosts) { // If fetching is done but no posts, resolve empty
-            clearInterval(checkInterval);
-            resolve([]);
+          clearInterval(checkInterval);
+          resolve([]);
         }
       }, 100);
     });
@@ -71,20 +71,42 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
     // Always attempt to fetch from network if no posts in memory or a full sync is needed
     if (allPosts.length === 0 || shouldTriggerFullSync()) {
       try {
-        const response = await fetch('/posts.json');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const networkPosts = await response.json();
+        // Construct the URL for today's data
+        const today = new Date().toISOString().split('T')[0];
+        const url = `https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-/output/${today}.json`;
 
-        // Clear all existing posts and add new ones from network
-        await clearAllPosts();
-        await addPosts(networkPosts);
-        localStorage.setItem(LAST_SYNC_TIMESTAMP_KEY, new Date().toISOString());
-        postsToReturn = networkPosts; // Use network data
-        fetchedFromNetwork = true;
+        const response = await fetch(url);
+        if (!response.ok) {
+          // If today's file isn't ready yet, try yesterday's
+          if (response.status === 404) {
+            const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+            const yesterdayUrl = `https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-/output/${yesterday}.json`;
+            const yesterdayResponse = await fetch(yesterdayUrl);
+            if (!yesterdayResponse.ok) {
+              throw new Error(`HTTP error! status: ${yesterdayResponse.status}`);
+            }
+            const networkPosts = await yesterdayResponse.json();
+            await clearAllPosts();
+            await addPosts(networkPosts);
+            localStorage.setItem(LAST_SYNC_TIMESTAMP_KEY, new Date().toISOString());
+            postsToReturn = networkPosts;
+            fetchedFromNetwork = true;
+          } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+        } else {
+          const networkPosts = await response.json();
+
+          // Clear all existing posts and add new ones from network
+          await clearAllPosts();
+          await addPosts(networkPosts);
+          localStorage.setItem(LAST_SYNC_TIMESTAMP_KEY, new Date().toISOString());
+          postsToReturn = networkPosts; // Use network data
+          fetchedFromNetwork = true;
+        }
       } catch (networkError) {
         // Fallback to IndexedDB if network fetch fails
+        console.error("Network fetch failed:", networkError);
       }
     }
 
