@@ -125,7 +125,8 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
   }
 };
 
-export const getPaginatedPosts = async ({ page, topic_name, search_query }: { page: number; topic_name?: string; search_query?: string }): Promise<{ posts: Post[], hasMore: boolean }> => {
+// Get ALL filtered posts at once (optimized for local-first)
+export const getFilteredPosts = async ({ topic_name, search_query }: { topic_name?: string; search_query?: string }): Promise<Post[]> => {
   const posts = await fetchAllPosts();
 
   let filteredPosts = posts;
@@ -143,6 +144,13 @@ export const getPaginatedPosts = async ({ page, topic_name, search_query }: { pa
     );
   }
 
+  return filteredPosts;
+};
+
+// Legacy pagination function (kept for compatibility)
+export const getPaginatedPosts = async ({ page, topic_name, search_query }: { page: number; topic_name?: string; search_query?: string }): Promise<{ posts: Post[], hasMore: boolean }> => {
+  const filteredPosts = await getFilteredPosts({ topic_name, search_query });
+
   const startIndex = (page - 1) * PAGE_SIZE;
   const endIndex = startIndex + PAGE_SIZE;
   const paginatedPosts = filteredPosts.slice(startIndex, endIndex);
@@ -152,8 +160,7 @@ export const getPaginatedPosts = async ({ page, topic_name, search_query }: { pa
 };
 
 export const checkIfFeedHasPosts = async (type: 'topic' | 'interest', name: string): Promise<boolean> => {
-  const { posts } = await getPaginatedPosts({
-    page: 1,
+  const posts = await getFilteredPosts({
     topic_name: type === 'topic' ? name : undefined,
     search_query: type === 'interest' ? name : undefined,
   });
