@@ -53,6 +53,9 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const wheelAccumulator = useRef(0);
+  const wheelTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -98,20 +101,68 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   }, [summaryText]);
 
   const handleDragEnd = (event: any, info: PanInfo) => {
-    // Allow swipe in any direction to dismiss (mobile friendly)
-    // Lower thresholds for better sensitivity
-    const threshold = 80;
-    const velocityThreshold = 400;
+    // Allow swipe up or down to dismiss
+    const threshold = 100;
+    const velocityThreshold = 500;
 
     if (
       Math.abs(info.offset.y) > threshold ||
-      Math.abs(info.velocity.y) > velocityThreshold ||
-      Math.abs(info.offset.x) > threshold ||
-      Math.abs(info.velocity.x) > velocityThreshold
+      Math.abs(info.velocity.y) > velocityThreshold
     ) {
       setIsExpanded(false);
     }
   };
+
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      const scrollContainer = scrollContainerRef.current;
+
+      // If we don't have the ref yet, or if the event target isn't a node, ignore
+      if (!scrollContainer || !(e.target instanceof Node)) return;
+
+      const isScrollable = scrollContainer.scrollHeight > scrollContainer.clientHeight;
+      const isAtTop = scrollContainer.scrollTop <= 0;
+      // 1px tolerance for float calculations
+      const isAtBottom = Math.abs(scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight) < 1;
+
+      const isInsideScrollable = scrollContainer.contains(e.target);
+
+      if (isInsideScrollable && isScrollable) {
+        // If inside scrollable content:
+        // Only accumulate if we are at boundaries and trying to scroll past them
+        if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
+          wheelAccumulator.current += e.deltaY;
+        } else {
+          // Otherwise we are scrolling content, reset accumulator
+          wheelAccumulator.current = 0;
+        }
+      } else {
+        // If outside scrollable area (e.g. image) or content fits screen:
+        // Any vertical swipe contributes to closing
+        wheelAccumulator.current += e.deltaY;
+      }
+
+      // Threshold for closing (adjust as needed, 100 is reasonable for trackpad swipe)
+      if (Math.abs(wheelAccumulator.current) > 100) {
+        setIsExpanded(false);
+        wheelAccumulator.current = 0;
+      }
+
+      // Reset accumulator if no events for a short time
+      if (wheelTimeoutRef.current) clearTimeout(wheelTimeoutRef.current);
+      wheelTimeoutRef.current = setTimeout(() => {
+        wheelAccumulator.current = 0;
+      }, 150);
+    };
+
+    window.addEventListener("wheel", handleWheel);
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      if (wheelTimeoutRef.current) clearTimeout(wheelTimeoutRef.current);
+    };
+  }, [isExpanded]);
 
   return (
     <>
@@ -188,9 +239,9 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
               {/* Main Container with Drag to Dismiss */}
               <motion.div
                 className="relative w-full h-full flex flex-col will-change-transform"
-                drag
-                dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
-                dragElastic={0.2}
+                drag="y"
+                dragConstraints={{ top: 0, bottom: 0 }}
+                dragElastic={0.7}
                 onDragEnd={handleDragEnd}
               >
                 {/* Full Screen Morphing Image */}
@@ -231,7 +282,10 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
                 </div>
 
                 {/* Content Overlay - Bottom Aligned */}
-                <div className="relative flex-1 flex flex-col justify-end p-6 md:p-12 pb-10 md:pb-16 overflow-y-auto no-scrollbar">
+                <div
+                  ref={scrollContainerRef}
+                  className="relative flex-1 flex flex-col justify-end p-6 md:p-12 pb-10 md:pb-16 overflow-y-auto no-scrollbar"
+                >
                   <motion.div
                     layoutId={`header-${uniqueId}`}
                     className="max-w-3xl mx-auto w-full space-y-6"
