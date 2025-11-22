@@ -17,16 +17,17 @@ interface DashboardContentProps {
   setIsIntroMode?: (isIntro: boolean) => void;
   greetingMainText?: string;
   greetingSubText?: string;
+  initialViewState?: "intro" | "dashboard";
 }
 
-export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingMainText, greetingSubText }) => {
+export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingMainText, greetingSubText, initialViewState = "intro" }) => {
   const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
   const [readHistory, setReadHistory] = useState<(Post & { readAt: string })[]>([]);
   const [savedCount, setSavedCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [viewState, setViewState] = useState<"intro" | "dashboard">("intro");
+  const [viewState, setViewState] = useState<"intro" | "dashboard">(initialViewState);
   const [timelineItemsToShow, setTimelineItemsToShow] = useState(4);
 
   const fetchData = async () => {

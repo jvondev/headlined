@@ -15,7 +15,7 @@ type CarouselItem = {
   name: string;
   type: "topic" | "interest" | "none";
   href: string;
-  icon?: React.ForwardRefExoticComponent<Omit<any, "ref"> & React.RefAttributes<SVGSVGElement>>;
+  icon?: string;
   isIconOnly?: boolean;
 };
 
@@ -32,6 +32,7 @@ type MainContentCarouselProps = {
   date?: string;
   dateRange?: { start: string; end: string };
   setIsDashboardIntro?: (isIntro: boolean) => void;
+  initialViewState?: "intro" | "dashboard";
 };
 
 const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
@@ -45,6 +46,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
   date,
   dateRange,
   setIsDashboardIntro,
+  initialViewState,
 }) => {
   const pathname = usePathname();
 
@@ -59,8 +61,8 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
     if (pathname === "/yesterday" && date) {
       const d = new Date(date);
       return {
-        mainText: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
-        subText: timeGreeting
+        mainText: "Yesterday",
+        subText: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
       };
     }
     if (pathname === "/archive" && date) {
@@ -76,15 +78,15 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
       const startStr = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       const endStr = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       return {
-        mainText: `${startStr} - ${endStr}`,
-        subText: timeGreeting
+        mainText: "This Week",
+        subText: `${startStr} - ${endStr}`
       };
     }
     if (pathname === "/this-month" && dateRange) {
       const start = new Date(dateRange.start);
       return {
-        mainText: start.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-        subText: timeGreeting
+        mainText: "This Month",
+        subText: start.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
       };
     }
 
@@ -107,6 +109,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
                     setIsIntroMode={setIsDashboardIntro}
                     greetingMainText={greetingData.mainText}
                     greetingSubText={greetingData.subText}
+                    initialViewState={initialViewState}
                   />
                 )}
                 {(item.type === "topic" || item.type === "interest") && (

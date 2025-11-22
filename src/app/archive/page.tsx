@@ -13,7 +13,7 @@ export default function ArchivePage() {
         <main className="h-screen w-full bg-background">
             <PremiumGuard>
                 <OnboardingProvider>
-                    <SynchronizedCarousel topics={[]} interests={[]} date={date} />
+                    <SynchronizedCarousel topics={[]} interests={[]} date={date} initialViewState="dashboard" />
                 </OnboardingProvider>
             </PremiumGuard>
         </main>

@@ -21,9 +21,10 @@ type SynchronizedCarouselProps = {
     interests: Interest[];
     date?: string;
     dateRange?: { start: string; end: string };
+    initialViewState?: "intro" | "dashboard";
 };
 
-export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, date, dateRange }) => {
+export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, date, dateRange, initialViewState }) => {
     const pathname = usePathname();
     const { subscribedTopics, subscribedInterests } = useSubscribedFeeds();
     const [isDashboardIntro, setIsDashboardIntro] = useState(true);
@@ -172,6 +173,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 date={date}
                 dateRange={dateRange}
                 setIsDashboardIntro={setIsDashboardIntro}
+                initialViewState={initialViewState}
                 className="pt-[52px]"
             />
         </div>

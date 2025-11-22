@@ -11,7 +11,7 @@ export default function YesterdayPage() {
         <main className="h-screen w-full bg-background">
             <PremiumGuard>
                 <OnboardingProvider>
-                    <SynchronizedCarousel topics={[]} interests={[]} date={yesterday} />
+                    <SynchronizedCarousel topics={[]} interests={[]} date={yesterday} initialViewState="dashboard" />
                 </OnboardingProvider>
             </PremiumGuard>
         </main>

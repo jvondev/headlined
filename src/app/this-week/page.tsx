@@ -17,7 +17,7 @@ export default function ThisWeekPage() {
         <main className="h-screen w-full bg-background">
             <PremiumGuard>
                 <OnboardingProvider>
-                    <SynchronizedCarousel topics={[]} interests={[]} dateRange={{ start: startDate, end: endDate }} />
+                    <SynchronizedCarousel topics={[]} interests={[]} dateRange={{ start: startDate, end: endDate }} initialViewState="dashboard" />
                 </OnboardingProvider>
             </PremiumGuard>
         </main>
