@@ -138,7 +138,7 @@ async function fetchArticleMetadata(url: string): Promise<{ description: string 
 // --- Main Logic ---
 
 async function processItem(item: any, source: any): Promise<any | null> {
-    let title = item.title ? cleanCdata(item.title) : null;
+    let title = item.title ? stripHtml(cleanCdata(item.title)) : null;
     title = removePhrases(title, phrasesToRemoveFromTitle);
 
     let link = item.link;
@@ -367,9 +367,9 @@ async function run() {
         }
     }
 
-    // Save updated data
-    fs.writeFileSync(dailyFile, JSON.stringify(dailyData, null, 2));
-    fs.writeFileSync(INDEX_FILE, JSON.stringify(Array.from(indexSet), null, 2));
+    // Save updated data with explicit UTF-8 encoding
+    fs.writeFileSync(dailyFile, JSON.stringify(dailyData, null, 2), 'utf-8');
+    fs.writeFileSync(INDEX_FILE, JSON.stringify(Array.from(indexSet), null, 2), 'utf-8');
 
     console.log(`Job finished. Added ${newItemsCount} new items. Saved to ${dailyFile}`);
 }

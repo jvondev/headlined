@@ -17,11 +17,21 @@ interface PostViewProps {
   emblaApi?: UseEmblaCarouselType[1];
 }
 
+const decodeHtmlEntities = (text: string) => {
+  if (typeof window === 'undefined') return text;
+  const textArea = document.createElement('textarea');
+  textArea.innerHTML = text;
+  return textArea.value;
+};
+
 const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () => void }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSpeedingUp, setIsSpeedingUp] = useState(false);
   const hasCompleted = useRef(false);
+
+  // Convert text to array of characters (handles Unicode properly including emojis)
+  const textChars = useMemo(() => Array.from(text), [text]);
 
   useEffect(() => {
     setDisplayedText("");
@@ -31,7 +41,7 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
   }, [text]);
 
   useEffect(() => {
-    if (currentIndex < text.length) {
+    if (currentIndex < textChars.length) {
       let delay = 0;
       let charsToAdd = 1;
 
@@ -40,27 +50,27 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
         charsToAdd = 5; // Add multiple chars to speed up significantly
       } else {
         // Calculate delay based on progress: slower at start, faster at end
-        const progress = currentIndex / text.length;
+        const progress = currentIndex / textChars.length;
         const baseDelay = 30;
         const minDelay = 5;
         delay = Math.max(minDelay, baseDelay * (1 - progress));
       }
 
       const timer = setTimeout(() => {
-        const nextIndex = Math.min(currentIndex + charsToAdd, text.length);
-        setDisplayedText(text.substring(0, nextIndex));
+        const nextIndex = Math.min(currentIndex + charsToAdd, textChars.length);
+        setDisplayedText(textChars.slice(0, nextIndex).join(''));
         setCurrentIndex(nextIndex);
       }, delay);
       return () => clearTimeout(timer);
-    } else if (currentIndex === text.length && !hasCompleted.current) {
+    } else if (currentIndex === textChars.length && !hasCompleted.current) {
       hasCompleted.current = true;
       onComplete?.();
     }
-  }, [currentIndex, text, onComplete, isSpeedingUp]);
+  }, [currentIndex, textChars, onComplete, isSpeedingUp]);
 
   return (
     <div className="relative">
-      {currentIndex < text.length && (
+      {currentIndex < textChars.length && (
         <div
           className="fixed inset-0 z-[150] cursor-pointer"
           onClick={(e) => {
@@ -71,7 +81,7 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
       )}
       <p className="text-base md:text-lg leading-relaxed font-sans text-primary-foreground">
         {displayedText}
-        {currentIndex < text.length && <span className="inline-block w-[2px] h-5 ml-1 bg-primary animate-pulse align-middle" />}
+        {currentIndex < textChars.length && <span className="inline-block w-[2px] h-5 ml-1 bg-primary animate-pulse align-middle" />}
       </p>
     </div>
   );
@@ -147,15 +157,21 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   }, [isActive]);
 
   const summaryText = useMemo(() => {
+    let text = "No summary available.";
     if (post.summaries && post.summaries.length > 0 && post.summaries[0].content) {
-      return typeof post.summaries[0].content === 'string'
+      text = typeof post.summaries[0].content === 'string'
         ? post.summaries[0].content
         : post.summaries[0].content.snippet || post.description || "No summary available.";
+    } else if (post.description) {
+      text = post.description;
     }
-    return post.description || "No summary available.";
+    return decodeHtmlEntities(text);
   }, [post]);
 
   const uniqueId = post.slug || post.title || Math.random().toString();
+
+  // Decode title for display
+  const decodedTitle = useMemo(() => decodeHtmlEntities(post.title), [post.title]);
 
   // Calculate reading time (approximate)
   const readingTime = useMemo(() => {
@@ -209,8 +225,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    e.stopPropagation();           // ← ADD THIS
-    touchStart.current = null;      // ← ADD THIS
+    e.stopPropagation();
+    touchStart.current = null;
     // Lower threshold for easier closing - now checks both vertical AND horizontal movement
     const verticalDistance = Math.abs(y.get());
     const horizontalDistance = Math.abs(x.get());
@@ -319,7 +335,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
 
             {/* Title - Clean Sans-Serif - Moved to Top for better readability */}
             <h2 className="font-sans text-3xl md:text-4xl font-bold text-white leading-tight tracking-tight text-balance drop-shadow-lg">
-              {post.title}
+              {decodedTitle}
             </h2>
           </motion.div>
 
@@ -413,7 +429,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
 
                     {/* Title - Clean & Impactful */}
                     <h1 className="font-sans text-3xl md:text-2xl font-bold text-white leading-tight tracking-tight text-balance">
-                      {post.title}
+                      {decodedTitle}
                     </h1>
 
                     {/* Key Insights / Summary - Distraction Free */}
