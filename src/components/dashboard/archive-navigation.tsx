@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { CalendarDays, Clock, Calendar } from "lucide-react";
 import { checkLicenseStatus } from "@/lib/license-manager";
 import { useEffect, useState } from "react";
@@ -11,6 +11,7 @@ import { useAppUsage } from "@/hooks/use-app-usage";
 export function ArchiveNavigation() {
     const router = useRouter();
     const pathname = usePathname();
+    const searchParams = useSearchParams();
     const [isPremium, setIsPremium] = useState<boolean>(false);
     const usage = useAppUsage();
 
@@ -29,38 +30,55 @@ export function ArchiveNavigation() {
         router.push(path);
     };
 
-
-
     const renderButtons = () => {
+        const today = new Date();
+        const getPastDate = (days: number, fromDate?: Date) => {
+            const d = new Date(fromDate || today);
+            d.setDate(d.getDate() - days);
+            return d.toISOString().split('T')[0];
+        };
+        const formatDate = (dateStr: string) => {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        };
+
         if (pathname === "/yesterday") {
-            // Logic for "2 Days Ago", "3 Days Ago", "4 Days Ago"
-            // For now, let's just link to specific dates or placeholders
-            // Since we don't have dynamic routes for specific dates yet, we might need to use query params or just show the buttons visually for now.
-            // Assuming the user wants to navigate to these days.
-            // Let's use query params on the archive page or similar.
-            // Actually, the user asked for "last 2 day, last 3 days and last 4 day"
-            // Let's implement navigation to /archive?date=...
-
-            const today = new Date();
-            const getPastDate = (days: number) => {
-                const d = new Date(today);
-                d.setDate(today.getDate() - days);
-                return d.toISOString().split('T')[0];
-            };
-
             return (
                 <>
+                    <Button variant="outline" size="sm" className="flex-shrink-0 gap-2 rounded-full" onClick={() => handleNavigation("/today")}>
+                        <CalendarDays className="w-4 h-4" /> Today
+                    </Button>
                     <Button variant="outline" size="sm" className="flex-shrink-0 gap-2 rounded-full" onClick={() => handleNavigation(`/archive?date=${getPastDate(2)}`)}>
                         <Clock className="w-4 h-4" /> 2 Days Ago
                     </Button>
                     <Button variant="outline" size="sm" className="flex-shrink-0 gap-2 rounded-full" onClick={() => handleNavigation(`/archive?date=${getPastDate(3)}`)}>
                         <Clock className="w-4 h-4" /> 3 Days Ago
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-shrink-0 gap-2 rounded-full" onClick={() => handleNavigation(`/archive?date=${getPastDate(4)}`)}>
-                        <Clock className="w-4 h-4" /> 4 Days Ago
-                    </Button>
                 </>
             );
+        }
+
+        if (pathname === "/archive") {
+            const currentDateStr = searchParams.get("date");
+            if (currentDateStr) {
+                const currentDate = new Date(currentDateStr);
+                const prevDay1 = getPastDate(1, currentDate);
+                const prevDay2 = getPastDate(2, currentDate);
+
+                return (
+                    <>
+                        <Button variant="outline" size="sm" className="flex-shrink-0 gap-2 rounded-full" onClick={() => handleNavigation("/today")}>
+                            <CalendarDays className="w-4 h-4" /> Today
+                        </Button>
+                        <Button variant="outline" size="sm" className="flex-shrink-0 gap-2 rounded-full" onClick={() => handleNavigation(`/archive?date=${prevDay1}`)}>
+                            <Clock className="w-4 h-4" /> {formatDate(prevDay1)}
+                        </Button>
+                        <Button variant="outline" size="sm" className="flex-shrink-0 gap-2 rounded-full" onClick={() => handleNavigation(`/archive?date=${prevDay2}`)}>
+                            <Clock className="w-4 h-4" /> {formatDate(prevDay2)}
+                        </Button>
+                    </>
+                );
+            }
         }
 
         if (pathname === "/this-week") {

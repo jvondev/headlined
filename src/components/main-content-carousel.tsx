@@ -48,13 +48,48 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
 }) => {
   const pathname = usePathname();
 
-  const greetingTitle = useMemo(() => {
-    if (pathname === "/yesterday") return "Yesterday";
-    if (pathname === "/this-week") return "This Week";
-    if (pathname === "/this-month") return "This Month";
-    if (pathname === "/archive") return "Archive";
-    return undefined;
-  }, [pathname]);
+  const greetingData = useMemo(() => {
+    const now = new Date();
+    const hour = now.getHours();
+    let timeGreeting = "Good Evening";
+    if (hour < 5) timeGreeting = "Good Night";
+    else if (hour < 12) timeGreeting = "Good Morning";
+    else if (hour < 18) timeGreeting = "Good Afternoon";
+
+    if (pathname === "/yesterday" && date) {
+      const d = new Date(date);
+      return {
+        mainText: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
+        subText: timeGreeting
+      };
+    }
+    if (pathname === "/archive" && date) {
+      const d = new Date(date);
+      return {
+        mainText: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
+        subText: timeGreeting
+      };
+    }
+    if (pathname === "/this-week" && dateRange) {
+      const start = new Date(dateRange.start);
+      const end = new Date(dateRange.end);
+      const startStr = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const endStr = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return {
+        mainText: `${startStr} - ${endStr}`,
+        subText: timeGreeting
+      };
+    }
+    if (pathname === "/this-month" && dateRange) {
+      const start = new Date(dateRange.start);
+      return {
+        mainText: start.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+        subText: timeGreeting
+      };
+    }
+
+    return { mainText: undefined, subText: undefined };
+  }, [pathname, date, dateRange]);
 
   return (
     <div className={cn("flex-1 overflow-hidden", className)} ref={emblaRef}>
@@ -67,7 +102,13 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
                 className="flex-[0_0_100%] h-full will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
               >
                 {item.name === "Saved" && <SavedContent />}
-                {item.name === "Dashboard" && <DashboardContent setIsIntroMode={setIsDashboardIntro} greetingTitle={greetingTitle} />}
+                {item.name === "Dashboard" && (
+                  <DashboardContent
+                    setIsIntroMode={setIsDashboardIntro}
+                    greetingMainText={greetingData.mainText}
+                    greetingSubText={greetingData.subText}
+                  />
+                )}
                 {(item.type === "topic" || item.type === "interest") && (
                   <PostCarousel
                     shouldFetchPaginatedPosts={selectedIndex === index}
