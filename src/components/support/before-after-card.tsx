@@ -11,6 +11,10 @@ interface BeforeAfterCardProps {
     afterImage: string;
     beforeLabel?: string;
     afterLabel?: string;
+    beforeTitle?: string;
+    beforeDescription?: string;
+    afterTitle?: string;
+    afterDescription?: string;
     className?: string;
 }
 
@@ -21,6 +25,10 @@ export function BeforeAfterCard({
     afterImage,
     beforeLabel = "Free",
     afterLabel = "ReadMore+",
+    beforeTitle = "Standard Experience",
+    beforeDescription = "Limited access or basic functionality.",
+    afterTitle = "Premium Experience",
+    afterDescription = "Full access, enhanced features, and priority support.",
     className,
 }: BeforeAfterCardProps) {
     const hasImages = beforeImage && afterImage;
@@ -82,9 +90,9 @@ export function BeforeAfterCard({
                             <span className="inline-block text-xs font-medium px-2 py-1 rounded bg-muted text-muted-foreground mb-2">
                                 {beforeLabel}
                             </span>
-                            <h4 className="font-semibold text-lg">Standard Experience</h4>
+                            <h4 className="font-semibold text-lg">{beforeTitle}</h4>
                             <p className="text-sm text-muted-foreground">
-                                Limited access or basic functionality.
+                                {beforeDescription}
                             </p>
                         </div>
 
@@ -93,9 +101,9 @@ export function BeforeAfterCard({
                             <span className="inline-block text-xs font-bold px-2 py-1 rounded bg-primary text-primary-foreground mb-2">
                                 {afterLabel}
                             </span>
-                            <h4 className="font-semibold text-lg text-primary">Premium Experience</h4>
+                            <h4 className="font-semibold text-lg text-primary">{afterTitle}</h4>
                             <p className="text-sm text-muted-foreground">
-                                Full access, enhanced features, and priority support.
+                                {afterDescription}
                             </p>
                         </div>
                     </div>

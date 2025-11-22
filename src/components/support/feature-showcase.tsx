@@ -14,8 +14,12 @@ export function FeatureShowcase() {
                     description: "Go back in time. Access news from today up to 7 days ago.",
                     beforeLabel: "Today Only",
                     afterLabel: "7-Day History",
-                    beforeImage: "", // Placeholder or asset path if available
-                    afterImage: "", // Placeholder
+                    beforeImage: "",
+                    afterImage: "",
+                    beforeTitle: "Today's News Only",
+                    beforeDescription: "You can only see the current day's news feed. Yesterday's stories are gone.",
+                    afterTitle: "7-Day Archive",
+                    afterDescription: "Travel back in time. Access full news feeds from the past week."
                 },
                 {
                     title: "Analytics Dashboard",
@@ -24,6 +28,10 @@ export function FeatureShowcase() {
                     afterLabel: "30-Day Insights",
                     beforeImage: "",
                     afterImage: "",
+                    beforeTitle: "Basic Stats",
+                    beforeDescription: "View simple read counts for the current session.",
+                    afterTitle: "30-Day Insights",
+                    afterDescription: "Deep dive into your reading habits with a full month of analytics and trends."
                 },
             ],
         },
@@ -37,6 +45,10 @@ export function FeatureShowcase() {
                     afterLabel: "Custom Keywords",
                     beforeImage: "",
                     afterImage: "",
+                    beforeTitle: "Broad Topics",
+                    beforeDescription: "Subscribe to general categories like 'Technology' or 'Health'.",
+                    afterTitle: "Specific Keywords",
+                    afterDescription: "Follow niche interests like 'SpaceX', 'Vegan Recipes', or 'ReactJS'."
                 },
                 {
                     title: "Theme Customization",
@@ -45,6 +57,10 @@ export function FeatureShowcase() {
                     afterLabel: "Custom Themes",
                     beforeImage: "",
                     afterImage: "",
+                    beforeTitle: "Default Theme",
+                    beforeDescription: "Standard light/dark mode experience.",
+                    afterTitle: "Personalized Look",
+                    afterDescription: "Customize accent colors and themes to match your style."
                 },
             ],
         },
@@ -58,6 +74,10 @@ export function FeatureShowcase() {
                     afterLabel: "Smart Groups",
                     beforeImage: "",
                     afterImage: "",
+                    beforeTitle: "Single List",
+                    beforeDescription: "All saved posts are dumped into one long, unorganized list.",
+                    afterTitle: "Smart Collections",
+                    afterDescription: "Create custom folders and groups to organize your saved content."
                 },
                 {
                     title: "Cross-Device Sync (Coming Soon)",
@@ -66,6 +86,10 @@ export function FeatureShowcase() {
                     afterLabel: "Cloud Sync",
                     beforeImage: "",
                     afterImage: "",
+                    beforeTitle: "Local Storage",
+                    beforeDescription: "Data lives on this device only. Lost if you clear cache.",
+                    afterTitle: "Cloud Sync (coming soon)",
+                    afterDescription: "Seamlessly pick up where you left off on any device."
                 },
             ],
         },
@@ -79,6 +103,10 @@ export function FeatureShowcase() {
                     afterLabel: "Priority Access",
                     beforeImage: "",
                     afterImage: "",
+                    beforeTitle: "Standard Feedback",
+                    beforeDescription: "Submit requests via standard channels.",
+                    afterTitle: "Priority Feedback",
+                    afterDescription: "Your feature requests and bug reports get top priority."
                 },
                 {
                     title: "Support Solo Development",
@@ -87,6 +115,10 @@ export function FeatureShowcase() {
                     afterLabel: "Patron",
                     beforeImage: "",
                     afterImage: "",
+                    beforeTitle: "Free User",
+                    beforeDescription: "Enjoying the app for free.",
+                    afterTitle: "Patron",
+                    afterDescription: "Directly funding the developer's coffee and server costs to keep ReadMore alive."
                 },
             ],
         },
@@ -121,6 +153,10 @@ export function FeatureShowcase() {
                                         afterLabel={item.afterLabel}
                                         beforeImage={item.beforeImage}
                                         afterImage={item.afterImage}
+                                        beforeTitle={item.beforeTitle}
+                                        beforeDescription={item.beforeDescription}
+                                        afterTitle={item.afterTitle}
+                                        afterDescription={item.afterDescription}
                                     />
                                 </motion.div>
                             ))}
