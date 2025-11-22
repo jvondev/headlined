@@ -1,52 +1,55 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { checkLicenseStatus } from "@/lib/license-manager";
 import { useRouter } from "next/navigation";
-import { Lock } from "lucide-react";
+import { Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { checkLicenseStatus } from "@/lib/license-manager";
+import { PremiumUpsellModal } from "@/components/support/premium-upsell-modal";
 
-export function PremiumGuard({ children }: { children: React.ReactNode }) {
+interface PremiumGuardProps {
+    children: React.ReactNode;
+    fallback?: React.ReactNode;
+}
+
+export function PremiumGuard({ children, fallback }: PremiumGuardProps) {
     const [isPremium, setIsPremium] = useState<boolean | null>(null);
     const router = useRouter();
 
     useEffect(() => {
-        const check = async () => {
-            const status = await checkLicenseStatus();
-            setIsPremium(status);
-        };
-        check();
+        checkLicenseStatus().then(setIsPremium);
     }, []);
 
     if (isPremium === null) {
         return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+            <div className="flex h-full w-full items-center justify-center min-h-[50vh]">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
         );
     }
 
     if (!isPremium) {
+        if (fallback) return <>{fallback}</>;
+
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 text-center space-y-6">
-                <div className="p-4 bg-primary/10 rounded-full">
-                    <Lock className="w-12 h-12 text-primary" />
+            <div className="flex h-full w-full flex-col items-center justify-center min-h-[60vh] p-8 text-center space-y-6">
+                <div className="rounded-full bg-primary/10 p-6">
+                    <Lock className="h-12 w-12 text-primary" />
                 </div>
                 <div className="space-y-2 max-w-md">
                     <h2 className="text-2xl font-bold tracking-tight">Premium Feature</h2>
                     <p className="text-muted-foreground">
-                        This archive is available exclusively to ReadMore+ supporters.
-                        Unlock 30-day history, weekly digests, and more.
+                        This feature is available exclusively to ReadMore Plus subscribers.
+                        Upgrade to access unlimited history, distraction-free reading, and more.
                     </p>
                 </div>
-                <div className="flex gap-4">
-                    <Button variant="outline" onClick={() => router.push("/today")}>
-                        Back to Today
-                    </Button>
-                    <Button onClick={() => router.push("/support")}>
-                        Upgrade to Plus
-                    </Button>
-                </div>
+                <PremiumUpsellModal
+                    trigger={
+                        <Button size="lg" className="font-semibold">
+                            Upgrade to Plus
+                        </Button>
+                    }
+                />
             </div>
         );
     }

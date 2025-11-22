@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { PolarCheckout } from "./polar-checkout";
 import { LicenseValidationModal } from "./license-validation-modal";
 import { Heart, Sparkles, Zap, Crown } from "lucide-react";
+import { DistractionSettings } from "./distraction-settings";
 
 export function SupportHero() {
     const [amount, setAmount] = useState(10);
@@ -173,6 +174,11 @@ export function SupportHero() {
                 </Button>
 
                 <LicenseValidationModal />
+            </div>
+
+            {/* Distraction Settings (Only visible if premium) */}
+            <div className="mt-12 max-w-2xl mx-auto w-full text-left">
+                <DistractionSettings />
             </div>
 
             {showCheckout && (

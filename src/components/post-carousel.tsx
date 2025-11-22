@@ -23,6 +23,7 @@ import { SaveDialog } from "./save-dialog";
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
 import { Post, SavedItem } from "@/types";
 import { affiliateAds, AffiliateProgram } from "@/data/affiliate-ads";
+import { useDistractionSettings } from "@/hooks/use-distraction-settings";
 
 type PostCarouselProps = {
   shouldFetchPaginatedPosts?: boolean,
@@ -59,8 +60,19 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const page = useRef(1);
   const nextAdDistance = useRef(Math.floor(Math.random() * 5) + 5); // Initial random range 5-10
 
+  const { enabled: distractionEnabled, keywords: distractionKeywords } = useDistractionSettings();
+
+  const filterDistractions = useCallback((postsToFilter: Post[]) => {
+    if (!distractionEnabled) return postsToFilter;
+    return postsToFilter.filter(post => {
+      const content = `${post.title} ${post.description || ""} ${post.topic || ""}`.toLowerCase();
+      return !distractionKeywords.some(keyword => content.includes(keyword.toLowerCase()));
+    });
+  }, [distractionEnabled, distractionKeywords]);
+
   // Use external posts if provided, otherwise use internal state
-  const posts = externalPosts || internalPosts;
+  const rawPosts = externalPosts || internalPosts;
+  const posts = useMemo(() => filterDistractions(rawPosts), [rawPosts, filterDistractions]);
 
   // Lazy Loading State
   const [hasActivated, setHasActivated] = useState(shouldFetchPaginatedPosts || !!externalPosts);
