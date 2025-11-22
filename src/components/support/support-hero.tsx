@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { PolarCheckout } from "./polar-checkout";
+import { LicenseValidationModal } from "./license-validation-modal";
 import { Heart, Sparkles, Zap, Crown } from "lucide-react";
 
 export function SupportHero() {
@@ -162,7 +163,7 @@ export function SupportHero() {
             </AnimatePresence>
 
             {/* CTA Button */}
-            <div className="pt-4">
+            <div className="pt-4 flex flex-col items-center gap-4">
                 <Button
                     size="lg"
                     className="w-full max-w-xs text-lg h-14 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1"
@@ -170,6 +171,8 @@ export function SupportHero() {
                 >
                     Support Now
                 </Button>
+
+                <LicenseValidationModal />
             </div>
 
             {showCheckout && (
