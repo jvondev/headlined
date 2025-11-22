@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { PremiumGuard } from "@/components/premium-guard";
 import { SynchronizedCarousel } from "@/components/post-carousel";
+import { OnboardingProvider } from "@/context/onboarding-provider";
 import { fetchArchivePosts } from "@/lib/client-posts";
 import { Post } from "@/types";
 import { useRouter } from "next/navigation";
@@ -25,19 +26,21 @@ export default function YesterdayPage() {
     }, []);
 
     return (
-        <PremiumGuard>
-            <div className="fixed top-4 left-4 z-50">
-                <Button variant="ghost" size="icon" onClick={() => router.push("/today")}>
-                    <ArrowLeft className="w-6 h-6" />
-                </Button>
-            </div>
-            {loading ? (
-                <div className="flex items-center justify-center min-h-screen">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+        <OnboardingProvider>
+            <PremiumGuard>
+                <div className="fixed top-4 left-4 z-50">
+                    <Button variant="ghost" size="icon" onClick={() => router.push("/today")}>
+                        <ArrowLeft className="w-6 h-6" />
+                    </Button>
                 </div>
-            ) : (
-                <SynchronizedCarousel posts={posts} />
-            )}
-        </PremiumGuard>
+                {loading ? (
+                    <div className="flex items-center justify-center min-h-screen">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+                    </div>
+                ) : (
+                    <SynchronizedCarousel posts={posts} />
+                )}
+            </PremiumGuard>
+        </OnboardingProvider>
     );
 }

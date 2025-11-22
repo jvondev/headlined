@@ -36,6 +36,35 @@ export function FeatureShowcase() {
             ],
         },
         {
+            category: "Reading Experience",
+            items: [
+                {
+                    title: "Ad-Free Experience",
+                    description: "Enjoy a completely seamless reading experience without any interruptions.",
+                    beforeLabel: "With Ads",
+                    afterLabel: "Ad-Free",
+                    beforeImage: "",
+                    afterImage: "",
+                    beforeTitle: "Standard Experience",
+                    beforeDescription: "Occasional sponsored content and ads in your feed.",
+                    afterTitle: "Pure Content",
+                    afterDescription: "Zero ads. Zero interruptions. Just the content you love."
+                },
+                {
+                    title: "Distraction Control",
+                    description: "Filter out noise. Block specific keywords or topics that you don't want to see.",
+                    beforeLabel: "Unfiltered",
+                    afterLabel: "Focused",
+                    beforeImage: "",
+                    afterImage: "",
+                    beforeTitle: "Noisy Feed",
+                    beforeDescription: "See everything, including topics or keywords you might find distracting or annoying.",
+                    afterTitle: "Zen Mode",
+                    afterDescription: "Custom filters block unwanted keywords (e.g., 'politics', 'spoilers') for a peaceful reading experience."
+                },
+            ],
+        },
+        {
             category: "Personalization",
             items: [
                 {

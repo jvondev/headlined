@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import { SupportHero } from "./support-hero";
 import { FeatureShowcase } from "./feature-showcase";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -25,6 +25,7 @@ export function PremiumUpsellModal({ open, onOpenChange, trigger }: PremiumUpsel
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
             <DialogContent className="max-w-[100vw] h-[100vh] p-0 border-none rounded-none bg-background overflow-hidden z-[100]">
+                <DialogTitle className="sr-only">Premium Upgrade</DialogTitle>
                 <div className="relative w-full h-full flex flex-col">
                     <div className="absolute top-4 right-4 z-50">
                         <Button

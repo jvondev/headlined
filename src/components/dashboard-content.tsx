@@ -3,12 +3,12 @@
 import React, { FC, useEffect, useState, useCallback } from "react";
 import { Greeting } from "@/components/dashboard/greeting";
 import { Clock } from "@/components/dashboard/clock";
-import { getAllPostsFromIndexedDB, getReadHistory, removeFromReadHistory } from "@/lib/indexeddb";
+import { getAllPostsFromIndexedDB, getReadHistory } from "@/lib/indexeddb";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
 import { Post } from "@/types";
 import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { TrendingUp, Newspaper, Bookmark, Search, History, PieChart, Calendar, Layers, ArrowRight, Sparkles, Grid } from "lucide-react";
+import { TrendingUp, Newspaper, Bookmark, Search, PieChart, Calendar, Layers, ArrowRight, Sparkles, Grid } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ArchiveNavigation } from "@/components/dashboard/archive-navigation";
@@ -171,6 +171,17 @@ export const DashboardContent: FC = () => {
           variants={containerVariants as any}
           className="flex flex-col items-center relative z-20 shrink-0 mb-8"
         >
+          {viewState === "dashboard" && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mb-4"
+            >
+              <ArchiveNavigation />
+            </motion.div>
+          )}
+
           <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "origin-top  scale-[0.5]" : "")}>
             <Clock variant="stacked" className={cn(
               "transition-all duration-1000 ease-in-out",
@@ -181,17 +192,6 @@ export const DashboardContent: FC = () => {
           <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "opacity-80 scale-90 origin-top -mt-4" : "")}>
             <Greeting onComplete={handleIntroComplete} />
           </motion.div>
-
-          {viewState === "dashboard" && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="mt-4"
-            >
-              <ArchiveNavigation />
-            </motion.div>
-          )}
         </motion.div>
 
         {/* Main Content Area - Neo-Minimalist Grid */}

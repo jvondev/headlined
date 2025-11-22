@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Lock } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { checkLicenseStatus } from "@/lib/license-manager";
-import { PremiumUpsellModal } from "@/components/support/premium-upsell-modal";
+import { useAppUsage } from "@/hooks/use-app-usage";
 
 interface PremiumGuardProps {
     children: React.ReactNode;
@@ -15,10 +14,21 @@ interface PremiumGuardProps {
 export function PremiumGuard({ children, fallback }: PremiumGuardProps) {
     const [isPremium, setIsPremium] = useState<boolean | null>(null);
     const router = useRouter();
+    const usage = useAppUsage();
 
     useEffect(() => {
         checkLicenseStatus().then(setIsPremium);
     }, []);
+
+    useEffect(() => {
+        if (isPremium === false) {
+            // Delayed Paywall Logic:
+            // Only block if user has used the app for > 5 days AND has a 2-day streak.
+            if (usage.daysUsed > 5 && usage.consecutiveDays >= 2) {
+                router.replace("/support");
+            }
+        }
+    }, [isPremium, usage, router]);
 
     if (isPremium === null) {
         return (
@@ -29,29 +39,14 @@ export function PremiumGuard({ children, fallback }: PremiumGuardProps) {
     }
 
     if (!isPremium) {
-        if (fallback) return <>{fallback}</>;
+        // If user is "hooked", the useEffect above will redirect.
+        // While redirecting, show nothing or loader.
+        if (usage.daysUsed > 5 && usage.consecutiveDays >= 2) {
+            return null;
+        }
 
-        return (
-            <div className="flex h-full w-full flex-col items-center justify-center min-h-[60vh] p-8 text-center space-y-6">
-                <div className="rounded-full bg-primary/10 p-6">
-                    <Lock className="h-12 w-12 text-primary" />
-                </div>
-                <div className="space-y-2 max-w-md">
-                    <h2 className="text-2xl font-bold tracking-tight">Premium Feature</h2>
-                    <p className="text-muted-foreground">
-                        This feature is available exclusively to ReadMore Plus subscribers.
-                        Upgrade to access unlimited history, distraction-free reading, and more.
-                    </p>
-                </div>
-                <PremiumUpsellModal
-                    trigger={
-                        <Button size="lg" className="font-semibold">
-                            Upgrade to Plus
-                        </Button>
-                    }
-                />
-            </div>
-        );
+        // If user is NOT "hooked" yet, allow free access (Hook Model).
+        return <>{children}</>;
     }
 
     return <>{children}</>;
