@@ -1,7 +1,7 @@
 import { Post } from '@/types';
 
 const DB_NAME = 'ReadMoreDB';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 const STORE_NAME = 'posts';
 const READ_HISTORY_STORE_NAME = 'read_history';
 
@@ -25,6 +25,9 @@ const openDatabase = (): Promise<IDBDatabase> => {
       }
       if (store && !store.indexNames.contains('topic')) {
         store.createIndex('topic', 'topic', { unique: false });
+      }
+      if (store && !store.indexNames.contains('date')) {
+        store.createIndex('date', 'date', { unique: false });
       }
 
       if (!db.objectStoreNames.contains(READ_HISTORY_STORE_NAME)) {
@@ -83,6 +86,69 @@ export const getAllPostsFromIndexedDB = async (): Promise<Post[]> => {
     request.onsuccess = () => resolve(request.result as Post[]);
     request.onerror = (event) => {
       console.error('Get all posts transaction error:', (event.target as IDBRequest).error);
+      reject((event.target as IDBRequest).error);
+    };
+  });
+};
+
+export const getPostsByDate = async (date: string): Promise<Post[]> => {
+  const database = await openDatabase();
+  const transaction = database.transaction(STORE_NAME, 'readonly');
+  const store = transaction.objectStore(STORE_NAME);
+  const index = store.index('date');
+
+  return new Promise((resolve, reject) => {
+    const request = index.getAll(IDBKeyRange.only(date));
+    request.onsuccess = () => resolve(request.result as Post[]);
+    request.onerror = (event) => {
+      console.error('Get posts by date transaction error:', (event.target as IDBRequest).error);
+      reject((event.target as IDBRequest).error);
+    };
+  });
+};
+
+export const getPostsDateRange = async (startDate: string, endDate: string): Promise<Post[]> => {
+  const database = await openDatabase();
+  const transaction = database.transaction(STORE_NAME, 'readonly');
+  const store = transaction.objectStore(STORE_NAME);
+  const index = store.index('date');
+
+  return new Promise((resolve, reject) => {
+    const request = index.getAll(IDBKeyRange.bound(startDate, endDate));
+    request.onsuccess = () => resolve(request.result as Post[]);
+    request.onerror = (event) => {
+      console.error('Get posts date range transaction error:', (event.target as IDBRequest).error);
+      reject((event.target as IDBRequest).error);
+    };
+  });
+};
+
+export const clearOldPosts = async (daysToKeep: number): Promise<void> => {
+  const database = await openDatabase();
+  const transaction = database.transaction(STORE_NAME, 'readwrite');
+  const store = transaction.objectStore(STORE_NAME);
+  const index = store.index('date');
+
+  // Calculate the cutoff date
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
+  const cutoffDateString = cutoffDate.toISOString().split('T')[0];
+
+  return new Promise((resolve, reject) => {
+    // Get all keys with date < cutoffDateString
+    const request = index.openCursor(IDBKeyRange.upperBound(cutoffDateString, true));
+
+    request.onsuccess = (event) => {
+      const cursor = (event.target as IDBRequest).result as IDBCursorWithValue;
+      if (cursor) {
+        cursor.delete();
+        cursor.continue();
+      } else {
+        resolve(); // Done
+      }
+    };
+    request.onerror = (event) => {
+      console.error('Clear old posts transaction error:', (event.target as IDBRequest).error);
       reject((event.target as IDBRequest).error);
     };
   });

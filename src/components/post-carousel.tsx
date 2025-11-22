@@ -28,6 +28,7 @@ type PostCarouselProps = {
   shouldFetchPaginatedPosts?: boolean,
   topicName?: string;
   searchQuery?: string;
+  posts?: Post[];
 }
 
 const PAGE_SIZE = 10; // Define page size for client-side pagination
@@ -36,6 +37,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   shouldFetchPaginatedPosts = false,
   topicName,
   searchQuery,
+  posts: externalPosts,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -50,21 +52,24 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return "default";
   }, [topicName, searchQuery]);
 
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [internalPosts, setInternalPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const page = useRef(1);
   const nextAdDistance = useRef(Math.floor(Math.random() * 5) + 5); // Initial random range 5-10
 
+  // Use external posts if provided, otherwise use internal state
+  const posts = externalPosts || internalPosts;
+
   // Lazy Loading State
-  const [hasActivated, setHasActivated] = useState(shouldFetchPaginatedPosts);
+  const [hasActivated, setHasActivated] = useState(shouldFetchPaginatedPosts || !!externalPosts);
 
   useEffect(() => {
-    if (shouldFetchPaginatedPosts) {
+    if (shouldFetchPaginatedPosts || externalPosts) {
       setHasActivated(true);
     }
-  }, [shouldFetchPaginatedPosts]);
+  }, [shouldFetchPaginatedPosts, externalPosts]);
 
   const createAdPost = useCallback((program: AffiliateProgram): Post => {
     const variant = program.variants[Math.floor(Math.random() * program.variants.length)];
@@ -117,7 +122,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   }, [topicName, searchQuery, createAdPost]);
 
   const fetchPosts = useCallback(async () => {
-    if (isLoading) return;
+    if (isLoading || externalPosts) return; // Skip fetch if external posts provided
 
     setIsLoading(true);
     setError(null);
@@ -129,7 +134,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
         search_query: searchQuery,
       });
 
-      setPosts(injectAds(newPosts));
+      setInternalPosts(injectAds(newPosts));
       setHasMore(newHasMore);
       page.current = 1;
     } catch (err: any) {
@@ -138,17 +143,17 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, topicName, searchQuery, injectAds]);
+  }, [isLoading, topicName, searchQuery, injectAds, externalPosts]);
 
   useEffect(() => {
-    if (hasActivated) {
-      setPosts([]);
+    if (hasActivated && !externalPosts) {
+      setInternalPosts([]);
       setHasMore(false);
       page.current = 1;
       setActiveSlideIndex(0);
       fetchPosts();
     }
-  }, [currentKey, hasActivated]);
+  }, [currentKey, hasActivated, externalPosts]);
 
   // Prevent iOS bounce on body and browser navigation swipes
   useEffect(() => {
@@ -225,7 +230,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
 
   const loadMorePosts = useCallback(async () => {
-    if (isLoading || !hasMore) return;
+    if (isLoading || !hasMore || externalPosts) return; // Disable load more for external posts for now
 
     setIsLoading(true);
     page.current += 1;
@@ -237,7 +242,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     });
 
     if (newPosts.length > 0) {
-      setPosts(prev => {
+      setInternalPosts(prev => {
         const postsWithAds = injectAds(newPosts);
         const updatedPosts = [...prev, ...postsWithAds];
         return updatedPosts;
@@ -245,7 +250,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     }
     setHasMore(newHasMore);
     setIsLoading(false);
-  }, [isLoading, hasMore, topicName, searchQuery, injectAds]);
+  }, [isLoading, hasMore, topicName, searchQuery, injectAds, externalPosts]);
 
 
   useEffect(() => {
@@ -475,3 +480,5 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     </CarouselContext.Provider>
   );
 };
+
+export const SynchronizedCarousel = PostCarousel;

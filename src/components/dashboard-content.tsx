@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { TrendingUp, Newspaper, Bookmark, Search, History, PieChart, Calendar, Layers, ArrowRight, Sparkles, Grid } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { ArchiveNavigation } from "@/components/dashboard/archive-navigation";
 
 export const DashboardContent: FC = () => {
   const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
@@ -78,6 +79,17 @@ export const DashboardContent: FC = () => {
     Object.values(groupedTopics).flat().map(post => post.slug)
   );
 
+  // Calculate stats for topics only
+  const topicStats = Object.entries(groupedTopics)
+    .map(([topic, posts]) => ({
+      topic,
+      count: posts.length,
+      percentage: Object.values(groupedTopics).flat().length > 0
+        ? (posts.length / Object.values(groupedTopics).flat().length) * 100
+        : 0
+    }))
+    .sort((a, b) => b.count - a.count);
+
   // Group history by Interests (based on content matching with aliases)
   // Exclude posts that are already categorized under topics
   const groupedInterests = readHistory.reduce((acc, post) => {
@@ -101,17 +113,6 @@ export const DashboardContent: FC = () => {
     });
     return acc;
   }, {} as Record<string, (Post & { readAt: string })[]>);
-
-  // Calculate stats for topics only
-  const topicStats = Object.entries(groupedTopics)
-    .map(([topic, posts]) => ({
-      topic,
-      count: posts.length,
-      percentage: Object.values(groupedTopics).flat().length > 0
-        ? (posts.length / Object.values(groupedTopics).flat().length) * 100
-        : 0
-    }))
-    .sort((a, b) => b.count - a.count);
 
   // Calculate stats for interests only
   const interestStats = Object.entries(groupedInterests)
@@ -180,6 +181,17 @@ export const DashboardContent: FC = () => {
           <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "opacity-80 scale-90 origin-top -mt-4" : "")}>
             <Greeting onComplete={handleIntroComplete} />
           </motion.div>
+
+          {viewState === "dashboard" && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mt-4"
+            >
+              <ArchiveNavigation />
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Main Content Area - Neo-Minimalist Grid */}

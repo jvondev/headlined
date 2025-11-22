@@ -1,8 +1,9 @@
 'use client';
 
 import { Post } from '@/types';
-import { addPosts, getAllPostsFromIndexedDB, clearAllPosts } from './indexeddb';
+import { addPosts, getAllPostsFromIndexedDB, clearAllPosts, clearOldPosts, getPostsByDate, getPostsDateRange } from './indexeddb';
 import { topicsData } from '@/data/topics-data';
+import { checkLicenseStatus } from './license-manager';
 
 const PAGE_SIZE = 10; // Define page size for pagination
 const LAST_SYNC_TIMESTAMP_KEY = 'lastSyncTimestamp';
@@ -76,6 +77,9 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
         const url = `https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-/output/${today}.json`;
 
         const response = await fetch(url);
+        let networkPosts: Post[] = [];
+        let dateToSave = today;
+
         if (!response.ok) {
           // If today's file isn't ready yet, try yesterday's
           if (response.status === 404) {
@@ -85,25 +89,32 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
             if (!yesterdayResponse.ok) {
               throw new Error(`HTTP error! status: ${yesterdayResponse.status}`);
             }
-            const networkPosts = await yesterdayResponse.json();
-            await clearAllPosts();
-            await addPosts(networkPosts);
-            localStorage.setItem(LAST_SYNC_TIMESTAMP_KEY, new Date().toISOString());
-            postsToReturn = networkPosts;
-            fetchedFromNetwork = true;
+            networkPosts = await yesterdayResponse.json();
+            dateToSave = yesterday;
           } else {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
         } else {
-          const networkPosts = await response.json();
-
-          // Clear all existing posts and add new ones from network
-          await clearAllPosts();
-          await addPosts(networkPosts);
-          localStorage.setItem(LAST_SYNC_TIMESTAMP_KEY, new Date().toISOString());
-          postsToReturn = networkPosts; // Use network data
-          fetchedFromNetwork = true;
+          networkPosts = await response.json();
         }
+
+        // Attach date to posts
+        networkPosts = networkPosts.map(p => ({ ...p, date: dateToSave }));
+
+        // Check license status for retention policy
+        const isPremium = await checkLicenseStatus();
+        const daysToKeep = isPremium ? 30 : 2; // Keep 30 days for premium, 2 days for free (today + yesterday fallback)
+
+        // Clear old posts based on retention policy
+        await clearOldPosts(daysToKeep);
+
+        // Add new posts
+        await addPosts(networkPosts);
+
+        localStorage.setItem(LAST_SYNC_TIMESTAMP_KEY, new Date().toISOString());
+        postsToReturn = networkPosts;
+        fetchedFromNetwork = true;
+
       } catch (networkError) {
         // Fallback to IndexedDB if network fetch fails
         console.error("Network fetch failed:", networkError);
@@ -112,6 +123,10 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
 
     // If not fetched from network (either skipped or failed), try IndexedDB
     if (!fetchedFromNetwork) {
+      // For main dashboard, we typically want "today's" posts or the latest available.
+      // getAllPostsFromIndexedDB returns EVERYTHING. We might want to filter?
+      // For now, let's just return everything and let the UI filter or just show latest.
+      // Actually, existing logic returned everything.
       const indexedDBPosts = await getAllPostsFromIndexedDB();
       postsToReturn = indexedDBPosts;
     }
@@ -123,6 +138,52 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
   } finally {
     isFetchingAllPosts = false;
   }
+};
+
+export const fetchArchivePosts = async (date: string): Promise<Post[]> => {
+  // 1. Check IndexedDB first
+  const localPosts = await getPostsByDate(date);
+  if (localPosts.length > 0) {
+    return localPosts;
+  }
+
+  // 2. Fetch from network
+  try {
+    const url = `https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-/output/${date}.json`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      if (response.status === 404) return []; // No data for this date
+      throw new Error(`Failed to fetch archive for ${date}`);
+    }
+    let posts: Post[] = await response.json();
+
+    // Attach date
+    posts = posts.map(p => ({ ...p, date }));
+
+    // Save to IDB
+    await addPosts(posts);
+
+    return posts;
+  } catch (error) {
+    console.error(`Error fetching archive for ${date}:`, error);
+    return [];
+  }
+};
+
+export const fetchDateRangePosts = async (startDate: string, endDate: string): Promise<Post[]> => {
+  // This is a bit complex because we need to iterate days.
+  // Simple approach: iterate from start to end date.
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const posts: Post[] = [];
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const dateStr = d.toISOString().split('T')[0];
+    const dayPosts = await fetchArchivePosts(dateStr);
+    posts.push(...dayPosts);
+  }
+
+  return posts;
 };
 
 // Get ALL filtered posts at once (optimized for local-first)
@@ -168,8 +229,13 @@ export const checkIfFeedHasPosts = async (type: 'topic' | 'interest', name: stri
 };
 
 export const getPostBySlug = async (slug: string): Promise<Post | undefined> => {
-  const posts = await fetchAllPosts();
-  return posts.find(post => post.slug === slug);
+  // First try memory
+  let post = allPosts.find(p => p.slug === slug);
+  if (post) return post;
+
+  // Then try IDB (all posts)
+  const dbPosts = await getAllPostsFromIndexedDB();
+  return dbPosts.find(p => p.slug === slug);
 };
 
 export const getRandomPostSlug = async (): Promise<string | null> => {
