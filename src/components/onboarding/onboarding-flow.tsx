@@ -16,6 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DynamicIcon } from "@/components/dynamic-icon";
 import { Topic, Interest } from "@/types";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
+import { LicenseValidationModal } from "@/components/support/license-validation-modal";
 
 interface OnboardingFlowProps {
   isOpen: boolean;
@@ -127,14 +128,23 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({
           </ScrollArea>
         </div>
 
-        <AlertDialogFooter className="pt-4">
+        <AlertDialogFooter className="pt-4 flex-col gap-2 sm:gap-0">
           <Button
             onClick={handleSaveSelections}
             disabled={selectedTopics.length === 0 && selectedInterests.length === 0}
-            className="w-full text-lg py-3"
+            className="w-full text-lg py-3 mb-2 sm:mb-0"
           >
             Get Started
           </Button>
+          <div className="w-full flex justify-center mt-2">
+            <LicenseValidationModal
+              trigger={
+                <Button variant="link" size="sm" className="text-muted-foreground">
+                  Have a ReadMore+ key?
+                </Button>
+              }
+            />
+          </div>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

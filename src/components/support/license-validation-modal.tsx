@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { setLicense } from "@/lib/license-manager";
+import { useRouter } from "next/navigation";
 
 interface LicenseValidationModalProps {
     trigger?: React.ReactNode;
@@ -17,6 +19,7 @@ export function LicenseValidationModal({ trigger }: LicenseValidationModalProps)
     const [isLoading, setIsLoading] = useState(false);
     const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
     const [errorMessage, setErrorMessage] = useState("");
+    const router = useRouter();
 
     const validateLicense = async () => {
         if (!key.trim()) return;
@@ -46,7 +49,7 @@ export function LicenseValidationModal({ trigger }: LicenseValidationModalProps)
 
             // Assuming a successful response means the key is valid
             // You might want to store the validation status in localStorage or a context here
-            localStorage.setItem("readmore_plus_license", key.trim());
+            setLicense(key.trim());
             setStatus("success");
 
         } catch (error: any) {
@@ -114,8 +117,8 @@ export function LicenseValidationModal({ trigger }: LicenseValidationModalProps)
 
                     <div className="flex justify-end">
                         {status === "success" ? (
-                            <Button className="w-full" onClick={() => window.location.reload()}>
-                                Reload to Apply Changes
+                            <Button className="w-full" onClick={() => router.push('/today')}>
+                                Continue to ReadMore
                             </Button>
                         ) : (
                             <Button
