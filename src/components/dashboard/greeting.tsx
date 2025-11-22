@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { ArchiveNavigation } from "@/components/dashboard/archive-navigation";
 
 interface GreetingProps {
     onComplete?: () => void;
@@ -72,6 +73,15 @@ export const Greeting = ({ onComplete }: GreetingProps) => {
             >
                 {dateStr}
             </motion.p>
+
+            <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: showDate ? 1 : 0, y: showDate ? 0 : 10 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="mt-4 w-full max-w-md"
+            >
+                <ArchiveNavigation />
+            </motion.div>
         </div>
     );
 };

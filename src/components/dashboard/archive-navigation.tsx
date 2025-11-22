@@ -6,27 +6,30 @@ import { CalendarDays, Clock, Calendar } from "lucide-react";
 import { checkLicenseStatus } from "@/lib/license-manager";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAppUsage } from "@/hooks/use-app-usage";
 
 export function ArchiveNavigation() {
     const router = useRouter();
     const [isPremium, setIsPremium] = useState<boolean>(false);
+    const usage = useAppUsage();
 
     useEffect(() => {
         checkLicenseStatus().then(setIsPremium);
     }, []);
 
+    // Show only if user is Premium OR has used the app for > 5 days with 2+ day streak
+    const shouldShow = isPremium || (usage.daysUsed > 5 && usage.consecutiveDays >= 2);
+
+    if (!shouldShow) {
+        return null;
+    }
+
     const handleNavigation = (path: string) => {
-        if (!isPremium) {
-            // If not premium, maybe show a toast or just let the guard handle it?
-            // Let's let the guard handle it on the page, so user sees the "Premium Feature" screen.
-            router.push(path);
-        } else {
-            router.push(path);
-        }
+        router.push(path);
     };
 
     return (
-        <div className="flex gap-2 mt-2 overflow-x-auto pb-2 no-scrollbar">
+        <div className="flex gap-2 mt-2 overflow-x-auto pb-2 no-scrollbar justify-center w-full">
             <Button
                 variant="outline"
                 size="sm"

@@ -171,16 +171,6 @@ export const DashboardContent: FC = () => {
           variants={containerVariants as any}
           className="flex flex-col items-center relative z-20 shrink-0 mb-8"
         >
-          {viewState === "dashboard" && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="mb-4"
-            >
-              <ArchiveNavigation />
-            </motion.div>
-          )}
 
           <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "origin-top  scale-[0.5]" : "")}>
             <Clock variant="stacked" className={cn(
