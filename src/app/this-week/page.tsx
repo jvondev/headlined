@@ -1,23 +1,23 @@
 "use client";
 
-import { useCallback } from "react";
-import { ArchivePageWrapper } from "@/components/archive-page-wrapper";
-import { fetchDateRangePosts } from "@/lib/client-posts";
+import { SynchronizedCarousel } from "@/components/synchronized-carousel";
+import { PremiumGuard } from "@/components/premium-guard";
+import { OnboardingProvider } from "@/context/onboarding-provider";
 
 export default function ThisWeekPage() {
-    const fetchPosts = useCallback(async () => {
-        const end = new Date();
-        const start = new Date();
-        start.setDate(end.getDate() - 7);
+    const today = new Date();
+    const day = today.getDay(); // 0 is Sunday
+    const diff = today.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+    const monday = new Date(today.setDate(diff));
 
-        const endDateStr = end.toISOString().split('T')[0];
-        const startDateStr = start.toISOString().split('T')[0];
+    const startDate = monday.toISOString().split('T')[0];
+    const endDate = new Date().toISOString().split('T')[0];
 
-        const data = await fetchDateRangePosts(startDateStr, endDateStr);
-        // Sort by date descending
-        data.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-        return data;
-    }, []);
-
-    return <ArchivePageWrapper fetchPosts={fetchPosts} />;
+    return (
+        <PremiumGuard>
+            <OnboardingProvider>
+                <SynchronizedCarousel topics={[]} interests={[]} dateRange={{ start: startDate, end: endDate }} />
+            </OnboardingProvider>
+        </PremiumGuard>
+    );
 }

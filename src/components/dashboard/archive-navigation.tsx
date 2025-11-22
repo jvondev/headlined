@@ -29,11 +29,11 @@ export function ArchiveNavigation() {
     };
 
     return (
-        <div className="flex gap-2 mt-2 overflow-x-auto pb-2 no-scrollbar justify-center w-full">
+        <div className="flex gap-2 mt-2 overflow-x-auto pb-2 no-scrollbar justify-start md:justify-center w-full px-4 md:px-0">
             <Button
                 variant="outline"
                 size="sm"
-                className={cn("gap-2 rounded-full", !isPremium && "opacity-80")}
+                className="flex-shrink-0 gap-2 rounded-full"
                 onClick={() => handleNavigation("/yesterday")}
             >
                 <Clock className="w-4 h-4" />
@@ -42,7 +42,7 @@ export function ArchiveNavigation() {
             <Button
                 variant="outline"
                 size="sm"
-                className={cn("gap-2 rounded-full", !isPremium && "opacity-80")}
+                className="flex-shrink-0 gap-2 rounded-full"
                 onClick={() => handleNavigation("/this-week")}
             >
                 <CalendarDays className="w-4 h-4" />
@@ -51,7 +51,7 @@ export function ArchiveNavigation() {
             <Button
                 variant="outline"
                 size="sm"
-                className={cn("gap-2 rounded-full", !isPremium && "opacity-80")}
+                className="flex-shrink-0 gap-2 rounded-full"
                 onClick={() => handleNavigation("/this-month")}
             >
                 <Calendar className="w-4 h-4" />

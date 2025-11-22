@@ -30,6 +30,8 @@ type PostCarouselProps = {
   topicName?: string;
   searchQuery?: string;
   posts?: Post[];
+  date?: string;
+  dateRange?: { start: string; end: string };
 }
 
 const PAGE_SIZE = 10; // Define page size for client-side pagination
@@ -39,6 +41,8 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   topicName,
   searchQuery,
   posts: externalPosts,
+  date,
+  dateRange,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -50,8 +54,10 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const currentKey = useMemo(() => {
     if (topicName) return `topic-${topicName}`;
     if (searchQuery) return `search-${searchQuery}`;
+    if (date) return `date-${date}`;
+    if (dateRange) return `range-${dateRange.start}-${dateRange.end}`;
     return "default";
-  }, [topicName, searchQuery]);
+  }, [topicName, searchQuery, date, dateRange]);
 
   const [internalPosts, setInternalPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(false);
@@ -144,6 +150,8 @@ export const PostCarousel: FC<PostCarouselProps> = ({
         page: 1,
         topic_name: topicName,
         search_query: searchQuery,
+        date,
+        dateRange,
       });
 
       setInternalPosts(injectAds(newPosts));
@@ -155,7 +163,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, topicName, searchQuery, injectAds, externalPosts]);
+  }, [isLoading, topicName, searchQuery, injectAds, externalPosts, date, dateRange]);
 
   useEffect(() => {
     if (hasActivated && !externalPosts) {
@@ -251,6 +259,8 @@ export const PostCarousel: FC<PostCarouselProps> = ({
       page: page.current,
       topic_name: topicName, // Use topicName prop
       search_query: searchQuery, // Use searchQuery prop
+      date,
+      dateRange,
     });
 
     if (newPosts.length > 0) {
@@ -262,7 +272,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     }
     setHasMore(newHasMore);
     setIsLoading(false);
-  }, [isLoading, hasMore, topicName, searchQuery, injectAds, externalPosts]);
+  }, [isLoading, hasMore, topicName, searchQuery, injectAds, externalPosts, date, dateRange]);
 
 
   useEffect(() => {
@@ -316,7 +326,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     return () => {
       emblaApi.off("select", onSelect);
     };
-  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery, hasActivated]);
+  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery, hasActivated, date, dateRange]);
 
 
 

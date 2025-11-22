@@ -187,8 +187,16 @@ export const fetchDateRangePosts = async (startDate: string, endDate: string): P
 };
 
 // Get ALL filtered posts at once (optimized for local-first)
-export const getFilteredPosts = async ({ topic_name, search_query }: { topic_name?: string; search_query?: string }): Promise<Post[]> => {
-  const posts = await fetchAllPosts();
+export const getFilteredPosts = async ({ topic_name, search_query, date, dateRange }: { topic_name?: string; search_query?: string; date?: string; dateRange?: { start: string; end: string } }): Promise<Post[]> => {
+  let posts: Post[] = [];
+
+  if (date) {
+    posts = await fetchArchivePosts(date);
+  } else if (dateRange) {
+    posts = await fetchDateRangePosts(dateRange.start, dateRange.end);
+  } else {
+    posts = await fetchAllPosts();
+  }
 
   let filteredPosts = posts;
 
@@ -209,8 +217,8 @@ export const getFilteredPosts = async ({ topic_name, search_query }: { topic_nam
 };
 
 // Legacy pagination function (kept for compatibility)
-export const getPaginatedPosts = async ({ page, topic_name, search_query }: { page: number; topic_name?: string; search_query?: string }): Promise<{ posts: Post[], hasMore: boolean }> => {
-  const filteredPosts = await getFilteredPosts({ topic_name, search_query });
+export const getPaginatedPosts = async ({ page, topic_name, search_query, date, dateRange }: { page: number; topic_name?: string; search_query?: string; date?: string; dateRange?: { start: string; end: string } }): Promise<{ posts: Post[], hasMore: boolean }> => {
+  const filteredPosts = await getFilteredPosts({ topic_name, search_query, date, dateRange });
 
   const startIndex = (page - 1) * PAGE_SIZE;
   const endIndex = startIndex + PAGE_SIZE;
@@ -220,10 +228,12 @@ export const getPaginatedPosts = async ({ page, topic_name, search_query }: { pa
   return { posts: paginatedPosts, hasMore };
 };
 
-export const checkIfFeedHasPosts = async (type: 'topic' | 'interest', name: string): Promise<boolean> => {
+export const checkIfFeedHasPosts = async (type: 'topic' | 'interest', name: string, date?: string, dateRange?: { start: string; end: string }): Promise<boolean> => {
   const posts = await getFilteredPosts({
     topic_name: type === 'topic' ? name : undefined,
     search_query: type === 'interest' ? name : undefined,
+    date,
+    dateRange
   });
   return posts.length > 0;
 };

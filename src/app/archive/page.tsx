@@ -4,13 +4,11 @@ import { SynchronizedCarousel } from "@/components/synchronized-carousel";
 import { PremiumGuard } from "@/components/premium-guard";
 import { OnboardingProvider } from "@/context/onboarding-provider";
 
-export default function YesterdayPage() {
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-
+export default function ArchivePage() {
     return (
         <PremiumGuard>
             <OnboardingProvider>
-                <SynchronizedCarousel topics={[]} interests={[]} date={yesterday} />
+                <SynchronizedCarousel topics={[]} interests={[]} />
             </OnboardingProvider>
         </PremiumGuard>
     );

@@ -13,7 +13,11 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ArchiveNavigation } from "@/components/dashboard/archive-navigation";
 
-export const DashboardContent: FC = () => {
+interface DashboardContentProps {
+  setIsIntroMode?: (isIntro: boolean) => void;
+}
+
+export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode }) => {
   const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
@@ -63,6 +67,12 @@ export const DashboardContent: FC = () => {
   const handleIntroComplete = useCallback(() => {
     setViewState("dashboard");
   }, []);
+
+  useEffect(() => {
+    if (setIsIntroMode) {
+      setIsIntroMode(viewState === "intro");
+    }
+  }, [viewState, setIsIntroMode]);
 
   // Group history by Topics (based on post.topic field)
   const groupedTopics = readHistory.reduce((acc, post) => {
@@ -181,6 +191,7 @@ export const DashboardContent: FC = () => {
 
           <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "opacity-80 scale-90 origin-top -mt-4" : "")}>
             <Greeting onComplete={handleIntroComplete} />
+            {viewState === "dashboard" && <ArchiveNavigation />}
           </motion.div>
         </motion.div>
 

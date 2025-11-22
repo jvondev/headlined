@@ -18,11 +18,14 @@ type CarouselItem = {
 type SynchronizedCarouselProps = {
     topics: Topic[];
     interests: Interest[];
+    date?: string;
+    dateRange?: { start: string; end: string };
 };
 
-export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests }) => {
+export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, date, dateRange }) => {
     const pathname = usePathname();
     const { subscribedTopics, subscribedInterests } = useSubscribedFeeds();
+    const [isDashboardIntro, setIsDashboardIntro] = useState(true);
 
     const allFilterItems: CarouselItem[] = React.useMemo(() => {
         const baseItems: CarouselItem[] = [
@@ -30,7 +33,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
             { name: "Dashboard", type: "none" as const, href: "/", icon: "LayoutDashboard", isIconOnly: true },
         ];
 
-        if (pathname === "/today") {
+        if (pathname === "/today" || pathname === "/yesterday" || pathname === "/this-week" || pathname === "/this-month" || pathname === "/archive") {
             const subscribedTopicItems = subscribedTopics.map(topic => ({
                 ...topic,
                 type: "topic" as const,
@@ -47,10 +50,10 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         }
 
         return baseItems;
-    }, [topics, interests, subscribedTopics, subscribedInterests, pathname]);
+    }, [topics, interests, subscribedTopics, subscribedInterests, pathname, date, dateRange]);
 
     const getInitialIndex = useCallback(() => {
-        if (pathname === "/today" || pathname === "/") {
+        if (pathname === "/today" || pathname === "/" || pathname === "/yesterday" || pathname === "/this-week" || pathname === "/this-month" || pathname === "/archive") {
             const dashboardIndex = allFilterItems.findIndex(item => item.name === "Dashboard");
             if (dashboardIndex !== -1) return dashboardIndex;
         }
@@ -125,18 +128,21 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     }, [emblaApi, onSelect]);
 
 
+    const showNav = !isDashboardIntro || allFilterItems[selectedIndex]?.name !== "Dashboard";
 
     return (
         <div className="flex flex-col h-full relative">
-            <div className="fixed top-0 left-0 right-0 z-20 w-full bg-background py-2">
-                <CarouselNav
-                    emblaRef={navEmblaRef}
-                    emblaApi={navEmblaApi}
-                    allFilterItems={allFilterItems}
-                    selectedIndex={selectedIndex}
-                    onNavClick={onNavClick}
-                />
-            </div>
+            {showNav && (
+                <div className="fixed top-0 left-0 right-0 z-20 w-full bg-background py-2">
+                    <CarouselNav
+                        emblaRef={navEmblaRef}
+                        emblaApi={navEmblaApi}
+                        allFilterItems={allFilterItems}
+                        selectedIndex={selectedIndex}
+                        onNavClick={onNavClick}
+                    />
+                </div>
+            )}
             <MainContentCarousel
                 emblaRef={emblaRef}
                 emblaApi={emblaApi}
@@ -144,6 +150,9 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 selectedIndex={selectedIndex}
                 topics={topics}
                 interests={interests}
+                date={date}
+                dateRange={dateRange}
+                setIsDashboardIntro={setIsDashboardIntro}
                 className="pt-[52px]"
             />
         </div>

@@ -27,6 +27,9 @@ type MainContentCarouselProps = {
   topics: Topic[];
   interests: Interest[];
   className?: string;
+  date?: string;
+  dateRange?: { start: string; end: string };
+  setIsDashboardIntro?: (isIntro: boolean) => void;
 };
 
 const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
@@ -37,6 +40,9 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
   topics,
   interests,
   className,
+  date,
+  dateRange,
+  setIsDashboardIntro,
 }) => {
   return (
     <div className={cn("flex-1 overflow-hidden", className)} ref={emblaRef}>
@@ -49,12 +55,14 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
                 className="flex-[0_0_100%] h-full will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
               >
                 {item.name === "Saved" && <SavedContent />}
-                {item.name === "Dashboard" && <DashboardContent />}
+                {item.name === "Dashboard" && <DashboardContent setIsIntroMode={setIsDashboardIntro} />}
                 {(item.type === "topic" || item.type === "interest") && (
                   <PostCarousel
                     shouldFetchPaginatedPosts={selectedIndex === index}
                     topicName={item.type === "topic" ? item.name : undefined}
                     searchQuery={item.type === "interest" ? item.name : undefined}
+                    date={date}
+                    dateRange={dateRange}
                   />
                 )}
                 {item.name === "Explore" && <ExploreContent />}

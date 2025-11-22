@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ArchiveNavigation } from "@/components/dashboard/archive-navigation";
 
 interface GreetingProps {
     onComplete?: () => void;
@@ -80,7 +79,6 @@ export const Greeting = ({ onComplete }: GreetingProps) => {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="mt-4 w-full max-w-md"
             >
-                <ArchiveNavigation />
             </motion.div>
         </div>
     );

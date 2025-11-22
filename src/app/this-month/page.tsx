@@ -1,23 +1,20 @@
 "use client";
 
-import { useCallback } from "react";
-import { ArchivePageWrapper } from "@/components/archive-page-wrapper";
-import { fetchDateRangePosts } from "@/lib/client-posts";
+import { SynchronizedCarousel } from "@/components/synchronized-carousel";
+import { PremiumGuard } from "@/components/premium-guard";
+import { OnboardingProvider } from "@/context/onboarding-provider";
 
 export default function ThisMonthPage() {
-    const fetchPosts = useCallback(async () => {
-        const end = new Date();
-        const start = new Date();
-        start.setDate(end.getDate() - 30);
+    const today = new Date();
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    const startDate = firstDay.toISOString().split('T')[0];
+    const endDate = today.toISOString().split('T')[0];
 
-        const endDateStr = end.toISOString().split('T')[0];
-        const startDateStr = start.toISOString().split('T')[0];
-
-        const data = await fetchDateRangePosts(startDateStr, endDateStr);
-        // Sort by date descending
-        data.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-        return data;
-    }, []);
-
-    return <ArchivePageWrapper fetchPosts={fetchPosts} />;
+    return (
+        <PremiumGuard>
+            <OnboardingProvider>
+                <SynchronizedCarousel topics={[]} interests={[]} dateRange={{ start: startDate, end: endDate }} />
+            </OnboardingProvider>
+        </PremiumGuard>
+    );
 }
