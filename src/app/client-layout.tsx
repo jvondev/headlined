@@ -23,10 +23,12 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
     >
       <FullScreenContext.Provider value={{ isFullScreen, toggleFullScreen }}>
         <BackgroundSyncProvider />
-        <div className="h-full">
-          {children}
+        <div className="flex flex-col min-h-screen">
+          <div className="flex-1">
+            {children}
+          </div>
+          <FooterWrapper />
         </div>
-        <FooterWrapper />
         <Toaster />
       </FullScreenContext.Provider>
     </ThemeProvider>
