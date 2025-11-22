@@ -26,7 +26,8 @@ export function LicenseValidationModal({ trigger }: LicenseValidationModalProps)
         setErrorMessage("");
 
         try {
-            const response = await fetch("https://api.polar.sh/v1/customer-portal/license-keys/validate", {
+            // Using sandbox API to match the sandbox checkout environment
+            const response = await fetch("https://sandbox-api.polar.sh/v1/customer-portal/license-keys/validate", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
