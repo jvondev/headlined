@@ -6,6 +6,7 @@ import { MainContentCarousel } from "@/components/main-content-carousel";
 import type { Topic, Interest } from "@/types";
 import { usePathname } from "next/navigation";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
+import { checkIfFeedHasPosts } from "@/lib/client-posts";
 
 type CarouselItem = {
     name: string;
@@ -26,31 +27,49 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     const pathname = usePathname();
     const { subscribedTopics, subscribedInterests } = useSubscribedFeeds();
     const [isDashboardIntro, setIsDashboardIntro] = useState(true);
+    const [filteredItems, setFilteredItems] = useState<CarouselItem[]>([]);
 
-    const allFilterItems: CarouselItem[] = React.useMemo(() => {
-        const baseItems: CarouselItem[] = [
-            { name: "Saved", type: "none" as const, href: "/saved", icon: "Bookmark", isIconOnly: true },
-            { name: "Dashboard", type: "none" as const, href: "/", icon: "LayoutDashboard", isIconOnly: true },
-        ];
+    useEffect(() => {
+        const filterItems = async () => {
+            const baseItems: CarouselItem[] = [
+                { name: "Saved", type: "none" as const, href: "/saved", icon: "Bookmark", isIconOnly: true },
+                { name: "Dashboard", type: "none" as const, href: "/", icon: "LayoutDashboard", isIconOnly: true },
+            ];
 
-        if (pathname === "/today" || pathname === "/yesterday" || pathname === "/this-week" || pathname === "/this-month" || pathname === "/archive") {
-            const subscribedTopicItems = subscribedTopics.map(topic => ({
-                ...topic,
-                type: "topic" as const,
-                href: `/topic?topic=${topic.name}`,
-                icon: topic.icon,
-            }));
-            const subscribedInterestItems = subscribedInterests.map(interest => ({
-                ...interest,
-                type: "interest" as const,
-                href: `/interest?interest=${interest.name}`,
-                icon: interest.icon,
-            }));
-            return [...baseItems, ...subscribedTopicItems, ...subscribedInterestItems, { name: "Explore", type: "none" as const, href: "/explore", icon: "Compass", isIconOnly: true }, { name: "Search", type: "none" as const, href: "/search", icon: "Search", isIconOnly: true }];
-        }
+            if (pathname === "/today" || pathname === "/yesterday" || pathname === "/this-week" || pathname === "/this-month" || pathname === "/archive") {
+                const subscribedTopicItems = subscribedTopics.map(topic => ({
+                    ...topic,
+                    type: "topic" as const,
+                    href: `/topic?topic=${topic.name}`,
+                    icon: topic.icon,
+                }));
+                const subscribedInterestItems = subscribedInterests.map(interest => ({
+                    ...interest,
+                    type: "interest" as const,
+                    href: `/interest?interest=${interest.name}`,
+                    icon: interest.icon,
+                }));
 
-        return baseItems;
+                const allPotentialItems = [...subscribedTopicItems, ...subscribedInterestItems];
+                const validItems: CarouselItem[] = [];
+
+                for (const item of allPotentialItems) {
+                    const hasPosts = await checkIfFeedHasPosts(item.type as 'topic' | 'interest', item.name, date, dateRange);
+                    if (hasPosts) {
+                        validItems.push(item);
+                    }
+                }
+
+                setFilteredItems([...baseItems, ...validItems, { name: "Explore", type: "none" as const, href: "/explore", icon: "Compass", isIconOnly: true }, { name: "Search", type: "none" as const, href: "/search", icon: "Search", isIconOnly: true }]);
+            } else {
+                setFilteredItems(baseItems);
+            }
+        };
+
+        filterItems();
     }, [topics, interests, subscribedTopics, subscribedInterests, pathname, date, dateRange]);
+
+    const allFilterItems = filteredItems;
 
     const getInitialIndex = useCallback(() => {
         if (pathname === "/today" || pathname === "/" || pathname === "/yesterday" || pathname === "/this-week" || pathname === "/this-month" || pathname === "/archive") {

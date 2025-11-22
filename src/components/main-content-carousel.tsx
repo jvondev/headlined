@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { UseEmblaCarouselType } from "embla-carousel-react";
 import { PostCarousel } from "@/components/post-carousel";
 import { SavedContent } from "@/components/saved-content";
@@ -18,6 +18,8 @@ type CarouselItem = {
   icon?: React.ForwardRefExoticComponent<Omit<any, "ref"> & React.RefAttributes<SVGSVGElement>>;
   isIconOnly?: boolean;
 };
+
+import { usePathname } from "next/navigation";
 
 type MainContentCarouselProps = {
   emblaRef: (instance: HTMLElement | null) => void;
@@ -44,6 +46,16 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
   dateRange,
   setIsDashboardIntro,
 }) => {
+  const pathname = usePathname();
+
+  const greetingTitle = useMemo(() => {
+    if (pathname === "/yesterday") return "Yesterday";
+    if (pathname === "/this-week") return "This Week";
+    if (pathname === "/this-month") return "This Month";
+    if (pathname === "/archive") return "Archive";
+    return undefined;
+  }, [pathname]);
+
   return (
     <div className={cn("flex-1 overflow-hidden", className)} ref={emblaRef}>
       <div className="flex h-full">
@@ -55,7 +67,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
                 className="flex-[0_0_100%] h-full will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
               >
                 {item.name === "Saved" && <SavedContent />}
-                {item.name === "Dashboard" && <DashboardContent setIsIntroMode={setIsDashboardIntro} />}
+                {item.name === "Dashboard" && <DashboardContent setIsIntroMode={setIsDashboardIntro} greetingTitle={greetingTitle} />}
                 {(item.type === "topic" || item.type === "interest") && (
                   <PostCarousel
                     shouldFetchPaginatedPosts={selectedIndex === index}

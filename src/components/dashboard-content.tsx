@@ -15,9 +15,10 @@ import { ArchiveNavigation } from "@/components/dashboard/archive-navigation";
 
 interface DashboardContentProps {
   setIsIntroMode?: (isIntro: boolean) => void;
+  greetingTitle?: string;
 }
 
-export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode }) => {
+export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingTitle }) => {
   const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
@@ -190,7 +191,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode }) 
           </motion.div>
 
           <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "opacity-80 scale-90 origin-top -mt-4" : "")}>
-            <Greeting onComplete={handleIntroComplete} />
+            <Greeting onComplete={handleIntroComplete} title={greetingTitle} />
             {viewState === "dashboard" && <ArchiveNavigation />}
           </motion.div>
         </motion.div>
