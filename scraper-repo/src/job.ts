@@ -15,7 +15,12 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 const INDEX_FILE = path.join(OUTPUT_DIR, 'index.json');
 
 // Banned keywords for filtering posts
-const bannedKeywords = ['Only Fans', 'porn', 'sex', 'gambling', 'Form 13F', 'Form 13G', 'Form 144'];
+const bannedKeywords = ['Only Fans', 'porn', 'sex', 'gambling', 'Form 13F', 'Form 13G', 'Form 144', 'deals', 'black friday', 'discount', 'best'];
+
+// Banned thumbnail URLs (default/placeholder images to filter out)
+const bannedThumbnails = [
+    'https://s.yimg.com/cv/apiv2/social/images/yahoo_default_logo-1200x1200.png'
+];
 
 // Phrases to remove from descriptions
 const phrasesToRemoveFromDescription = [
@@ -212,6 +217,11 @@ async function processItem(item: any, source: any): Promise<any | null> {
         }
     }
 
+    // Filter out banned thumbnail URLs (e.g., default Yahoo logo)
+    if (thumbnail_url && bannedThumbnails.includes(thumbnail_url)) {
+        thumbnail_url = null;
+    }
+
     if ((!description || !thumbnail_url) || source.url.includes('hnrss.org') || source.url === 'https://rss.slashdot.org/Slashdot/slashdot' || source.url === 'https://www.investing.com/rss/news.rss') {
         const metadata = await fetchArticleMetadata(link);
         if (!description) {
@@ -220,6 +230,11 @@ async function processItem(item: any, source: any): Promise<any | null> {
         if (!thumbnail_url) {
             thumbnail_url = metadata.thumbnail_url;
         }
+    }
+
+    // Filter out banned thumbnails again (in case they came from metadata fetch)
+    if (thumbnail_url && bannedThumbnails.includes(thumbnail_url)) {
+        thumbnail_url = null;
     }
 
     if (thumbnail_url) {
