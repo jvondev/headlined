@@ -6,9 +6,11 @@ import { motion } from "framer-motion";
 interface GreetingProps {
     onComplete?: () => void;
     title?: string;
+    mainText?: string;
+    subText?: string;
 }
 
-export const Greeting = ({ onComplete, title }: GreetingProps) => {
+export const Greeting = ({ onComplete, title, mainText, subText }: GreetingProps) => {
     const [greeting, setGreeting] = useState("");
     const [dateStr, setDateStr] = useState("");
     const [text, setText] = useState("");
@@ -18,7 +20,9 @@ export const Greeting = ({ onComplete, title }: GreetingProps) => {
         const date = new Date();
         const hour = date.getHours();
         let greet = "Good Evening";
-        if (title) {
+        if (mainText) {
+            greet = mainText;
+        } else if (title) {
             greet = title;
         } else {
             if (hour < 5) greet = "Good Night";
@@ -27,8 +31,12 @@ export const Greeting = ({ onComplete, title }: GreetingProps) => {
         }
 
         setGreeting(greet);
-        setDateStr(date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
-    }, []);
+        if (subText) {
+            setDateStr(subText);
+        } else {
+            setDateStr(date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
+        }
+    }, [title, mainText, subText]);
 
     const onCompleteRef = useRef(onComplete);
 

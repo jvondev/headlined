@@ -8,10 +8,12 @@ export default function YesterdayPage() {
     const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
 
     return (
-        <PremiumGuard>
-            <OnboardingProvider>
-                <SynchronizedCarousel topics={[]} interests={[]} date={yesterday} />
-            </OnboardingProvider>
-        </PremiumGuard>
+        <main className="h-screen w-full bg-background">
+            <PremiumGuard>
+                <OnboardingProvider>
+                    <SynchronizedCarousel topics={[]} interests={[]} date={yesterday} />
+                </OnboardingProvider>
+            </PremiumGuard>
+        </main>
     );
 }

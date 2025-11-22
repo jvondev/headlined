@@ -14,10 +14,12 @@ export default function ThisWeekPage() {
     const endDate = new Date().toISOString().split('T')[0];
 
     return (
-        <PremiumGuard>
-            <OnboardingProvider>
-                <SynchronizedCarousel topics={[]} interests={[]} dateRange={{ start: startDate, end: endDate }} />
-            </OnboardingProvider>
-        </PremiumGuard>
+        <main className="h-screen w-full bg-background">
+            <PremiumGuard>
+                <OnboardingProvider>
+                    <SynchronizedCarousel topics={[]} interests={[]} dateRange={{ start: startDate, end: endDate }} />
+                </OnboardingProvider>
+            </PremiumGuard>
+        </main>
     );
 }

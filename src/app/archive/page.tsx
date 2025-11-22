@@ -10,10 +10,12 @@ export default function ArchivePage() {
     const date = searchParams.get("date") || undefined;
 
     return (
-        <PremiumGuard>
-            <OnboardingProvider>
-                <SynchronizedCarousel topics={[]} interests={[]} date={date} />
-            </OnboardingProvider>
-        </PremiumGuard>
+        <main className="h-screen w-full bg-background">
+            <PremiumGuard>
+                <OnboardingProvider>
+                    <SynchronizedCarousel topics={[]} interests={[]} date={date} />
+                </OnboardingProvider>
+            </PremiumGuard>
+        </main>
     );
 }

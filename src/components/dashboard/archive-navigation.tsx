@@ -10,6 +10,7 @@ import { useAppUsage } from "@/hooks/use-app-usage";
 
 export function ArchiveNavigation() {
     const router = useRouter();
+    const pathname = usePathname();
     const [isPremium, setIsPremium] = useState<boolean>(false);
     const usage = useAppUsage();
 
@@ -28,7 +29,7 @@ export function ArchiveNavigation() {
         router.push(path);
     };
 
-    const pathname = usePathname();
+
 
     const renderButtons = () => {
         if (pathname === "/yesterday") {
