@@ -43,8 +43,16 @@ export function DashboardClient() {
         }
 
         const filterFeeds = async () => {
-            // Only show full page skeleton if we have NO data at all
-            if (availableTopics.length === 0 && availableInterests.length === 0) {
+            // Try to load from session storage first to avoid skeleton
+            const cachedTopics = sessionStorage.getItem('dashboard_topics');
+            const cachedInterests = sessionStorage.getItem('dashboard_interests');
+
+            if (cachedTopics && cachedInterests) {
+                setAvailableTopics(JSON.parse(cachedTopics));
+                setAvailableInterests(JSON.parse(cachedInterests));
+                setLoadingFeeds(false);
+            } else if (availableTopics.length === 0 && availableInterests.length === 0) {
+                // Only show full page skeleton if we have NO data at all and no cache
                 setLoadingFeeds(true);
             }
 
@@ -55,7 +63,6 @@ export function DashboardClient() {
                     filteredTopics.push(topic as Topic);
                 }
             }
-            setAvailableTopics(filteredTopics);
 
             const filteredInterests: Interest[] = [];
             for (const interest of interestsData) {
@@ -64,7 +71,13 @@ export function DashboardClient() {
                     filteredInterests.push(interest as Interest);
                 }
             }
+
+            // Update state and cache
+            setAvailableTopics(filteredTopics);
             setAvailableInterests(filteredInterests);
+            sessionStorage.setItem('dashboard_topics', JSON.stringify(filteredTopics));
+            sessionStorage.setItem('dashboard_interests', JSON.stringify(filteredInterests));
+
             setLoadingFeeds(false);
         };
 
@@ -99,12 +112,10 @@ export function DashboardClient() {
                 break;
             case 'yesterday':
                 date = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-                initialViewState = "dashboard";
                 usePremiumGuard = true;
                 break;
             case 'archive':
                 date = searchParams.get("date") || undefined;
-                initialViewState = "dashboard";
                 usePremiumGuard = true;
                 break;
             case 'this-week':
@@ -116,7 +127,6 @@ export function DashboardClient() {
                     start: monday.toISOString().split('T')[0],
                     end: new Date().toISOString().split('T')[0]
                 };
-                initialViewState = "dashboard";
                 usePremiumGuard = true;
                 break;
             case 'this-month':
@@ -126,7 +136,6 @@ export function DashboardClient() {
                     start: firstDay.toISOString().split('T')[0],
                     end: t.toISOString().split('T')[0]
                 };
-                initialViewState = "dashboard";
                 usePremiumGuard = true;
                 break;
         }
@@ -156,6 +165,7 @@ export function DashboardClient() {
                             date={carouselProps.date}
                             dateRange={carouselProps.dateRange}
                             initialViewState={carouselProps.initialViewState}
+                            isIntroPaused={showOnboarding}
                         />
                     )}
                 </PremiumGuard>

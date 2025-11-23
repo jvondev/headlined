@@ -18,9 +18,10 @@ interface DashboardContentProps {
   greetingMainText?: string;
   greetingSubText?: string;
   initialViewState?: "intro" | "dashboard";
+  isIntroPaused?: boolean;
 }
 
-export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingMainText, greetingSubText, initialViewState = "intro" }) => {
+export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingMainText, greetingSubText, initialViewState = "intro", isIntroPaused }) => {
   const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
@@ -217,6 +218,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
               mainText={greetingMainText}
               subText={greetingSubText}
               action={viewState === "dashboard" ? <ArchiveNavigation /> : undefined}
+              isPaused={isIntroPaused}
             />
           </motion.div>
         </motion.div>

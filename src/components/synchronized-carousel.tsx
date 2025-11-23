@@ -22,9 +22,10 @@ type SynchronizedCarouselProps = {
     date?: string;
     dateRange?: { start: string; end: string };
     initialViewState?: "intro" | "dashboard";
+    isIntroPaused?: boolean;
 };
 
-export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, date, dateRange, initialViewState }) => {
+export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, date, dateRange, initialViewState, isIntroPaused }) => {
     const pathname = usePathname();
     const { subscribedTopics, subscribedInterests } = useSubscribedFeeds();
     const [isDashboardIntro, setIsDashboardIntro] = useState(true);
@@ -42,13 +43,13 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                     ...topic,
                     type: "topic" as const,
                     href: `/topic?topic=${topic.name}`,
-                    icon: topic.icon,
+                    icon: topic.icon || undefined,
                 }));
                 const subscribedInterestItems = subscribedInterests.map(interest => ({
                     ...interest,
                     type: "interest" as const,
                     href: `/interest?interest=${interest.name}`,
-                    icon: interest.icon,
+                    icon: interest.icon || undefined,
                 }));
 
                 const allPotentialItems = [...subscribedTopicItems, ...subscribedInterestItems];
@@ -175,6 +176,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 setIsDashboardIntro={setIsDashboardIntro}
                 initialViewState={initialViewState}
                 className="pt-[52px]"
+                isIntroPaused={isIntroPaused}
             />
         </div>
     );

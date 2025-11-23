@@ -9,9 +9,10 @@ interface GreetingProps {
     mainText?: string;
     subText?: string;
     action?: React.ReactNode;
+    isPaused?: boolean;
 }
 
-export const Greeting = ({ onComplete, title, mainText, subText, action }: GreetingProps) => {
+export const Greeting = ({ onComplete, title, mainText, subText, action, isPaused = false }: GreetingProps) => {
     const [greetingDisplay, setGreetingDisplay] = useState("");
     const [dateDisplay, setDateDisplay] = useState("");
     const [showAction, setShowAction] = useState(!!action);
@@ -28,6 +29,8 @@ export const Greeting = ({ onComplete, title, mainText, subText, action }: Greet
 
     // Main Greeting Typing Logic
     useEffect(() => {
+        if (isPaused) return;
+
         const targetGreeting = mainText || title || getTimeBasedGreeting();
         let currentIdx = 0;
 
@@ -49,7 +52,7 @@ export const Greeting = ({ onComplete, title, mainText, subText, action }: Greet
         }, 50);
 
         return () => clearInterval(timer);
-    }, [mainText, title]);
+    }, [mainText, title, isPaused]);
 
     // Date Typing Logic
     const typeDate = () => {

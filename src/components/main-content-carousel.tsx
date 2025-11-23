@@ -33,6 +33,7 @@ type MainContentCarouselProps = {
   dateRange?: { start: string; end: string };
   setIsDashboardIntro?: (isIntro: boolean) => void;
   initialViewState?: "intro" | "dashboard";
+  isIntroPaused?: boolean;
 };
 
 const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
@@ -47,6 +48,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
   dateRange,
   setIsDashboardIntro,
   initialViewState,
+  isIntroPaused,
 }) => {
   const pathname = usePathname();
 
@@ -110,6 +112,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
                     greetingMainText={greetingData.mainText}
                     greetingSubText={greetingData.subText}
                     initialViewState={initialViewState}
+                    isIntroPaused={isIntroPaused}
                   />
                 )}
                 {(item.type === "topic" || item.type === "interest") && (
