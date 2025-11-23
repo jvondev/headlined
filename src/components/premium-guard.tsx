@@ -6,6 +6,8 @@ import { Loader2 } from "lucide-react";
 import { checkLicenseStatus } from "@/lib/license-manager";
 import { useAppUsage } from "@/hooks/use-app-usage";
 
+import { PremiumModal } from "@/components/support/premium-modal";
+
 interface PremiumGuardProps {
     children: React.ReactNode;
     fallback?: React.ReactNode;
@@ -14,6 +16,7 @@ interface PremiumGuardProps {
 
 export function PremiumGuard({ children, fallback, disabled }: PremiumGuardProps) {
     const [isPremium, setIsPremium] = useState<boolean | null>(null);
+    const [showModal, setShowModal] = useState(false);
     const router = useRouter();
     const usage = useAppUsage();
 
@@ -26,10 +29,10 @@ export function PremiumGuard({ children, fallback, disabled }: PremiumGuardProps
             // Delayed Paywall Logic:
             // Only block if user has used the app for > 2 days.
             if (usage.daysUsed > 2) {
-                router.replace("/support");
+                setShowModal(true);
             }
         }
-    }, [isPremium, usage, router, disabled]);
+    }, [isPremium, usage, disabled]);
 
     if (disabled) {
         return <>{children}</>;
@@ -43,16 +46,25 @@ export function PremiumGuard({ children, fallback, disabled }: PremiumGuardProps
         );
     }
 
-    if (!isPremium) {
-        // If user is "hooked", the useEffect above will redirect.
-        // While redirecting, show nothing or loader.
-        if (usage.daysUsed > 2) {
-            return null;
-        }
+    // If blocked, show modal AND children (so the background is visible but blocked by modal overlay)
+    // OR show modal and fallback?
+    // User wants "SPA feel", so showing the underlying page (maybe blurred) is best.
 
-        // If user is NOT "hooked" yet, allow free access (Hook Model).
-        return <>{children}</>;
-    }
+    const isBlocked = !isPremium && usage.daysUsed > 2;
 
-    return <>{children}</>;
+    return (
+        <>
+            {children}
+            <PremiumModal isOpen={showModal} onClose={() => {
+                // Optional: redirect to home if they close the modal without paying?
+                // Or just keep it open?
+                // For now, let's keep it open or redirect to home if they try to close it.
+                // If we want to FORCE them, we shouldn't allow closing.
+                // But PremiumModal uses Dialog which usually has a close button.
+                // If they close it, they are still on the restricted page.
+                // So we should probably redirect to home if they close it.
+                router.push('/');
+            }} />
+        </>
+    );
 }
