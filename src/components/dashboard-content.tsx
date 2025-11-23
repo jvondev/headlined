@@ -124,9 +124,9 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
         const localTodayStr = new Date(now.getTime() - offset).toISOString().split('T')[0];
 
         history = history.filter(post => {
-          if (!post.date) return false;
-          const postDateStr = getLocalYMD(post.date);
-          return postDateStr === localTodayStr;
+          if (!post.readAt) return false;
+          const readDateStr = getLocalYMD(post.readAt);
+          return readDateStr === localTodayStr;
         });
 
         // Filter posts for today only

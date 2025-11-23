@@ -152,6 +152,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
         search_query: searchQuery,
         date,
         dateRange,
+        refreshOrder: true,
       });
 
       setInternalPosts(injectAds(newPosts));

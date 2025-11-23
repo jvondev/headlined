@@ -1,7 +1,7 @@
 'use client';
 
 import { Post } from '@/types';
-import { addPosts, getAllPostsFromIndexedDB, clearAllPosts, clearOldPosts, getPostsByDate, getPostsDateRange } from './indexeddb';
+import { addPosts, getAllPostsFromIndexedDB, clearAllPosts, clearOldPosts, getPostsByDate, getPostsDateRange, getReadHistory } from './indexeddb';
 import { topicsData } from '@/data/topics-data';
 import { checkLicenseStatus } from './license-manager';
 
@@ -14,6 +14,18 @@ const CLEANUP_INTERVAL_HOURS = 1;
 
 let allPosts: Post[] = [];
 let isFetchingAllPosts = false;
+
+// Cache for randomized/sorted posts to maintain consistency across pagination
+let filteredPostsCache: Record<string, Post[]> = {};
+
+function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
 
 // Helper to check access rights
 const checkAccess = async (): Promise<boolean> => {
@@ -256,13 +268,53 @@ export const getFilteredPosts = async ({ topic_name, search_query, date, dateRan
 };
 
 // Legacy pagination function (kept for compatibility)
-export const getPaginatedPosts = async ({ page, topic_name, search_query, date, dateRange }: { page: number; topic_name?: string; search_query?: string; date?: string; dateRange?: { start: string; end: string } }): Promise<{ posts: Post[], hasMore: boolean }> => {
-  const filteredPosts = await getFilteredPosts({ topic_name, search_query, date, dateRange });
+export const getPaginatedPosts = async ({
+  page,
+  topic_name,
+  search_query,
+  date,
+  dateRange,
+  refreshOrder = false
+}: {
+  page: number;
+  topic_name?: string;
+  search_query?: string;
+  date?: string;
+  dateRange?: { start: string; end: string };
+  refreshOrder?: boolean;
+}): Promise<{ posts: Post[], hasMore: boolean }> => {
+
+  const cacheKey = JSON.stringify({ topic_name, search_query, date, dateRange });
+
+  let posts = filteredPostsCache[cacheKey];
+
+  if (refreshOrder || !posts) {
+    const filteredPosts = await getFilteredPosts({ topic_name, search_query, date, dateRange });
+
+    // Fetch read history to sort read posts to bottom
+    const history = await getReadHistory();
+    const readSlugs = new Set(history.map(h => h.slug));
+
+    const unreadPosts = filteredPosts.filter(p => !readSlugs.has(p.slug));
+    const readPosts = filteredPosts.filter(p => readSlugs.has(p.slug));
+
+    // Randomize unread posts
+    const shuffledUnread = shuffleArray(unreadPosts);
+
+    // Randomize read posts
+    const shuffledRead = shuffleArray(readPosts);
+
+    // Combine: Random Unread + Random Read
+    posts = [...shuffledUnread, ...shuffledRead];
+
+    // Update cache
+    filteredPostsCache[cacheKey] = posts;
+  }
 
   const startIndex = (page - 1) * PAGE_SIZE;
   const endIndex = startIndex + PAGE_SIZE;
-  const paginatedPosts = filteredPosts.slice(startIndex, endIndex);
-  const hasMore = filteredPosts.length > endIndex;
+  const paginatedPosts = posts.slice(startIndex, endIndex);
+  const hasMore = posts.length > endIndex;
 
   return { posts: paginatedPosts, hasMore };
 };
