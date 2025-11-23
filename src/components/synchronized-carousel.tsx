@@ -85,7 +85,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     const [selectedIndex, setSelectedIndex] = useState(getInitialIndex());
 
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 25 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
-    const [navEmblaRef, navEmblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 25 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
+    const [navEmblaRef, navEmblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 50 }, [WheelGesturesPlugin({ forceWheelAxis: 'x', wheelDraggingClass: 'is-wheel-dragging' })]);
 
     // Effect to handle the initial scroll position
     useEffect(() => {
@@ -96,12 +96,6 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         if (!emblaMainApi || !navEmblaApi) return;
         const newSelectedIndex = emblaMainApi.selectedScrollSnap();
         setSelectedIndex(newSelectedIndex);
-
-        const currentItem = allFilterItems[newSelectedIndex];
-        if (currentItem) {
-            const targetIndex = Math.max(0, newSelectedIndex - 1);
-            navEmblaApi.scrollTo(targetIndex, true);
-        }
     }, [navEmblaApi, allFilterItems]);
 
     const onNavClick = useCallback((index: number) => {

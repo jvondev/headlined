@@ -39,10 +39,16 @@ export function CarouselNav({
         checkLicenseStatus().then(setIsPremium);
     }, []);
 
+    useEffect(() => {
+        if (emblaApi) {
+            emblaApi.scrollTo(selectedIndex);
+        }
+    }, [emblaApi, selectedIndex]);
+
     return (
         <div className="flex items-center w-full pl-4">
-            <Button variant="outline" className="mr-4 flex-shrink-0 font-bold text-lg tracking-tight px-4 rounded-lg" asChild>
-                <Link href="/today">
+            <Button variant="outline" className="mr-4 flex-shrink-0 font-bold text-md tracking-tight px-4 rounded-lg" asChild>
+                <Link href={isPremium ? "/today" : "/sponsor"}>
                     ReadMore
                     {isPremium && <sup className="-ml-2 text-md">+</sup>}
                 </Link>
