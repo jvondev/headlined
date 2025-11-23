@@ -17,5 +17,5 @@ export function useArchiveAccess() {
     // Show only if user is Premium OR has used the app for > 2 days
     const hasAccess = isPremium || (usage.daysUsed > 2);
 
-    return { hasAccess, isLoading };
+    return { hasAccess, isPremium, isLoading };
 }

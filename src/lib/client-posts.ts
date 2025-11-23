@@ -15,6 +15,29 @@ const CLEANUP_INTERVAL_HOURS = 1;
 let allPosts: Post[] = [];
 let isFetchingAllPosts = false;
 
+// Helper to check access rights
+const checkAccess = async (): Promise<boolean> => {
+  const isPremium = await checkLicenseStatus();
+  if (isPremium) return true;
+
+  // Check usage for non-premium users
+  if (typeof window === 'undefined') return false;
+  const storedUsage = localStorage.getItem("app-usage");
+  if (!storedUsage) return true; // New user, allow access
+
+  try {
+    const currentUsage = JSON.parse(storedUsage);
+    const firstDate = new Date(currentUsage.firstLaunchDate || new Date().toISOString());
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - firstDate.getTime());
+    const daysSinceFirstLaunch = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return daysSinceFirstLaunch <= 2;
+  } catch (e) {
+    return true; // Fallback to allow if parsing fails
+  }
+};
+
 export const fetchAllPosts = async (): Promise<Post[]> => {
   // 1. Try to load from in-memory cache first for fast initial load
   if (allPosts.length > 0) {
@@ -124,11 +147,15 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
     // If not fetched from network (either skipped or failed), try IndexedDB
     if (!fetchedFromNetwork) {
       // For main dashboard, we typically want "today's" posts or the latest available.
-      // getAllPostsFromIndexedDB returns EVERYTHING. We might want to filter?
-      // For now, let's just return everything and let the UI filter or just show latest.
-      // Actually, existing logic returned everything.
       const indexedDBPosts = await getAllPostsFromIndexedDB();
       postsToReturn = indexedDBPosts;
+    }
+
+    // Enforce data access policy: Non-premium users only get today's data
+    const isPremium = await checkLicenseStatus();
+    if (!isPremium) {
+      const today = new Date().toISOString().split('T')[0];
+      postsToReturn = postsToReturn.filter(post => post.date === today);
     }
 
     allPosts = postsToReturn; // Update in-memory cache
@@ -141,6 +168,12 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
 };
 
 export const fetchArchivePosts = async (date: string): Promise<Post[]> => {
+  // 0. Check Access
+  const hasAccess = await checkAccess();
+  if (!hasAccess) {
+    return [];
+  }
+
   // 1. Check IndexedDB first
   const localPosts = await getPostsByDate(date);
   if (localPosts.length > 0) {
@@ -171,6 +204,12 @@ export const fetchArchivePosts = async (date: string): Promise<Post[]> => {
 };
 
 export const fetchDateRangePosts = async (startDate: string, endDate: string): Promise<Post[]> => {
+  // 0. Check Access
+  const hasAccess = await checkAccess();
+  if (!hasAccess) {
+    return [];
+  }
+
   // This is a bit complex because we need to iterate days.
   // Simple approach: iterate from start to end date.
   const start = new Date(startDate);

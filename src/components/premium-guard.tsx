@@ -63,7 +63,7 @@ export function PremiumGuard({ children, fallback, disabled }: PremiumGuardProps
                 // But PremiumModal uses Dialog which usually has a close button.
                 // If they close it, they are still on the restricted page.
                 // So we should probably redirect to home if they close it.
-                router.push('/');
+                router.push('/today');
             }} />
         </>
     );

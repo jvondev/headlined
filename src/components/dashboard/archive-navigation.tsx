@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { CalendarDays, Clock, Calendar, ChevronDown, History, Sparkles } from "lucide-react";
+import { CalendarDays, Clock, Calendar, ChevronDown, History, Sparkles, Lock } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { useArchiveAccess } from "@/hooks/use-archive-access";
 import {
@@ -15,11 +15,15 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { PremiumModal } from "@/components/support/premium-modal";
+import { Heart } from "lucide-react";
+
 export function ArchiveNavigation() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    const { hasAccess: shouldShow } = useArchiveAccess();
+    const { hasAccess: shouldShow, isPremium } = useArchiveAccess();
+    const [showModal, setShowModal] = useState(false);
 
     const navData = useMemo(() => {
         const today = new Date();
@@ -84,71 +88,68 @@ export function ArchiveNavigation() {
         router.push(path);
     };
 
+    const renderMenuItem = (item: { label: string, path: string, icon: any }, isLocked: boolean = false) => (
+        <DropdownMenuItem
+            onClick={() => {
+                if (isLocked) {
+                    setShowModal(true);
+                } else {
+                    handleNavigation(item.path);
+                }
+            }}
+            className={`rounded-lg focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200 ${isLocked ? 'opacity-50' : ''}`}
+        >
+            <item.icon className={`w-4 h-4 mr-3 ${isLocked ? 'text-muted-foreground' : (item === navData.options.today ? 'text-primary' : 'text-muted-foreground')}`} />
+            <span className="font-medium flex-1">{item.label}</span>
+            {isLocked && <Lock className="w-3 h-3 ml-2 text-muted-foreground" />}
+        </DropdownMenuItem>
+    );
+
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button
-                    variant="ghost"
-                    className="h-auto py-1 px-3 ml-2 rounded-full bg-primary/5 hover:bg-primary/10 border border-primary/10 hover:border-primary/20 text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 group focus-visible:ring-0 focus-visible:ring-offset-0 shadow-sm"
+        <>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        className="h-auto py-1 px-3 ml-2 rounded-full bg-primary/5 hover:bg-primary/10 border border-primary/10 hover:border-primary/20 text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 group focus-visible:ring-0 focus-visible:ring-offset-0 shadow-sm"
+                    >
+                        <span className="mr-1 group-hover:text-primary transition-colors">{navData.current.label}</span>
+                        <ChevronDown className="w-4 h-4 opacity-50 group-hover:translate-y-0.5 group-hover:text-primary transition-all duration-300" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                    align="center"
+                    className="w-64 bg-card/60 backdrop-blur-2xl border-border/40 shadow-2xl rounded-xl p-2 animate-in fade-in zoom-in-95 duration-200"
                 >
-                    <span className="mr-1 group-hover:text-primary transition-colors">{navData.current.label}</span>
-                    <ChevronDown className="w-4 h-4 opacity-50 group-hover:translate-y-0.5 group-hover:text-primary transition-all duration-300" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-                align="center"
-                className="w-64 bg-card/60 backdrop-blur-2xl border-border/40 shadow-2xl rounded-xl p-2 animate-in fade-in zoom-in-95 duration-200"
-            >
-                <DropdownMenuGroup>
-                    <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/50 font-semibold px-2 py-1.5 mb-1">Time Travel</DropdownMenuLabel>
-                    <DropdownMenuItem
-                        onClick={() => handleNavigation(navData.options.today.path)}
-                        className="rounded-lg focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200"
-                    >
-                        <navData.options.today.icon className="w-4 h-4 mr-3 text-primary" />
-                        <span className="font-medium">{navData.options.today.label}</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => handleNavigation(navData.options.yesterday.path)}
-                        className="rounded-lg focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200"
-                    >
-                        <navData.options.yesterday.icon className="w-4 h-4 mr-3 text-muted-foreground" />
-                        <span className="font-medium">{navData.options.yesterday.label}</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => handleNavigation(navData.options.twoDaysAgo.path)}
-                        className="rounded-lg focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200"
-                    >
-                        <navData.options.twoDaysAgo.icon className="w-4 h-4 mr-3 text-muted-foreground" />
-                        <span className="font-medium">{navData.options.twoDaysAgo.label}</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => handleNavigation(navData.options.threeDaysAgo.path)}
-                        className="rounded-lg focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200"
-                    >
-                        <navData.options.threeDaysAgo.icon className="w-4 h-4 mr-3 text-muted-foreground" />
-                        <span className="font-medium">{navData.options.threeDaysAgo.label}</span>
-                    </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator className="bg-border/30 my-2" />
-                <DropdownMenuGroup>
-                    <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/50 font-semibold px-2 py-1.5 mb-1">Summaries</DropdownMenuLabel>
-                    <DropdownMenuItem
-                        onClick={() => handleNavigation(navData.options.thisWeek.path)}
-                        className="rounded-lg focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200"
-                    >
-                        <navData.options.thisWeek.icon className="w-4 h-4 mr-3 text-orange-500" />
-                        <span className="font-medium">{navData.options.thisWeek.label}</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => handleNavigation(navData.options.thisMonth.path)}
-                        className="rounded-lg focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200"
-                    >
-                        <navData.options.thisMonth.icon className="w-4 h-4 mr-3 text-blue-500" />
-                        <span className="font-medium">{navData.options.thisMonth.label}</span>
-                    </DropdownMenuItem>
-                </DropdownMenuGroup>
-            </DropdownMenuContent>
-        </DropdownMenu>
+                    <DropdownMenuGroup>
+                        <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/50 font-semibold px-2 py-1.5 mb-1">Time Travel</DropdownMenuLabel>
+                        {renderMenuItem(navData.options.today)}
+                        {renderMenuItem(navData.options.yesterday, !isPremium)}
+                        {renderMenuItem(navData.options.twoDaysAgo, !isPremium)}
+                        {renderMenuItem(navData.options.threeDaysAgo, !isPremium)}
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator className="bg-border/30 my-2" />
+                    <DropdownMenuGroup>
+                        <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/50 font-semibold px-2 py-1.5 mb-1">Summaries</DropdownMenuLabel>
+                        {renderMenuItem(navData.options.thisWeek, !isPremium)}
+                        {renderMenuItem(navData.options.thisMonth, !isPremium)}
+                    </DropdownMenuGroup>
+
+                    {!isPremium && (
+                        <>
+                            <DropdownMenuSeparator className="bg-border/30 my-2" />
+                            <DropdownMenuItem
+                                onClick={() => setShowModal(true)}
+                                className="rounded-lg bg-primary/10 text-primary focus:bg-primary/20 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200"
+                            >
+                                <Heart className="w-4 h-4 mr-3 fill-primary text-primary" />
+                                <span className="font-medium">Sponsor ReadMore+</span>
+                            </DropdownMenuItem>
+                        </>
+                    )}
+                </DropdownMenuContent>
+            </DropdownMenu>
+            <PremiumModal isOpen={showModal} onClose={() => setShowModal(false)} />
+        </>
     );
 }

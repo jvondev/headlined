@@ -44,6 +44,14 @@ export const clearLicense = () => {
 };
 
 export const validateLicense = async (key: string): Promise<boolean> => {
+    const trimmedKey = key.trim();
+
+    // Basic format validation (prevent "test", "123", etc.)
+    // Assuming Polar keys are at least 10 chars long or have specific format.
+    if (trimmedKey.length < 10) {
+        return false;
+    }
+
     try {
         const response = await fetch(POLAR_VALIDATE_URL, {
             method: "POST",
@@ -51,7 +59,7 @@ export const validateLicense = async (key: string): Promise<boolean> => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                key: key.trim(),
+                key: trimmedKey,
                 organization_id: ORGANIZATION_ID,
             }),
         });
@@ -60,8 +68,17 @@ export const validateLicense = async (key: string): Promise<boolean> => {
             return false;
         }
 
+        // Double check response body just in case
+        const data = await response.json();
+        // Polar API returns the license object if valid.
+        // We can check if data.key matches or data.status is 'active' if available.
+        // For now, response.ok is the primary indicator, but let's be safe.
+        if (!data || data.error) {
+            return false;
+        }
+
         // If valid, update storage
-        await setLicense(key);
+        await setLicense(trimmedKey);
         return true;
     } catch (error) {
         console.error("License validation failed:", error);
