@@ -6,7 +6,8 @@ import { Footer } from '@/components/common/Footer';
 
 export function FooterWrapper() {
   const pathname = usePathname();
-  const showFooter = pathname !== '/today';
+  const hiddenRoutes = ['/today', '/yesterday', '/this-week', '/this-month', '/archive'];
+  const showFooter = !hiddenRoutes.includes(pathname);
 
   return showFooter ? <Footer /> : null;
 }

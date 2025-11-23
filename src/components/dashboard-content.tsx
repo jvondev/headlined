@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils";
 import { ArchiveNavigation } from "@/components/dashboard/archive-navigation";
 import { useArchiveAccess } from "@/hooks/use-archive-access";
 import { checkLicenseStatus } from "@/lib/license-manager";
+import { DistractionSettings } from "@/components/support/distraction-settings";
+import { useAppUsage } from "@/hooks/use-app-usage";
 
 interface DashboardContentProps {
   setIsIntroMode?: (isIntro: boolean) => void;
@@ -28,6 +30,7 @@ interface DashboardContentProps {
 
 export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingMainText, greetingSubText, initialViewState = "intro", isIntroPaused, date, dateRange, periodLabel }) => {
   const { hasAccess: hasArchiveAccess } = useArchiveAccess();
+  const usage = useAppUsage();
   const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
@@ -612,6 +615,20 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                   </Card>
                 </motion.div >
               </div >
+
+              {/* Distraction Settings (Premium Feature - Unlocks after 2 days) */}
+              {usage.daysUsed > 2 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4"
+                >
+                  <div className="col-span-1 md:col-span-2 md:col-start-2">
+                    <DistractionSettings isPremium={isPremiumUser} />
+                  </div>
+                </motion.div>
+              )}
 
             </motion.div >
           )
