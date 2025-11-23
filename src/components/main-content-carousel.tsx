@@ -61,15 +61,15 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
     if (pathname === "/yesterday" && date) {
       const d = new Date(date);
       return {
-        mainText: "Yesterday",
+        mainText: timeGreeting,
         subText: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
       };
     }
     if (pathname === "/archive" && date) {
       const d = new Date(date);
       return {
-        mainText: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
-        subText: timeGreeting
+        mainText: timeGreeting,
+        subText: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
       };
     }
     if (pathname === "/this-week" && dateRange) {
@@ -78,14 +78,14 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
       const startStr = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       const endStr = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       return {
-        mainText: "This Week",
+        mainText: timeGreeting,
         subText: `${startStr} - ${endStr}`
       };
     }
     if (pathname === "/this-month" && dateRange) {
       const start = new Date(dateRange.start);
       return {
-        mainText: "This Month",
+        mainText: timeGreeting,
         subText: start.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
       };
     }
