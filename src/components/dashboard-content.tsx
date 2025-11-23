@@ -12,6 +12,7 @@ import { TrendingUp, Newspaper, Bookmark, Search, PieChart, Calendar, Layers, Ar
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ArchiveNavigation } from "@/components/dashboard/archive-navigation";
+import { useArchiveAccess } from "@/hooks/use-archive-access";
 
 interface DashboardContentProps {
   setIsIntroMode?: (isIntro: boolean) => void;
@@ -22,6 +23,7 @@ interface DashboardContentProps {
 }
 
 export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingMainText, greetingSubText, initialViewState = "intro", isIntroPaused }) => {
+  const { hasAccess: hasArchiveAccess } = useArchiveAccess();
   const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
@@ -217,7 +219,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
               onComplete={handleIntroComplete}
               mainText={greetingMainText}
               subText={greetingSubText}
-              action={viewState === "dashboard" ? <ArchiveNavigation /> : undefined}
+              action={viewState === "dashboard" && hasArchiveAccess ? <ArchiveNavigation /> : undefined}
               isPaused={isIntroPaused}
             />
           </motion.div>

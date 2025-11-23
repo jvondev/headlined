@@ -17,6 +17,8 @@ export const Greeting = ({ onComplete, title, mainText, subText, action, isPause
     const [dateDisplay, setDateDisplay] = useState("");
     const [showAction, setShowAction] = useState(!!action);
     const [isBackspacing, setIsBackspacing] = useState(false);
+    const [isGreetingTypingComplete, setIsGreetingTypingComplete] = useState(false);
+    const [isDateTypingComplete, setIsDateTypingComplete] = useState(false);
 
     // Refs to track state for animation logic
     const actionRef = useRef(action);
@@ -46,6 +48,7 @@ export const Greeting = ({ onComplete, title, mainText, subText, action, isPause
                 currentIdx++;
             } else {
                 clearInterval(timer);
+                setIsGreetingTypingComplete(true);
                 // Start typing date after greeting
                 typeDate();
             }
@@ -65,6 +68,7 @@ export const Greeting = ({ onComplete, title, mainText, subText, action, isPause
                 currentIdx++;
             } else {
                 clearInterval(timer);
+                setIsDateTypingComplete(true);
                 // Trigger completion to switch to dashboard mode
                 if (onComplete) setTimeout(onComplete, 1000);
             }
@@ -113,7 +117,7 @@ export const Greeting = ({ onComplete, title, mainText, subText, action, isPause
         <div className="flex flex-col items-center justify-center text-center">
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight font-headline text-foreground min-h-[1.2em]">
                 {greetingDisplay}
-                {!action && !isBackspacing && greetingDisplay.length < (mainText || "").length && (
+                {!action && !isBackspacing && !isGreetingTypingComplete && (
                     <span className="inline-block w-[3px] h-[0.8em] bg-primary ml-1 align-middle rounded-full animate-pulse" />
                 )}
             </h1>
@@ -123,7 +127,7 @@ export const Greeting = ({ onComplete, title, mainText, subText, action, isPause
                 {!showAction && (
                     <p className="text-lg md:text-xl text-muted-foreground font-medium">
                         {dateDisplay}
-                        {(greetingDisplay.length >= (mainText || "").length) && !isBackspacing && (
+                        {isGreetingTypingComplete && !isBackspacing && !isDateTypingComplete && (
                             <span className="inline-block w-[2px] h-[0.8em] bg-primary/50 ml-1 align-middle rounded-full animate-pulse" />
                         )}
                         {isBackspacing && (

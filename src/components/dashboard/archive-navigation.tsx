@@ -3,10 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { CalendarDays, Clock, Calendar, ChevronDown, History, Sparkles } from "lucide-react";
-import { checkLicenseStatus } from "@/lib/license-manager";
 import { useEffect, useState, useMemo } from "react";
-import { cn } from "@/lib/utils";
-import { useAppUsage } from "@/hooks/use-app-usage";
+import { useArchiveAccess } from "@/hooks/use-archive-access";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,15 +19,7 @@ export function ArchiveNavigation() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    const [isPremium, setIsPremium] = useState<boolean>(false);
-    const usage = useAppUsage();
-
-    useEffect(() => {
-        checkLicenseStatus().then(setIsPremium);
-    }, []);
-
-    // Show only if user is Premium OR has used the app for > 5 days with 2+ day streak
-    const shouldShow = isPremium || (usage.daysUsed > 5 && usage.consecutiveDays >= 2);
+    const { hasAccess: shouldShow } = useArchiveAccess();
 
     const navData = useMemo(() => {
         const today = new Date();
