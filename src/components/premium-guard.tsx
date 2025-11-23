@@ -9,9 +9,10 @@ import { useAppUsage } from "@/hooks/use-app-usage";
 interface PremiumGuardProps {
     children: React.ReactNode;
     fallback?: React.ReactNode;
+    disabled?: boolean;
 }
 
-export function PremiumGuard({ children, fallback }: PremiumGuardProps) {
+export function PremiumGuard({ children, fallback, disabled }: PremiumGuardProps) {
     const [isPremium, setIsPremium] = useState<boolean | null>(null);
     const router = useRouter();
     const usage = useAppUsage();
@@ -21,14 +22,18 @@ export function PremiumGuard({ children, fallback }: PremiumGuardProps) {
     }, []);
 
     useEffect(() => {
-        if (isPremium === false) {
+        if (!disabled && isPremium === false) {
             // Delayed Paywall Logic:
             // Only block if user has used the app for > 5 days AND has a 2-day streak.
             if (usage.daysUsed > 5 && usage.consecutiveDays >= 2) {
                 router.replace("/support");
             }
         }
-    }, [isPremium, usage, router]);
+    }, [isPremium, usage, router, disabled]);
+
+    if (disabled) {
+        return <>{children}</>;
+    }
 
     if (isPremium === null) {
         return (

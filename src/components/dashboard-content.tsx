@@ -36,6 +36,13 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
   });
   const [timelineItemsToShow, setTimelineItemsToShow] = useState(4);
 
+  // Sync viewState with prop changes (e.g. navigation)
+  useEffect(() => {
+    if (initialViewState === 'dashboard') {
+      setViewState('dashboard');
+    }
+  }, [initialViewState]);
+
   useEffect(() => {
     if (viewState === "dashboard") {
       sessionStorage.setItem('intro_shown', 'true');
