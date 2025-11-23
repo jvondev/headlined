@@ -41,10 +41,12 @@ export function CarouselNav({
 
     return (
         <div className="flex items-center w-full pl-4">
-            <Link href="/today" className="mr-4 flex-shrink-0 font-bold text-lg tracking-tight">
-                ReadMore
-                {isPremium && <sup className="text-primary ml-0.5 text-xs">+</sup>}
-            </Link>
+            <Button variant="outline" className="mr-4 flex-shrink-0 font-bold text-lg tracking-tight px-4 rounded-lg" asChild>
+                <Link href="/today">
+                    ReadMore
+                    {isPremium && <sup className="-ml-2 text-md">+</sup>}
+                </Link>
+            </Button>
             <div className="overflow-hidden flex-1" ref={emblaRef}>
                 <div className="flex items-center">
                     {allFilterItems.map((item, index) => {

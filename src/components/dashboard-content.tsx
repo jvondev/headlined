@@ -27,8 +27,20 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
   const [readHistory, setReadHistory] = useState<(Post & { readAt: string })[]>([]);
   const [savedCount, setSavedCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [viewState, setViewState] = useState<"intro" | "dashboard">(initialViewState);
+  const [viewState, setViewState] = useState<"intro" | "dashboard">(() => {
+    if (initialViewState === 'dashboard') return 'dashboard';
+    if (typeof window !== 'undefined' && sessionStorage.getItem('intro_shown')) {
+      return 'dashboard';
+    }
+    return 'intro';
+  });
   const [timelineItemsToShow, setTimelineItemsToShow] = useState(4);
+
+  useEffect(() => {
+    if (viewState === "dashboard") {
+      sessionStorage.setItem('intro_shown', 'true');
+    }
+  }, [viewState]);
 
   const fetchData = async () => {
     try {
@@ -185,10 +197,10 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
           className="flex flex-col items-center relative z-20 shrink-0 mb-8"
         >
 
-          <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "origin-top  scale-[0.5]" : "")}>
+          <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "origin-top  " : "")}>
             <Clock variant="stacked" className={cn(
               "transition-all duration-1000 ease-in-out",
-              viewState === "intro" ? "text-[12rem] md:text-[8rem] opacity-90" : "text-[4rem] md:text-[4rem] opacity-80"
+              viewState === "intro" ? "text-[6rem] md:text-[10rem] opacity-90" : "text-[4rem] md:text-[6rem] opacity-80"
             )} />
           </motion.div>
 
