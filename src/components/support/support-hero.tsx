@@ -176,11 +176,6 @@ export function SupportHero() {
                 <LicenseValidationModal />
             </div>
 
-            {/* Distraction Settings (Only visible if premium) */}
-            <div className="mt-12 max-w-2xl mx-auto w-full text-left">
-                <DistractionSettings />
-            </div>
-
             {showCheckout && (
                 <PolarCheckout
                     checkoutUrl={checkoutUrl}
