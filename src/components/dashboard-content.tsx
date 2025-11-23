@@ -78,9 +78,10 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
       let filteredPosts = allPosts;
 
       if (date) {
-        // Filter history for specific date (UTC comparison)
+        // Filter history for specific date (based on Post Date)
         history = history.filter(post => {
-          const postDateStr = new Date(post.readAt).toISOString().split('T')[0];
+          if (!post.date) return false;
+          const postDateStr = new Date(post.date).toISOString().split('T')[0];
           return postDateStr === date;
         });
 
@@ -88,13 +89,14 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
         filteredPosts = allPosts.filter(p => p.date === date);
 
       } else if (dateRange) {
-        // Filter history for date range
+        // Filter history for date range (based on Post Date)
         const start = new Date(dateRange.start).getTime();
         const end = new Date(dateRange.end).getTime() + 86400000; // Include the end date
 
         history = history.filter(post => {
-          const readAtTime = new Date(post.readAt).getTime();
-          return readAtTime >= start && readAtTime < end;
+          if (!post.date) return false;
+          const postDate = new Date(post.date).getTime();
+          return postDate >= start && postDate < end;
         });
 
         // Filter posts for date range
@@ -104,14 +106,16 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
         });
 
       } else {
-        // Default view (Today) - Always show Local Today
+        // Default view (Today) - Filter for Today's Content
+        const todayStr = now.toISOString().split('T')[0];
+
         history = history.filter(post => {
-          const readAtTime = new Date(post.readAt).getTime();
-          return readAtTime >= todayStart;
+          if (!post.date) return false;
+          const postDateStr = new Date(post.date).toISOString().split('T')[0];
+          return postDateStr === todayStr;
         });
 
         // Filter posts for today only
-        const todayStr = now.toISOString().split('T')[0];
         filteredPosts = allPosts.filter(p => p.date === todayStr);
       }
 
@@ -591,9 +595,10 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
               </div>
 
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </div>
+          )
+          }
+        </AnimatePresence >
+      </div >
+    </div >
   );
 };
