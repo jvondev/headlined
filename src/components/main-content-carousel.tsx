@@ -113,6 +113,8 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
                     greetingSubText={greetingData.subText}
                     initialViewState={initialViewState}
                     isIntroPaused={isIntroPaused}
+                    date={date}
+                    dateRange={dateRange}
                   />
                 )}
                 {(item.type === "topic" || item.type === "interest") && (

@@ -13,6 +13,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ArchiveNavigation } from "@/components/dashboard/archive-navigation";
 import { useArchiveAccess } from "@/hooks/use-archive-access";
+import { checkLicenseStatus } from "@/lib/license-manager";
 
 interface DashboardContentProps {
   setIsIntroMode?: (isIntro: boolean) => void;
@@ -20,9 +21,11 @@ interface DashboardContentProps {
   greetingSubText?: string;
   initialViewState?: "intro" | "dashboard";
   isIntroPaused?: boolean;
+  date?: string;
+  dateRange?: { start: string; end: string };
 }
 
-export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingMainText, greetingSubText, initialViewState = "intro", isIntroPaused }) => {
+export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingMainText, greetingSubText, initialViewState = "intro", isIntroPaused, date, dateRange }) => {
   const { hasAccess: hasArchiveAccess } = useArchiveAccess();
   const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
@@ -52,14 +55,82 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
     }
   }, [viewState]);
 
+  const [isPremiumUser, setIsPremiumUser] = useState(false);
+
   const fetchData = async () => {
     try {
       const allPosts = await getAllPostsFromIndexedDB();
-      const history = await getReadHistory();
+      // Sort posts by date descending (newest first)
+      allPosts.sort((a, b) => {
+        const dateA = a.date ? new Date(a.date).getTime() : 0;
+        const dateB = b.date ? new Date(b.date).getTime() : 0;
+        return dateB - dateA;
+      });
+
+      let history = await getReadHistory();
+      const isPremium = await checkLicenseStatus();
+      setIsPremiumUser(isPremium);
+
+      const now = new Date();
+      // Reset time to start of day for accurate "today" comparison
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+      let filteredPosts = allPosts;
+
+      if (date) {
+        // Filter history for specific date (UTC comparison)
+        history = history.filter(post => {
+          const postDateStr = new Date(post.readAt).toISOString().split('T')[0];
+          return postDateStr === date;
+        });
+
+        // Filter posts for specific date
+        filteredPosts = allPosts.filter(p => p.date === date);
+
+      } else if (dateRange) {
+        // Filter history for date range
+        const start = new Date(dateRange.start).getTime();
+        const end = new Date(dateRange.end).getTime() + 86400000; // Include the end date
+
+        history = history.filter(post => {
+          const readAtTime = new Date(post.readAt).getTime();
+          return readAtTime >= start && readAtTime < end;
+        });
+
+        // Filter posts for date range
+        filteredPosts = allPosts.filter(p => {
+          const postDate = p.date ? new Date(p.date).getTime() : 0;
+          return postDate >= start && postDate < end;
+        });
+
+      } else {
+        // Default view (Today)
+        if (isPremium) {
+          // Filter history for last 30 days
+          const thirtyDaysAgo = new Date(now);
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          const thirtyDaysAgoTime = thirtyDaysAgo.getTime();
+
+          history = history.filter(post => {
+            const readAtTime = new Date(post.readAt).getTime();
+            return readAtTime >= thirtyDaysAgoTime;
+          });
+        } else {
+          // Filter history for today only
+          history = history.filter(post => {
+            const readAtTime = new Date(post.readAt).getTime();
+            return readAtTime >= todayStart;
+          });
+
+          // Filter posts for today only
+          const todayStr = now.toISOString().split('T')[0];
+          filteredPosts = allPosts.filter(p => p.date === todayStr);
+        }
+      }
 
       const subscribedNames = subscribedTopics.map(t => t.name);
-      const subscribed = allPosts.filter(p => p.topic && subscribedNames.includes(p.topic));
-      const others = allPosts.filter(p => !p.topic || !subscribedNames.includes(p.topic));
+      const subscribed = filteredPosts.filter(p => p.topic && subscribedNames.includes(p.topic));
+      const others = filteredPosts.filter(p => !p.topic || !subscribedNames.includes(p.topic));
 
       setRecentPosts(subscribed.slice(0, 10));
       setTrendingPosts(others.slice(0, 5));
@@ -87,7 +158,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
 
     window.addEventListener('read-history-updated', handleHistoryUpdate);
     return () => window.removeEventListener('read-history-updated', handleHistoryUpdate);
-  }, [subscribedTopics, feedsLoading]);
+  }, [subscribedTopics, feedsLoading, date, dateRange]);
 
   const handleIntroComplete = useCallback(() => {
     setViewState("dashboard");
@@ -250,7 +321,11 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                       <div>
                         <h2 className="text-xl md:text-2xl font-semibold leading-tight tracking-tight text-foreground">
                           {readHistory.length > 0
-                            ? `You've read ${readHistory.length} articles today.`
+                            ? (
+                              date ? `You read ${readHistory.length} articles on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
+                                dateRange ? `You read ${readHistory.length} articles during this period.` :
+                                  `You've read ${readHistory.length} articles ${isPremiumUser ? "in the last 30 days" : "today"}.`
+                            )
                             : "Start your reading journey today."}
                         </h2>
                         <p className="text-muted-foreground mt-2 text-sm font-medium">
