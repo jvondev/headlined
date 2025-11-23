@@ -104,28 +104,15 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
         });
 
       } else {
-        // Default view (Today)
-        if (isPremium) {
-          // Filter history for last 30 days
-          const thirtyDaysAgo = new Date(now);
-          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-          const thirtyDaysAgoTime = thirtyDaysAgo.getTime();
+        // Default view (Today) - Always show Local Today
+        history = history.filter(post => {
+          const readAtTime = new Date(post.readAt).getTime();
+          return readAtTime >= todayStart;
+        });
 
-          history = history.filter(post => {
-            const readAtTime = new Date(post.readAt).getTime();
-            return readAtTime >= thirtyDaysAgoTime;
-          });
-        } else {
-          // Filter history for today only
-          history = history.filter(post => {
-            const readAtTime = new Date(post.readAt).getTime();
-            return readAtTime >= todayStart;
-          });
-
-          // Filter posts for today only
-          const todayStr = now.toISOString().split('T')[0];
-          filteredPosts = allPosts.filter(p => p.date === todayStr);
-        }
+        // Filter posts for today only
+        const todayStr = now.toISOString().split('T')[0];
+        filteredPosts = allPosts.filter(p => p.date === todayStr);
       }
 
       const subscribedNames = subscribedTopics.map(t => t.name);
@@ -324,9 +311,13 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                             ? (
                               date ? `You read ${readHistory.length} articles on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
                                 dateRange ? `You read ${readHistory.length} articles during this period.` :
-                                  `You've read ${readHistory.length} articles ${isPremiumUser ? "in the last 30 days" : "today"}.`
+                                  `You've read ${readHistory.length} articles today.`
                             )
-                            : "Start your reading journey today."}
+                            : (
+                              date ? `No articles read on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
+                                dateRange ? "No reading activity during this period." :
+                                  "Start your reading journey today."
+                            )}
                         </h2>
                         <p className="text-muted-foreground mt-2 text-sm font-medium">
                           {readHistory.length > 5
