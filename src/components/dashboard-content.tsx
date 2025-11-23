@@ -205,8 +205,12 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
           </motion.div>
 
           <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "opacity-80 scale-90 origin-top -mt-4" : "")}>
-            <Greeting onComplete={handleIntroComplete} mainText={greetingMainText} subText={greetingSubText} />
-            {viewState === "dashboard" && <ArchiveNavigation />}
+            <Greeting
+              onComplete={handleIntroComplete}
+              mainText={greetingMainText}
+              subText={greetingSubText}
+              action={viewState === "dashboard" ? <ArchiveNavigation /> : undefined}
+            />
           </motion.div>
         </motion.div>
 

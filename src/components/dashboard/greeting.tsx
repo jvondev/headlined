@@ -8,9 +8,10 @@ interface GreetingProps {
     title?: string;
     mainText?: string;
     subText?: string;
+    action?: React.ReactNode;
 }
 
-export const Greeting = ({ onComplete, title, mainText, subText }: GreetingProps) => {
+export const Greeting = ({ onComplete, title, mainText, subText, action }: GreetingProps) => {
     const [greeting, setGreeting] = useState("");
     const [dateStr, setDateStr] = useState("");
     const [text, setText] = useState("");
@@ -77,14 +78,20 @@ export const Greeting = ({ onComplete, title, mainText, subText }: GreetingProps
                     />
                 )}
             </h1>
-            <motion.p
+            <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: showDate ? 1 : 0, y: showDate ? 0 : 10 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-lg md:text-xl text-muted-foreground mt-2 font-medium"
+                className="mt-2"
             >
-                {dateStr}
-            </motion.p>
+                {action ? (
+                    action
+                ) : (
+                    <p className="text-lg md:text-xl text-muted-foreground font-medium">
+                        {dateStr}
+                    </p>
+                )}
+            </motion.div>
 
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
