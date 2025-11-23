@@ -161,7 +161,8 @@ export function FeatureShowcase() {
                         <motion.h2
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
+                            viewport={{ once: true, margin: "-10%" }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
                             className="text-3xl md:text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60"
                         >
                             {section.category}
@@ -170,10 +171,10 @@ export function FeatureShowcase() {
                             {section.items.map((item, itemIdx) => (
                                 <motion.div
                                     key={itemIdx}
-                                    initial={{ opacity: 0, y: 40 }}
+                                    initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, margin: "-100px" }}
-                                    transition={{ duration: 0.5, delay: itemIdx * 0.1 }}
+                                    viewport={{ once: true, margin: "-5%" }}
+                                    transition={{ duration: 0.5, ease: "easeOut", delay: itemIdx * 0.05 }}
                                 >
                                     <BeforeAfterCard
                                         title={item.title}
