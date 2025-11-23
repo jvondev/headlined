@@ -12,94 +12,135 @@ interface GreetingProps {
 }
 
 export const Greeting = ({ onComplete, title, mainText, subText, action }: GreetingProps) => {
-    const [greeting, setGreeting] = useState("");
-    const [dateStr, setDateStr] = useState("");
-    const [text, setText] = useState("");
-    const [showDate, setShowDate] = useState(false);
+    const [greetingDisplay, setGreetingDisplay] = useState("");
+    const [dateDisplay, setDateDisplay] = useState("");
+    const [showAction, setShowAction] = useState(!!action);
+    const [isBackspacing, setIsBackspacing] = useState(false);
+
+    // Refs to track state for animation logic
+    const actionRef = useRef(action);
+    const isMounted = useRef(false);
 
     useEffect(() => {
-        const date = new Date();
-        const hour = date.getHours();
-        let greet = "Good Evening";
-        if (mainText) {
-            greet = mainText;
-        } else if (title) {
-            greet = title;
-        } else {
-            if (hour < 5) greet = "Good Night";
-            else if (hour < 12) greet = "Good Morning";
-            else if (hour < 18) greet = "Good Afternoon";
+        isMounted.current = true;
+        return () => { isMounted.current = false; };
+    }, []);
+
+    // Main Greeting Typing Logic
+    useEffect(() => {
+        const targetGreeting = mainText || title || getTimeBasedGreeting();
+        let currentIdx = 0;
+
+        // If action is already present on mount (Dashboard mode), show full text immediately
+        if (action) {
+            setGreetingDisplay(targetGreeting);
+            return;
         }
-
-        setGreeting(greet);
-        if (subText) {
-            setDateStr(subText);
-        } else {
-            setDateStr(date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
-        }
-    }, [title, mainText, subText]);
-
-    const onCompleteRef = useRef(onComplete);
-
-    useEffect(() => {
-        onCompleteRef.current = onComplete;
-    }, [onComplete]);
-
-    useEffect(() => {
-        if (!greeting) return;
-
-        let currentIndex = 0;
-        const targetText = greeting;
-        setText(""); // Ensure clear start
 
         const timer = setInterval(() => {
-            if (currentIndex < targetText.length) {
-                setText(targetText.slice(0, currentIndex + 1));
-                currentIndex++;
+            if (currentIdx <= targetGreeting.length) {
+                setGreetingDisplay(targetGreeting.slice(0, currentIdx));
+                currentIdx++;
             } else {
                 clearInterval(timer);
-                setShowDate(true);
-                if (onCompleteRef.current) setTimeout(onCompleteRef.current, 1500);
+                // Start typing date after greeting
+                typeDate();
             }
-        }, 80);
+        }, 50);
 
         return () => clearInterval(timer);
-    }, [greeting]);
+    }, [mainText, title]);
+
+    // Date Typing Logic
+    const typeDate = () => {
+        const targetDate = subText || new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        let currentIdx = 0;
+
+        const timer = setInterval(() => {
+            if (currentIdx <= targetDate.length) {
+                setDateDisplay(targetDate.slice(0, currentIdx));
+                currentIdx++;
+            } else {
+                clearInterval(timer);
+                // Trigger completion to switch to dashboard mode
+                if (onComplete) setTimeout(onComplete, 1000);
+            }
+        }, 50);
+    };
+
+    // Watch for action becoming available (Intro -> Dashboard transition)
+    useEffect(() => {
+        if (action && !actionRef.current) {
+            // Action just appeared (transition)
+            // Start backspacing date
+            setIsBackspacing(true);
+        }
+        actionRef.current = action;
+    }, [action]);
+
+    // Backspacing Logic
+    useEffect(() => {
+        if (!isBackspacing) return;
+
+        const timer = setInterval(() => {
+            setDateDisplay(prev => {
+                if (prev.length > 0) {
+                    return prev.slice(0, -1);
+                } else {
+                    clearInterval(timer);
+                    setIsBackspacing(false);
+                    setShowAction(true);
+                    return "";
+                }
+            });
+        }, 30); // Fast backspace
+
+        return () => clearInterval(timer);
+    }, [isBackspacing]);
+
+    function getTimeBasedGreeting() {
+        const hour = new Date().getHours();
+        if (hour < 5) return "Good Night";
+        if (hour < 12) return "Good Morning";
+        if (hour < 18) return "Good Afternoon";
+        return "Good Evening";
+    }
 
     return (
         <div className="flex flex-col items-center justify-center text-center">
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight font-headline text-foreground">
-                {text}
-                {!showDate && (
-                    <motion.span
-                        animate={{ opacity: [1, 0] }}
-                        transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-                        className="inline-block w-[3px] h-[0.8em] bg-primary ml-1 align-middle rounded-full"
-                    />
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight font-headline text-foreground min-h-[1.2em]">
+                {greetingDisplay}
+                {!action && !isBackspacing && greetingDisplay.length < (mainText || "").length && (
+                    <span className="inline-block w-[3px] h-[0.8em] bg-primary ml-1 align-middle rounded-full animate-pulse" />
                 )}
             </h1>
-            <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: showDate ? 1 : 0, y: showDate ? 0 : 10 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="mt-2"
-            >
-                {action ? (
-                    action
-                ) : (
+
+            <div className="mt-2 h-8 flex items-center justify-center relative">
+                {/* Date Text (Types in, then backspaces) */}
+                {!showAction && (
                     <p className="text-lg md:text-xl text-muted-foreground font-medium">
-                        {dateStr}
+                        {dateDisplay}
+                        {(greetingDisplay.length >= (mainText || "").length) && !isBackspacing && (
+                            <span className="inline-block w-[2px] h-[0.8em] bg-primary/50 ml-1 align-middle rounded-full animate-pulse" />
+                        )}
+                        {isBackspacing && (
+                            <span className="inline-block w-[2px] h-[0.8em] bg-primary ml-1 align-middle rounded-full" />
+                        )}
                     </p>
                 )}
-            </motion.div>
 
-            <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: showDate ? 1 : 0, y: showDate ? 0 : 10 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="mt-4 w-full max-w-md"
-            >
-            </motion.div>
+                {/* Action/Dropdown (Reveals like typing) */}
+                {showAction && action && (
+                    <motion.div
+                        initial={{ width: 0, opacity: 0 }}
+                        animate={{ width: "auto", opacity: 1 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="overflow-hidden whitespace-nowrap"
+                    >
+                        {action}
+                    </motion.div>
+                )}
+            </div>
         </div>
     );
 };

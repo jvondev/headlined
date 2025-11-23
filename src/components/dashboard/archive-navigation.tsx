@@ -47,30 +47,35 @@ export function ArchiveNavigation() {
             return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         };
 
-        const todayStr = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-        const yesterdayDate = new Date();
-        yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-        const yesterdayStr = yesterdayDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-
-        let current = { label: todayStr, path: "/today", icon: Sparkles };
-
-        // Define all possible navigation options
+        // Define all possible navigation options with relative labels
         const options = {
             today: { label: "Today", path: "/today", icon: Sparkles },
             yesterday: { label: "Yesterday", path: "/yesterday", icon: History },
-            twoDaysAgo: { label: formatShortDate(getPastDate(2)), path: `/archive?date=${getPastDate(2)}`, icon: Clock },
-            threeDaysAgo: { label: formatShortDate(getPastDate(3)), path: `/archive?date=${getPastDate(3)}`, icon: Clock },
+            twoDaysAgo: { label: "2 Days Ago", path: `/archive?date=${getPastDate(2)}`, icon: Clock },
+            threeDaysAgo: { label: "3 Days Ago", path: `/archive?date=${getPastDate(3)}`, icon: Clock },
             thisWeek: { label: "This Week", path: "/this-week", icon: CalendarDays },
             thisMonth: { label: "This Month", path: "/this-month", icon: Calendar },
         };
 
-        // Determine current view
+        let current = options.today;
+
+        // Determine current view and set label
         if (pathname === "/yesterday") {
-            current = { ...options.yesterday, label: yesterdayStr };
+            current = options.yesterday;
         } else if (pathname === "/archive") {
             const dateParam = searchParams.get("date");
             if (dateParam) {
-                current = { label: formatDate(dateParam), path: `/archive?date=${dateParam}`, icon: Clock };
+                // Check if dateParam matches 2 or 3 days ago for relative labeling
+                const twoDaysAgoDate = getPastDate(2);
+                const threeDaysAgoDate = getPastDate(3);
+
+                if (dateParam === twoDaysAgoDate) {
+                    current = options.twoDaysAgo;
+                } else if (dateParam === threeDaysAgoDate) {
+                    current = options.threeDaysAgo;
+                } else {
+                    current = { label: formatDate(dateParam), path: `/archive?date=${dateParam}`, icon: Clock };
+                }
             }
         } else if (pathname === "/this-week") {
             current = options.thisWeek;
@@ -94,7 +99,7 @@ export function ArchiveNavigation() {
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="ghost"
-                    className="h-auto py-1 px-3 ml-2 rounded-full bg-primary/5 hover:bg-primary/10 border border-primary/10 hover:border-primary/20 text-md md:text-lg text-muted-foreground font-medium hover:text-foreground transition-all duration-300 group focus-visible:ring-0 focus-visible:ring-offset-0 shadow-sm"
+                    className="h-auto py-1 px-3 ml-2 rounded-full bg-primary/5 hover:bg-primary/10 border border-primary/10 hover:border-primary/20 text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 group focus-visible:ring-0 focus-visible:ring-offset-0 shadow-sm"
                 >
                     <span className="mr-1 group-hover:text-primary transition-colors">{navData.current.label}</span>
                     <ChevronDown className="w-4 h-4 opacity-50 group-hover:translate-y-0.5 group-hover:text-primary transition-all duration-300" />
