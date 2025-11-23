@@ -34,6 +34,7 @@ type MainContentCarouselProps = {
   setIsDashboardIntro?: (isIntro: boolean) => void;
   initialViewState?: "intro" | "dashboard";
   isIntroPaused?: boolean;
+  periodLabel?: string;
 };
 
 const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
@@ -49,6 +50,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
   setIsDashboardIntro,
   initialViewState,
   isIntroPaused,
+  periodLabel,
 }) => {
   const pathname = usePathname();
 
@@ -75,8 +77,11 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
       };
     }
     if (pathname === "/this-week" && dateRange) {
-      const start = new Date(dateRange.start);
-      const end = new Date(dateRange.end);
+      const [sY, sM, sD] = dateRange.start.split('-').map(Number);
+      const [eY, eM, eD] = dateRange.end.split('-').map(Number);
+      const start = new Date(sY, sM - 1, sD);
+      const end = new Date(eY, eM - 1, eD);
+
       const startStr = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       const endStr = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       return {
@@ -85,10 +90,16 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
       };
     }
     if (pathname === "/this-month" && dateRange) {
-      const start = new Date(dateRange.start);
+      const [sY, sM, sD] = dateRange.start.split('-').map(Number);
+      const [eY, eM, eD] = dateRange.end.split('-').map(Number);
+      const start = new Date(sY, sM - 1, sD);
+      const end = new Date(eY, eM - 1, eD);
+
+      const startStr = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const endStr = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       return {
         mainText: timeGreeting,
-        subText: start.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+        subText: `${startStr} - ${endStr}`
       };
     }
 
@@ -115,6 +126,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
                     isIntroPaused={isIntroPaused}
                     date={date}
                     dateRange={dateRange}
+                    periodLabel={periodLabel}
                   />
                 )}
                 {(item.type === "topic" || item.type === "interest") && (

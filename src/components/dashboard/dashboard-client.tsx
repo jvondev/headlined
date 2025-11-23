@@ -103,6 +103,7 @@ export function DashboardClient() {
         let topics: Topic[] = [];
         let interests: Interest[] = [];
         let usePremiumGuard = false;
+        let periodLabel: string | undefined = undefined;
 
         switch (view) {
             case 'today':
@@ -120,27 +121,42 @@ export function DashboardClient() {
                 break;
             case 'this-week':
                 const today = new Date();
-                const day = today.getDay(); // 0 is Sunday
-                const diff = today.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
-                const monday = new Date(today.setDate(diff));
+                const last7DaysStart = new Date(today);
+                last7DaysStart.setDate(today.getDate() - 6);
+
+                // Use local date strings to avoid UTC shifts excluding today's content
+                const toLocalYMD = (d: Date) => {
+                    const offset = d.getTimezoneOffset() * 60000;
+                    return new Date(d.getTime() - offset).toISOString().split('T')[0];
+                };
+
                 dateRange = {
-                    start: monday.toISOString().split('T')[0],
-                    end: new Date().toISOString().split('T')[0]
+                    start: toLocalYMD(last7DaysStart),
+                    end: toLocalYMD(today)
                 };
                 usePremiumGuard = true;
+                periodLabel = "in the last 7 days";
                 break;
             case 'this-month':
                 const t = new Date();
-                const firstDay = new Date(t.getFullYear(), t.getMonth(), 1);
+                const last30DaysStart = new Date(t);
+                last30DaysStart.setDate(t.getDate() - 29);
+
+                const toLocalYMD2 = (d: Date) => {
+                    const offset = d.getTimezoneOffset() * 60000;
+                    return new Date(d.getTime() - offset).toISOString().split('T')[0];
+                };
+
                 dateRange = {
-                    start: firstDay.toISOString().split('T')[0],
-                    end: t.toISOString().split('T')[0]
+                    start: toLocalYMD2(last30DaysStart),
+                    end: toLocalYMD2(t)
                 };
                 usePremiumGuard = true;
+                periodLabel = "in the last 30 days";
                 break;
         }
 
-        return { date, dateRange, initialViewState, topics, interests, usePremiumGuard };
+        return { date, dateRange, initialViewState, topics, interests, usePremiumGuard, periodLabel };
     }, [view, searchParams, availableTopics, availableInterests]);
 
     return (
@@ -166,6 +182,7 @@ export function DashboardClient() {
                             dateRange={carouselProps.dateRange}
                             initialViewState={carouselProps.initialViewState}
                             isIntroPaused={showOnboarding}
+                            periodLabel={carouselProps.periodLabel}
                         />
                     )}
                 </PremiumGuard>

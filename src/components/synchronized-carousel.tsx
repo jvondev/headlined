@@ -23,9 +23,10 @@ type SynchronizedCarouselProps = {
     dateRange?: { start: string; end: string };
     initialViewState?: "intro" | "dashboard";
     isIntroPaused?: boolean;
+    periodLabel?: string;
 };
 
-export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, date, dateRange, initialViewState, isIntroPaused }) => {
+export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, date, dateRange, initialViewState, isIntroPaused, periodLabel }) => {
     const pathname = usePathname();
     const { subscribedTopics, subscribedInterests } = useSubscribedFeeds();
     const [isDashboardIntro, setIsDashboardIntro] = useState(true);
@@ -177,6 +178,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 initialViewState={initialViewState}
                 className="pt-[52px]"
                 isIntroPaused={isIntroPaused}
+                periodLabel={periodLabel}
             />
         </div>
     );

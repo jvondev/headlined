@@ -23,9 +23,10 @@ interface DashboardContentProps {
   isIntroPaused?: boolean;
   date?: string;
   dateRange?: { start: string; end: string };
+  periodLabel?: string;
 }
 
-export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingMainText, greetingSubText, initialViewState = "intro", isIntroPaused, date, dateRange }) => {
+export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingMainText, greetingSubText, initialViewState = "intro", isIntroPaused, date, dateRange, periodLabel }) => {
   const { hasAccess: hasArchiveAccess } = useArchiveAccess();
   const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
@@ -72,8 +73,16 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
       setIsPremiumUser(isPremium);
 
       const now = new Date();
-      // Reset time to start of day for accurate "today" comparison
-      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      const todayStr = now.toISOString().split('T')[0];
+
+      // Helper to get local YYYY-MM-DD from a date string
+      const getLocalYMD = (dateStr: string) => {
+        if (!dateStr) return '';
+        if (dateStr.length === 10) return dateStr;
+        const d = new Date(dateStr);
+        const offset = d.getTimezoneOffset() * 60000;
+        return new Date(d.getTime() - offset).toISOString().split('T')[0];
+      };
 
       let filteredPosts = allPosts;
 
@@ -81,42 +90,44 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
         // Filter history for specific date (based on Post Date)
         history = history.filter(post => {
           if (!post.date) return false;
-          const postDateStr = new Date(post.date).toISOString().split('T')[0];
+          const postDateStr = getLocalYMD(post.date);
           return postDateStr === date;
         });
 
         // Filter posts for specific date
-        filteredPosts = allPosts.filter(p => p.date === date);
+        filteredPosts = allPosts.filter(p => p.date && getLocalYMD(p.date) === date);
 
       } else if (dateRange) {
         // Filter history for date range (based on Post Date)
-        const start = new Date(dateRange.start).getTime();
-        const end = new Date(dateRange.end).getTime() + 86400000; // Include the end date
-
+        // dateRange.start and end are already local YYYY-MM-DD strings
         history = history.filter(post => {
           if (!post.date) return false;
-          const postDate = new Date(post.date).getTime();
-          return postDate >= start && postDate < end;
+          const postDateStr = getLocalYMD(post.date);
+          return postDateStr >= dateRange.start && postDateStr <= dateRange.end;
         });
 
         // Filter posts for date range
         filteredPosts = allPosts.filter(p => {
-          const postDate = p.date ? new Date(p.date).getTime() : 0;
-          return postDate >= start && postDate < end;
+          if (!p.date) return false;
+          const postDateStr = getLocalYMD(p.date);
+          return postDateStr >= dateRange.start && postDateStr <= dateRange.end;
         });
 
       } else {
         // Default view (Today) - Filter for Today's Content
-        const todayStr = now.toISOString().split('T')[0];
+        // We use the local YYYY-MM-DD of 'now' which is todayStr (calculated via ISO split might be UTC... wait)
+        // new Date().toISOString() is UTC. We need local todayStr.
+        const offset = now.getTimezoneOffset() * 60000;
+        const localTodayStr = new Date(now.getTime() - offset).toISOString().split('T')[0];
 
         history = history.filter(post => {
           if (!post.date) return false;
-          const postDateStr = new Date(post.date).toISOString().split('T')[0];
-          return postDateStr === todayStr;
+          const postDateStr = getLocalYMD(post.date);
+          return postDateStr === localTodayStr;
         });
 
         // Filter posts for today only
-        filteredPosts = allPosts.filter(p => p.date === todayStr);
+        filteredPosts = allPosts.filter(p => p.date && getLocalYMD(p.date) === localTodayStr);
       }
 
       const subscribedNames = subscribedTopics.map(t => t.name);
@@ -313,14 +324,16 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                         <h2 className="text-xl md:text-2xl font-semibold leading-tight tracking-tight text-foreground">
                           {readHistory.length > 0
                             ? (
-                              date ? `You read ${readHistory.length} articles on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
-                                dateRange ? `You read ${readHistory.length} articles during this period.` :
-                                  `You've read ${readHistory.length} articles today.`
+                              periodLabel ? `You read ${readHistory.length} articles ${periodLabel}.` :
+                                date ? `You read ${readHistory.length} articles on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
+                                  dateRange ? `You read ${readHistory.length} articles from this period.` :
+                                    `You've read ${readHistory.length} articles today.`
                             )
                             : (
-                              date ? `No articles read on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
-                                dateRange ? "No reading activity during this period." :
-                                  "Start your reading journey today."
+                              periodLabel ? `No reading activity ${periodLabel}.` :
+                                date ? `No articles read on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
+                                  dateRange ? "No reading activity from this period." :
+                                    "Start your reading journey today."
                             )}
                         </h2>
                         <p className="text-muted-foreground mt-2 text-sm font-medium">
@@ -362,10 +375,10 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                       )}
                     </div>
                   </Card>
-                </motion.div>
+                </motion.div >
 
                 {/* Stats: Interest Distribution */}
-                <motion.div className="col-span-1 md:col-span-1">
+                < motion.div className="col-span-1 md:col-span-1" >
                   <Card className="h-full p-5 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
                     <div className="flex items-center gap-2 text-muted-foreground mb-4">
                       <Grid className="w-4 h-4" />
@@ -393,13 +406,13 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                       )}
                     </div>
                   </Card>
-                </motion.div>
-              </div>
+                </motion.div >
+              </div >
 
               {/* SECTION 2: TIMELINE & TOPIC/INTEREST CARDS */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              < div className="grid grid-cols-1 md:grid-cols-3 gap-8" >
                 {/* Timeline (Left Column) */}
-                <div className="col-span-1 md:col-span-1">
+                < div className="col-span-1 md:col-span-1" >
                   <Card className="h-full p-5 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
                     <div className="flex items-center gap-2 mb-6">
                       <Calendar className="w-4 h-4 text-primary" />
@@ -435,100 +448,106 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                       )}
                     </div>
                   </Card>
-                </div>
+                </div >
 
                 {/* Right Column: Topics & Interests */}
-                <div className="col-span-1 md:col-span-2 space-y-8">
+                < div className="col-span-1 md:col-span-2 space-y-8" >
 
                   {/* Topics Section */}
-                  {Object.keys(groupedTopics).length > 0 && (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 px-1">
-                        <Layers className="w-4 h-4 text-primary" />
-                        <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Topics</h3>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {Object.entries(groupedTopics).map(([topic, posts]) => (
-                          <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
-                            <div className="flex items-center justify-between border-b border-border/50 pb-2">
-                              <div className="flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-primary" />
-                                <span className="font-bold text-sm uppercase tracking-wider">{topic}</span>
-                              </div>
-                              <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
-                            </div>
-                            <div className="space-y-2">
-                              {posts.slice(0, 3).map(post => (
-                                <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
-                                  {post.thumbnail_url && (
-                                    <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
-                                  )}
-                                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
+                  {
+                    Object.keys(groupedTopics).length > 0 && (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 px-1">
+                          <Layers className="w-4 h-4 text-primary" />
+                          <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Topics</h3>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {Object.entries(groupedTopics).map(([topic, posts]) => (
+                            <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
+                              <div className="flex items-center justify-between border-b border-border/50 pb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-primary" />
+                                  <span className="font-bold text-sm uppercase tracking-wider">{topic}</span>
                                 </div>
-                              ))}
-                            </div>
-                          </Card>
-                        ))}
+                                <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
+                              </div>
+                              <div className="space-y-2">
+                                {posts.slice(0, 3).map(post => (
+                                  <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
+                                    {post.thumbnail_url && (
+                                      <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
+                                    )}
+                                    <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )
+                  }
 
                   {/* Interests Section */}
-                  {Object.keys(groupedInterests).length > 0 && (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 px-1">
-                        <Grid className="w-4 h-4 text-primary" />
-                        <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Interests</h3>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {Object.entries(groupedInterests).map(([topic, posts]) => (
-                          <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
-                            <div className="flex items-center justify-between border-b border-border/50 pb-2">
-                              <div className="flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-primary" />
-                                <span className="font-bold text-sm uppercase tracking-wider">{topic}</span>
-                              </div>
-                              <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
-                            </div>
-                            <div className="space-y-2">
-                              {posts.slice(0, 3).map(post => (
-                                <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
-                                  {post.thumbnail_url && (
-                                    <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
-                                  )}
-                                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
+                  {
+                    Object.keys(groupedInterests).length > 0 && (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 px-1">
+                          <Grid className="w-4 h-4 text-primary" />
+                          <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Interests</h3>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {Object.entries(groupedInterests).map(([topic, posts]) => (
+                            <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
+                              <div className="flex items-center justify-between border-b border-border/50 pb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-primary" />
+                                  <span className="font-bold text-sm uppercase tracking-wider">{topic}</span>
                                 </div>
-                              ))}
-                            </div>
-                          </Card>
-                        ))}
+                                <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
+                              </div>
+                              <div className="space-y-2">
+                                {posts.slice(0, 3).map(post => (
+                                  <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
+                                    {post.thumbnail_url && (
+                                      <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
+                                    )}
+                                    <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )
+                  }
 
-                  {Object.keys(groupedTopics).length === 0 && Object.keys(groupedInterests).length === 0 && (
-                    <div className="p-8 border border-dashed border-border/50 rounded-xl flex flex-col items-center justify-center text-muted-foreground h-full">
-                      <Layers className="w-8 h-8 mb-2 opacity-50" />
-                      <p className="text-sm">Read articles to see them grouped here.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+                  {
+                    Object.keys(groupedTopics).length === 0 && Object.keys(groupedInterests).length === 0 && (
+                      <div className="p-8 border border-dashed border-border/50 rounded-xl flex flex-col items-center justify-center text-muted-foreground h-full">
+                        <Layers className="w-8 h-8 mb-2 opacity-50" />
+                        <p className="text-sm">Read articles to see them grouped here.</p>
+                      </div>
+                    )
+                  }
+                </div >
+              </div >
 
               {/* DIVIDER */}
-              <div className="relative py-4">
+              < div className="relative py-4" >
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t border-border/50" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase tracking-widest">
                   <span className="bg-background px-2 text-muted-foreground">Apps & Widgets</span>
                 </div>
-              </div>
+              </div >
 
               {/* SECTION 3: WIDGETS */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              < div className="grid grid-cols-1 md:grid-cols-4 gap-4" >
                 {/* For You Widget */}
-                <motion.div className="col-span-1 md:col-span-1 relative group">
+                < motion.div className="col-span-1 md:col-span-1 relative group" >
                   <Link href="/topic" className="absolute inset-0 z-10" />
                   <Card className="h-40 w-full bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col p-5">
                     <div className="flex items-center justify-between mb-auto">
@@ -544,10 +563,10 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                       </p>
                     </div>
                   </Card>
-                </motion.div>
+                </motion.div >
 
                 {/* Trending Widget */}
-                <motion.div className="col-span-1 md:col-span-1 relative group">
+                < motion.div className="col-span-1 md:col-span-1 relative group" >
                   <Link href="/explore" className="absolute inset-0 z-10" />
                   <Card className="h-40 w-full bg-gradient-to-br from-orange-500/5 to-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col p-5">
                     <div className="flex items-center justify-between mb-auto">
@@ -562,10 +581,10 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                       </p>
                     </div>
                   </Card>
-                </motion.div>
+                </motion.div >
 
                 {/* Saved Widget */}
-                <motion.div className="col-span-1 relative group">
+                < motion.div className="col-span-1 relative group" >
                   <Link href="/saved" className="absolute inset-0 z-10" />
                   <Card className="h-40 w-full bg-gradient-to-br from-blue-500/5 to-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col p-5">
                     <div className="flex items-center justify-between mb-auto">
@@ -576,10 +595,10 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                     </div>
                     <h3 className="font-semibold text-lg tracking-tight">Saved</h3>
                   </Card>
-                </motion.div>
+                </motion.div >
 
                 {/* Search Widget */}
-                <motion.div className="col-span-1 relative group">
+                < motion.div className="col-span-1 relative group" >
                   <Link href="/search" className="absolute inset-0 z-10" />
                   <Card className="h-40 w-full bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col items-center justify-center gap-3 p-5 text-muted-foreground hover:text-foreground group-hover:border-primary/20">
                     <div className="p-3 bg-secondary rounded-full group-hover:bg-primary/10 transition-colors">
@@ -591,10 +610,10 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                       <span className="text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded border border-border">K</span>
                     </div>
                   </Card>
-                </motion.div>
-              </div>
+                </motion.div >
+              </div >
 
-            </motion.div>
+            </motion.div >
           )
           }
         </AnimatePresence >
