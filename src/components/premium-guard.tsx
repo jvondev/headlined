@@ -24,8 +24,8 @@ export function PremiumGuard({ children, fallback, disabled }: PremiumGuardProps
     useEffect(() => {
         if (!disabled && isPremium === false) {
             // Delayed Paywall Logic:
-            // Only block if user has used the app for > 5 days AND has a 2-day streak.
-            if (usage.daysUsed > 5 && usage.consecutiveDays >= 2) {
+            // Only block if user has used the app for > 2 days.
+            if (usage.daysUsed > 2) {
                 router.replace("/support");
             }
         }
@@ -46,7 +46,7 @@ export function PremiumGuard({ children, fallback, disabled }: PremiumGuardProps
     if (!isPremium) {
         // If user is "hooked", the useEffect above will redirect.
         // While redirecting, show nothing or loader.
-        if (usage.daysUsed > 5 && usage.consecutiveDays >= 2) {
+        if (usage.daysUsed > 2) {
             return null;
         }
 

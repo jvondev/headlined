@@ -29,6 +29,24 @@ export const Greeting = ({ onComplete, title, mainText, subText, action, isPause
         return () => { isMounted.current = false; };
     }, []);
 
+    // Date Typing Logic
+    const typeDate = () => {
+        const targetDate = subText || new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        let currentIdx = 0;
+
+        const timer = setInterval(() => {
+            if (currentIdx <= targetDate.length) {
+                setDateDisplay(targetDate.slice(0, currentIdx));
+                currentIdx++;
+            } else {
+                clearInterval(timer);
+                setIsDateTypingComplete(true);
+                // Trigger completion to switch to dashboard mode
+                if (onComplete) setTimeout(onComplete, 1000);
+            }
+        }, 50);
+    };
+
     // Main Greeting Typing Logic
     useEffect(() => {
         if (isPaused) return;
@@ -56,24 +74,6 @@ export const Greeting = ({ onComplete, title, mainText, subText, action, isPause
 
         return () => clearInterval(timer);
     }, [mainText, title, isPaused]);
-
-    // Date Typing Logic
-    const typeDate = () => {
-        const targetDate = subText || new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-        let currentIdx = 0;
-
-        const timer = setInterval(() => {
-            if (currentIdx <= targetDate.length) {
-                setDateDisplay(targetDate.slice(0, currentIdx));
-                currentIdx++;
-            } else {
-                clearInterval(timer);
-                setIsDateTypingComplete(true);
-                // Trigger completion to switch to dashboard mode
-                if (onComplete) setTimeout(onComplete, 1000);
-            }
-        }, 50);
-    };
 
     // Watch for action becoming available (Intro -> Dashboard transition)
     useEffect(() => {

@@ -49,7 +49,7 @@ export function LicenseValidationModal({ trigger }: LicenseValidationModalProps)
 
             // Assuming a successful response means the key is valid
             // You might want to store the validation status in localStorage or a context here
-            setLicense(key.trim());
+            await setLicense(key.trim());
             setStatus("success");
 
         } catch (error: any) {
