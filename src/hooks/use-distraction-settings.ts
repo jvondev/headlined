@@ -27,14 +27,28 @@ export function useDistractionSettings() {
         const storedPresets = localStorage.getItem(STORAGE_KEY_PRESETS);
 
         if (storedEnabled !== null) {
-            setEnabled(JSON.parse(storedEnabled));
+            try {
+                setEnabled(JSON.parse(storedEnabled));
+            } catch (e) {
+                console.warn("Failed to parse stored enabled state", e);
+            }
         }
         if (storedKeywords !== null) {
-            setKeywords(JSON.parse(storedKeywords));
+            try {
+                setKeywords(JSON.parse(storedKeywords));
+            } catch (e) {
+                console.warn("Failed to parse stored keywords", e);
+            }
         }
         if (storedPresets !== null) {
-            const parsed = JSON.parse(storedPresets);
-            setPresets(prev => ({ ...prev, ...parsed }));
+            try {
+                const parsed = JSON.parse(storedPresets);
+                setPresets(prev => ({ ...prev, ...parsed }));
+            } catch (e) {
+                console.warn("Failed to parse stored presets", e);
+                // Optional: Clear corrupted data
+                // localStorage.removeItem(STORAGE_KEY_PRESETS); 
+            }
         }
         setLoaded(true);
     }, []);
@@ -77,6 +91,36 @@ export function useDistractionSettings() {
         updateKeywords(newKeywords);
     };
 
+    const enforceSinglePreset = (keepKey: string) => {
+        setPresets(prev => {
+            const newPresets = Object.keys(prev).reduce((acc, key) => {
+                acc[key] = key === keepKey;
+                return acc;
+            }, {} as Record<string, boolean>);
+            localStorage.setItem(STORAGE_KEY_PRESETS, JSON.stringify(newPresets));
+            return newPresets;
+        });
+    };
+
+    const validatePresets = (isPremium: boolean) => {
+        setPresets(prev => {
+            if (isPremium) return prev;
+
+            const activeKeys = Object.keys(prev).filter(k => prev[k]);
+            if (activeKeys.length <= 1) return prev;
+
+            // Keep only the first one
+            const keepKey = activeKeys[0];
+            const newPresets = Object.keys(prev).reduce((acc, key) => {
+                acc[key] = key === keepKey;
+                return acc;
+            }, {} as Record<string, boolean>);
+
+            localStorage.setItem(STORAGE_KEY_PRESETS, JSON.stringify(newPresets));
+            return newPresets;
+        });
+    };
+
     return {
         enabled,
         toggleEnabled,
@@ -85,6 +129,8 @@ export function useDistractionSettings() {
         removeKeyword,
         presets,
         togglePreset,
+        enforceSinglePreset,
+        validatePresets,
         loaded,
     };
 }

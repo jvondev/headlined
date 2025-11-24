@@ -27,6 +27,7 @@ import { affiliateAds, AffiliateProgram } from "@/data/affiliate-ads";
 import { useDistractionSettings } from "@/hooks/use-distraction-settings";
 import { checkLicenseStatus } from "@/lib/license-manager";
 import { SupportButton } from "@/components/support-button";
+import { DISTRACTION_FILTERS } from "@/data/distraction-filters";
 
 type PostCarouselProps = {
   shouldFetchPaginatedPosts?: boolean,
@@ -69,34 +70,44 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const page = useRef(1);
   const nextAdDistance = useRef(Math.floor(Math.random() * 5) + 5); // Initial random range 5-10
 
-  const { enabled: distractionEnabled, keywords: distractionKeywords, presets } = useDistractionSettings();
+  const { enabled: distractionEnabled, keywords: distractionKeywords, presets, validatePresets } = useDistractionSettings();
   const [isPremium, setIsPremium] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
 
   useEffect(() => {
-    checkLicenseStatus().then(setIsPremium);
+    checkLicenseStatus().then(status => {
+      setIsPremium(status);
+      validatePresets(status);
+    });
   }, []);
 
   const filterDistractions = useCallback((postsToFilter: Post[]) => {
-    if (!isPremium) return postsToFilter;
-
-    // Preset Keywords Definition
-    const celebrityKeywords = ["celebrity", "gossip", "kardashian", "royal", "hollywood", "dating", "star", "actor", "actress", "fame"];
-    const worldNewsKeywords = ["war", "conflict", "disaster", "earthquake", "flood", "fire", "attack", "crisis", "bomb", "killed", "death"];
-    const politicsKeywords = ["politics", "election", "vote", "campaign", "senate", "congress", "president", "minister", "parliament", "democrat", "republican", "policy"];
-
     return postsToFilter.filter(post => {
       const content = `${post.title} ${post.description || ""} ${post.topic || ""}`.toLowerCase();
 
-      // Check Custom Keywords
-      if (distractionEnabled && distractionKeywords.some(keyword => content.includes(keyword.toLowerCase()))) {
+      // Check Custom Keywords (Premium Only)
+      if (isPremium && distractionEnabled && distractionKeywords.some(keyword => content.includes(keyword.toLowerCase()))) {
         return false;
       }
 
-      // Check Presets
-      if (presets.celebrity && celebrityKeywords.some(k => content.includes(k))) return false;
-      if (presets.worldNews && worldNewsKeywords.some(k => content.includes(k))) return false;
-      if (presets.politics && politicsKeywords.some(k => content.includes(k))) return false;
+      // Check Presets (Free: Max 1, Premium: Unlimited)
+      let activePresets = Object.entries(presets).filter(([k, v]) => v);
+
+      if (!isPremium && activePresets.length > 1) {
+        // Security: User has >1 preset enabled but is free.
+        // Only use the first one for filtering.
+        // Note: validatePresets in useEffect will eventually fix the state/storage,
+        // but for this render, we enforce the limit strictly here too.
+        activePresets = [activePresets[0]];
+      }
+
+      // Check against active presets
+      for (const [key, isActive] of activePresets) {
+        const filterDef = DISTRACTION_FILTERS.find(f => f.id === key);
+        if (filterDef && filterDef.keywords.some(k => content.includes(k))) {
+          return false;
+        }
+      }
 
       return true;
     });
