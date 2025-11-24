@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, Filter } from 'lucide-react';
+import { Search, X, Filter, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -57,11 +57,11 @@ export function SearchInput({ initialQuery = '', onSearch, autoFocus = false, cl
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Search posts, topics, or interests..."
-                    className="pl-12 pr-24 h-14 text-lg rounded-2xl border-2 border-border/50 bg-background/50 backdrop-blur-xl focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all shadow-sm hover:shadow-md"
+                    className="pl-12 pr-32 h-14 text-lg rounded-2xl border-2 border-border/50 bg-background/50 backdrop-blur-xl focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all shadow-sm hover:shadow-md"
                 />
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
                     {query && (
-                        <Button variant="ghost" size="icon" onClick={clearSearch} className="h-8 w-8 rounded-full hover:bg-muted">
+                        <Button variant="ghost" size="icon" onClick={clearSearch} className="h-8 w-8 rounded-full hover:bg-muted text-muted-foreground">
                             <X className="w-4 h-4" />
                         </Button>
                     )}
@@ -69,9 +69,16 @@ export function SearchInput({ initialQuery = '', onSearch, autoFocus = false, cl
                         variant={filterType !== 'all' ? "default" : "ghost"}
                         size="icon"
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className={cn("h-10 w-10 rounded-xl transition-all", filterType !== 'all' && "bg-primary text-primary-foreground")}
+                        className={cn("h-9 w-9 rounded-xl transition-all", filterType !== 'all' && "bg-primary text-primary-foreground")}
                     >
                         <Filter className="w-4 h-4" />
+                    </Button>
+                    <Button
+                        size="icon"
+                        onClick={handleSearch}
+                        className="h-9 w-9 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                    >
+                        <ArrowRight className="w-4 h-4" />
                     </Button>
                 </div>
             </div>

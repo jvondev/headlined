@@ -8,9 +8,10 @@ import { Post } from '@/types';
 import { PostView } from '@/components/post-view';
 import { checkLicenseStatus } from '@/lib/license-manager';
 import { Button } from '@/components/ui/button';
-import { Sparkles } from 'lucide-react';
+import { PostCarousel } from '@/components/post-carousel';
+import { ArrowLeft } from 'lucide-react';
 import { PremiumModal } from '@/components/support/premium-modal';
-import { PostPageLoadingSkeleton } from '@/components/post-page-loading-skeleton';
+import { OnboardingProvider } from "@/context/onboarding-provider";
 
 export function SearchView() {
     const searchParams = useSearchParams();
@@ -49,62 +50,32 @@ export function SearchView() {
     };
 
     return (
-        <div className="min-h-screen bg-background pb-20">
-            <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border/50 p-4">
-                <SearchInput initialQuery={q} onSearch={handleSearch} />
-            </div>
+        <OnboardingProvider>
+            <div className="h-screen bg-background flex flex-col overflow-hidden">
+                <div className="flex-none z-40 bg-background/80 backdrop-blur-md border-b border-border/50 p-4 flex items-center gap-2">
+                    <Button variant="ghost" size="icon" onClick={() => router.back()} className="shrink-0">
+                        <ArrowLeft className="w-5 h-5" />
+                    </Button>
+                    <div className="flex-1">
+                        <SearchInput initialQuery={q} onSearch={handleSearch} />
+                    </div>
+                </div>
 
-            <div className="container mx-auto px-4 py-8">
-                {loading ? (
-                    <PostPageLoadingSkeleton />
-                ) : (
-                    <>
-                        {/* Banner for Premium Subscription to Search Results */}
-                        {!isPremium && (
-                            <div className="mb-8 p-6 rounded-2xl bg-gradient-to-r from-primary/10 via-purple-500/10 to-blue-500/10 border border-primary/20 flex flex-col md:flex-row items-center justify-between gap-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-primary/20 rounded-full text-primary">
-                                        <Sparkles className="w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold text-lg">Save Your Search</h3>
-                                        <p className="text-sm text-muted-foreground">Premium members can add custom searches to their dashboard.</p>
-                                    </div>
-                                </div>
-                                <Button onClick={() => setShowPremiumModal(true)} className="whitespace-nowrap">
-                                    Unlock Premium
-                                </Button>
-                            </div>
-                        )}
-
-                        <div className="space-y-6">
-                            <h2 className="text-2xl font-bold tracking-tight">
-                                {posts.length} Results {q && `for "${q}"`}
-                            </h2>
-
-                            {posts.length === 0 ? (
-                                <div className="text-center py-20 text-muted-foreground">
-                                    <p>No results found. Try different keywords or filters.</p>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {posts.map(post => (
-                                        <div key={post.slug} className="h-[400px]">
-                                            <PostView
-                                                post={post}
-                                                isActive={true}
-                                                isLocked={!isPremium}
-                                                onUnlockRequest={() => setShowPremiumModal(true)}
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                <div className="flex-1 overflow-hidden relative">
+                    {loading ? (
+                        <div className="flex items-center justify-center h-full">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         </div>
-                    </>
-                )}
+                    ) : (
+                        <PostCarousel
+                            posts={posts}
+                            searchQuery={q}
+                            topicName={topic}
+                        />
+                    )}
+                </div>
+                <PremiumModal isOpen={showPremiumModal} onClose={() => setShowPremiumModal(false)} />
             </div>
-            <PremiumModal isOpen={showPremiumModal} onClose={() => setShowPremiumModal(false)} />
-        </div>
+        </OnboardingProvider>
     );
 }
