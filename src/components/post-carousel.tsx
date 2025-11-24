@@ -563,24 +563,24 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                 ) : post.slug === 'search-limit-cta' ? (
                   <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh] flex items-center justify-center p-4">
                     <Card className="max-w-md w-full bg-card/90 backdrop-blur-xl border-primary/20 rounded-3xl p-8 shadow-2xl text-center space-y-8 relative overflow-hidden group">
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-transparent opacity-50" />
+                      <div className="absolute inset-0 bg-secondary/5" />
 
                       <div className="relative z-10">
-                        <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner ring-1 ring-white/10 group-hover:scale-105 transition-transform duration-500">
-                          <Sparkles className="w-12 h-12 text-primary drop-shadow-md" />
+                        <div className="w-20 h-20 bg-secondary/25 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-inner ring-1 ring-white/10 group-hover:scale-105 transition-transform duration-500">
+                          <Sparkles className="w-10 h-10 text-primary drop-shadow-md" />
                         </div>
 
-                        <h2 className="text-4xl font-black tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+                        <h2 className="text-3xl font-black tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
                           Unlock All Results
                         </h2>
-                        <p className="text-muted-foreground text-lg mb-8 leading-relaxed font-medium">
+                        <p className="text-muted-foreground text-md mb-8 leading-relaxed font-small">
                           Free search is limited to 3 results. <br />
-                          Support independent creators to unlock unlimited access.
+                          Support independent creators.
                         </p>
 
                         <SupportButton
                           onClick={() => setShowSupportModal(true)}
-                          className="w-full h-16 text-xl font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-r from-primary to-purple-600 border-none"
+                          className="w-full h-14 text-xl font-bold shadow-xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-primary border-none"
                         />
 
                         <Button
