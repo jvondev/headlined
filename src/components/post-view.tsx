@@ -137,7 +137,14 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     };
   }, [isExpanded, y, x]);
 
+  const isCTA = post.slug === 'premium-cta';
+
   const handleCardClick = () => {
+    if (isCTA) {
+      onUnlockRequest?.();
+      return;
+    }
+
     if (post.slug === "home") {
       router.push(post.link);
       return;
@@ -366,6 +373,25 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
           )}
         </div>
       </motion.div>
+
+      {/* CTA Card Override */}
+      {isCTA && (
+        <motion.div
+          className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-gradient-to-br from-primary/20 via-background to-background p-8 text-center"
+          onClick={handleCardClick}
+        >
+          <div className="mb-6 p-4 bg-primary/10 rounded-full">
+            <Sparkles className="w-12 h-12 text-primary animate-pulse" />
+          </div>
+          <h2 className="text-3xl font-bold mb-4 tracking-tight">Unlock More Results</h2>
+          <p className="text-muted-foreground mb-8 text-lg max-w-xs mx-auto">
+            Support ReadMore+ to access unlimited search results and history.
+          </p>
+          <Button size="lg" className="w-full max-w-xs rounded-full text-lg h-14 font-bold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+            Unlock Premium
+          </Button>
+        </motion.div>
+      )}
 
       {/* Expanded View Portal - Full Screen Morphing Design */}
       {mounted && createPortal(

@@ -113,7 +113,43 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   // Use external posts if provided, otherwise use internal state
   const rawPosts = externalPosts || internalPosts;
-  const posts = useMemo(() => filterDistractions(rawPosts), [rawPosts, filterDistractions]);
+
+  const posts = useMemo(() => {
+    let filtered = filterDistractions(rawPosts);
+
+    // Freemium Search Logic
+    if (searchQuery && !isPremium) {
+      // 1. Filter for Today's articles only
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      const todayPosts = filtered.filter(post => {
+        if (!post.date) return false;
+        return post.date === todayStr;
+      });
+
+      // 2. Limit to 3 articles
+      const limitedPosts = todayPosts.slice(0, 3);
+
+      // 3. Append CTA if needed
+      if (filtered.length > 3 || todayPosts.length < filtered.length) {
+        const ctaPost: Post = {
+          slug: 'search-limit-cta',
+          title: 'Unlock All Results',
+          description: 'Upgrade to Premium to see all search results and access the full archive.',
+          link: '/support',
+          thumbnail_url: null,
+          topic: 'Premium',
+          summaries: [],
+          date: todayStr
+        };
+        return [...limitedPosts, ctaPost];
+      }
+
+      return limitedPosts;
+    }
+
+    return filtered;
+  }, [rawPosts, filterDistractions, searchQuery, isPremium]);
 
   // Lazy Loading State
   const [hasActivated, setHasActivated] = useState(shouldFetchPaginatedPosts || !!externalPosts);
@@ -514,6 +550,36 @@ export const PostCarousel: FC<PostCarouselProps> = ({
               {shouldRender ? (
                 post.slug === "home" ? (
                   <HomepagePostSlide />
+                ) : post.slug === 'search-limit-cta' ? (
+                  <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh] flex items-center justify-center p-4">
+                    <div className="max-w-md w-full bg-card border border-border rounded-3xl p-8 shadow-2xl text-center space-y-6 relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                      <div className="relative z-10">
+                        <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                          <HelpCircle className="w-10 h-10 text-primary" />
+                        </div>
+
+                        <h2 className="text-3xl font-bold tracking-tight mb-2">Unlock All Results</h2>
+                        <p className="text-muted-foreground text-lg mb-8">
+                          You've reached the free search limit. Upgrade to ReadMore+ to access unlimited search results and history.
+                        </p>
+
+                        <SupportButton
+                          onClick={() => setShowSupportModal(true)}
+                          className="w-full h-14 text-lg font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                        />
+
+                        <Button
+                          variant="ghost"
+                          className="w-full mt-4"
+                          onClick={() => router.push('/today')}
+                        >
+                          Back to Today
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
                     <PostView

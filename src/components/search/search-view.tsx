@@ -57,7 +57,14 @@ export function SearchView() {
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
                     <div className="flex-1">
-                        <SearchInput initialQuery={q} onSearch={handleSearch} />
+                        <div className="flex-1">
+                            <SearchInput
+                                initialQuery={q}
+                                onSearch={handleSearch}
+                                isPremium={isPremium}
+                                onPremiumRequest={() => setShowPremiumModal(true)}
+                            />
+                        </div>
                     </div>
                 </div>
 
