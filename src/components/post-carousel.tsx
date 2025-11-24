@@ -20,11 +20,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 
 import { SaveDialog } from "./save-dialog";
+import { PremiumModal } from "@/components/support/premium-modal";
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
 import { Post, SavedItem } from "@/types";
 import { affiliateAds, AffiliateProgram } from "@/data/affiliate-ads";
 import { useDistractionSettings } from "@/hooks/use-distraction-settings";
 import { checkLicenseStatus } from "@/lib/license-manager";
+import { SupportButton } from "@/components/support-button";
 
 type PostCarouselProps = {
   shouldFetchPaginatedPosts?: boolean,
@@ -69,6 +71,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
   const { enabled: distractionEnabled, keywords: distractionKeywords } = useDistractionSettings();
   const [isPremium, setIsPremium] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
 
   useEffect(() => {
     checkLicenseStatus().then(setIsPremium);
@@ -423,19 +426,38 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     if (posts.length === 0) {
       if ((date || dateRange) && !isPremium) {
         return (
-          <div className="text-center py-16 px-4 max-w-md mx-auto">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <HelpCircle className="w-8 h-8 text-primary" />
+          <div className="flex flex-col items-center justify-center h-full max-w-md mx-auto px-6 text-center animate-in fade-in zoom-in duration-500">
+            <div className="relative mb-8 group cursor-pointer" onClick={() => setShowSupportModal(true)}>
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500" />
+              <div className="relative w-24 h-24 bg-gradient-to-br from-background to-muted rounded-2xl border border-border/50 shadow-2xl flex items-center justify-center transform group-hover:scale-105 transition-transform duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent rounded-2xl opacity-50" />
+                <HelpCircle className="w-10 h-10 text-primary relative z-10" />
+              </div>
             </div>
-            <h1 className="font-headline text-3xl font-bold">History Locked</h1>
-            <p className="mt-2 text-lg text-muted-foreground">
-              Access to past archives is available for ReadMore+ supporters.
+
+            <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 mb-3">
+              Unlock Your Posts History
+            </h2>
+
+            <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+              Support ReadMore+ to access your complete posts history.
             </p>
-            <div className="mt-6 flex flex-col gap-3">
-              <Button onClick={() => router.push('/today')} variant="default" className="w-full">
-                Go to Today
+
+            <div className="flex flex-col gap-3 w-full sm:w-auto min-w-[200px]">
+              <SupportButton
+                onClick={() => setShowSupportModal(true)}
+                className="w-full h-12 text-base font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+              />
+              <Button
+                onClick={() => router.push('/today')}
+                variant="ghost"
+                className="w-full hover:bg-muted/50 transition-colors"
+              >
+                Back to Today
               </Button>
             </div>
+
+            <PremiumModal isOpen={showSupportModal} onClose={() => setShowSupportModal(false)} />
           </div>
         );
       }

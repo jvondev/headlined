@@ -18,6 +18,7 @@ import { checkLicenseStatus } from "@/lib/license-manager";
 import { DistractionSettings } from "@/components/support/distraction-settings";
 import { useAppUsage } from "@/hooks/use-app-usage";
 import { PremiumModal } from "@/components/support/premium-modal";
+import { SupportButton } from "@/components/support-button";
 
 interface DashboardContentProps {
   setIsIntroMode?: (isIntro: boolean) => void;
@@ -511,16 +512,9 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                             <div className="bg-background/95 backdrop-blur-sm border border-border p-4 rounded-xl shadow-lg text-center max-w-[240px]">
                               <Sparkles className="w-6 h-6 text-primary mx-auto mb-2" />
                               <p className="text-xs font-medium text-foreground mb-3">
-                                {date
-                                  ? `Support to get ${date === new Date().toISOString().split('T')[0] ? 'today\'s' : 'past'} posts.`
-                                  : dateRange
-                                    ? "Support to get posts from this period."
-                                    : "Support to access your full history."
-                                }
+                                Unlock your complete reading history and deep dive into your past interests.
                               </p>
-                              <Button size="sm" onClick={() => setShowSupportModal(true)} className="w-full h-8 text-xs">
-                                Support ReadMore+
-                              </Button>
+                              <SupportButton onClick={() => setShowSupportModal(true)} className="w-full h-8 text-xs" />
                             </div>
                           </div>
                         )}
