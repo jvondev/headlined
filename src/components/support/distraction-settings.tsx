@@ -3,19 +3,18 @@
 import { useState } from "react";
 import { useDistractionSettings } from "@/hooks/use-distraction-settings";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, Sparkles, Lock, Zap } from "lucide-react";
+import { X, Plus, Zap, Lock, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { DISTRACTION_FILTERS } from "@/data/distraction-filters";
 
 export function DistractionSettings({ isPremium, onOpenSupport }: { isPremium: boolean; onOpenSupport?: () => void }) {
     const { enabled, toggleEnabled, keywords, addKeyword, removeKeyword, loaded, presets, togglePreset } = useDistractionSettings();
     const [newKeyword, setNewKeyword] = useState("");
-    const [activeSupportToggle, setActiveSupportToggle] = useState<string | null>(null);
 
     if (!loaded) return null;
 
@@ -26,60 +25,8 @@ export function DistractionSettings({ isPremium, onOpenSupport }: { isPremium: b
         }
     };
 
-    const handleToggleClick = (id: string, currentVal: boolean, setter: () => void) => {
-        if (isPremium) {
-            setter();
-        } else {
-            setActiveSupportToggle(id);
-        }
-    };
-
-    const renderToggleItem = (id: string, label: string, description: string, checked: boolean, onToggle: () => void) => {
-        const showSupport = activeSupportToggle === id && !isPremium;
-
-        return (
-            <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/30 border border-border/50 transition-all duration-300">
-                <div className="flex flex-col gap-1 flex-1 mr-4">
-                    <span className="font-semibold text-sm">{label}</span>
-                    <span className="text-[11px] text-muted-foreground line-clamp-1">{description}</span>
-                </div>
-
-                <div className="relative h-6 min-w-[44px] flex items-center justify-end">
-                    <AnimatePresence mode="wait">
-                        {showSupport ? (
-                            <motion.button
-                                key="support-btn"
-                                initial={{ opacity: 0, scale: 0.8, width: 44 }}
-                                animate={{ opacity: 1, scale: 1, width: "auto" }}
-                                exit={{ opacity: 0, scale: 0.8, width: 44 }}
-                                className="h-7 px-3 bg-black text-white text-[10px] font-bold rounded-full shadow-md flex items-center gap-1.5 whitespace-nowrap"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onOpenSupport?.();
-                                }}
-                            >
-                                <Zap className="w-3 h-3 fill-current" />
-                                Support
-                            </motion.button>
-                        ) : (
-                            <motion.div
-                                key="toggle"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                            >
-                                <Switch
-                                    checked={checked}
-                                    onCheckedChange={() => handleToggleClick(id, checked, onToggle)}
-                                    className="data-[state=checked]:bg-primary"
-                                />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            </div>
-        );
-    };
+    const activePresetsCount = Object.values(presets).filter(Boolean).length;
+    const isLimitReached = !isPremium && activePresetsCount >= 1;
 
     return (
         <Card className={cn(
@@ -101,43 +48,99 @@ export function DistractionSettings({ isPremium, onOpenSupport }: { isPremium: b
                             </CardDescription>
                         </div>
                     </div>
+                    {!isPremium && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 text-[10px] font-bold bg-primary/10 text-primary hover:bg-primary/20 gap-1.5 px-2.5 rounded-full"
+                            onClick={onOpenSupport}
+                        >
+                            <Lock className="w-3 h-3" />
+                            Unlock All
+                        </Button>
+                    )}
                 </div>
             </CardHeader>
 
-            <CardContent className="space-y-3">
-                {/* Preset Filters */}
-                {renderToggleItem(
-                    "celebrity",
-                    "Celebrity Gossip",
-                    "Filter out celebrity news and gossip",
-                    presets.celebrity,
-                    () => togglePreset("celebrity")
+            <CardContent className="space-y-5">
+                {/* Preset Filters Grid */}
+                <div className="grid grid-cols-2 gap-2">
+                    {DISTRACTION_FILTERS.map((filter) => {
+                        const isActive = presets[filter.id];
+                        const Icon = filter.icon;
+
+                        return (
+                            <motion.button
+                                key={filter.id}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => togglePreset(filter.id, isPremium)}
+                                className={cn(
+                                    "relative flex flex-col items-start p-3 rounded-xl border text-left transition-all duration-200 h-full",
+                                    isActive
+                                        ? "bg-primary/5 border-primary/50 shadow-sm"
+                                        : "bg-secondary/20 border-border/40 hover:bg-secondary/40 hover:border-border/60"
+                                )}
+                            >
+                                <div className="flex items-center justify-between w-full mb-2">
+                                    <div className={cn(
+                                        "p-1.5 rounded-md",
+                                        isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                                    )}>
+                                        <Icon className="w-3.5 h-3.5" />
+                                    </div>
+                                    {isActive && (
+                                        <motion.div
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            className="bg-primary text-primary-foreground rounded-full p-0.5"
+                                        >
+                                            <Check className="w-3 h-3" />
+                                        </motion.div>
+                                    )}
+                                </div>
+                                <span className={cn("text-xs font-semibold mb-0.5", isActive ? "text-primary" : "text-foreground")}>
+                                    {filter.label}
+                                </span>
+                                <span className="text-[10px] text-muted-foreground leading-tight line-clamp-2">
+                                    {filter.description}
+                                </span>
+                            </motion.button>
+                        );
+                    })}
+                </div>
+
+                {!isPremium && (
+                    <div className="text-[10px] text-center text-muted-foreground bg-secondary/30 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5">
+                        <span>Free Plan: 1 Active Filter</span>
+                        <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
+                        <span className="text-primary font-medium cursor-pointer hover:underline" onClick={onOpenSupport}>Upgrade for Unlimited</span>
+                    </div>
                 )}
 
-                {renderToggleItem(
-                    "worldNews",
-                    "World News",
-                    "Filter out disasters, conflicts, etc.",
-                    presets.worldNews,
-                    () => togglePreset("worldNews")
-                )}
-
-                {renderToggleItem(
-                    "politics",
-                    "Political Noise",
-                    "Filter out political debates and opinions",
-                    presets.politics,
-                    () => togglePreset("politics")
-                )}
+                <div className="h-px bg-border/40 w-full" />
 
                 {/* Custom Keywords Toggle */}
-                {renderToggleItem(
-                    "custom",
-                    "Custom Keywords",
-                    "Hide posts matching specific words",
-                    enabled,
-                    (val) => toggleEnabled(val ?? !enabled) // Switch passes boolean, but our toggleEnabled expects boolean. Wait, Switch onCheckedChange passes boolean.
-                )}
+                <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/30 border border-border/50">
+                    <div className="flex flex-col gap-1 flex-1 mr-4">
+                        <div className="flex items-center gap-2">
+                            <span className="font-semibold text-sm">Custom Keywords</span>
+                            {!isPremium && <Lock className="w-3 h-3 text-muted-foreground/60" />}
+                        </div>
+                        <span className="text-[11px] text-muted-foreground">Hide posts matching specific words</span>
+                    </div>
+
+                    <Switch
+                        checked={enabled}
+                        onCheckedChange={(val) => {
+                            if (!isPremium && val) {
+                                onOpenSupport?.();
+                            } else {
+                                toggleEnabled(val);
+                            }
+                        }}
+                        className="data-[state=checked]:bg-primary"
+                    />
+                </div>
 
                 {/* Custom Keywords Input Area */}
                 <AnimatePresence>
@@ -146,7 +149,7 @@ export function DistractionSettings({ isPremium, onOpenSupport }: { isPremium: b
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="space-y-4 overflow-hidden pt-2"
+                            className="space-y-4 overflow-hidden pt-1"
                         >
                             <div className="flex gap-2">
                                 <div className="relative flex-1">
