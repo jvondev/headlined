@@ -96,8 +96,6 @@ export const PostCarousel: FC<PostCarouselProps> = ({
       if (!isPremium && activePresets.length > 1) {
         // Security: User has >1 preset enabled but is free.
         // Only use the first one for filtering.
-        // Note: validatePresets in useEffect will eventually fix the state/storage,
-        // but for this render, we enforce the limit strictly here too.
         activePresets = [activePresets[0]];
       }
 

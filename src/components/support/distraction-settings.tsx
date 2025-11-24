@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDistractionSettings } from "@/hooks/use-distraction-settings";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -13,9 +13,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { DISTRACTION_FILTERS } from "@/data/distraction-filters";
 
 export function DistractionSettings({ isPremium, onOpenSupport }: { isPremium: boolean; onOpenSupport?: () => void }) {
-    const { enabled, toggleEnabled, keywords, addKeyword, removeKeyword, loaded, presets, togglePreset } = useDistractionSettings();
+    const { enabled, toggleEnabled, keywords, addKeyword, removeKeyword, loaded, presets, togglePreset, validatePresets } = useDistractionSettings();
     const [newKeyword, setNewKeyword] = useState("");
     const [limitOverlayId, setLimitOverlayId] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (loaded) {
+            validatePresets(isPremium);
+        }
+    }, [loaded, isPremium, validatePresets]);
 
     if (!loaded) return null;
 
