@@ -16,6 +16,7 @@ import { useArchiveAccess } from "@/hooks/use-archive-access";
 import { checkLicenseStatus } from "@/lib/license-manager";
 import { DistractionSettings } from "@/components/support/distraction-settings";
 import { useAppUsage } from "@/hooks/use-app-usage";
+import { PremiumModal } from "@/components/support/premium-modal";
 
 interface DashboardContentProps {
   setIsIntroMode?: (isIntro: boolean) => void;
@@ -60,6 +61,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
   }, [viewState]);
 
   const [isPremiumUser, setIsPremiumUser] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -625,11 +627,21 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                   className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4"
                 >
                   <div className="col-span-1 md:col-span-2 md:col-start-2">
-                    <DistractionSettings isPremium={isPremiumUser} />
+                    <DistractionSettings
+                      isPremium={isPremiumUser}
+                      onOpenSupport={() => setShowSupportModal(true)}
+                    />
                   </div>
                 </motion.div>
               )}
 
+              <PremiumModal
+                isOpen={showSupportModal}
+                onClose={() => {
+                  setShowSupportModal(false);
+                  fetchData(); // Refresh data in case license was activated
+                }}
+              />
             </motion.div >
           )
           }

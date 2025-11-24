@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
-export function DistractionSettings({ isPremium }: { isPremium: boolean }) {
+export function DistractionSettings({ isPremium, onOpenSupport }: { isPremium: boolean; onOpenSupport?: () => void }) {
     const { enabled, toggleEnabled, keywords, addKeyword, removeKeyword, loaded } = useDistractionSettings();
     const [newKeyword, setNewKeyword] = useState("");
 
@@ -29,30 +29,9 @@ export function DistractionSettings({ isPremium }: { isPremium: boolean }) {
         <Card className={cn(
             "w-full relative overflow-hidden transition-all duration-300",
             isPremium
-                ? "border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card shadow-sm hover:shadow-md"
-                : "border-border/50 bg-card/50 grayscale-[0.5] hover:grayscale-0"
+                ? "border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card shadow-sm"
+                : "border-border/50 bg-card/50"
         )}>
-            {/* Premium Locked Overlay */}
-            {!isPremium && (
-                <div className="absolute inset-0 z-20 bg-background/60 backdrop-blur-[2px] flex flex-col items-center justify-center text-center p-6 transition-opacity duration-300 hover:bg-background/40">
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/30 dark:to-amber-900/10 p-4 rounded-full shadow-sm mb-3 border border-amber-200/50 dark:border-amber-700/30"
-                    >
-                        <Lock className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                    </motion.div>
-                    <h3 className="font-bold text-lg tracking-tight mb-1">Unlock Focus Mode</h3>
-                    <p className="text-sm text-muted-foreground max-w-[240px] leading-relaxed mb-4">
-                        Take control of your feed. Filter out noise and focus on what matters to you.
-                    </p>
-                    <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-0 shadow-md rounded-full px-6">
-                        <Sparkles className="w-3.5 h-3.5 mr-2 fill-current" />
-                        Upgrade to Pro
-                    </Button>
-                </div>
-            )}
-
             <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
@@ -66,15 +45,19 @@ export function DistractionSettings({ isPremium }: { isPremium: boolean }) {
                             </CardDescription>
                         </div>
                     </div>
-                    {isPremium && (
-                        <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 border-0 px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-bold">
-                            Pro Active
+                    {isPremium ? (
+                        <Badge variant="secondary" className="bg-primary/10 text-primary border-0 px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-bold">
+                            Active
+                        </Badge>
+                    ) : (
+                        <Badge variant="outline" className="text-muted-foreground border-border px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-bold">
+                            Preview
                         </Badge>
                     )}
                 </div>
             </CardHeader>
 
-            <CardContent className={cn("space-y-6", !isPremium && "opacity-40 pointer-events-none blur-[1px]")}>
+            <CardContent className="space-y-6">
                 <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/30 border border-border/50">
                     <Label htmlFor="distraction-mode" className="flex flex-col gap-1 cursor-pointer">
                         <span className="font-semibold text-sm">Distraction-Free Mode</span>
@@ -107,8 +90,13 @@ export function DistractionSettings({ isPremium }: { isPremium: boolean }) {
                                         disabled={!isPremium}
                                         className="pr-8 bg-background/50 focus:bg-background transition-colors"
                                     />
+                                    {!isPremium && (
+                                        <div className="absolute inset-y-0 right-3 flex items-center text-muted-foreground">
+                                            <Lock className="w-4 h-4" />
+                                        </div>
+                                    )}
                                 </div>
-                                <Button onClick={handleAdd} size="icon" className="shrink-0" disabled={!isPremium || !newKeyword.trim()}>
+                                <Button onClick={handleAdd} size="icon" className="shrink-0" disabled={!newKeyword.trim() || !isPremium}>
                                     <Plus className="w-4 h-4" />
                                 </Button>
                             </div>
@@ -131,8 +119,8 @@ export function DistractionSettings({ isPremium }: { isPremium: boolean }) {
                                                 {keyword}
                                                 <button
                                                     onClick={() => removeKeyword(keyword)}
-                                                    className="hover:bg-destructive/10 hover:text-destructive rounded-full p-0.5 transition-colors"
                                                     disabled={!isPremium}
+                                                    className="hover:bg-destructive/10 hover:text-destructive rounded-full p-0.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
                                                     <X className="w-3 h-3" />
                                                 </button>
@@ -144,6 +132,22 @@ export function DistractionSettings({ isPremium }: { isPremium: boolean }) {
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                {!isPremium && (
+                    <div className="flex items-center justify-between pt-1 border-t border-border/40">
+                        <p className="text-[10px] text-muted-foreground font-medium">
+                            Support development to enable filtering.
+                        </p>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto p-0 text-[10px] text-primary hover:text-primary/80 font-bold hover:bg-transparent"
+                            onClick={onOpenSupport}
+                        >
+                            Open Support
+                        </Button>
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

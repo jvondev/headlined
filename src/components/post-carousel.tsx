@@ -24,6 +24,7 @@ import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton
 import { Post, SavedItem } from "@/types";
 import { affiliateAds, AffiliateProgram } from "@/data/affiliate-ads";
 import { useDistractionSettings } from "@/hooks/use-distraction-settings";
+import { checkLicenseStatus } from "@/lib/license-manager";
 
 type PostCarouselProps = {
   shouldFetchPaginatedPosts?: boolean,
@@ -67,14 +68,19 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const nextAdDistance = useRef(Math.floor(Math.random() * 5) + 5); // Initial random range 5-10
 
   const { enabled: distractionEnabled, keywords: distractionKeywords } = useDistractionSettings();
+  const [isPremium, setIsPremium] = useState(false);
+
+  useEffect(() => {
+    checkLicenseStatus().then(setIsPremium);
+  }, []);
 
   const filterDistractions = useCallback((postsToFilter: Post[]) => {
-    if (!distractionEnabled) return postsToFilter;
+    if (!distractionEnabled || !isPremium) return postsToFilter;
     return postsToFilter.filter(post => {
       const content = `${post.title} ${post.description || ""} ${post.topic || ""}`.toLowerCase();
       return !distractionKeywords.some(keyword => content.includes(keyword.toLowerCase()));
     });
-  }, [distractionEnabled, distractionKeywords]);
+  }, [distractionEnabled, distractionKeywords, isPremium]);
 
   // Use external posts if provided, otherwise use internal state
   const rawPosts = externalPosts || internalPosts;
