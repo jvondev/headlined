@@ -69,7 +69,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const page = useRef(1);
   const nextAdDistance = useRef(Math.floor(Math.random() * 5) + 5); // Initial random range 5-10
 
-  const { enabled: distractionEnabled, keywords: distractionKeywords } = useDistractionSettings();
+  const { enabled: distractionEnabled, keywords: distractionKeywords, presets } = useDistractionSettings();
   const [isPremium, setIsPremium] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
 
@@ -78,12 +78,29 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   }, []);
 
   const filterDistractions = useCallback((postsToFilter: Post[]) => {
-    if (!distractionEnabled || !isPremium) return postsToFilter;
+    if (!isPremium) return postsToFilter;
+
+    // Preset Keywords Definition
+    const celebrityKeywords = ["celebrity", "gossip", "kardashian", "royal", "hollywood", "dating", "star", "actor", "actress", "fame"];
+    const worldNewsKeywords = ["war", "conflict", "disaster", "earthquake", "flood", "fire", "attack", "crisis", "bomb", "killed", "death"];
+    const politicsKeywords = ["politics", "election", "vote", "campaign", "senate", "congress", "president", "minister", "parliament", "democrat", "republican", "policy"];
+
     return postsToFilter.filter(post => {
       const content = `${post.title} ${post.description || ""} ${post.topic || ""}`.toLowerCase();
-      return !distractionKeywords.some(keyword => content.includes(keyword.toLowerCase()));
+
+      // Check Custom Keywords
+      if (distractionEnabled && distractionKeywords.some(keyword => content.includes(keyword.toLowerCase()))) {
+        return false;
+      }
+
+      // Check Presets
+      if (presets.celebrity && celebrityKeywords.some(k => content.includes(k))) return false;
+      if (presets.worldNews && worldNewsKeywords.some(k => content.includes(k))) return false;
+      if (presets.politics && politicsKeywords.some(k => content.includes(k))) return false;
+
+      return true;
     });
-  }, [distractionEnabled, distractionKeywords, isPremium]);
+  }, [distractionEnabled, distractionKeywords, isPremium, presets]);
 
   // Use external posts if provided, otherwise use internal state
   const rawPosts = externalPosts || internalPosts;
