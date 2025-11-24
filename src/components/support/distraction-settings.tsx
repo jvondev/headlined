@@ -45,15 +45,6 @@ export function DistractionSettings({ isPremium, onOpenSupport }: { isPremium: b
                             </CardDescription>
                         </div>
                     </div>
-                    {isPremium ? (
-                        <Badge variant="secondary" className="bg-primary/10 text-primary border-0 px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-bold">
-                            Active
-                        </Badge>
-                    ) : (
-                        <Badge variant="outline" className="text-muted-foreground border-border px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-bold">
-                            Preview
-                        </Badge>
-                    )}
                 </div>
             </CardHeader>
 

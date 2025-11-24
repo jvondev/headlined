@@ -419,7 +419,27 @@ export const PostCarousel: FC<PostCarouselProps> = ({
         </div>
       );
     }
+
     if (posts.length === 0) {
+      if ((date || dateRange) && !isPremium) {
+        return (
+          <div className="text-center py-16 px-4 max-w-md mx-auto">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <HelpCircle className="w-8 h-8 text-primary" />
+            </div>
+            <h1 className="font-headline text-3xl font-bold">History Locked</h1>
+            <p className="mt-2 text-lg text-muted-foreground">
+              Access to past archives is available for ReadMore+ supporters.
+            </p>
+            <div className="mt-6 flex flex-col gap-3">
+              <Button onClick={() => router.push('/today')} variant="default" className="w-full">
+                Go to Today
+              </Button>
+            </div>
+          </div>
+        );
+      }
+
       return (
         <div className="text-center py-16">
           <h1 className="font-headline text-4xl font-bold">No Posts Found</h1>
@@ -427,6 +447,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
         </div>
       );
     }
+
     return (
       <>
         {posts.map((post, index) => {

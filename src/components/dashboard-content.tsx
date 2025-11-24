@@ -7,6 +7,7 @@ import { getAllPostsFromIndexedDB, getReadHistory } from "@/lib/indexeddb";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
 import { Post } from "@/types";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { TrendingUp, Newspaper, Bookmark, Search, PieChart, Calendar, Layers, ArrowRight, Sparkles, Grid } from "lucide-react";
 import Link from "next/link";
@@ -288,7 +289,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
           <motion.div layout className={cn("transition-all duration-1000 ease-in-out", viewState === "dashboard" ? "origin-top  " : "")}>
             <Clock variant="stacked" className={cn(
               "transition-all duration-1000 ease-in-out",
-              viewState === "intro" ? "text-[6rem] md:text-[10rem] opacity-90" : "text-[4rem] md:text-[6rem] opacity-80"
+              viewState === "intro" ? "text-[6rem] md:text-[10rem] opacity-90" : "text-[4rem] md:text-[5rem] opacity-80"
             )} />
           </motion.div>
 
@@ -310,330 +311,357 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
               variants={contentVariants as any}
               initial="hidden"
               animate="visible"
-              className="w-full max-w-6xl mx-auto space-y-12"
+              className="w-full max-w-6xl mx-auto space-y-12 relative"
             >
-              {/* SECTION 1: OVERVIEW & STATS */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Daily Insight (Wide) */}
-                <motion.div className="col-span-1 md:col-span-2">
-                  <Card className="h-full p-6 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="relative z-10 flex flex-col justify-between h-full">
-                      <div className="flex items-center gap-2 text-primary mb-2">
-                        <div className="p-1.5 bg-primary/10 rounded-md">
-                          <Sparkles className="w-4 h-4" />
+              {/* Premium Lock Overlay for Past Dates */}
+              {((date || dateRange) && !isPremiumUser) && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center p-4">
+                  <div className="bg-background/80 backdrop-blur-md border border-border/50 p-8 rounded-2xl shadow-2xl max-w-md text-center space-y-6">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Sparkles className="w-8 h-8 text-primary" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-2xl font-bold">Unlock Your History</h3>
+                      <p className="text-muted-foreground">
+                        Access to past daily summaries, weekly reviews, and your complete reading history is available for supporters.
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Button onClick={() => setShowSupportModal(true)} size="lg" className="w-full font-semibold">
+                        Support ReadMore+
+                      </Button>
+                      <Button variant="ghost" onClick={() => window.history.back()} className="w-full">
+                        Go Back
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className={cn("space-y-12 transition-all duration-500", ((date || dateRange) && !isPremiumUser) ? "blur-lg opacity-50 pointer-events-none select-none" : "")}>
+                {/* SECTION 1: OVERVIEW & STATS */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  {/* Daily Insight (Wide) */}
+                  <motion.div className="col-span-1 md:col-span-2">
+                    <Card className="h-full p-6 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      <div className="relative z-10 flex flex-col justify-between h-full">
+                        <div className="flex items-center gap-2 text-primary mb-2">
+                          <div className="p-1.5 bg-primary/10 rounded-md">
+                            <Sparkles className="w-4 h-4" />
+                          </div>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Daily Insight</span>
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Daily Insight</span>
+                        <div>
+                          <h2 className="text-xl md:text-2xl font-semibold leading-tight tracking-tight text-foreground">
+                            {readHistory.length > 0
+                              ? (
+                                periodLabel ? `You read ${readHistory.length} articles ${periodLabel}.` :
+                                  date ? `You read ${readHistory.length} articles on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
+                                    dateRange ? `You read ${readHistory.length} articles from this period.` :
+                                      `You've read ${readHistory.length} articles today.`
+                              )
+                              : (
+                                periodLabel ? `No reading activity ${periodLabel}.` :
+                                  date ? `No articles read on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
+                                    dateRange ? "No reading activity from this period." :
+                                      "Start your reading journey today."
+                              )}
+                          </h2>
+                          <p className="text-muted-foreground mt-2 text-sm font-medium">
+                            {readHistory.length > 5
+                              ? `You're diving deep into ${topicStats[0]?.topic}. Keep it up!`
+                              : "Explore trending topics to stay informed."}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+
+                  {/* Stats: Topic Distribution */}
+                  <motion.div className="col-span-1 md:col-span-1">
+                    <Card className="h-full p-5 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+                      <div className="flex items-center gap-2 text-muted-foreground mb-4">
+                        <PieChart className="w-4 h-4" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Topics</span>
+                      </div>
+                      <div className="flex-1 space-y-3 overflow-y-auto pr-1">
+                        {topicStats.slice(0, 3).map((stat) => (
+                          <div key={stat.topic} className="space-y-1.5">
+                            <div className="flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                              <span>{stat.topic}</span>
+                              <span className="opacity-70">{Math.round(stat.percentage)}%</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${stat.percentage}%` }}
+                                transition={{ duration: 1, delay: 0.5 }}
+                                className="h-full bg-primary rounded-full"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                        {topicStats.length === 0 && (
+                          <div className="h-full flex items-center justify-center text-muted-foreground text-xs font-medium">No data yet</div>
+                        )}
+                      </div>
+                    </Card>
+                  </motion.div >
+
+                  {/* Stats: Interest Distribution */}
+                  < motion.div className="col-span-1 md:col-span-1" >
+                    <Card className="h-full p-5 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+                      <div className="flex items-center gap-2 text-muted-foreground mb-4">
+                        <Grid className="w-4 h-4" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Interests</span>
+                      </div>
+                      <div className="flex-1 space-y-3 overflow-y-auto pr-1">
+                        {interestStats.slice(0, 3).map((stat) => (
+                          <div key={stat.interest} className="space-y-1.5">
+                            <div className="flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                              <span className="line-clamp-1">{stat.interest}</span>
+                              <span className="opacity-70">{Math.round(stat.percentage)}%</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${stat.percentage}%` }}
+                                transition={{ duration: 1, delay: 0.5 }}
+                                className="h-full bg-primary rounded-full"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                        {interestStats.length === 0 && (
+                          <div className="h-full flex items-center justify-center text-muted-foreground text-xs font-medium">No data yet</div>
+                        )}
+                      </div>
+                    </Card>
+                  </motion.div >
+                </div >
+
+                {/* SECTION 2: TIMELINE & TOPIC/INTEREST CARDS */}
+                < div className="grid grid-cols-1 md:grid-cols-3 gap-8" >
+                  {/* Timeline (Left Column) */}
+                  < div className="col-span-1 md:col-span-1" >
+                    <Card className="h-full p-5 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+                      <div className="flex items-center gap-2 mb-6">
+                        <Calendar className="w-4 h-4 text-primary" />
+                        <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Timeline</h3>
+                      </div>
+                      <div className="relative border-l border-border/50 ml-2 pl-6 space-y-8 py-2 flex-1">
+                        {readHistory.length > 0 ? (
+                          <>
+                            {readHistory.slice(0, timelineItemsToShow).map((post) => (
+                              <div key={post.slug} className="relative group">
+                                <span className="absolute -left-[29px] top-1.5 w-2.5 h-2.5 rounded-full bg-background border-2 border-primary z-10 group-hover:scale-125 transition-transform duration-300" />
+                                <div className="flex flex-col gap-1">
+                                  <span className="text-[10px] text-muted-foreground font-mono font-medium">
+                                    {new Date(post.readAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                  <h4 className="font-medium text-sm leading-snug text-foreground/90 hover:text-primary transition-colors cursor-pointer">
+                                    {post.title}
+                                  </h4>
+                                </div>
+                              </div>
+                            ))}
+                            {readHistory.length > timelineItemsToShow && (
+                              <button
+                                onClick={() => setTimelineItemsToShow(readHistory.length)}
+                                className="w-full py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors border border-border/50 rounded-md hover:bg-primary/5"
+                              >
+                                Show More ({readHistory.length - timelineItemsToShow} more)
+                              </button>
+                            )}
+                          </>
+                        ) : (
+                          <p className="text-sm text-muted-foreground italic">No reading activity yet.</p>
+                        )}
+                      </div>
+                    </Card>
+                  </div >
+
+                  {/* Right Column: Topics & Interests */}
+                  < div className="col-span-1 md:col-span-2 space-y-8" >
+
+                    {/* Topics Section */}
+                    {
+                      Object.keys(groupedTopics).length > 0 && (
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2 px-1">
+                            <Layers className="w-4 h-4 text-primary" />
+                            <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Topics</h3>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {Object.entries(groupedTopics).map(([topic, posts]) => (
+                              <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
+                                <div className="flex items-center justify-between border-b border-border/50 pb-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-primary" />
+                                    <span className="font-bold text-sm uppercase tracking-wider">{topic}</span>
+                                  </div>
+                                  <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
+                                </div>
+                                <div className="space-y-2">
+                                  {posts.slice(0, 3).map(post => (
+                                    <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
+                                      {post.thumbnail_url && (
+                                        <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
+                                      )}
+                                      <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    }
+
+                    {/* Interests Section */}
+                    {
+                      Object.keys(groupedInterests).length > 0 && (
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2 px-1">
+                            <Grid className="w-4 h-4 text-primary" />
+                            <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Interests</h3>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {Object.entries(groupedInterests).map(([topic, posts]) => (
+                              <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
+                                <div className="flex items-center justify-between border-b border-border/50 pb-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-primary" />
+                                    <span className="font-bold text-sm uppercase tracking-wider">{topic}</span>
+                                  </div>
+                                  <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
+                                </div>
+                                <div className="space-y-2">
+                                  {posts.slice(0, 3).map(post => (
+                                    <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
+                                      {post.thumbnail_url && (
+                                        <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
+                                      )}
+                                      <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    }
+
+                    {
+                      Object.keys(groupedTopics).length === 0 && Object.keys(groupedInterests).length === 0 && (
+                        <div className="p-8 border border-dashed border-border/50 rounded-xl flex flex-col items-center justify-center text-muted-foreground h-full">
+                          <Layers className="w-8 h-8 mb-2 opacity-50" />
+                          <p className="text-sm">Read articles to see them grouped here.</p>
+                        </div>
+                      )
+                    }
+                  </div >
+                </div >
+
+                {/* DIVIDER */}
+                < div className="relative py-4" >
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-border/50" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase tracking-widest">
+                    <span className="bg-background px-2 text-muted-foreground">Apps & Widgets</span>
+                  </div>
+                </div >
+
+                {/* SECTION 3: WIDGETS */}
+                < div className="grid grid-cols-1 md:grid-cols-4 gap-4" >
+                  {/* For You Widget */}
+                  < motion.div className="col-span-1 md:col-span-1 relative group" >
+                    <Link href="/topic" className="absolute inset-0 z-10" />
+                    <Card className="h-40 w-full bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col p-5">
+                      <div className="flex items-center justify-between mb-auto">
+                        <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                          <Newspaper className="w-5 h-5" />
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity -rotate-45 group-hover:rotate-0 duration-300" />
                       </div>
                       <div>
-                        <h2 className="text-xl md:text-2xl font-semibold leading-tight tracking-tight text-foreground">
-                          {readHistory.length > 0
-                            ? (
-                              periodLabel ? `You read ${readHistory.length} articles ${periodLabel}.` :
-                                date ? `You read ${readHistory.length} articles on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
-                                  dateRange ? `You read ${readHistory.length} articles from this period.` :
-                                    `You've read ${readHistory.length} articles today.`
-                            )
-                            : (
-                              periodLabel ? `No reading activity ${periodLabel}.` :
-                                date ? `No articles read on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
-                                  dateRange ? "No reading activity from this period." :
-                                    "Start your reading journey today."
-                            )}
-                        </h2>
-                        <p className="text-muted-foreground mt-2 text-sm font-medium">
-                          {readHistory.length > 5
-                            ? `You're diving deep into ${topicStats[0]?.topic}. Keep it up!`
-                            : "Explore trending topics to stay informed."}
+                        <h3 className="font-semibold text-lg tracking-tight">For You</h3>
+                        <p className="text-xs text-muted-foreground line-clamp-1 font-medium mt-1">
+                          {recentPosts.length} new updates
                         </p>
                       </div>
-                    </div>
-                  </Card>
-                </motion.div>
+                    </Card>
+                  </motion.div >
 
-                {/* Stats: Topic Distribution */}
-                <motion.div className="col-span-1 md:col-span-1">
-                  <Card className="h-full p-5 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-4">
-                      <PieChart className="w-4 h-4" />
-                      <span className="text-[10px] font-bold uppercase tracking-wider">Topics</span>
-                    </div>
-                    <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-                      {topicStats.slice(0, 3).map((stat) => (
-                        <div key={stat.topic} className="space-y-1.5">
-                          <div className="flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                            <span>{stat.topic}</span>
-                            <span className="opacity-70">{Math.round(stat.percentage)}%</span>
-                          </div>
-                          <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${stat.percentage}%` }}
-                              transition={{ duration: 1, delay: 0.5 }}
-                              className="h-full bg-primary rounded-full"
-                            />
-                          </div>
+                  {/* Trending Widget */}
+                  < motion.div className="col-span-1 md:col-span-1 relative group" >
+                    <Link href="/explore" className="absolute inset-0 z-10" />
+                    <Card className="h-40 w-full bg-gradient-to-br from-orange-500/5 to-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col p-5">
+                      <div className="flex items-center justify-between mb-auto">
+                        <div className="p-2 bg-orange-500/10 rounded-lg text-orange-600 dark:text-orange-400">
+                          <TrendingUp className="w-5 h-5" />
                         </div>
-                      ))}
-                      {topicStats.length === 0 && (
-                        <div className="h-full flex items-center justify-center text-muted-foreground text-xs font-medium">No data yet</div>
-                      )}
-                    </div>
-                  </Card>
-                </motion.div >
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg tracking-tight">Trending</h3>
+                        <p className="text-xs text-muted-foreground line-clamp-1 font-medium mt-1">
+                          {trendingPosts[0]?.title || "Explore what's hot"}
+                        </p>
+                      </div>
+                    </Card>
+                  </motion.div >
 
-                {/* Stats: Interest Distribution */}
-                < motion.div className="col-span-1 md:col-span-1" >
-                  <Card className="h-full p-5 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-4">
-                      <Grid className="w-4 h-4" />
-                      <span className="text-[10px] font-bold uppercase tracking-wider">Interests</span>
-                    </div>
-                    <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-                      {interestStats.slice(0, 3).map((stat) => (
-                        <div key={stat.interest} className="space-y-1.5">
-                          <div className="flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                            <span className="line-clamp-1">{stat.interest}</span>
-                            <span className="opacity-70">{Math.round(stat.percentage)}%</span>
-                          </div>
-                          <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${stat.percentage}%` }}
-                              transition={{ duration: 1, delay: 0.5 }}
-                              className="h-full bg-primary rounded-full"
-                            />
-                          </div>
+                  {/* Saved Widget */}
+                  < motion.div className="col-span-1 relative group" >
+                    <Link href="/saved" className="absolute inset-0 z-10" />
+                    <Card className="h-40 w-full bg-gradient-to-br from-blue-500/5 to-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col p-5">
+                      <div className="flex items-center justify-between mb-auto">
+                        <div className="p-2 bg-blue-500/10 rounded-lg text-blue-600 dark:text-blue-400">
+                          <Bookmark className="w-5 h-5" />
                         </div>
-                      ))}
-                      {interestStats.length === 0 && (
-                        <div className="h-full flex items-center justify-center text-muted-foreground text-xs font-medium">No data yet</div>
-                      )}
-                    </div>
-                  </Card>
-                </motion.div >
-              </div >
+                        <span className="text-2xl font-bold tabular-nums tracking-tight">{savedCount}</span>
+                      </div>
+                      <h3 className="font-semibold text-lg tracking-tight">Saved</h3>
+                    </Card>
+                  </motion.div >
 
-              {/* SECTION 2: TIMELINE & TOPIC/INTEREST CARDS */}
-              < div className="grid grid-cols-1 md:grid-cols-3 gap-8" >
-                {/* Timeline (Left Column) */}
-                < div className="col-span-1 md:col-span-1" >
-                  <Card className="h-full p-5 bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
-                    <div className="flex items-center gap-2 mb-6">
-                      <Calendar className="w-4 h-4 text-primary" />
-                      <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Timeline</h3>
-                    </div>
-                    <div className="relative border-l border-border/50 ml-2 pl-6 space-y-8 py-2 flex-1">
-                      {readHistory.length > 0 ? (
-                        <>
-                          {readHistory.slice(0, timelineItemsToShow).map((post) => (
-                            <div key={post.slug} className="relative group">
-                              <span className="absolute -left-[29px] top-1.5 w-2.5 h-2.5 rounded-full bg-background border-2 border-primary z-10 group-hover:scale-125 transition-transform duration-300" />
-                              <div className="flex flex-col gap-1">
-                                <span className="text-[10px] text-muted-foreground font-mono font-medium">
-                                  {new Date(post.readAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                                <h4 className="font-medium text-sm leading-snug text-foreground/90 hover:text-primary transition-colors cursor-pointer">
-                                  {post.title}
-                                </h4>
-                              </div>
-                            </div>
-                          ))}
-                          {readHistory.length > timelineItemsToShow && (
-                            <button
-                              onClick={() => setTimelineItemsToShow(readHistory.length)}
-                              className="w-full py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors border border-border/50 rounded-md hover:bg-primary/5"
-                            >
-                              Show More ({readHistory.length - timelineItemsToShow} more)
-                            </button>
-                          )}
-                        </>
-                      ) : (
-                        <p className="text-sm text-muted-foreground italic">No reading activity yet.</p>
-                      )}
-                    </div>
-                  </Card>
+                  {/* Search Widget */}
+                  < motion.div className="col-span-1 relative group" >
+                    <Link href="/search" className="absolute inset-0 z-10" />
+                    <Card className="h-40 w-full bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col items-center justify-center gap-3 p-5 text-muted-foreground hover:text-foreground group-hover:border-primary/20">
+                      <div className="p-3 bg-secondary rounded-full group-hover:bg-primary/10 transition-colors">
+                        <Search className="w-6 h-6 group-hover:text-primary transition-colors" />
+                      </div>
+                      <span className="font-medium text-sm">Search</span>
+                      <div className="absolute bottom-3 right-3 flex gap-1">
+                        <span className="text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded border border-border">⌘</span>
+                        <span className="text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded border border-border">K</span>
+                      </div>
+                    </Card>
+                  </motion.div >
                 </div >
 
-                {/* Right Column: Topics & Interests */}
-                < div className="col-span-1 md:col-span-2 space-y-8" >
-
-                  {/* Topics Section */}
-                  {
-                    Object.keys(groupedTopics).length > 0 && (
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-2 px-1">
-                          <Layers className="w-4 h-4 text-primary" />
-                          <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Topics</h3>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          {Object.entries(groupedTopics).map(([topic, posts]) => (
-                            <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
-                              <div className="flex items-center justify-between border-b border-border/50 pb-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="w-2 h-2 rounded-full bg-primary" />
-                                  <span className="font-bold text-sm uppercase tracking-wider">{topic}</span>
-                                </div>
-                                <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
-                              </div>
-                              <div className="space-y-2">
-                                {posts.slice(0, 3).map(post => (
-                                  <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
-                                    {post.thumbnail_url && (
-                                      <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
-                                    )}
-                                    <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </Card>
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  }
-
-                  {/* Interests Section */}
-                  {
-                    Object.keys(groupedInterests).length > 0 && (
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-2 px-1">
-                          <Grid className="w-4 h-4 text-primary" />
-                          <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Interests</h3>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          {Object.entries(groupedInterests).map(([topic, posts]) => (
-                            <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
-                              <div className="flex items-center justify-between border-b border-border/50 pb-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="w-2 h-2 rounded-full bg-primary" />
-                                  <span className="font-bold text-sm uppercase tracking-wider">{topic}</span>
-                                </div>
-                                <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
-                              </div>
-                              <div className="space-y-2">
-                                {posts.slice(0, 3).map(post => (
-                                  <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
-                                    {post.thumbnail_url && (
-                                      <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
-                                    )}
-                                    <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </Card>
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  }
-
-                  {
-                    Object.keys(groupedTopics).length === 0 && Object.keys(groupedInterests).length === 0 && (
-                      <div className="p-8 border border-dashed border-border/50 rounded-xl flex flex-col items-center justify-center text-muted-foreground h-full">
-                        <Layers className="w-8 h-8 mb-2 opacity-50" />
-                        <p className="text-sm">Read articles to see them grouped here.</p>
-                      </div>
-                    )
-                  }
-                </div >
-              </div >
-
-              {/* DIVIDER */}
-              < div className="relative py-4" >
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-border/50" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase tracking-widest">
-                  <span className="bg-background px-2 text-muted-foreground">Apps & Widgets</span>
-                </div>
-              </div >
-
-              {/* SECTION 3: WIDGETS */}
-              < div className="grid grid-cols-1 md:grid-cols-4 gap-4" >
-                {/* For You Widget */}
-                < motion.div className="col-span-1 md:col-span-1 relative group" >
-                  <Link href="/topic" className="absolute inset-0 z-10" />
-                  <Card className="h-40 w-full bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col p-5">
-                    <div className="flex items-center justify-between mb-auto">
-                      <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                        <Newspaper className="w-5 h-5" />
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity -rotate-45 group-hover:rotate-0 duration-300" />
+                {/* Distraction Settings (Premium Feature - Unlocks after 2 days) */}
+                {usage.daysUsed > 2 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4"
+                  >
+                    <div className="col-span-1 md:col-span-2 md:col-start-2">
+                      <DistractionSettings
+                        isPremium={isPremiumUser}
+                        onOpenSupport={() => setShowSupportModal(true)}
+                      />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-lg tracking-tight">For You</h3>
-                      <p className="text-xs text-muted-foreground line-clamp-1 font-medium mt-1">
-                        {recentPosts.length} new updates
-                      </p>
-                    </div>
-                  </Card>
-                </motion.div >
-
-                {/* Trending Widget */}
-                < motion.div className="col-span-1 md:col-span-1 relative group" >
-                  <Link href="/explore" className="absolute inset-0 z-10" />
-                  <Card className="h-40 w-full bg-gradient-to-br from-orange-500/5 to-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col p-5">
-                    <div className="flex items-center justify-between mb-auto">
-                      <div className="p-2 bg-orange-500/10 rounded-lg text-orange-600 dark:text-orange-400">
-                        <TrendingUp className="w-5 h-5" />
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg tracking-tight">Trending</h3>
-                      <p className="text-xs text-muted-foreground line-clamp-1 font-medium mt-1">
-                        {trendingPosts[0]?.title || "Explore what's hot"}
-                      </p>
-                    </div>
-                  </Card>
-                </motion.div >
-
-                {/* Saved Widget */}
-                < motion.div className="col-span-1 relative group" >
-                  <Link href="/saved" className="absolute inset-0 z-10" />
-                  <Card className="h-40 w-full bg-gradient-to-br from-blue-500/5 to-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col p-5">
-                    <div className="flex items-center justify-between mb-auto">
-                      <div className="p-2 bg-blue-500/10 rounded-lg text-blue-600 dark:text-blue-400">
-                        <Bookmark className="w-5 h-5" />
-                      </div>
-                      <span className="text-2xl font-bold tabular-nums tracking-tight">{savedCount}</span>
-                    </div>
-                    <h3 className="font-semibold text-lg tracking-tight">Saved</h3>
-                  </Card>
-                </motion.div >
-
-                {/* Search Widget */}
-                < motion.div className="col-span-1 relative group" >
-                  <Link href="/search" className="absolute inset-0 z-10" />
-                  <Card className="h-40 w-full bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col items-center justify-center gap-3 p-5 text-muted-foreground hover:text-foreground group-hover:border-primary/20">
-                    <div className="p-3 bg-secondary rounded-full group-hover:bg-primary/10 transition-colors">
-                      <Search className="w-6 h-6 group-hover:text-primary transition-colors" />
-                    </div>
-                    <span className="font-medium text-sm">Search</span>
-                    <div className="absolute bottom-3 right-3 flex gap-1">
-                      <span className="text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded border border-border">⌘</span>
-                      <span className="text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded border border-border">K</span>
-                    </div>
-                  </Card>
-                </motion.div >
-              </div >
-
-              {/* Distraction Settings (Premium Feature - Unlocks after 2 days) */}
-              {usage.daysUsed > 2 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4"
-                >
-                  <div className="col-span-1 md:col-span-2 md:col-start-2">
-                    <DistractionSettings
-                      isPremium={isPremiumUser}
-                      onOpenSupport={() => setShowSupportModal(true)}
-                    />
-                  </div>
-                </motion.div>
-              )}
+                  </motion.div>
+                )}
+              </div>
 
               <PremiumModal
                 isOpen={showSupportModal}

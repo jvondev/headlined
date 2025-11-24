@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { CalendarDays, Clock, Calendar, ChevronDown, History, Sparkles, Lock } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
+import { cn } from "@/lib/utils";
 import { useArchiveAccess } from "@/hooks/use-archive-access";
 import {
     DropdownMenu,
@@ -90,18 +91,12 @@ export function ArchiveNavigation() {
 
     const renderMenuItem = (item: { label: string, path: string, icon: any }, isLocked: boolean = false) => (
         <DropdownMenuItem
-            onClick={() => {
-                if (isLocked) {
-                    setShowModal(true);
-                } else {
-                    handleNavigation(item.path);
-                }
-            }}
-            className={`rounded-lg focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200 ${isLocked ? 'opacity-50' : ''}`}
+            onClick={() => handleNavigation(item.path)}
+            className="rounded-lg focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200"
         >
-            <item.icon className={`w-4 h-4 mr-3 ${isLocked ? 'text-muted-foreground' : (item === navData.options.today ? 'text-primary' : 'text-muted-foreground')}`} />
+            <item.icon className={cn("w-4 h-4 mr-3", item === navData.options.today ? "text-primary" : "text-muted-foreground")} />
             <span className="font-medium flex-1">{item.label}</span>
-            {isLocked && <Lock className="w-3 h-3 ml-2 text-muted-foreground" />}
+            {isLocked && <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded ml-2">Preview</span>}
         </DropdownMenuItem>
     );
 
