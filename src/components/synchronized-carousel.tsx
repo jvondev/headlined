@@ -7,6 +7,7 @@ import type { Topic, Interest } from "@/types";
 import { usePathname } from "next/navigation";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
 import { checkIfFeedHasPosts } from "@/lib/client-posts";
+import { checkLicenseStatus } from "@/lib/license-manager";
 
 type CarouselItem = {
     name: string;
@@ -55,10 +56,18 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
 
                 const allPotentialItems = [...subscribedTopicItems, ...subscribedInterestItems];
                 const validItems: CarouselItem[] = [];
+                const isPremium = await checkLicenseStatus();
+                const isArchiveMode = !!(date || dateRange);
 
                 for (const item of allPotentialItems) {
                     const hasPosts = await checkIfFeedHasPosts(item.type as 'topic' | 'interest', item.name, date, dateRange);
-                    if (hasPosts) {
+
+                    // Logic:
+                    // 1. If item has posts, always show it.
+                    // 2. If it's archive mode AND user is NOT premium (Preview Mode), show it even if no posts (to show locked state).
+                    // 3. If premium user in archive mode, only show if has posts (standard behavior).
+
+                    if (hasPosts || (isArchiveMode && !isPremium)) {
                         validItems.push(item);
                     }
                 }

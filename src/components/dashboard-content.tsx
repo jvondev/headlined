@@ -296,6 +296,25 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
   const displayTopicStats = isPreviewMode ? mockTopicStats : topicStats;
   const displayInterestStats = isPreviewMode ? mockInterestStats : interestStats;
 
+  // Dynamic Mock Data based on User Subscriptions
+  const displayGroupedTopics = isPreviewMode ? (
+    subscribedTopics.length > 0 ?
+      subscribedTopics.reduce((acc, topic) => {
+        acc[topic.name] = mockHistory.slice(0, Math.floor(Math.random() * 3) + 1);
+        return acc;
+      }, {} as Record<string, (Post & { readAt: string })[]>)
+      : { "Technology": mockHistory.slice(0, 3), "Science": mockHistory.slice(2, 4) } // Fallback if no subs
+  ) : groupedTopics;
+
+  const displayGroupedInterests = isPreviewMode ? (
+    subscribedInterests.length > 0 ?
+      subscribedInterests.reduce((acc, interest) => {
+        acc[interest.name] = mockHistory.slice(0, Math.floor(Math.random() * 3) + 1);
+        return acc;
+      }, {} as Record<string, (Post & { readAt: string })[]>)
+      : { "AI": mockHistory.slice(0, 2), "Space": mockHistory.slice(3, 5) } // Fallback if no subs
+  ) : groupedInterests;
+
   if (loading) return null;
 
   return (
@@ -514,14 +533,14 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
 
                     {/* Topics Section */}
                     {
-                      Object.keys(groupedTopics).length > 0 && (
+                      Object.keys(displayGroupedTopics).length > 0 && (
                         <div className="space-y-4">
                           <div className="flex items-center gap-2 px-1">
                             <Layers className="w-4 h-4 text-primary" />
                             <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Topics</h3>
                           </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {Object.entries(groupedTopics).map(([topic, posts]) => (
+                          <div className={cn("grid grid-cols-1 sm:grid-cols-2 gap-4", isPreviewMode && "blur-sm select-none pointer-events-none")}>
+                            {Object.entries(displayGroupedTopics).map(([topic, posts]) => (
                               <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
                                 <div className="flex items-center justify-between border-b border-border/50 pb-2">
                                   <div className="flex items-center gap-2">
@@ -531,8 +550,8 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                                   <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
                                 </div>
                                 <div className="space-y-2">
-                                  {posts.slice(0, 3).map(post => (
-                                    <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
+                                  {posts.slice(0, 3).map((post, i) => (
+                                    <div key={post.slug || i} className="flex items-center gap-3 group cursor-pointer">
                                       {post.thumbnail_url && (
                                         <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
                                       )}
@@ -549,14 +568,14 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
 
                     {/* Interests Section */}
                     {
-                      Object.keys(groupedInterests).length > 0 && (
+                      Object.keys(displayGroupedInterests).length > 0 && (
                         <div className="space-y-4">
                           <div className="flex items-center gap-2 px-1">
                             <Grid className="w-4 h-4 text-primary" />
                             <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Interests</h3>
                           </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {Object.entries(groupedInterests).map(([topic, posts]) => (
+                          <div className={cn("grid grid-cols-1 sm:grid-cols-2 gap-4", isPreviewMode && "blur-sm select-none pointer-events-none")}>
+                            {Object.entries(displayGroupedInterests).map(([topic, posts]) => (
                               <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
                                 <div className="flex items-center justify-between border-b border-border/50 pb-2">
                                   <div className="flex items-center gap-2">
@@ -566,8 +585,8 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                                   <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
                                 </div>
                                 <div className="space-y-2">
-                                  {posts.slice(0, 3).map(post => (
-                                    <div key={post.slug} className="flex items-center gap-3 group cursor-pointer">
+                                  {posts.slice(0, 3).map((post, i) => (
+                                    <div key={post.slug || i} className="flex items-center gap-3 group cursor-pointer">
                                       {post.thumbnail_url && (
                                         <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
                                       )}
@@ -583,7 +602,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                     }
 
                     {
-                      Object.keys(groupedTopics).length === 0 && Object.keys(groupedInterests).length === 0 && (
+                      Object.keys(displayGroupedTopics).length === 0 && Object.keys(displayGroupedInterests).length === 0 && (
                         <div className="p-8 border border-dashed border-border/50 rounded-xl flex flex-col items-center justify-center text-muted-foreground h-full">
                           <Layers className="w-8 h-8 mb-2 opacity-50" />
                           <p className="text-sm">Read articles to see them grouped here.</p>
