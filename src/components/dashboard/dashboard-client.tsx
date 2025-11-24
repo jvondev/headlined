@@ -113,11 +113,11 @@ export function DashboardClient() {
                 break;
             case 'yesterday':
                 date = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-                usePremiumGuard = true;
+                usePremiumGuard = false;
                 break;
             case 'archive':
                 date = searchParams.get("date") || undefined;
-                usePremiumGuard = true;
+                usePremiumGuard = false;
                 break;
             case 'this-week':
                 const today = new Date();
@@ -134,7 +134,7 @@ export function DashboardClient() {
                     start: toLocalYMD(last7DaysStart),
                     end: toLocalYMD(today)
                 };
-                usePremiumGuard = true;
+                usePremiumGuard = false;
                 periodLabel = "in the last 7 days";
                 break;
             case 'this-month':
@@ -151,7 +151,7 @@ export function DashboardClient() {
                     start: toLocalYMD2(last30DaysStart),
                     end: toLocalYMD2(t)
                 };
-                usePremiumGuard = true;
+                usePremiumGuard = false;
                 periodLabel = "in the last 30 days";
                 break;
         }

@@ -268,6 +268,34 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
     }
   };
 
+  const isPreviewMode = (date || dateRange) && !isPremiumUser;
+
+  // Mock Data for Preview Mode
+  const mockHistory = Array(5).fill(null).map((_, i) => ({
+    slug: `mock-${i}`,
+    title: "Premium Article Content Preview",
+    description: "This content is available for premium supporters.",
+    readAt: new Date().toISOString(),
+    topic: ["Technology", "Science", "Health", "Design", "Business"][i % 5],
+    thumbnail_url: null
+  })) as (Post & { readAt: string })[];
+
+  const mockTopicStats = [
+    { topic: "Technology", count: 15, percentage: 45 },
+    { topic: "Science", count: 10, percentage: 30 },
+    { topic: "Health", count: 8, percentage: 25 }
+  ];
+
+  const mockInterestStats = [
+    { interest: "AI", count: 8, percentage: 40 },
+    { interest: "Space", count: 6, percentage: 30 },
+    { interest: "Wellness", count: 6, percentage: 30 }
+  ];
+
+  const displayHistory = isPreviewMode ? mockHistory : readHistory;
+  const displayTopicStats = isPreviewMode ? mockTopicStats : topicStats;
+  const displayInterestStats = isPreviewMode ? mockInterestStats : interestStats;
+
   if (loading) return null;
 
   return (
@@ -313,32 +341,9 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
               animate="visible"
               className="w-full max-w-6xl mx-auto space-y-12 relative"
             >
-              {/* Premium Lock Overlay for Past Dates */}
-              {((date || dateRange) && !isPremiumUser) && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center p-4">
-                  <div className="bg-background/80 backdrop-blur-md border border-border/50 p-8 rounded-2xl shadow-2xl max-w-md text-center space-y-6">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Sparkles className="w-8 h-8 text-primary" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-2xl font-bold">Unlock Your History</h3>
-                      <p className="text-muted-foreground">
-                        Access to past daily summaries, weekly reviews, and your complete reading history is available for supporters.
-                      </p>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      <Button onClick={() => setShowSupportModal(true)} size="lg" className="w-full font-semibold">
-                        Support ReadMore+
-                      </Button>
-                      <Button variant="ghost" onClick={() => window.history.back()} className="w-full">
-                        Go Back
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {/* Premium Lock Overlay removed - allowing preview access */}
 
-              <div className={cn("space-y-12 transition-all duration-500", ((date || dateRange) && !isPremiumUser) ? "blur-lg opacity-50 pointer-events-none select-none" : "")}>
+              <div className={cn("space-y-12 transition-all duration-500")}>
                 {/* SECTION 1: OVERVIEW & STATS */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   {/* Daily Insight (Wide) */}
@@ -353,13 +358,13 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                           <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Daily Insight</span>
                         </div>
                         <div>
-                          <h2 className="text-xl md:text-2xl font-semibold leading-tight tracking-tight text-foreground">
-                            {readHistory.length > 0
+                          <h2 className={cn("text-xl md:text-2xl font-semibold leading-tight tracking-tight text-foreground", isPreviewMode && "blur-sm select-none")}>
+                            {displayHistory.length > 0
                               ? (
-                                periodLabel ? `You read ${readHistory.length} articles ${periodLabel}.` :
-                                  date ? `You read ${readHistory.length} articles on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
-                                    dateRange ? `You read ${readHistory.length} articles from this period.` :
-                                      `You've read ${readHistory.length} articles today.`
+                                periodLabel ? `You read ${displayHistory.length} articles ${periodLabel}.` :
+                                  date ? `You read ${displayHistory.length} articles on ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.` :
+                                    dateRange ? `You read ${displayHistory.length} articles from this period.` :
+                                      `You've read ${displayHistory.length} articles today.`
                               )
                               : (
                                 periodLabel ? `No reading activity ${periodLabel}.` :
@@ -368,9 +373,9 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                                       "Start your reading journey today."
                               )}
                           </h2>
-                          <p className="text-muted-foreground mt-2 text-sm font-medium">
-                            {readHistory.length > 5
-                              ? `You're diving deep into ${topicStats[0]?.topic}. Keep it up!`
+                          <p className={cn("text-muted-foreground mt-2 text-sm font-medium", isPreviewMode && "blur-sm select-none")}>
+                            {displayHistory.length > 5
+                              ? `You're diving deep into ${displayTopicStats[0]?.topic}. Keep it up!`
                               : "Explore trending topics to stay informed."}
                           </p>
                         </div>
@@ -386,13 +391,13 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                         <span className="text-[10px] font-bold uppercase tracking-wider">Topics</span>
                       </div>
                       <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-                        {topicStats.slice(0, 3).map((stat) => (
+                        {displayTopicStats.slice(0, 3).map((stat) => (
                           <div key={stat.topic} className="space-y-1.5">
-                            <div className="flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                            <div className={cn("flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground", isPreviewMode && "blur-sm select-none")}>
                               <span>{stat.topic}</span>
                               <span className="opacity-70">{Math.round(stat.percentage)}%</span>
                             </div>
-                            <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                            <div className={cn("h-1.5 w-full bg-secondary rounded-full overflow-hidden", isPreviewMode && "blur-[2px]")}>
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${stat.percentage}%` }}
@@ -402,7 +407,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                             </div>
                           </div>
                         ))}
-                        {topicStats.length === 0 && (
+                        {displayTopicStats.length === 0 && (
                           <div className="h-full flex items-center justify-center text-muted-foreground text-xs font-medium">No data yet</div>
                         )}
                       </div>
@@ -417,13 +422,13 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                         <span className="text-[10px] font-bold uppercase tracking-wider">Interests</span>
                       </div>
                       <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-                        {interestStats.slice(0, 3).map((stat) => (
+                        {displayInterestStats.slice(0, 3).map((stat) => (
                           <div key={stat.interest} className="space-y-1.5">
-                            <div className="flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                            <div className={cn("flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground", isPreviewMode && "blur-sm select-none")}>
                               <span className="line-clamp-1">{stat.interest}</span>
                               <span className="opacity-70">{Math.round(stat.percentage)}%</span>
                             </div>
-                            <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                            <div className={cn("h-1.5 w-full bg-secondary rounded-full overflow-hidden", isPreviewMode && "blur-[2px]")}>
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${stat.percentage}%` }}
@@ -433,7 +438,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                             </div>
                           </div>
                         ))}
-                        {interestStats.length === 0 && (
+                        {displayInterestStats.length === 0 && (
                           <div className="h-full flex items-center justify-center text-muted-foreground text-xs font-medium">No data yet</div>
                         )}
                       </div>
@@ -451,32 +456,54 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                         <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Timeline</h3>
                       </div>
                       <div className="relative border-l border-border/50 ml-2 pl-6 space-y-8 py-2 flex-1">
-                        {readHistory.length > 0 ? (
+                        {displayHistory.length > 0 ? (
                           <>
-                            {readHistory.slice(0, timelineItemsToShow).map((post) => (
-                              <div key={post.slug} className="relative group">
-                                <span className="absolute -left-[29px] top-1.5 w-2.5 h-2.5 rounded-full bg-background border-2 border-primary z-10 group-hover:scale-125 transition-transform duration-300" />
-                                <div className="flex flex-col gap-1">
-                                  <span className="text-[10px] text-muted-foreground font-mono font-medium">
-                                    {new Date(post.readAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </span>
-                                  <h4 className="font-medium text-sm leading-snug text-foreground/90 hover:text-primary transition-colors cursor-pointer">
-                                    {post.title}
-                                  </h4>
+                            <div className={cn(isPreviewMode && "blur-sm select-none pointer-events-none")}>
+                              {displayHistory.slice(0, timelineItemsToShow).map((post, i) => (
+                                <div key={post.slug || i} className="relative group mb-8 last:mb-0">
+                                  <span className="absolute -left-[29px] top-1.5 w-2.5 h-2.5 rounded-full bg-background border-2 border-primary z-10 group-hover:scale-125 transition-transform duration-300" />
+                                  <div className="flex flex-col gap-1">
+                                    <span className="text-[10px] text-muted-foreground font-mono font-medium">
+                                      {new Date(post.readAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                    <h4 className="font-medium text-sm leading-snug text-foreground/90 hover:text-primary transition-colors cursor-pointer">
+                                      {post.title}
+                                    </h4>
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
-                            {readHistory.length > timelineItemsToShow && (
+                              ))}
+                            </div>
+                            {displayHistory.length > timelineItemsToShow && !isPreviewMode && (
                               <button
-                                onClick={() => setTimelineItemsToShow(readHistory.length)}
+                                onClick={() => setTimelineItemsToShow(displayHistory.length)}
                                 className="w-full py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors border border-border/50 rounded-md hover:bg-primary/5"
                               >
-                                Show More ({readHistory.length - timelineItemsToShow} more)
+                                Show More ({displayHistory.length - timelineItemsToShow} more)
                               </button>
                             )}
                           </>
                         ) : (
                           <p className="text-sm text-muted-foreground italic">No reading activity yet.</p>
+                        )}
+
+                        {/* Preview Mode Message Overlay */}
+                        {isPreviewMode && (
+                          <div className="absolute inset-0 flex items-center justify-center p-4 z-20">
+                            <div className="bg-background/95 backdrop-blur-sm border border-border p-4 rounded-xl shadow-lg text-center max-w-[240px]">
+                              <Sparkles className="w-6 h-6 text-primary mx-auto mb-2" />
+                              <p className="text-xs font-medium text-foreground mb-3">
+                                {date
+                                  ? `Support to get ${date === new Date().toISOString().split('T')[0] ? 'today\'s' : 'past'} posts.`
+                                  : dateRange
+                                    ? "Support to get posts from this period."
+                                    : "Support to access your full history."
+                                }
+                              </p>
+                              <Button size="sm" onClick={() => setShowSupportModal(true)} className="w-full h-8 text-xs">
+                                Support ReadMore+
+                              </Button>
+                            </div>
+                          </div>
                         )}
                       </div>
                     </Card>

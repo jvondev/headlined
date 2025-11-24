@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { CalendarDays, Clock, Calendar, ChevronDown, History, Sparkles, Lock } from "lucide-react";
+import { CalendarDays, Clock, Calendar, ChevronDown, History, Sparkles } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useArchiveAccess } from "@/hooks/use-archive-access";
