@@ -7,7 +7,7 @@ import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { Share2, ExternalLink, X, Sparkles, Clock, ChevronRight } from "lucide-react";
+import { Share2, ExternalLink, X, Sparkles, Clock, ChevronRight, Lock } from "lucide-react";
 import { Button } from "./ui/button";
 import { addToReadHistory } from "@/lib/indexeddb";
 
@@ -15,6 +15,8 @@ interface PostViewProps {
   post: Post;
   isActive: boolean;
   emblaApi?: UseEmblaCarouselType[1];
+  isLocked?: boolean;
+  onUnlockRequest?: () => void;
 }
 
 const decodeHtmlEntities = (text: string) => {
@@ -87,7 +89,7 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
   );
 };
 
-const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
+const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest }) => {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -138,6 +140,11 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
   const handleCardClick = () => {
     if (post.slug === "home") {
       router.push(post.link);
+      return;
+    }
+
+    if (isLocked) {
+      onUnlockRequest?.();
       return;
     }
 
@@ -348,6 +355,15 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive }) => {
               <span>View Details</span>
             </div>
           </div>
+
+          {/* Locked State Overlay */}
+          {isLocked && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] z-20">
+              <div className="bg-background/90 p-3 rounded-full shadow-lg">
+                <Lock className="w-6 h-6 text-primary" />
+              </div>
+            </div>
+          )}
         </div>
       </motion.div>
 

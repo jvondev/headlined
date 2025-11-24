@@ -3,6 +3,7 @@
 import { Post } from '@/types';
 import { addPosts, getAllPostsFromIndexedDB, clearAllPosts, clearOldPosts, getPostsByDate, getPostsDateRange, getReadHistory } from './indexeddb';
 import { topicsData } from '@/data/topics-data';
+import { interestsData } from '@/data/interests-data';
 import { checkLicenseStatus } from './license-manager';
 
 const PAGE_SIZE = 10; // Define page size for pagination
@@ -238,7 +239,7 @@ export const fetchDateRangePosts = async (startDate: string, endDate: string): P
 };
 
 // Get ALL filtered posts at once (optimized for local-first)
-export const getFilteredPosts = async ({ topic_name, search_query, date, dateRange }: { topic_name?: string; search_query?: string; date?: string; dateRange?: { start: string; end: string } }): Promise<Post[]> => {
+export const getFilteredPosts = async ({ topic_name, search_query, interest_name, date, dateRange }: { topic_name?: string; search_query?: string; interest_name?: string; date?: string; dateRange?: { start: string; end: string } }): Promise<Post[]> => {
   let posts: Post[] = [];
 
   if (date) {
@@ -253,6 +254,17 @@ export const getFilteredPosts = async ({ topic_name, search_query, date, dateRan
 
   if (topic_name) {
     filteredPosts = filteredPosts.filter(post => post.topic === topic_name);
+  }
+
+  if (interest_name) {
+    const interest = interestsData.find(i => i.name === interest_name);
+    if (interest) {
+      const searchTerms = [interest.name, ...(interest.aliases || [])].map(t => t.toLowerCase());
+      filteredPosts = filteredPosts.filter(post => {
+        const content = `${post.title} ${post.description || ''}`.toLowerCase();
+        return searchTerms.some(term => content.includes(term));
+      });
+    }
   }
 
   if (search_query) {
@@ -322,7 +334,7 @@ export const getPaginatedPosts = async ({
 export const checkIfFeedHasPosts = async (type: 'topic' | 'interest', name: string, date?: string, dateRange?: { start: string; end: string }): Promise<boolean> => {
   const posts = await getFilteredPosts({
     topic_name: type === 'topic' ? name : undefined,
-    search_query: type === 'interest' ? name : undefined,
+    interest_name: type === 'interest' ? name : undefined,
     date,
     dateRange
   });

@@ -19,6 +19,7 @@ import { DistractionSettings } from "@/components/support/distraction-settings";
 import { useAppUsage } from "@/hooks/use-app-usage";
 import { PremiumModal } from "@/components/support/premium-modal";
 import { SupportButton } from "@/components/support-button";
+import { SearchModal } from "@/components/search/search-modal";
 
 interface DashboardContentProps {
   setIsIntroMode?: (isIntro: boolean) => void;
@@ -64,6 +65,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
 
   const [isPremiumUser, setIsPremiumUser] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -670,8 +672,8 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                   </motion.div >
 
                   {/* Search Widget */}
-                  < motion.div className="col-span-1 relative group" >
-                    <Link href="/search" className="absolute inset-0 z-10" />
+                  < motion.div className="col-span-1 relative group" onClick={() => setShowSearchModal(true)} >
+                    <div className="absolute inset-0 z-10 cursor-pointer" />
                     <Card className="h-40 w-full bg-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col items-center justify-center gap-3 p-5 text-muted-foreground hover:text-foreground group-hover:border-primary/20">
                       <div className="p-3 bg-secondary rounded-full group-hover:bg-primary/10 transition-colors">
                         <Search className="w-6 h-6 group-hover:text-primary transition-colors" />
@@ -710,6 +712,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                   fetchData(); // Refresh data in case license was activated
                 }}
               />
+              <SearchModal isOpen={showSearchModal} onClose={() => setShowSearchModal(false)} />
             </motion.div >
           )
           }

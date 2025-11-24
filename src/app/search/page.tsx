@@ -1,10 +1,11 @@
+import { Suspense } from 'react';
+import { SearchView } from '@/components/search/search-view';
+import { PostPageLoadingSkeleton } from '@/components/post-page-loading-skeleton';
 
-import { redirect } from "next/navigation";
-
-// This page redirects to the homepage if someone lands here without a query.
-// The actual search results are handled by /search/[query]
-export default async function SearchPage() {
-    redirect('/');
+export default function SearchPage() {
+    return (
+        <Suspense fallback={<PostPageLoadingSkeleton />}>
+            <SearchView />
+        </Suspense>
+    );
 }
-
-
