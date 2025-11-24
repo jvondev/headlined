@@ -6,6 +6,7 @@ import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, Pencil, HelpCircle, Sparkles } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "./ui/button";
+import { Card } from "./ui/card";
 import { CarouselContext } from "@/context/carousel-context";
 import { useOnboardingContext } from "@/context/onboarding-context";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
@@ -561,7 +562,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                   <HomepagePostSlide />
                 ) : post.slug === 'search-limit-cta' ? (
                   <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh] flex items-center justify-center p-4">
-                    <div className="max-w-md w-full bg-card/90 backdrop-blur-xl border border-primary/20 rounded-3xl p-8 shadow-2xl text-center space-y-8 relative overflow-hidden group">
+                    <Card className="max-w-md w-full bg-card/90 backdrop-blur-xl border-primary/20 rounded-3xl p-8 shadow-2xl text-center space-y-8 relative overflow-hidden group">
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-transparent opacity-50" />
 
                       <div className="relative z-10">
@@ -570,11 +571,11 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                         </div>
 
                         <h2 className="text-4xl font-black tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-                          Unlock Everything
+                          Unlock All Results
                         </h2>
                         <p className="text-muted-foreground text-lg mb-8 leading-relaxed font-medium">
-                          You've hit the daily limit. <br />
-                          Support independent creators and get unlimited access to all search results.
+                          Free search is limited to 3 results. <br />
+                          Support independent creators to unlock unlimited access.
                         </p>
 
                         <SupportButton
@@ -590,7 +591,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                           Back to Today
                         </Button>
                       </div>
-                    </div>
+                    </Card>
                   </div>
                 ) : (
                   <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
