@@ -63,6 +63,7 @@ export function SearchView() {
                                 onSearch={handleSearch}
                                 isPremium={isPremium}
                                 onPremiumRequest={() => setShowPremiumModal(true)}
+                                showSubscribeButton={true}
                             />
                         </div>
                     </div>
@@ -78,6 +79,8 @@ export function SearchView() {
                             posts={posts}
                             searchQuery={q}
                             topicName={topic}
+                            shouldFetchPaginatedPosts={!posts}
+                            isPremium={isPremium}
                         />
                     )}
                 </div>

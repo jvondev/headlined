@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, type FC, useRef, useMemo } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, Pencil, HelpCircle } from "lucide-react";
+import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, Pencil, HelpCircle, Sparkles } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "./ui/button";
 import { CarouselContext } from "@/context/carousel-context";
@@ -36,6 +36,7 @@ type PostCarouselProps = {
   posts?: Post[];
   date?: string;
   dateRange?: { start: string; end: string };
+  isPremium?: boolean;
 }
 
 const PAGE_SIZE = 10; // Define page size for client-side pagination
@@ -47,6 +48,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   posts: externalPosts,
   date,
   dateRange,
+  isPremium: initialIsPremium,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -71,15 +73,20 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const nextAdDistance = useRef(Math.floor(Math.random() * 5) + 5); // Initial random range 5-10
 
   const { enabled: distractionEnabled, keywords: distractionKeywords, presets, validatePresets } = useDistractionSettings();
-  const [isPremium, setIsPremium] = useState(false);
+  const [isPremium, setIsPremium] = useState(initialIsPremium ?? false);
   const [showSupportModal, setShowSupportModal] = useState(false);
 
   useEffect(() => {
-    checkLicenseStatus().then(status => {
-      setIsPremium(status);
-      validatePresets(status);
-    });
-  }, []);
+    if (initialIsPremium !== undefined) {
+      setIsPremium(initialIsPremium);
+      validatePresets(initialIsPremium);
+    } else {
+      checkLicenseStatus().then(status => {
+        setIsPremium(status);
+        validatePresets(status);
+      });
+    }
+  }, [initialIsPremium, validatePresets]);
 
   const filterDistractions = useCallback((postsToFilter: Post[]) => {
     return postsToFilter.filter(post => {
@@ -120,7 +127,9 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     // Freemium Search Logic
     if (searchQuery && !isPremium) {
       // 1. Filter for Today's articles only
-      const todayStr = new Date().toISOString().split('T')[0];
+      const now = new Date();
+      const offset = now.getTimezoneOffset() * 60000;
+      const todayStr = new Date(now.getTime() - offset).toISOString().split('T')[0];
 
       const todayPosts = filtered.filter(post => {
         if (!post.date) return false;
@@ -552,27 +561,30 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                   <HomepagePostSlide />
                 ) : post.slug === 'search-limit-cta' ? (
                   <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh] flex items-center justify-center p-4">
-                    <div className="max-w-md w-full bg-card border border-border rounded-3xl p-8 shadow-2xl text-center space-y-6 relative overflow-hidden group">
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="max-w-md w-full bg-card/90 backdrop-blur-xl border border-primary/20 rounded-3xl p-8 shadow-2xl text-center space-y-8 relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-transparent opacity-50" />
 
                       <div className="relative z-10">
-                        <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                          <HelpCircle className="w-10 h-10 text-primary" />
+                        <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner ring-1 ring-white/10 group-hover:scale-105 transition-transform duration-500">
+                          <Sparkles className="w-12 h-12 text-primary drop-shadow-md" />
                         </div>
 
-                        <h2 className="text-3xl font-bold tracking-tight mb-2">Unlock All Results</h2>
-                        <p className="text-muted-foreground text-lg mb-8">
-                          You've reached the free search limit. Upgrade to ReadMore+ to access unlimited search results and history.
+                        <h2 className="text-4xl font-black tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+                          Unlock Everything
+                        </h2>
+                        <p className="text-muted-foreground text-lg mb-8 leading-relaxed font-medium">
+                          You've hit the daily limit. <br />
+                          Support independent creators and get unlimited access to all search results.
                         </p>
 
                         <SupportButton
                           onClick={() => setShowSupportModal(true)}
-                          className="w-full h-14 text-lg font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                          className="w-full h-16 text-xl font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-r from-primary to-purple-600 border-none"
                         />
 
                         <Button
                           variant="ghost"
-                          className="w-full mt-4"
+                          className="w-full mt-4 text-muted-foreground hover:text-foreground"
                           onClick={() => router.push('/today')}
                         >
                           Back to Today

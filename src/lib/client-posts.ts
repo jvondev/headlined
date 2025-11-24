@@ -264,6 +264,13 @@ export const getFilteredPosts = async ({ topic_name, search_query, interest_name
         const content = `${post.title} ${post.description || ''}`.toLowerCase();
         return searchTerms.some(term => content.includes(term));
       });
+    } else {
+      // Handle custom interest (keyword)
+      const searchTerm = interest_name.toLowerCase();
+      filteredPosts = filteredPosts.filter(post => {
+        const content = `${post.title} ${post.description || ''}`.toLowerCase();
+        return content.includes(searchTerm);
+      });
     }
   }
 

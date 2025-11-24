@@ -7,7 +7,7 @@ import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { Share2, ExternalLink, X, Sparkles, Clock, ChevronRight, Lock } from "lucide-react";
+import { Share2, ExternalLink, X, Sparkles, Clock, ChevronRight, Lock, Bookmark } from "lucide-react";
 import { Button } from "./ui/button";
 import { addToReadHistory } from "@/lib/indexeddb";
 
@@ -17,6 +17,9 @@ interface PostViewProps {
   emblaApi?: UseEmblaCarouselType[1];
   isLocked?: boolean;
   onUnlockRequest?: () => void;
+  onSave?: () => void;
+  isSaved?: boolean;
+  onShare?: () => void;
 }
 
 const decodeHtmlEntities = (text: string) => {
@@ -89,7 +92,7 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
   );
 };
 
-const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest }) => {
+const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest, onSave, isSaved, onShare }) => {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -498,13 +501,30 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                         Read Full Story <ExternalLink className="w-4 h-4 ml-2" />
                       </Button>
 
+                      {onSave && (
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className={cn(
+                            "h-12 w-12 rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 backdrop-blur-sm",
+                            isSaved && "bg-primary text-primary-foreground hover:bg-primary/90 border-primary"
+                          )}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSave();
+                          }}
+                        >
+                          <Bookmark className={cn("w-5 h-5", isSaved && "fill-current")} />
+                        </Button>
+                      )}
+
                       <Button
                         variant="outline"
                         size="icon"
                         className="h-12 w-12 rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 backdrop-blur-sm"
                         onClick={(e) => {
                           e.stopPropagation();
-                          // Share logic here
+                          onShare?.();
                         }}
                       >
                         <Share2 className="w-5 h-5" />

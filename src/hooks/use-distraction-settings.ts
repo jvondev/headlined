@@ -121,6 +121,32 @@ export function useDistractionSettings() {
         });
     };
 
+    const filterDistractions = (posts: any[], isPremium: boolean) => {
+        if (!posts || !Array.isArray(posts)) return [];
+        if (!enabled) return posts;
+
+        return posts.filter(post => {
+            const content = (post.title + " " + (post.description || "")).toLowerCase();
+
+            // Check keywords
+            const hasKeyword = keywords.some(keyword => content.includes(keyword.toLowerCase()));
+            if (hasKeyword) return false;
+
+            // Check presets
+            for (const [presetId, isActive] of Object.entries(presets)) {
+                if (isActive) {
+                    const preset = DISTRACTION_FILTERS.find(p => p.id === presetId);
+                    if (preset && preset.keywords) {
+                        const matchesPreset = preset.keywords.some(k => content.includes(k.toLowerCase()));
+                        if (matchesPreset) return false;
+                    }
+                }
+            }
+
+            return true;
+        });
+    };
+
     return {
         enabled,
         toggleEnabled,
@@ -132,5 +158,6 @@ export function useDistractionSettings() {
         enforceSinglePreset,
         validatePresets,
         loaded,
+        filterDistractions,
     };
 }

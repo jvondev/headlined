@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Filter, ArrowRight, Rss, Lock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -19,9 +20,10 @@ interface SearchInputProps {
     className?: string;
     isPremium?: boolean;
     onPremiumRequest?: () => void;
+    showSubscribeButton?: boolean;
 }
 
-export function SearchInput({ initialQuery = '', onSearch, autoFocus = false, className, isPremium = false, onPremiumRequest }: SearchInputProps) {
+export function SearchInput({ initialQuery = '', onSearch, autoFocus = false, className, isPremium = false, onPremiumRequest, showSubscribeButton = false }: SearchInputProps) {
     const [query, setQuery] = useState(initialQuery);
     const [isExpanded, setIsExpanded] = useState(false);
     const [filterType, setFilterType] = useState<'all' | 'topic' | 'interest'>('all');
@@ -87,8 +89,8 @@ export function SearchInput({ initialQuery = '', onSearch, autoFocus = false, cl
 
     return (
         <>
-            <div className={cn("w-full max-w-2xl mx-auto relative z-50", className)}>
-                <div className="relative flex items-center gap-2">
+            <div className={cn("w-full max-w-2xl mx-auto relative z-50 flex items-center gap-2", className)}>
+                <div className="relative flex-1">
                     <div className="relative flex-1">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
@@ -122,39 +124,42 @@ export function SearchInput({ initialQuery = '', onSearch, autoFocus = false, cl
                             </Button>
                         </div>
                     </div>
-
                 </div>
 
                 {/* Subscribe Button (Beside Search Bar) */}
-                {query && (
+                {showSubscribeButton && query && (
                     <div className="shrink-0">
-                        <Button
-                            size="lg"
-                            variant={isSubscribed ? "default" : "outline"}
-                            onClick={handleSubscribe}
-                            className={cn(
-                                "h-14 px-6 rounded-2xl transition-all border-2 flex items-center gap-2 shadow-sm hover:shadow-md",
-                                !isPremium && "opacity-90 border-dashed border-primary/30 hover:border-primary/60 bg-secondary/30"
-                            )}
-                            title={isPremium ? "Subscribe to this search" : "Premium: Subscribe to this search"}
-                        >
-                            {isPremium ? (
-                                <>
-                                    <Rss className={cn("w-5 h-5", isSubscribed && "fill-current")} />
-                                    <span className="font-bold">{isSubscribed ? "Subscribed" : "Subscribe"}</span>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="relative">
-                                        <Rss className="w-5 h-5 opacity-50" />
-                                        <div className="absolute -top-1.5 -right-1.5 bg-background rounded-full p-0.5 shadow-sm border border-border">
-                                            <Lock className="w-2.5 h-2.5 text-primary" />
-                                        </div>
+                        <Card className={cn(
+                            "h-14 pl-5 pr-2 rounded-2xl flex items-center gap-4 shadow-sm hover:shadow-md transition-all border-2",
+                            !isPremium && "bg-secondary/30 border-primary/10"
+                        )}>
+                            <div className="flex flex-col items-start justify-center">
+                                <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground leading-tight">
+                                    Get daily posts
+                                </span>
+                                <span className="text-sm font-bold max-w-[120px] sm:max-w-[160px] truncate leading-tight">
+                                    about "{query}"
+                                </span>
+                            </div>
+                            <Button
+                                size="sm"
+                                variant={isSubscribed ? "secondary" : (isPremium ? "default" : "outline")}
+                                onClick={handleSubscribe}
+                                className={cn(
+                                    "rounded-xl h-10 px-5 font-bold transition-all shadow-sm",
+                                    !isPremium && "border-primary/20 hover:bg-primary/5 hover:text-primary hover:border-primary/50"
+                                )}
+                            >
+                                {isPremium ? (
+                                    isSubscribed ? "Subscribed" : "Subscribe"
+                                ) : (
+                                    <div className="flex items-center gap-1.5">
+                                        <Lock className="w-3.5 h-3.5" />
+                                        <span>Unlock</span>
                                     </div>
-                                    <span className="font-medium text-muted-foreground">Subscribe</span>
-                                </>
-                            )}
-                        </Button>
+                                )}
+                            </Button>
+                        </Card>
                     </div>
                 )}
             </div>
