@@ -622,6 +622,28 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                       post={post}
                       isActive={index === activeSlideIndex}
                       emblaApi={emblaApi}
+                      isLocked={false}
+                      isPremium={isPremium}
+                      onSave={() => {
+                        if (hasSaved(post.slug)) {
+                          handleRemoveFromSaved(post.slug);
+                        } else {
+                          setIsSaveDialogOpen(true);
+                        }
+                      }}
+                      isSaved={hasSaved(post.slug)}
+                      onShare={() => {
+                        if (navigator.share) {
+                          navigator.share({
+                            title: post.title,
+                            text: post.description,
+                            url: post.link,
+                          }).catch(console.error);
+                        } else {
+                          navigator.clipboard.writeText(post.link);
+                          toast({ title: "Copied", description: "Link copied to clipboard" });
+                        }
+                      }}
                     />
                   </div>
                 )

@@ -20,6 +20,7 @@ interface PostViewProps {
     onSave?: () => void;
     isSaved?: boolean;
     onShare?: () => void;
+    isPremium?: boolean;
 }
 
 const decodeHtmlEntities = (text: string) => {
@@ -75,7 +76,7 @@ const TypewriterText = ({ text, onComplete, shouldSkip }: { text: string; onComp
     );
 };
 
-const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest, onSave, isSaved, onShare }) => {
+const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest, onSave, isSaved, onShare, isPremium }) => {
     const router = useRouter();
     const [isExpanded, setIsExpanded] = useState(false);
     const [mounted, setMounted] = useState(false);
@@ -415,9 +416,17 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                             </div>
 
                                             {/* Typewriter Summary */}
-                                            <div className="min-h-[200px]">
+                                            <div className="min-h-[50px]">
                                                 <TypewriterText text={summaryText} shouldSkip={skipTypewriter} />
                                             </div>
+
+                                            {/* Programmatic Ad Container */}
+                                            {!isPremium && (
+                                                <div className="w-full min-h-[250px] bg-zinc-900/30 rounded-2xl flex items-center justify-center overflow-hidden border border-white/5">
+                                                    {/* @ts-ignore */}
+                                                    <div ta-ad-container="" className="w-full h-full" />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
