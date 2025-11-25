@@ -437,7 +437,7 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.3 }}
+                            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                         >
                             <motion.div
                                 className="relative w-full h-full flex flex-col will-change-transform touch-pan-y"
@@ -446,114 +446,141 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                 onTouchMove={handleTouchMove}
                                 onTouchEnd={handleTouchEnd}
                             >
-                                <div className="absolute inset-0 overflow-hidden bg-muted/30 dark:bg-muted/10">
-                                    {post.thumbnail_url ? (
-                                        <motion.img
-                                            src={post.thumbnail_url}
-                                            alt=""
-                                            className="w-full h-full object-cover"
-                                            layoutId={`image-${uniqueId}`}
-                                            transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
-                                        />
-                                    ) : (
-                                        <motion.div
-                                            className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-zinc-800 dark:to-zinc-900"
-                                            layoutId={`image-${uniqueId}`}
-                                        />
-                                    )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent opacity-90" />
-                                </div>
+                                {/* Close Button - Floating Top Right */}
+                                <motion.button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsExpanded(false);
+                                    }}
+                                    className="absolute top-6 right-6 z-[60] p-3 rounded-full bg-black/20 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all hover:scale-110 active:scale-95 shadow-lg"
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: 0.2, duration: 0.3 }}
+                                >
+                                    <X className="w-5 h-5" />
+                                </motion.button>
 
-                                <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-50">
-                                    <motion.button
-                                        onClick={() => setIsExpanded(false)}
-                                        className="p-2 rounded-full bg-black/40 border border-white/10 text-white/90 hover:bg-white/20 transition-colors"
-                                        whileTap={{ scale: 0.9 }}
-                                    >
-                                        <X className="w-5 h-5" />
-                                    </motion.button>
-
-                                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 border border-white/10 text-xs font-medium text-white/90">
-                                        <Clock className="w-3 h-3" />
-                                        {readingTime}
-                                    </div>
-                                </div>
-
+                                {/* Scrollable Content Container */}
                                 <div
                                     ref={scrollContainerRef}
-                                    className="relative flex-1 flex flex-col justify-end p-6 md:p-12 pb-10 md:pb-16 overflow-y-auto no-scrollbar overscroll-contain"
+                                    className="relative flex-1 overflow-y-auto no-scrollbar overscroll-contain bg-black"
                                     onScroll={(e) => e.stopPropagation()}
                                 >
-                                    <motion.div
-                                        layoutId={`header-${uniqueId}`}
-                                        className="max-w-3xl mx-auto w-full space-y-6"
-                                    >
-                                        <div className="flex items-center gap-3 opacity-80">
-                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white text-black uppercase tracking-wider">
-                                                News
-                                            </span>
-                                            <span className="text-xs font-medium text-white/80 uppercase tracking-wide">
-                                                {new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}
-                                            </span>
+                                    {/* Hero Section */}
+                                    <div className="relative w-full h-[55vh] md:h-[65vh] overflow-hidden">
+                                        {post.thumbnail_url ? (
+                                            <motion.img
+                                                src={post.thumbnail_url}
+                                                alt=""
+                                                className="w-full h-full object-cover"
+                                                layoutId={`image-${uniqueId}`}
+                                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                                            />
+                                        ) : (
+                                            <motion.div
+                                                className="w-full h-full bg-gradient-to-br from-zinc-800 to-black"
+                                                layoutId={`image-${uniqueId}`}
+                                            />
+                                        )}
+                                        {/* Hero Gradient Overlay */}
+                                        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+
+                                        {/* Hero Content */}
+                                        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 pb-12 flex flex-col justify-end z-20">
+                                            <motion.div
+                                                layoutId={`header-${uniqueId}`}
+                                                className="max-w-4xl mx-auto w-full space-y-4"
+                                            >
+                                                {/* Meta Badges */}
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white text-black uppercase tracking-widest shadow-lg">
+                                                        {post.topic || 'News'}
+                                                    </span>
+                                                    <span className="flex items-center gap-1.5 text-xs font-medium text-white/80 uppercase tracking-wide bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                                                        <Clock className="w-3 h-3" />
+                                                        {new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+                                                    </span>
+                                                </div>
+
+                                                {/* Title */}
+                                                <h1 className="font-sans text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[0.95] tracking-tighter text-balance drop-shadow-2xl">
+                                                    {decodedTitle}
+                                                </h1>
+                                            </motion.div>
                                         </div>
+                                    </div>
 
-                                        <h1 className="font-sans text-3xl md:text-4xl font-bold text-white leading-tight tracking-tight text-balance">
-                                            {decodedTitle}
-                                        </h1>
-
-                                        <div className="space-y-4">
-                                            <div className="flex items-center gap-2 text-primary-foreground/80">
-                                                <Sparkles className="w-4 h-4" />
-                                                <span className="text-xs font-semibold uppercase tracking-wider">AI Summary</span>
+                                    {/* Article Content */}
+                                    <div className="relative z-10 px-6 md:px-10 pb-32 max-w-4xl mx-auto -mt-4">
+                                        {/* Summary Section */}
+                                        <div className="space-y-8">
+                                            <div className="flex items-center gap-3 pb-4 border-b border-white/10">
+                                                <div className="p-2 rounded-full bg-white/5 border border-white/10">
+                                                    <Sparkles className="w-4 h-4 text-white" />
+                                                </div>
+                                                <span className="text-sm font-semibold text-white/90 uppercase tracking-widest">Executive Summary</span>
+                                                <div className="flex-1" />
+                                                <span className="text-xs font-medium text-white/50">{readingTime}</span>
                                             </div>
 
-                                            <div className="text-lg md:text-xl leading-relaxed text-primary-foreground font-sans font-light border-l-2 border-white/80 pl-4">
+                                            <div className="text-xl md:text-2xl leading-relaxed text-white/90 font-serif font-light">
                                                 <TypewriterText text={summaryText} />
                                             </div>
                                         </div>
-
-                                        <div className="flex items-center gap-4 pt-6">
-                                            <Button
-                                                className="flex-1 h-12 rounded-full bg-white text-black hover:bg-white/90 font-medium text-base transition-transform active:scale-95"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    window.open(post.link, "_blank");
-                                                }}
-                                            >
-                                                Read Full Story <ExternalLink className="w-4 h-4 ml-2" />
-                                            </Button>
-
-                                            {onSave && (
-                                                <Button
-                                                    variant="outline"
-                                                    size="icon"
-                                                    className={cn(
-                                                        "h-12 w-12 rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 backdrop-blur-sm",
-                                                        isSaved && "bg-primary text-primary-foreground hover:bg-primary/90 border-primary"
-                                                    )}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        onSave();
-                                                    }}
-                                                >
-                                                    <Bookmark className={cn("w-5 h-5", isSaved && "fill-current")} />
-                                                </Button>
-                                            )}
-
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="h-12 w-12 rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 backdrop-blur-sm"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    onShare?.();
-                                                }}
-                                            >
-                                                <Share2 className="w-5 h-5" />
-                                            </Button>
-                                        </div>
-                                    </motion.div>
+                                    </div>
                                 </div>
+
+                                {/* Floating Action Dock - Bottom */}
+                                <motion.div
+                                    className="absolute bottom-8 left-0 right-0 flex justify-center z-50 pointer-events-none"
+                                    initial={{ y: 100, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.3, type: "spring", stiffness: 200, damping: 20 }}
+                                >
+                                    <div className="flex items-center gap-2 p-2 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl pointer-events-auto">
+                                        <Button
+                                            className="h-12 px-8 rounded-full bg-white text-black hover:bg-white/90 font-bold text-base tracking-wide transition-all hover:scale-105 active:scale-95 shadow-lg"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                window.open(post.link, "_blank");
+                                            }}
+                                        >
+                                            Read Full Story <ExternalLink className="w-4 h-4 ml-2" />
+                                        </Button>
+
+                                        <div className="w-px h-6 bg-white/20 mx-1" />
+
+                                        {onSave && (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className={cn(
+                                                    "h-12 w-12 rounded-full text-white hover:bg-white/10 transition-all hover:scale-110 active:scale-90",
+                                                    isSaved && "text-white bg-white/20"
+                                                )}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onSave();
+                                                }}
+                                            >
+                                                <Bookmark className={cn("w-5 h-5", isSaved && "fill-current")} />
+                                            </Button>
+                                        )}
+
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-12 w-12 rounded-full text-white hover:bg-white/10 transition-all hover:scale-110 active:scale-90"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onShare?.();
+                                            }}
+                                        >
+                                            <Share2 className="w-5 h-5" />
+                                        </Button>
+                                    </div>
+                                </motion.div>
                             </motion.div>
                         </motion.div>
                     )}
