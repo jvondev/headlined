@@ -28,28 +28,9 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
-// Helper to check access rights
-const checkAccess = async (): Promise<boolean> => {
-  const isPremium = await checkLicenseStatus();
-  if (isPremium) return true;
-
-  // Check usage for non-premium users
-  if (typeof window === 'undefined') return false;
-  const storedUsage = localStorage.getItem("app-usage");
-  if (!storedUsage) return true; // New user, allow access
-
-  try {
-    const currentUsage = JSON.parse(storedUsage);
-    const firstDate = new Date(currentUsage.firstLaunchDate || new Date().toISOString());
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - firstDate.getTime());
-    const daysSinceFirstLaunch = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    return daysSinceFirstLaunch <= 2;
-  } catch (e) {
-    return true; // Fallback to allow if parsing fails
-  }
-};
+// Note: Archive access is ONLY for premium users
+// The app usage check (in use-archive-access.ts) should only control UI visibility
+// (showing/hiding History nav item) but should NOT grant data access to historical posts
 
 export const fetchAllPosts = async (): Promise<Post[]> => {
   // 1. Try to load from in-memory cache first for fast initial load
@@ -139,7 +120,7 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
 
         // Check license status for retention policy
         const isPremium = await checkLicenseStatus();
-        const daysToKeep = isPremium ? 30 : 2; // Keep 30 days for premium, 2 days for free (today + yesterday fallback)
+        const daysToKeep = isPremium ? 30 : 1; // Keep 30 days for premium, 1 day for free
 
         // Clear old posts based on retention policy
         await clearOldPosts(daysToKeep);
@@ -181,10 +162,10 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
 };
 
 export const fetchArchivePosts = async (date: string): Promise<Post[]> => {
-  // 0. Check Access
-  const hasAccess = await checkAccess();
-  if (!hasAccess) {
-    return [];
+  // 0. Check Access - Archive access is PREMIUM ONLY
+  const isPremium = await checkLicenseStatus();
+  if (!isPremium) {
+    return []; // Non-premium users cannot access historical data
   }
 
   // 1. Check IndexedDB first
@@ -217,10 +198,10 @@ export const fetchArchivePosts = async (date: string): Promise<Post[]> => {
 };
 
 export const fetchDateRangePosts = async (startDate: string, endDate: string): Promise<Post[]> => {
-  // 0. Check Access
-  const hasAccess = await checkAccess();
-  if (!hasAccess) {
-    return [];
+  // 0. Check Access - Archive access is PREMIUM ONLY
+  const isPremium = await checkLicenseStatus();
+  if (!isPremium) {
+    return []; // Non-premium users cannot access historical data
   }
 
   // This is a bit complex because we need to iterate days.

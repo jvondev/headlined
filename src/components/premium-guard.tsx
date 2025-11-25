@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { checkLicenseStatus } from "@/lib/license-manager";
-import { useAppUsage } from "@/hooks/use-app-usage";
 
 import { PremiumModal } from "@/components/support/premium-modal";
 
@@ -18,7 +17,6 @@ export function PremiumGuard({ children, fallback, disabled }: PremiumGuardProps
     const [isPremium, setIsPremium] = useState<boolean | null>(null);
     const [showModal, setShowModal] = useState(false);
     const router = useRouter();
-    const usage = useAppUsage();
 
     useEffect(() => {
         checkLicenseStatus().then(setIsPremium);
@@ -26,13 +24,10 @@ export function PremiumGuard({ children, fallback, disabled }: PremiumGuardProps
 
     useEffect(() => {
         if (!disabled && isPremium === false) {
-            // Delayed Paywall Logic:
-            // Only block if user has used the app for > 2 days.
-            if (usage.daysUsed > 2) {
-                setShowModal(true);
-            }
+            // Block immediately for premium-only content
+            setShowModal(true);
         }
-    }, [isPremium, usage, disabled]);
+    }, [isPremium, disabled]);
 
     if (disabled) {
         return <>{children}</>;
@@ -46,25 +41,25 @@ export function PremiumGuard({ children, fallback, disabled }: PremiumGuardProps
         );
     }
 
-    // If blocked, show modal AND children (so the background is visible but blocked by modal overlay)
-    // OR show modal and fallback?
-    // User wants "SPA feel", so showing the underlying page (maybe blurred) is best.
+    // If not premium and guard is enabled, block completely
+    if (!isPremium) {
+        return (
+            <>
+                {fallback || (
+                    <div className="flex h-full w-full items-center justify-center min-h-[50vh]">
+                        <div className="text-center space-y-4 p-8">
+                            <p className="text-lg text-muted-foreground">Premium content</p>
+                        </div>
+                    </div>
+                )}
+                <PremiumModal isOpen={showModal} onClose={() => {
+                    // Redirect to home if they try to close without upgrading
+                    router.push('/today');
+                }} />
+            </>
+        );
+    }
 
-    const isBlocked = !isPremium && usage.daysUsed > 2;
-
-    return (
-        <>
-            {children}
-            <PremiumModal isOpen={showModal} onClose={() => {
-                // Optional: redirect to home if they close the modal without paying?
-                // Or just keep it open?
-                // For now, let's keep it open or redirect to home if they try to close it.
-                // If we want to FORCE them, we shouldn't allow closing.
-                // But PremiumModal uses Dialog which usually has a close button.
-                // If they close it, they are still on the restricted page.
-                // So we should probably redirect to home if they close it.
-                router.push('/today');
-            }} />
-        </>
-    );
+    // User is premium, render children normally
+    return <>{children}</>;
 }
