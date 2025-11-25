@@ -24,7 +24,7 @@ import { SaveDialog } from "./save-dialog";
 import { PremiumModal } from "@/components/support/premium-modal";
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
 import { Post, SavedItem } from "@/types";
-import { affiliateAds, AffiliateProgram } from "@/data/affiliate-ads";
+
 import { useDistractionSettings } from "@/hooks/use-distraction-settings";
 import { checkLicenseStatus } from "@/lib/license-manager";
 import { SupportButton } from "@/components/support-button";
@@ -71,7 +71,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const page = useRef(1);
-  const nextAdDistance = useRef(Math.floor(Math.random() * 5) + 5); // Initial random range 5-10
+  const nextAdDistance = useRef(Math.floor(Math.random() * 8) + 5); // Random 5-12
 
   const { enabled: distractionEnabled, keywords: distractionKeywords, presets, validatePresets } = useDistractionSettings();
   const [isPremium, setIsPremium] = useState(initialIsPremium ?? false);
@@ -170,55 +170,34 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     }
   }, [shouldFetchPaginatedPosts, externalPosts]);
 
-  const createAdPost = useCallback((program: AffiliateProgram): Post => {
-    const variant = program.variants[Math.floor(Math.random() * program.variants.length)];
+  const createNativeAdPost = useCallback((): Post => {
     return {
-      slug: `ad-${program.name}-${Math.random().toString(36).substr(2, 9)}`,
-      title: variant.title,
-      description: variant.description,
-      link: variant.link,
-      thumbnail_url: variant.asset,
-      topic: "Sponsored",
-      summaries: [{
-        type: 'article-summary',
-        title: 'Summary',
-        icon: 'Info',
-        content: {
-          snippet: variant.description,
-          originalArticleUrl: variant.link,
-          slug: `ad-summary-${Math.random()}`
-        }
-      }]
+      slug: `ad-native-${Math.random().toString(36).substr(2, 9)}`,
+      title: 'Sponsored Content',
+      description: 'Sponsored',
+      link: '#',
+      thumbnail_url: null,
+      topic: 'Sponsored',
+      summaries: [],
+      date: new Date().toISOString().split('T')[0]
     };
   }, []);
 
   const injectAds = useCallback((newPosts: Post[]) => {
     const postsWithAds: Post[] = [];
 
-    // Filter ads relevant to current topic/interest
-    const relevantAds = affiliateAds.filter(ad => {
-      if (topicName && ad.topics && !ad.topics.includes(topicName)) return false;
-      if (searchQuery && ad.interests && !ad.interests.includes(searchQuery)) return false;
-      return true;
-    });
-
-    if (relevantAds.length === 0) return newPosts;
-
     for (const post of newPosts) {
       postsWithAds.push(post);
       nextAdDistance.current -= 1;
 
       if (nextAdDistance.current <= 0) {
-        const randomAd = relevantAds[Math.floor(Math.random() * relevantAds.length)];
-        const min = randomAd.frequency?.min || 5;
-        const max = randomAd.frequency?.max || 10;
-
-        postsWithAds.push(createAdPost(randomAd));
-        nextAdDistance.current = Math.floor(Math.random() * (max - min + 1)) + min;
+        postsWithAds.push(createNativeAdPost());
+        // Reset distance to random 5-12
+        nextAdDistance.current = Math.floor(Math.random() * 8) + 5;
       }
     }
     return postsWithAds;
-  }, [topicName, searchQuery, createAdPost]);
+  }, [createNativeAdPost]);
 
   const fetchPosts = useCallback(async () => {
     if (isLoading || externalPosts) return; // Skip fetch if external posts provided
@@ -245,7 +224,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, topicName, searchQuery, injectAds, externalPosts, date, dateRange]);
+  }, [isLoading, topicName, searchQuery, externalPosts, date, dateRange, injectAds]);
 
   useEffect(() => {
     if (hasActivated && !externalPosts) {
@@ -347,14 +326,13 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
     if (newPosts.length > 0) {
       setInternalPosts(prev => {
-        const postsWithAds = injectAds(newPosts);
-        const updatedPosts = [...prev, ...postsWithAds];
+        const updatedPosts = [...prev, ...newPosts];
         return updatedPosts;
       });
     }
     setHasMore(newHasMore);
     setIsLoading(false);
-  }, [isLoading, hasMore, topicName, searchQuery, injectAds, externalPosts, date, dateRange]);
+  }, [isLoading, hasMore, topicName, searchQuery, externalPosts, date, dateRange]);
 
 
   useEffect(() => {
@@ -592,6 +570,17 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                         </Button>
                       </div>
                     </Card>
+                  </div>
+                ) : post.slug.startsWith('ad-') ? (
+                  <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
+                    <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-gradient-to-br from-zinc-900 to-black shadow-2xl border border-white/5 flex items-center justify-center">
+                      <div {...{ 'ta-ad-container': '' }} className="w-full h-full flex items-center justify-center" />
+                      <div className="absolute top-6 left-6 z-10">
+                        <span className="px-3 py-1 rounded-full bg-black/40 border border-white/10 text-xs font-medium text-white/90 tracking-wide uppercase">
+                          Sponsored
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">

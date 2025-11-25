@@ -40,9 +40,10 @@ export default function RootLayout({
           `}
         </Script>
         <Script
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6433098285542556"
+          src="https://cdn.apitiny.net/scripts/v2.0/main.js"
+          data-site-id="69229d201caeadfb3c21dd85"
+          data-test-mode="true"
           strategy="afterInteractive"
-          crossOrigin="anonymous"
         />
         <Script
           src="https://static.cloudflareinsights.com/beacon.min.js"
