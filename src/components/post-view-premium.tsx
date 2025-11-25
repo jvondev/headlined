@@ -4,7 +4,7 @@ import type { Post } from "@/types";
 import React, { useEffect, type FC, useMemo, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
-import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Share2, ExternalLink, X, Sparkles, Clock, ChevronRight, Lock, Bookmark, Heart } from "lucide-react";
@@ -51,7 +51,6 @@ const TypewriterText = ({ text, onComplete, shouldSkip }: { text: string; onComp
                 delay = 2;
                 charsToAdd = 5;
             } else {
-                // Dynamic pacing for natural feel
                 const progress = currentIndex / textChars.length;
                 delay = Math.max(5, 30 * (1 - progress));
             }
@@ -69,9 +68,9 @@ const TypewriterText = ({ text, onComplete, shouldSkip }: { text: string; onComp
     }, [currentIndex, textChars, onComplete, shouldSkip]);
 
     return (
-        <p className="text-lg md:text-xl leading-relaxed font-serif text-foreground/90">
+        <p className="text-lg md:text-xl leading-relaxed font-serif text-zinc-300">
             {displayedText}
-            {currentIndex < textChars.length && <span className="inline-block w-[2px] h-5 ml-1 bg-primary animate-pulse align-middle" />}
+            {currentIndex < textChars.length && <span className="inline-block w-[2px] h-5 ml-1 bg-white animate-pulse align-middle" />}
         </p>
     );
 };
@@ -165,11 +164,11 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
         return `${minutes} min read`;
     }, [summaryText]);
 
-    // Touch Handling
+    // Enhanced Touch Handling for "Award Worthy" Feel
     const handleTouchStart = (e: React.TouchEvent) => {
-        // Only allow drag to close if we are at the top of the scroll
         const scrollContainer = scrollContainerRef.current;
-        if (scrollContainer && scrollContainer.scrollTop > 0) return;
+        // Allow gesture if at top of scroll
+        if (scrollContainer && scrollContainer.scrollTop > 5) return;
 
         touchStart.current = {
             x: e.touches[0].clientX,
@@ -181,7 +180,7 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
     const handleTouchMove = (e: React.TouchEvent) => {
         if (!touchStart.current) return;
         const scrollContainer = scrollContainerRef.current;
-        if (scrollContainer && scrollContainer.scrollTop > 0) return;
+        if (scrollContainer && scrollContainer.scrollTop > 5) return;
 
         const currentY = e.touches[0].clientY;
         const currentX = e.touches[0].clientX;
@@ -190,20 +189,26 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
 
         // Only allow dragging DOWN to close
         if (deltaY > 0) {
-            e.preventDefault(); // Prevent scrolling while dragging down
-            y.set(deltaY * 0.5); // Resistance
-            x.set(deltaX * 0.5);
+            // Add resistance
+            const resistance = 0.5;
+            y.set(deltaY * resistance);
+
+            // Optional: slight horizontal movement for natural feel
+            x.set(deltaX * 0.2);
         }
     };
 
     const handleTouchEnd = (e: React.TouchEvent) => {
         touchStart.current = null;
         const verticalDistance = y.get();
-        if (verticalDistance > 100) {
+
+        // Threshold to close
+        if (verticalDistance > 120) {
             setIsExpanded(false);
         } else {
-            animate(y, 0, { type: "spring", stiffness: 300, damping: 30 });
-            animate(x, 0, { type: "spring", stiffness: 300, damping: 30 });
+            // Spring back
+            animate(y, 0, { type: "spring", stiffness: 400, damping: 40 });
+            animate(x, 0, { type: "spring", stiffness: 400, damping: 40 });
         }
     };
 
@@ -323,7 +328,7 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                     {isExpanded && (
                         <motion.div
                             layoutId={`card-container-${uniqueId}`}
-                            className="fixed inset-0 z-[100] flex flex-col bg-background/95 backdrop-blur-xl overscroll-none"
+                            className="fixed inset-0 z-[100] flex flex-col bg-zinc-950 backdrop-blur-xl overscroll-none"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -343,7 +348,7 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                         e.stopPropagation();
                                         setIsExpanded(false);
                                     }}
-                                    className="absolute top-6 right-6 z-[60] p-3 rounded-full bg-black/20 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all active:scale-95 shadow-lg"
+                                    className="absolute top-6 right-6 z-[60] p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all active:scale-95 shadow-lg"
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: 0.2 }}
@@ -372,7 +377,7 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                             />
                                         )}
                                         {/* Gradient Overlay for Text Readability */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent opacity-90" />
 
                                         {/* Title on Image */}
                                         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 pb-12 flex flex-col justify-end z-20">
@@ -393,25 +398,26 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                         </div>
                                     </div>
 
-                                    {/* Content Body - Light Mode Friendly */}
-                                    <div className="relative z-10 bg-background px-6 md:px-10 py-10 pb-32 -mt-6 rounded-t-[30px] shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+                                    {/* Content Body - Dark Mode */}
+                                    <div className="relative z-10 bg-zinc-950 px-6 md:px-10 py-10 pb-32 -mt-6 rounded-t-[30px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border-t border-white/5">
+                                        {/* Drag Handle Indicator */}
+                                        <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-8" />
+
                                         <div className="max-w-3xl mx-auto space-y-8">
                                             {/* Summary Header */}
-                                            <div className="flex items-center gap-3 pb-4 border-b border-border/50">
-                                                <div className="p-2 rounded-full bg-primary/10">
-                                                    <Sparkles className="w-4 h-4 text-primary" />
+                                            <div className="flex items-center gap-3 pb-4 border-b border-white/10">
+                                                <div className="p-2 rounded-full bg-white/5 border border-white/5">
+                                                    <Sparkles className="w-4 h-4 text-white" />
                                                 </div>
-                                                <span className="text-sm font-bold text-foreground/80 uppercase tracking-widest">Executive Summary</span>
+                                                <span className="text-sm font-bold text-zinc-200 uppercase tracking-widest">Executive Summary</span>
                                                 <div className="flex-1" />
-                                                <span className="text-xs font-medium text-muted-foreground">{readingTime}</span>
+                                                <span className="text-xs font-medium text-zinc-500">{readingTime}</span>
                                             </div>
 
                                             {/* Typewriter Summary */}
                                             <div className="min-h-[200px]">
                                                 <TypewriterText text={summaryText} shouldSkip={skipTypewriter} />
                                             </div>
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -423,9 +429,9 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.3, type: "spring", stiffness: 200, damping: 20 }}
                                 >
-                                    <div className="flex items-center gap-2 p-2 rounded-full bg-background/80 backdrop-blur-xl border border-border/50 shadow-2xl pointer-events-auto">
+                                    <div className="flex items-center gap-2 p-2 rounded-full bg-zinc-900/80 backdrop-blur-xl border border-white/10 shadow-2xl pointer-events-auto">
                                         <Button
-                                            className="h-12 px-8 rounded-full font-bold text-base tracking-wide shadow-lg"
+                                            className="h-12 px-8 rounded-full font-bold text-base tracking-wide shadow-lg bg-white text-black hover:bg-zinc-200"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 window.open(post.link, "_blank");
@@ -434,15 +440,15 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                             Read Full Story <ExternalLink className="w-4 h-4 ml-2" />
                                         </Button>
 
-                                        <div className="w-px h-6 bg-border mx-1" />
+                                        <div className="w-px h-6 bg-white/10 mx-1" />
 
                                         {onSave && (
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
                                                 className={cn(
-                                                    "h-12 w-12 rounded-full hover:bg-muted transition-all",
-                                                    isSaved && "text-primary bg-primary/10"
+                                                    "h-12 w-12 rounded-full hover:bg-white/10 transition-all text-white",
+                                                    isSaved && "text-white bg-white/20"
                                                 )}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -456,7 +462,7 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="h-12 w-12 rounded-full hover:bg-muted transition-all"
+                                            className="h-12 w-12 rounded-full hover:bg-white/10 transition-all text-white"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onShare?.();

@@ -39,12 +39,7 @@ export default function RootLayout({
             gtag('config', 'G-119CNXCR97');
           `}
         </Script>
-        <Script
-          src="https://cdn.apitiny.net/scripts/v2.0/main.js"
-          data-site-id="69229d201caeadfb3c21dd85"
-          data-test-mode="true"
-          strategy="afterInteractive"
-        />
+
         <Script
           src="https://static.cloudflareinsights.com/beacon.min.js"
           strategy="afterInteractive"

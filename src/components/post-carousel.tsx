@@ -185,6 +185,8 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   }, []);
 
   const injectAds = useCallback((newPosts: Post[]) => {
+    if (isPremium) return newPosts;
+
     const postsWithAds: Post[] = [];
 
     for (const post of newPosts) {
@@ -198,7 +200,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
       }
     }
     return postsWithAds;
-  }, [createNativeAdPost]);
+  }, [createNativeAdPost, isPremium]);
 
   const fetchPosts = useCallback(async () => {
     if (isLoading || externalPosts) return; // Skip fetch if external posts provided
