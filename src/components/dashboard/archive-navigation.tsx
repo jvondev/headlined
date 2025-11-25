@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { CalendarDays, Clock, Calendar, ChevronDown, History, Sparkles } from "lucide-react";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
 import { cn } from "@/lib/utils";
 import { useArchiveAccess } from "@/hooks/use-archive-access";
 import {
@@ -19,7 +19,7 @@ import {
 import { PremiumModal } from "@/components/support/premium-modal";
 import { Heart } from "lucide-react";
 
-export function ArchiveNavigation() {
+function ArchiveNavigationContent() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -146,5 +146,13 @@ export function ArchiveNavigation() {
             </DropdownMenu>
             <PremiumModal isOpen={showModal} onClose={() => setShowModal(false)} />
         </>
+    );
+}
+
+export function ArchiveNavigation() {
+    return (
+        <Suspense fallback={null}>
+            <ArchiveNavigationContent />
+        </Suspense>
     );
 }

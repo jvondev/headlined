@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { CheckCircle, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-export default function SuccessPage() {
+function SuccessContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [isValidating, setIsValidating] = useState(true);
@@ -158,5 +158,17 @@ export default function SuccessPage() {
                 </Card>
             </motion.div>
         </div>
+    );
+}
+
+export default function SuccessPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5">
+                <Loader2 className="w-12 h-12 animate-spin text-primary" />
+            </div>
+        }>
+            <SuccessContent />
+        </Suspense>
     );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, Suspense } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
@@ -23,7 +23,7 @@ const SynchronizedCarousel = dynamic(
     }
 );
 
-export function DashboardClient() {
+function DashboardContent() {
     const params = useParams();
     const searchParams = useSearchParams();
     const view = params.view as string; // 'today', 'yesterday', 'archive', 'this-week', 'this-month'
@@ -188,5 +188,13 @@ export function DashboardClient() {
                 </PremiumGuard>
             </OnboardingProvider>
         </main>
+    );
+}
+
+export function DashboardClient() {
+    return (
+        <Suspense fallback={<PostPageLoadingSkeleton />}>
+            <DashboardContent />
+        </Suspense>
     );
 }
