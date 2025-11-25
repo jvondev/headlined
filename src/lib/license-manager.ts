@@ -5,8 +5,8 @@ const LAST_VALIDATED_STORAGE_KEY = "_rm_lv_at"; // Last validation timestamp
 const SIGNATURE_STORAGE_KEY = "_rm_sig"; // Signature to prevent tampering
 const SALT = "readmore-secure-salt-v1-889b3cda"; // Obfuscation salt
 
-const POLAR_VALIDATE_URL = "https://sandbox-api.polar.sh/v1/customer-portal/license-keys/validate";
-const ORGANIZATION_ID = "889b3cda-08d8-4d35-bed0-693cbbfb440a";
+const POLAR_VALIDATE_URL = process.env.NEXT_PUBLIC_POLAR_API_URL || "https://api.polar.sh/v1/customer-portal/license-keys/validate";
+const ORGANIZATION_ID = process.env.NEXT_PUBLIC_POLAR_ORGANIZATION_ID || "5078246f-4a2f-45ff-8efa-0c42ddc4016e";
 
 export interface LicenseStatus {
     isValid: boolean;

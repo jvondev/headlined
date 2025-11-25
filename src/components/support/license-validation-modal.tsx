@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { setLicense } from "@/lib/license-manager";
+import { validateLicense as validateLicenseKey } from "@/lib/license-manager";
 import { useRouter } from "next/navigation";
 
 interface LicenseValidationModalProps {
@@ -29,27 +29,12 @@ export function LicenseValidationModal({ trigger }: LicenseValidationModalProps)
         setErrorMessage("");
 
         try {
-            // Using sandbox API to match the sandbox checkout environment
-            const response = await fetch("https://sandbox-api.polar.sh/v1/customer-portal/license-keys/validate", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    key: key.trim(),
-                    organization_id: "889b3cda-08d8-4d35-bed0-693cbbfb440a",
-                }),
-            });
+            const isValid = await validateLicenseKey(key.trim());
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.detail || "Failed to validate license");
+            if (!isValid) {
+                throw new Error("Invalid license key");
             }
 
-            // Assuming a successful response means the key is valid
-            // You might want to store the validation status in localStorage or a context here
-            await setLicense(key.trim());
             setStatus("success");
 
         } catch (error: any) {

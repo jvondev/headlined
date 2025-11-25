@@ -43,8 +43,8 @@ export function SupportHero() {
     const originalYearlyPrice = amount * 12;
 
     // Polar Checkout Links
-    const monthlyUrl = "https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_j8qo95B7jx7mi039CTxxPNIaq9Q7ijnnl8j0h2oQBeq/redirect";
-    const yearlyUrl = "https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_unFfrgoaLQIzOsQnFtBn0IBuqWXlUPKaHXDK74biydL/redirect";
+    const monthlyUrl = process.env.NEXT_PUBLIC_POLAR_MONTHLY_URL || "https://buy.polar.sh/polar_cl_9b2TeBrM4fRQLvqVcsikaMeKbw4N8gCtBPUHo0jtmTe";
+    const yearlyUrl = process.env.NEXT_PUBLIC_POLAR_YEARLY_URL || "https://buy.polar.sh/polar_cl_MflXTRUGLq0mqHpAAPztuknrtCsgVuMAnEfZL3K8frO";
 
     const baseUrl = isYearly ? yearlyUrl : monthlyUrl;
 
