@@ -12,7 +12,7 @@ import { useOnboardingContext } from "@/context/onboarding-context";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { PostView } from "@/components/post-view";
+import { PostViewPremium as PostView } from "@/components/post-view-premium";
 import { PostCardSkeleton } from "./post-card-skeleton";
 import { HomepagePostSlide } from "@/components/homepage-post-slide";
 import { getPaginatedPosts } from "@/lib/client-posts";
