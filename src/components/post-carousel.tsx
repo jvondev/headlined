@@ -636,7 +636,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                         if (navigator.share) {
                           navigator.share({
                             title: post.title,
-                            text: post.description,
+                            text: post.description || undefined,
                             url: post.link,
                           }).catch(console.error);
                         } else {
@@ -698,6 +698,8 @@ export const PostCarousel: FC<PostCarouselProps> = ({
             onRemove={handleRemoveFromSaved}
           />
         )}
+
+        <PremiumModal isOpen={showSupportModal} onClose={() => setShowSupportModal(false)} />
       </div>
     </CarouselContext.Provider>
   );
