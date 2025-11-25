@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, type FC, useRef, useMemo } from "react";
+import { motion } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, Pencil, HelpCircle, Sparkles } from "lucide-react";
@@ -71,7 +72,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const page = useRef(1);
-  const nextAdDistance = useRef(Math.floor(Math.random() * 8) + 5); // Random 5-12
+  const nextAdDistance = useRef(Math.floor(Math.random() * 5) + 4); // Random 4-88
 
   const { enabled: distractionEnabled, keywords: distractionKeywords, presets, validatePresets } = useDistractionSettings();
   const [isPremium, setIsPremium] = useState(initialIsPremium ?? false);
@@ -192,8 +193,8 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
       if (nextAdDistance.current <= 0) {
         postsWithAds.push(createNativeAdPost());
-        // Reset distance to random 5-12
-        nextAdDistance.current = Math.floor(Math.random() * 8) + 5;
+        // Reset distance to random 4-8
+        nextAdDistance.current = Math.floor(Math.random() * 5) + 4;
       }
     }
     return postsWithAds;
@@ -326,13 +327,14 @@ export const PostCarousel: FC<PostCarouselProps> = ({
 
     if (newPosts.length > 0) {
       setInternalPosts(prev => {
-        const updatedPosts = [...prev, ...newPosts];
+        const postsWithAds = injectAds(newPosts);
+        const updatedPosts = [...prev, ...postsWithAds];
         return updatedPosts;
       });
     }
     setHasMore(newHasMore);
     setIsLoading(false);
-  }, [isLoading, hasMore, topicName, searchQuery, externalPosts, date, dateRange]);
+  }, [isLoading, hasMore, topicName, searchQuery, externalPosts, date, dateRange, injectAds]);
 
 
   useEffect(() => {
@@ -572,15 +574,45 @@ export const PostCarousel: FC<PostCarouselProps> = ({
                     </Card>
                   </div>
                 ) : post.slug.startsWith('ad-') ? (
-                  <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
-                    <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-gradient-to-br from-zinc-900 to-black shadow-2xl border border-white/5 flex items-center justify-center">
-                      <div {...{ 'ta-ad-container': '' }} className="w-full h-full flex items-center justify-center" />
-                      <div className="absolute top-6 left-6 z-10">
-                        <span className="px-3 py-1 rounded-full bg-black/40 border border-white/10 text-xs font-medium text-white/90 tracking-wide uppercase">
-                          Sponsored
-                        </span>
+                  <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh] pointer-events-none">
+                    <motion.div
+                      className="relative w-full h-full rounded-[28px] overflow-hidden group"
+                      whileHover={{ scale: 0.985, y: -2 }}
+                      transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                    >
+                      {/* Premium Glow Effect - Monochrome */}
+                      <div className="absolute -inset-1 bg-gradient-to-br from-white/10 via-white/5 to-transparent rounded-[30px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl pointer-events-none" />
+
+                      {/* Main Card Container */}
+                      <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-gradient-to-br from-zinc-900 to-black shadow-2xl border border-white/5 pointer-events-none">
+                        {/* Background Gradient */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                          <div className="w-full h-full bg-gradient-to-br from-zinc-800 via-zinc-900 to-black" />
+
+                          {/* Multi-layer Gradients */}
+                          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/90" />
+                          <div className="absolute inset-0 bg-gradient-to-tr from-white/3 via-transparent to-white/2" />
+                        </div>
+
+                        {/* Card Content */}
+                        <div className="absolute inset-0 flex flex-col justify-between p-7 md:p-10 pointer-events-none">
+                          <div className="space-y-5 pt-2">
+                            {/* Sponsored Label */}
+                            <div className="flex items-center gap-3 flex-wrap">
+                              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-xs font-semibold text-white tracking-wide uppercase shadow-lg">
+                                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                                Sponsored
+                              </span>
+                            </div>
+
+                            {/* Ad Container - Full height to fill card */}
+                            <div className="absolute inset-0 flex items-center justify-center p-7 md:p-10 pointer-events-none">
+                              <div {...{ 'ta-ad-container': '' }} className="w-full h-full flex items-center justify-center relative pointer-events-auto rounded-2xl" />
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                 ) : (
                   <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
