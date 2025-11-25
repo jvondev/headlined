@@ -29,10 +29,9 @@ const decodeHtmlEntities = (text: string) => {
     return textArea.value;
 };
 
-const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () => void }) => {
+const TypewriterText = ({ text, onComplete, shouldSkip }: { text: string; onComplete?: () => void; shouldSkip: boolean }) => {
     const [displayedText, setDisplayedText] = useState("");
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [isSpeedingUp, setIsSpeedingUp] = useState(false);
     const hasCompleted = useRef(false);
 
     const textChars = useMemo(() => Array.from(text), [text]);
@@ -40,23 +39,21 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
     useEffect(() => {
         setDisplayedText("");
         setCurrentIndex(0);
-        setIsSpeedingUp(false);
         hasCompleted.current = false;
     }, [text]);
 
     useEffect(() => {
         if (currentIndex < textChars.length) {
-            let delay = 0;
+            let delay = 30;
             let charsToAdd = 1;
 
-            if (isSpeedingUp) {
-                delay = 5;
+            if (shouldSkip) {
+                delay = 2;
                 charsToAdd = 5;
             } else {
+                // Dynamic pacing for natural feel
                 const progress = currentIndex / textChars.length;
-                const baseDelay = 30;
-                const minDelay = 5;
-                delay = Math.max(minDelay, baseDelay * (1 - progress));
+                delay = Math.max(5, 30 * (1 - progress));
             }
 
             const timer = setTimeout(() => {
@@ -69,24 +66,13 @@ const TypewriterText = ({ text, onComplete }: { text: string; onComplete?: () =>
             hasCompleted.current = true;
             onComplete?.();
         }
-    }, [currentIndex, textChars, onComplete, isSpeedingUp]);
+    }, [currentIndex, textChars, onComplete, shouldSkip]);
 
     return (
-        <div className="relative">
-            {currentIndex < textChars.length && (
-                <div
-                    className="fixed inset-0 z-[150] cursor-pointer"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setIsSpeedingUp(true);
-                    }}
-                />
-            )}
-            <p className="text-base md:text-lg leading-relaxed font-sans text-primary-foreground">
-                {displayedText}
-                {currentIndex < textChars.length && <span className="inline-block w-[2px] h-5 ml-1 bg-primary animate-pulse align-middle" />}
-            </p>
-        </div>
+        <p className="text-lg md:text-xl leading-relaxed font-serif text-foreground/90">
+            {displayedText}
+            {currentIndex < textChars.length && <span className="inline-block w-[2px] h-5 ml-1 bg-primary animate-pulse align-middle" />}
+        </p>
     );
 };
 
@@ -94,26 +80,20 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
     const router = useRouter();
     const [isExpanded, setIsExpanded] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [skipTypewriter, setSkipTypewriter] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const wheelAccumulator = useRef(0);
-    const wheelTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    // Gestures
     const y = useMotionValue(0);
     const x = useMotionValue(0);
-    const opacityScale = useTransform(
-        [y, x],
-        ([latestY, latestX]) => {
-            const distance = Math.sqrt((latestY as number) ** 2 + (latestX as number) ** 2);
-            return Math.max(0.5, 1 - distance / 400);
-        }
-    );
-    const scaleAnim = useTransform(
-        [y, x],
-        ([latestY, latestX]) => {
-            const distance = Math.sqrt((latestY as number) ** 2 + (latestX as number) ** 2);
-            return Math.max(0.95, 1 - distance / 4000);
-        }
-    );
+    const opacityScale = useTransform([y, x], ([latestY, latestX]) => {
+        const distance = Math.sqrt((latestY as number) ** 2 + (latestX as number) ** 2);
+        return Math.max(0.5, 1 - distance / 400);
+    });
+    const scaleAnim = useTransform([y, x], ([latestY, latestX]) => {
+        const distance = Math.sqrt((latestY as number) ** 2 + (latestX as number) ** 2);
+        return Math.max(0.95, 1 - distance / 4000);
+    });
     const touchStart = useRef<{ x: number; y: number; scrollTop: number } | null>(null);
 
     useEffect(() => {
@@ -126,6 +106,7 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
             document.body.style.touchAction = 'none';
             y.set(0);
             x.set(0);
+            setSkipTypewriter(false);
         } else {
             document.body.style.overflow = '';
             document.body.style.touchAction = '';
@@ -143,21 +124,17 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
             onUnlockRequest?.();
             return;
         }
-
         if (post.slug === "home") {
             router.push(post.link);
             return;
         }
-
         if (isLocked) {
             onUnlockRequest?.();
             return;
         }
-
         if (!isExpanded) {
             addToReadHistory(post).catch(console.error);
         }
-
         setIsExpanded(!isExpanded);
     };
 
@@ -184,13 +161,16 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
 
     const readingTime = useMemo(() => {
         const words = summaryText.split(/\s+/).length;
-        const minutes = Math.ceil(words / 200);
+        const minutes = Math.max(1, Math.ceil(words / 200));
         return `${minutes} min read`;
     }, [summaryText]);
 
+    // Touch Handling
     const handleTouchStart = (e: React.TouchEvent) => {
-        e.stopPropagation();
+        // Only allow drag to close if we are at the top of the scroll
         const scrollContainer = scrollContainerRef.current;
+        if (scrollContainer && scrollContainer.scrollTop > 0) return;
+
         touchStart.current = {
             x: e.touches[0].clientX,
             y: e.touches[0].clientY,
@@ -199,88 +179,33 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
-        e.stopPropagation();
         if (!touchStart.current) return;
+        const scrollContainer = scrollContainerRef.current;
+        if (scrollContainer && scrollContainer.scrollTop > 0) return;
 
         const currentY = e.touches[0].clientY;
         const currentX = e.touches[0].clientX;
         const deltaY = currentY - touchStart.current.y;
         const deltaX = currentX - touchStart.current.x;
-        x.set(deltaX * 0.85);
-        const scrollContainer = scrollContainerRef.current;
 
-        if (!scrollContainer) {
-            y.set(deltaY);
-            return;
-        }
-
-        const isInsideScrollable = scrollContainer.contains(e.target as Node);
-        const isScrollable = scrollContainer.scrollHeight > scrollContainer.clientHeight;
-
-        if (isInsideScrollable && isScrollable) {
-            if (touchStart.current.scrollTop <= 0 && deltaY > 0) {
-                y.set(deltaY * 0.75);
-            } else if (Math.abs(scrollContainer.scrollHeight - touchStart.current.scrollTop - scrollContainer.clientHeight) < 2 && deltaY < 0) {
-                y.set(deltaY * 0.75);
-            }
-        } else {
-            y.set(deltaY * 0.85);
+        // Only allow dragging DOWN to close
+        if (deltaY > 0) {
+            e.preventDefault(); // Prevent scrolling while dragging down
+            y.set(deltaY * 0.5); // Resistance
+            x.set(deltaX * 0.5);
         }
     };
 
     const handleTouchEnd = (e: React.TouchEvent) => {
-        e.stopPropagation();
         touchStart.current = null;
-        const verticalDistance = Math.abs(y.get());
-        const horizontalDistance = Math.abs(x.get());
-
-        if (verticalDistance > 60 || horizontalDistance > 60) {
+        const verticalDistance = y.get();
+        if (verticalDistance > 100) {
             setIsExpanded(false);
         } else {
             animate(y, 0, { type: "spring", stiffness: 300, damping: 30 });
             animate(x, 0, { type: "spring", stiffness: 300, damping: 30 });
         }
     };
-
-    useEffect(() => {
-        if (!isExpanded) return;
-
-        const handleWheel = (e: WheelEvent) => {
-            const scrollContainer = scrollContainerRef.current;
-            if (!scrollContainer || !(e.target instanceof Node)) return;
-
-            const isScrollable = scrollContainer.scrollHeight > scrollContainer.clientHeight;
-            const isAtTop = scrollContainer.scrollTop <= 0;
-            const isAtBottom = Math.abs(scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight) < 1;
-            const isInsideScrollable = scrollContainer.contains(e.target);
-
-            if (isInsideScrollable && isScrollable) {
-                if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
-                    wheelAccumulator.current += e.deltaY;
-                } else {
-                    wheelAccumulator.current = 0;
-                }
-            } else {
-                wheelAccumulator.current += e.deltaY;
-            }
-
-            if (Math.abs(wheelAccumulator.current) > 60) {
-                setIsExpanded(false);
-                wheelAccumulator.current = 0;
-            }
-
-            if (wheelTimeoutRef.current) clearTimeout(wheelTimeoutRef.current);
-            wheelTimeoutRef.current = setTimeout(() => {
-                wheelAccumulator.current = 0;
-            }, 150);
-        };
-
-        window.addEventListener("wheel", handleWheel);
-        return () => {
-            window.removeEventListener("wheel", handleWheel);
-            if (wheelTimeoutRef.current) clearTimeout(wheelTimeoutRef.current);
-        };
-    }, [isExpanded]);
 
     return (
         <>
@@ -317,14 +242,9 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                             />
                         )}
 
-                        {/* Multi-layer Gradients for Premium Depth - Monochrome */}
+                        {/* Multi-layer Gradients */}
                         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/90" />
                         <div className="absolute inset-0 bg-gradient-to-tr from-white/3 via-transparent to-white/2" />
-
-                        {/* Subtle Noise Texture */}
-                        <div className="absolute inset-0 opacity-[0.015] mix-blend-overlay" style={{
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`
-                        }} />
                     </div>
 
                     {/* Card Content */}
@@ -338,73 +258,45 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                 </span>
                                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/30 border border-white/10 text-xs font-medium text-white/80">
                                     <Clock className="w-3 h-3" />
-                                    <span>{new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                    <span>{new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                                 </div>
                             </div>
 
                             {/* Title */}
-                            <h2 className="font-sans text-[2rem] md:text-[2.5rem] lg:text-5xl font-black text-white leading-[1.1] tracking-tight text-balance drop-shadow-2xl transform transition-all duration-500 group-hover:scale-[1.01] group-hover:tracking-tighter">
+                            <h2 className="font-sans text-[2rem] md:text-[2.5rem] lg:text-5xl font-black text-white leading-[1.1] tracking-tight text-balance drop-shadow-2xl">
                                 {decodedTitle}
                             </h2>
 
                             {/* Preview */}
-                            <p className="text-white/70 text-sm md:text-base leading-relaxed font-light line-clamp-2 transform transition-all duration-500 opacity-80 group-hover:opacity-100">
+                            <p className="text-white/70 text-sm md:text-base leading-relaxed font-light line-clamp-2 opacity-80">
                                 {post.description?.substring(0, 120) || summaryText.substring(0, 120)}...
                             </p>
                         </motion.div>
 
                         {/* Bottom Section */}
                         <div className="space-y-4">
-                            {/* Reading Time */}
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
                                     <Sparkles className="w-3.5 h-3.5 text-white" />
                                     <span className="text-xs font-medium text-white/90">{readingTime}</span>
                                 </div>
-                                <div className="h-0.5 flex-1 bg-gradient-to-r from-white/20 to-transparent rounded-full" />
                             </div>
-
-                            {/* Interactive Hint */}
-                            <motion.div
-                                className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 overflow-hidden"
-                                initial={{ height: 0, opacity: 0, marginBottom: 0 }}
-                                whileHover={{ height: 'auto', opacity: 1, marginBottom: 8 }}
-                                transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-                            >
-                                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-white text-black shadow-lg">
-                                    <ChevronRight className="w-4 h-4" />
-                                </div>
-                                <div className="flex-1">
-                                    <p className="text-xs font-semibold text-white">Tap to read full story</p>
-                                    <p className="text-[10px] text-white/60">AI-powered summary ready</p>
-                                </div>
-                            </motion.div>
                         </div>
 
                         {/* Locked Overlay */}
                         {isLocked && (
                             <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md z-20">
-                                <motion.div
-                                    className="flex flex-col items-center gap-4 p-6 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 shadow-2xl"
-                                    initial={{ scale: 0.9, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-                                >
-                                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-800 dark:from-zinc-300 dark:to-zinc-100 flex items-center justify-center shadow-xl">
-                                        <Lock className="w-7 h-7 text-white dark:text-black" />
+                                <div className="flex flex-col items-center gap-4 p-6 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 shadow-2xl">
+                                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-800 flex items-center justify-center shadow-xl">
+                                        <Lock className="w-7 h-7 text-white" />
                                     </div>
                                     <div className="text-center space-y-1">
                                         <p className="text-sm font-bold text-white">Premium Content</p>
                                         <p className="text-xs text-white/70">Support to unlock</p>
                                     </div>
-                                </motion.div>
+                                </div>
                             </div>
                         )}
-                    </div>
-
-                    {/* Shimmer Effect */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                     </div>
                 </div>
             </motion.div>
@@ -419,25 +311,23 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                         <Sparkles className="w-12 h-12 text-primary animate-pulse" />
                     </div>
                     <h2 className="text-3xl font-bold mb-4 tracking-tight">Unlock More Results</h2>
-                    <p className="text-muted-foreground mb-8 text-lg max-w-xs mx-auto">
-                        Support ReadMore+ to access unlimited search results and history.
-                    </p>
-                    <Button size="lg" className="w-full max-w-xs rounded-full text-lg h-14 font-bold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                    <Button size="lg" className="w-full max-w-xs rounded-full text-lg h-14 font-bold shadow-lg mt-8">
                         Unlock Premium
                     </Button>
                 </motion.div>
             )}
 
-            {/* Expanded View Portal */}
+            {/* EXPANDED VIEW PORTAL */}
             {mounted && createPortal(
                 <AnimatePresence>
                     {isExpanded && (
                         <motion.div
-                            className="fixed inset-0 z-[100] flex flex-col bg-black overscroll-none"
+                            layoutId={`card-container-${uniqueId}`}
+                            className="fixed inset-0 z-[100] flex flex-col bg-background/95 backdrop-blur-xl overscroll-none"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                         >
                             <motion.div
                                 className="relative w-full h-full flex flex-col will-change-transform touch-pan-y"
@@ -445,36 +335,35 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                 onTouchStart={handleTouchStart}
                                 onTouchMove={handleTouchMove}
                                 onTouchEnd={handleTouchEnd}
+                                onClick={() => setSkipTypewriter(true)}
                             >
-                                {/* Close Button - Floating Top Right */}
+                                {/* Close Button */}
                                 <motion.button
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setIsExpanded(false);
                                     }}
-                                    className="absolute top-6 right-6 z-[60] p-3 rounded-full bg-black/20 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all hover:scale-110 active:scale-95 shadow-lg"
+                                    className="absolute top-6 right-6 z-[60] p-3 rounded-full bg-black/20 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all active:scale-95 shadow-lg"
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 0.2, duration: 0.3 }}
+                                    transition={{ delay: 0.2 }}
                                 >
                                     <X className="w-5 h-5" />
                                 </motion.button>
 
-                                {/* Scrollable Content Container */}
+                                {/* Single Scrollable Container */}
                                 <div
                                     ref={scrollContainerRef}
-                                    className="relative flex-1 overflow-y-auto no-scrollbar overscroll-contain bg-black"
-                                    onScroll={(e) => e.stopPropagation()}
+                                    className="flex-1 overflow-y-auto no-scrollbar overscroll-contain"
                                 >
-                                    {/* Hero Section */}
-                                    <div className="relative w-full h-[55vh] md:h-[65vh] overflow-hidden">
+                                    {/* Hero Section - Scrolls with content */}
+                                    <div className="relative w-full h-[45vh] md:h-[55vh]">
                                         {post.thumbnail_url ? (
                                             <motion.img
                                                 src={post.thumbnail_url}
                                                 alt=""
                                                 className="w-full h-full object-cover"
                                                 layoutId={`image-${uniqueId}`}
-                                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                                             />
                                         ) : (
                                             <motion.div
@@ -482,65 +371,61 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                                 layoutId={`image-${uniqueId}`}
                                             />
                                         )}
-                                        {/* Hero Gradient Overlay */}
-                                        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black" />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+                                        {/* Gradient Overlay for Text Readability */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
 
-                                        {/* Hero Content */}
+                                        {/* Title on Image */}
                                         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 pb-12 flex flex-col justify-end z-20">
-                                            <motion.div
-                                                layoutId={`header-${uniqueId}`}
-                                                className="max-w-4xl mx-auto w-full space-y-4"
-                                            >
-                                                {/* Meta Badges */}
-                                                <div className="flex items-center gap-3 mb-2">
+                                            <motion.div layoutId={`header-${uniqueId}`} className="space-y-4">
+                                                <div className="flex items-center gap-3">
                                                     <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white text-black uppercase tracking-widest shadow-lg">
                                                         {post.topic || 'News'}
                                                     </span>
-                                                    <span className="flex items-center gap-1.5 text-xs font-medium text-white/80 uppercase tracking-wide bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                                                    <span className="flex items-center gap-1.5 text-xs font-medium text-white/90 uppercase tracking-wide bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
                                                         <Clock className="w-3 h-3" />
                                                         {new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
                                                     </span>
                                                 </div>
-
-                                                {/* Title */}
-                                                <h1 className="font-sans text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[0.95] tracking-tighter text-balance drop-shadow-2xl">
+                                                <h1 className="font-sans text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tighter text-balance drop-shadow-2xl">
                                                     {decodedTitle}
                                                 </h1>
                                             </motion.div>
                                         </div>
                                     </div>
 
-                                    {/* Article Content */}
-                                    <div className="relative z-10 px-6 md:px-10 pb-32 max-w-4xl mx-auto -mt-4">
-                                        {/* Summary Section */}
-                                        <div className="space-y-8">
-                                            <div className="flex items-center gap-3 pb-4 border-b border-white/10">
-                                                <div className="p-2 rounded-full bg-white/5 border border-white/10">
-                                                    <Sparkles className="w-4 h-4 text-white" />
+                                    {/* Content Body - Light Mode Friendly */}
+                                    <div className="relative z-10 bg-background px-6 md:px-10 py-10 pb-32 -mt-6 rounded-t-[30px] shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+                                        <div className="max-w-3xl mx-auto space-y-8">
+                                            {/* Summary Header */}
+                                            <div className="flex items-center gap-3 pb-4 border-b border-border/50">
+                                                <div className="p-2 rounded-full bg-primary/10">
+                                                    <Sparkles className="w-4 h-4 text-primary" />
                                                 </div>
-                                                <span className="text-sm font-semibold text-white/90 uppercase tracking-widest">Executive Summary</span>
+                                                <span className="text-sm font-bold text-foreground/80 uppercase tracking-widest">Executive Summary</span>
                                                 <div className="flex-1" />
-                                                <span className="text-xs font-medium text-white/50">{readingTime}</span>
+                                                <span className="text-xs font-medium text-muted-foreground">{readingTime}</span>
                                             </div>
 
-                                            <div className="text-xl md:text-2xl leading-relaxed text-white/90 font-serif font-light">
-                                                <TypewriterText text={summaryText} />
+                                            {/* Typewriter Summary */}
+                                            <div className="min-h-[200px]">
+                                                <TypewriterText text={summaryText} shouldSkip={skipTypewriter} />
                                             </div>
+
+
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Floating Action Dock - Bottom */}
+                                {/* Floating Action Dock */}
                                 <motion.div
-                                    className="absolute bottom-8 left-0 right-0 flex justify-center z-50 pointer-events-none"
+                                    className="fixed bottom-8 left-0 right-0 flex justify-center z-50 pointer-events-none"
                                     initial={{ y: 100, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.3, type: "spring", stiffness: 200, damping: 20 }}
                                 >
-                                    <div className="flex items-center gap-2 p-2 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl pointer-events-auto">
+                                    <div className="flex items-center gap-2 p-2 rounded-full bg-background/80 backdrop-blur-xl border border-border/50 shadow-2xl pointer-events-auto">
                                         <Button
-                                            className="h-12 px-8 rounded-full bg-white text-black hover:bg-white/90 font-bold text-base tracking-wide transition-all hover:scale-105 active:scale-95 shadow-lg"
+                                            className="h-12 px-8 rounded-full font-bold text-base tracking-wide shadow-lg"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 window.open(post.link, "_blank");
@@ -549,15 +434,15 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                             Read Full Story <ExternalLink className="w-4 h-4 ml-2" />
                                         </Button>
 
-                                        <div className="w-px h-6 bg-white/20 mx-1" />
+                                        <div className="w-px h-6 bg-border mx-1" />
 
                                         {onSave && (
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
                                                 className={cn(
-                                                    "h-12 w-12 rounded-full text-white hover:bg-white/10 transition-all hover:scale-110 active:scale-90",
-                                                    isSaved && "text-white bg-white/20"
+                                                    "h-12 w-12 rounded-full hover:bg-muted transition-all",
+                                                    isSaved && "text-primary bg-primary/10"
                                                 )}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -571,7 +456,7 @@ const PostViewPremiumComponent: FC<PostViewProps> = ({ post, isActive, isLocked,
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="h-12 w-12 rounded-full text-white hover:bg-white/10 transition-all hover:scale-110 active:scale-90"
+                                            className="h-12 w-12 rounded-full hover:bg-muted transition-all"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onShare?.();
