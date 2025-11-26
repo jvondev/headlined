@@ -6,6 +6,11 @@ export const KeyboardShortcutsHint = () => {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
+        // Only show on devices with a fine pointer (mouse/trackpad) - excludes most tablets/phones
+        if (typeof window !== 'undefined' && !window.matchMedia('(pointer: fine)').matches) {
+            return;
+        }
+
         // Check if hint has been seen in this session
         const hasSeenHint = sessionStorage.getItem('keyboard_hint_seen');
         if (hasSeenHint) return;
@@ -30,7 +35,7 @@ export const KeyboardShortcutsHint = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 20, scale: 0.9 }}
                     transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-                    className="fixed bottom-6 right-6 z-50 pointer-events-none hidden md:block"
+                    className="fixed bottom-6 right-6 z-50 pointer-events-none hidden lg:block"
                 >
                     <div className="bg-background/80 backdrop-blur-xl border border-border/50 p-4 rounded-2xl shadow-2xl flex flex-col gap-3">
                         <div className="flex items-center gap-2 text-muted-foreground mb-1">
