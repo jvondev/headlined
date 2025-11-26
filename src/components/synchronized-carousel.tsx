@@ -124,6 +124,14 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
             slides.forEach((slide, index) => {
                 const snap = snapList[index];
                 const diffToTarget = snap - scrollProgress;
+
+                if (Math.abs(diffToTarget) > 2) {
+                    slide.style.opacity = '0';
+                    slide.style.pointerEvents = 'none';
+                    return;
+                }
+
+                slide.style.pointerEvents = 'auto';
                 const scale = 1 - Math.abs(diffToTarget * 0.9);
                 const translateX = diffToTarget * 300;
 

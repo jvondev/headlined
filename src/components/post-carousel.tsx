@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, type FC, useRef, useMemo } from "react";
+import React, { useState, useEffect, useCallback, type FC, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
@@ -43,7 +43,7 @@ type PostCarouselProps = {
 
 const PAGE_SIZE = 10; // Define page size for client-side pagination
 
-export const PostCarousel: FC<PostCarouselProps> = ({
+const PostCarouselComponent: FC<PostCarouselProps> = ({
   shouldFetchPaginatedPosts = false,
   topicName,
   searchQuery,
@@ -355,6 +355,14 @@ export const PostCarousel: FC<PostCarouselProps> = ({
       slides.forEach((slide, index) => {
         const snap = snapList[index];
         const diffToTarget = snap - scrollProgress;
+
+        if (Math.abs(diffToTarget) > 2) {
+          slide.style.opacity = '0';
+          slide.style.pointerEvents = 'none';
+          return;
+        }
+
+        slide.style.pointerEvents = 'auto';
         const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
         const translateY = diffToTarget * 300; // Adjust vertical position
         const zIndex = Math.round(20 - Math.abs(diffToTarget * 10));
@@ -534,7 +542,7 @@ export const PostCarousel: FC<PostCarouselProps> = ({
         {posts.map((post, index) => {
           // Virtualization: Only render slides within a buffer of the active index
           // This drastically reduces DOM weight and React reconciliation cost
-          const shouldRender = Math.abs(index - activeSlideIndex) <= 5;
+          const shouldRender = Math.abs(index - activeSlideIndex) <= 3;
 
           return (
             <div
@@ -710,4 +718,5 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   );
 };
 
+export const PostCarousel = React.memo(PostCarouselComponent);
 export const SynchronizedCarousel = PostCarousel;
