@@ -297,6 +297,11 @@ export const PostCarousel: FC<PostCarouselProps> = ({
   useEffect(() => {
     if (!hasActivated) return;
     const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+        return;
+      }
+
       switch (event.key) {
         case "ArrowDown":
           scrollDown();

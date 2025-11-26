@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
 import { checkIfFeedHasPosts } from "@/lib/client-posts";
 import { checkLicenseStatus } from "@/lib/license-manager";
+import { KeyboardShortcutsHint } from "@/components/keyboard-shortcuts-hint";
 
 type CarouselItem = {
     name: string;
@@ -152,6 +153,31 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         }
     }, [emblaApi, onSelect]);
 
+    // Keyboard navigation for carousel
+    useEffect(() => {
+        if (!emblaApi) return;
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            // Ignore keyboard events if an input field is focused
+            const target = event.target as HTMLElement;
+            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+                return;
+            }
+
+            if (event.key === "ArrowLeft") {
+                emblaApi.scrollPrev();
+            } else if (event.key === "ArrowRight") {
+                emblaApi.scrollNext();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [emblaApi]);
+
 
     const showNav = !isDashboardIntro || allFilterItems[selectedIndex]?.name !== "Dashboard";
 
@@ -183,6 +209,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 isIntroPaused={isIntroPaused}
                 periodLabel={periodLabel}
             />
+            <KeyboardShortcutsHint />
         </div>
     );
 };
