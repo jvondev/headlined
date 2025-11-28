@@ -265,7 +265,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             {/* PREMIUM COLLAPSED CARD */}
             <motion.div
                 className={cn(
-                    "relative w-full h-full rounded-[28px] overflow-hidden cursor-pointer group",
+                    "relative w-full h-full cursor-pointer group",
                     isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
                 )}
                 layoutId={`card-container-${uniqueId}`}
@@ -274,11 +274,19 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                 whileTap={{ scale: 0.97 }}
                 transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
             >
-                {/* Premium Glow Effect - Monochrome */}
-                <div className="absolute -inset-1 bg-gradient-to-br from-white/10 via-white/5 to-transparent rounded-[30px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl" />
+                {/* Outer Ring - Minimalist Notion Style */}
+                <div
+                    className="absolute inset-0 rounded-[48px] z-20 pointer-events-none transition-all duration-500"
+                    style={{
+                        // Crisp definition:
+                        // 1. 1px Grey outer ring (definition against light bg)
+                        // 2. 1.5px White inner ring (premium glass detail)
+                        boxShadow: "0 0 0 1px rgba(255,255,255,0.08), inset 0 0 0 1.5px rgba(255,255,255,1)"
+                    }}
+                />
 
-                {/* Main Card Container */}
-                <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-gradient-to-br from-zinc-900 to-black shadow-2xl border border-white/5">
+                {/* Main Card Container - Larger Gap for "Double Border" Effect */}
+                <div className="absolute inset-4 md:inset-5 rounded-[32px] overflow-hidden bg-gradient-to-br from-zinc-900 to-black shadow-sm border border-white/10 z-10 group-hover:scale-[1.01] transition-transform duration-500">
                     {/* Background Image */}
                     <div className="absolute inset-0 overflow-hidden">
                         {post.thumbnail_url ? (
