@@ -7,7 +7,7 @@ import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { Share2, ExternalLink, X, Sparkles, Clock, ChevronRight, Lock, Bookmark, Heart, Download } from "lucide-react";
+import { ExternalLink, X, Sparkles, Clock, ChevronRight, Lock, Bookmark, Heart, Download } from "lucide-react";
 import { Button } from "./ui/button";
 import { addToReadHistory } from "@/lib/indexeddb";
 import html2canvas from "html2canvas";
