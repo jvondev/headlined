@@ -24,22 +24,22 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
             <div
                 ref={ref}
                 id="post-export-template"
-                className="relative bg-transparent"
+                className="relative bg-[#000000]"
                 style={{
                     width: "1080px",
                     height: "1350px",
                 }}
             >
                 {/* Outer "Glass" Border Ring - Thicker & bolder */}
-                <div
-                    className="absolute inset-2 rounded-[64px] border-[6px] border-white/20 z-50 pointer-events-none"
+                < div
+                    className="absolute inset-2 rounded-[64px] border-[6px] border-white/20 z-50 pointer-events-none m-4"
                     style={{
                         boxShadow: "0 0 60px rgba(255,255,255,0.05), inset 0 0 40px rgba(255,255,255,0.05)"
                     }}
                 />
 
                 {/* Main Content Card - Floating inside the ring */}
-                <div className="absolute inset-10 rounded-[48px] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl">
+                <div className="absolute inset-10 rounded-[48px] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl m-4">
                     {/* Background Image */}
                     <div
                         className="absolute inset-0 overflow-hidden bg-zinc-900"
@@ -104,7 +104,7 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
                         )}
                     </div>
                 </div>
-            </div>
+            </div >
         );
     }
 );
