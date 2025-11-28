@@ -32,9 +32,9 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
             >
                 {/* Outer "Glass" Border Ring - Thicker & bolder */}
                 <div
-                    className="absolute inset-4 rounded-[64px] border-[6px] border-white/20 z-50 pointer-events-none"
+                    className="absolute inset-2 rounded-[64px] border-[6px] border-white/20 z-50 pointer-events-none"
                     style={{
-                        boxShadow: "0 0 60px rgba(255,255,255,0.1), inset 0 0 40px rgba(255,255,255,0.05)"
+                        boxShadow: "0 0 60px rgba(255,255,255,0.05), inset 0 0 40px rgba(255,255,255,0.05)"
                     }}
                 />
 
@@ -61,25 +61,25 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
                     <div className="absolute inset-0 flex flex-col justify-between p-20">
                         <div className="space-y-12 pt-6">
                             {/* Meta Tags - Fixed Overflow & Alignment */}
-                            <div className="flex items-center gap-6 w-full">
-                                <div className="inline-flex items-center gap-4 px-6 py-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg max-w-[65%] min-w-0">
+                            <div className="flex items-center gap-6 w-full flex-nowrap">
+                                <div className="inline-flex items-center gap-4 px-6 py-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg max-w-[60%] min-w-0">
                                     <span className="w-3 h-3 rounded-full bg-white animate-pulse shrink-0" />
-                                    <span className="text-xl font-bold text-white tracking-wider uppercase truncate leading-none pt-1">
+                                    <span className="text-xl font-bold text-white tracking-wider uppercase leading-normal overflow-hidden text-ellipsis whitespace-nowrap">
                                         {post.topic || 'News'}
                                     </span>
                                 </div>
-                                <span className="text-xl font-semibold text-white/80 tracking-wide uppercase drop-shadow-md whitespace-nowrap shrink-0 pt-1">
+                                <span className="text-xl font-semibold text-white/80 tracking-wide uppercase drop-shadow-md whitespace-nowrap shrink-0">
                                     {new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                 </span>
                             </div>
 
                             {/* Title - Reduced size, tighter leading */}
-                            <h2 className="font-sans text-[4.5rem] font-black text-white leading-[1.1] tracking-tighter text-balance drop-shadow-2xl">
+                            <h2 className="font-sans text-[4.5rem] font-black text-white leading-[1.15] tracking-tighter text-balance drop-shadow-2xl pb-2">
                                 {decodedTitle}
                             </h2>
 
                             {/* Description - 1 Line */}
-                            <p className="text-3xl font-medium text-white/90 leading-relaxed line-clamp-1 drop-shadow-lg max-w-5xl opacity-90">
+                            <p className="text-3xl font-medium text-white/90 leading-[1.6] drop-shadow-lg max-w-5xl opacity-90 overflow-hidden text-ellipsis pb-3" style={{ display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>
                                 {decodedDescription}
                             </p>
                         </div>
