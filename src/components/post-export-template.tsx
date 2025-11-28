@@ -60,15 +60,12 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
                     {/* Card Content - Increased padding for aesthetic bleed */}
                     <div className="absolute inset-0 flex flex-col justify-between p-20">
                         <div className="space-y-12 pt-6">
-                            {/* Meta Tags - Fixed Overflow & Alignment */}
-                            <div className="flex items-center gap-6 w-full flex-nowrap">
-                                <div className="inline-flex items-center gap-4 px-6 py-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg max-w-[60%] min-w-0">
-                                    <span className="w-3 h-3 rounded-full bg-white animate-pulse shrink-0" />
-                                    <span className="text-xl font-bold text-white tracking-wider uppercase leading-normal overflow-hidden text-ellipsis whitespace-nowrap">
-                                        {post.topic || 'News'}
-                                    </span>
-                                </div>
-                                <span className="text-xl font-semibold text-white/80 tracking-wide uppercase drop-shadow-md whitespace-nowrap shrink-0">
+                            {/* Meta Tags */}
+                            <div className="flex items-center gap-6">
+                                <span className="text-xl font-semibold text-white tracking-wide uppercase drop-shadow-md whitespace-nowrap">
+                                    {post.topic || 'News'}
+                                </span>
+                                <span className="text-xl font-semibold text-white/80 tracking-wide uppercase drop-shadow-md whitespace-nowrap">
                                     {new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                 </span>
                             </div>
