@@ -274,19 +274,25 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                 whileTap={{ scale: 0.97 }}
                 transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
             >
-                {/* Outer Ring - Minimalist Notion Style */}
+                {/* Outer Ring - Museum Glass Boundary */}
                 <div
                     className="absolute inset-0 rounded-[48px] z-20 pointer-events-none transition-all duration-500"
                     style={{
-                        // Crisp definition:
-                        // 1. 1px Grey outer ring (definition against light bg)
-                        // 2. 1.5px White inner ring (premium glass detail)
-                        boxShadow: "0 0 0 1px rgba(255,255,255,0.08), inset 0 0 0 1.5px rgba(255,255,255,1)"
+                        // The "Museum Glass" Effect:
+                        // 1. 1px subtle dark stroke (defines the physical edge)
+                        // 2. White inner highlight (cut glass edge)
+                        // 3. Subtle inner shadow (simulates thickness/depth of the glass block)
+                        boxShadow: "0 0 0 1px rgba(0,0,0,0.06), inset 0 0 0 1.5px rgba(255,255,255,0.8), inset 0 0 20px rgba(0,0,0,0.02)"
                     }}
                 />
 
-                {/* Main Card Container - Larger Gap for "Double Border" Effect */}
-                <div className="absolute inset-4 md:inset-5 rounded-[32px] overflow-hidden bg-gradient-to-br from-zinc-900 to-black shadow-sm border border-white/10 z-10 group-hover:scale-[1.01] transition-transform duration-500">
+                {/* Main Card Container - The "Art Piece" */}
+                <div className="absolute inset-4 md:inset-5 rounded-[32px] overflow-hidden bg-zinc-950 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] border border-white/10 z-10 group-hover:scale-[1.01] transition-transform duration-700 ease-out">
+                    {/* Premium Texture Overlay (Noise) - Adds tactile "paper" feel */}
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-50 mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }} />
+
+                    {/* Subtle Gradient Background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black" />
                     {/* Background Image */}
                     <div className="absolute inset-0 overflow-hidden">
                         {post.thumbnail_url ? (
