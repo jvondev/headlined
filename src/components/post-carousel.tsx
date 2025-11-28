@@ -8,7 +8,7 @@ import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, Penci
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { PostViewPremium as PostView } from "@/components/post-view-premium";
+import { PostView } from "@/components/post-view";
 import { PostCardSkeleton } from "./post-card-skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "./ui/button";
