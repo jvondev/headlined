@@ -1,10 +1,9 @@
 import React, { forwardRef } from "react";
-import { Post } from "@/types";
-import { cn } from "@repo/lib/utils/utils";
+import { CompendiaPost } from "@/types";
 import { Lock } from "lucide-react";
 
 interface PostExportTemplateProps {
-    post: Post;
+    post: CompendiaPost;
     isLocked?: boolean;
 }
 
@@ -18,7 +17,7 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
         };
 
         const decodedTitle = decodeHtmlEntities(post.title);
-        const decodedDescription = decodeHtmlEntities(post.description || "");
+        const decodedDescription = decodeHtmlEntities(post.abstract || "");
 
         return (
             <div
@@ -31,7 +30,7 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
                 }}
             >
                 {/* Outer "Glass" Border Ring - Thicker & bolder */}
-                < div
+                <div
                     className="absolute inset-2 rounded-[64px] border-[6px] border-white/20 z-50 pointer-events-none m-4"
                     style={{
                         boxShadow: "0 0 60px rgba(255,255,255,0.05), inset 0 0 40px rgba(255,255,255,0.05)"
@@ -44,15 +43,13 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
                     <div
                         className="absolute inset-0 overflow-hidden bg-zinc-900"
                         style={{
-                            backgroundImage: post.thumbnail_url ? `url(${post.thumbnail_url})` : undefined,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundRepeat: 'no-repeat',
                         }}
                     >
-                        {!post.thumbnail_url && (
-                            <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900" />
-                        )}
+                        <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900" />
+
                         {/* Gradient Overlay - Smooth fade for text readability */}
                         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/20 to-black/90" />
                     </div>
@@ -63,7 +60,7 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
                             {/* Meta Tags */}
                             <div className="flex items-center gap-6">
                                 <span className="text-xl font-semibold text-white tracking-wide uppercase drop-shadow-md whitespace-nowrap">
-                                    {post.topic || 'News'}
+                                    {post.tags[0] || 'Research'}
                                 </span>
                                 <span className="text-xl font-semibold text-white/80 tracking-wide uppercase drop-shadow-md whitespace-nowrap">
                                     {new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -84,7 +81,7 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
                         {/* Footer Branding */}
                         <div className="flex items-center justify-between mt-auto">
                             <div className="flex items-center gap-4 text-3xl font-bold text-white tracking-tight drop-shadow-lg">
-                                <span className="opacity-90">ReadMore.in</span>
+                                <span className="opacity-90">Compendia</span>
                             </div>
                         </div>
 

@@ -1,20 +1,20 @@
 "use client";
 
-import type { Post } from "@/types";
+import type { CompendiaPost } from "@/types";
 import React, { useEffect, type FC, useMemo, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
-import { motion, AnimatePresence, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
-import { cn } from "@repo/lib/utils/utils";
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { ExternalLink, X, Sparkles, Clock, ChevronRight, Lock, Bookmark, Heart, Download } from "lucide-react";
-import { Button } from "./ui/button";
-import { addToReadHistory } from "@repo/lib/utils/indexeddb";
+import { ExternalLink, X, Sparkles, Clock, Lock, Bookmark, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Post } from "@repo/lib/types";
 import html2canvas from "html2canvas";
 import { PostExportTemplate } from "./post-export-template";
 
 interface PostViewProps {
-    post: Post;
+    post: CompendiaPost;
     isActive: boolean;
     emblaApi?: UseEmblaCarouselType[1];
     isLocked?: boolean;
@@ -121,23 +121,13 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
         };
     }, [isExpanded, y, x]);
 
-    const isCTA = post.slug === 'premium-cta';
-
     const handleCardClick = () => {
-        if (isCTA) {
-            onUnlockRequest?.();
-            return;
-        }
-        if (post.slug === "home") {
-            router.push(post.link);
-            return;
-        }
         if (isLocked) {
             onUnlockRequest?.();
             return;
         }
         if (!isExpanded) {
-            addToReadHistory(post).catch(console.error);
+            // Expand logic
         }
         setIsExpanded(!isExpanded);
     };
@@ -176,7 +166,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             const image = canvas.toDataURL("image/png");
             const link = document.createElement("a");
             link.href = image;
-            link.download = `readmore-${post.slug || 'post'}.png`;
+            link.download = `compendia-${post.id || 'post'}.png`;
             link.click();
         } catch (error) {
             console.error("Export failed:", error);
@@ -192,18 +182,10 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     }, [isActive]);
 
     const summaryText = useMemo(() => {
-        let text = "No summary available.";
-        if (post.summaries && post.summaries.length > 0 && post.summaries[0].content) {
-            text = typeof post.summaries[0].content === 'string'
-                ? post.summaries[0].content
-                : post.summaries[0].content.snippet || post.description || "No summary available.";
-        } else if (post.description) {
-            text = post.description;
-        }
-        return decodeHtmlEntities(text);
+        return decodeHtmlEntities(post.abstract || "No abstract available.");
     }, [post]);
 
-    const uniqueId = post.slug || post.title || Math.random().toString();
+    const uniqueId = post.id || Math.random().toString();
     const decodedTitle = useMemo(() => decodeHtmlEntities(post.title), [post.title]);
 
     const readingTime = useMemo(() => {
@@ -295,19 +277,10 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                     <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black" />
                     {/* Background Image */}
                     <div className="absolute inset-0 overflow-hidden">
-                        {post.thumbnail_url ? (
-                            <motion.img
-                                src={post.thumbnail_url}
-                                alt=""
-                                className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-110"
-                                layoutId={`image-${uniqueId}`}
-                            />
-                        ) : (
-                            <motion.div
-                                className="w-full h-full bg-gradient-to-br from-zinc-800 via-zinc-900 to-black"
-                                layoutId={`image-${uniqueId}`}
-                            />
-                        )}
+                        <motion.div
+                            className="w-full h-full bg-gradient-to-br from-zinc-800 via-zinc-900 to-black"
+                            layoutId={`image-${uniqueId}`}
+                        />
 
                         {/* Multi-layer Gradients */}
                         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/90" />
@@ -321,7 +294,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                             <div className="flex items-center gap-3 flex-wrap">
                                 <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-xs font-semibold text-white tracking-wide uppercase shadow-lg">
                                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                                    {post.topic || 'News'}
+                                    {post.tags[0] || 'Research'}
                                 </span>
                                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/30 border border-white/10 text-xs font-medium text-white/80">
                                     <Clock className="w-3 h-3" />
@@ -336,7 +309,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
 
                             {/* Preview */}
                             <p className="text-white/70 text-sm md:text-base leading-relaxed font-light line-clamp-2 opacity-80">
-                                {post.description?.substring(0, 120) || summaryText.substring(0, 120)}...
+                                {summaryText.substring(0, 120)}...
                             </p>
                         </motion.div>
 
@@ -367,22 +340,6 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                     </div>
                 </div>
             </motion.div>
-
-            {/* CTA Card Override */}
-            {isCTA && (
-                <motion.div
-                    className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-gradient-to-br from-primary/20 via-background to-background p-8 text-center"
-                    onClick={handleCardClick}
-                >
-                    <div className="mb-6 p-4 bg-primary/10 rounded-full">
-                        <Sparkles className="w-12 h-12 text-primary animate-pulse" />
-                    </div>
-                    <h2 className="text-3xl font-bold mb-4 tracking-tight">Unlock More Results</h2>
-                    <Button size="lg" className="w-full max-w-xs rounded-full text-lg h-14 font-bold shadow-lg mt-8">
-                        Unlock Premium
-                    </Button>
-                </motion.div>
-            )}
 
             {/* EXPANDED VIEW PORTAL */}
             {mounted && createPortal(
@@ -430,19 +387,10 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                 >
                                     {/* Hero Section - Scrolls with content */}
                                     <div className="relative w-full h-[45vh] md:h-[55vh]">
-                                        {post.thumbnail_url ? (
-                                            <motion.img
-                                                src={post.thumbnail_url}
-                                                alt=""
-                                                className="w-full h-full object-cover"
-                                                layoutId={`image-${uniqueId}`}
-                                            />
-                                        ) : (
-                                            <motion.div
-                                                className="w-full h-full bg-gradient-to-br from-zinc-800 to-black"
-                                                layoutId={`image-${uniqueId}`}
-                                            />
-                                        )}
+                                        <motion.div
+                                            className="w-full h-full bg-gradient-to-br from-zinc-800 to-black"
+                                            layoutId={`image-${uniqueId}`}
+                                        />
                                         {/* Gradient Overlay for Text Readability */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent opacity-90" />
 
@@ -451,7 +399,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                             <motion.div layoutId={`header-${uniqueId}`} className="space-y-4">
                                                 <div className="flex items-center gap-3">
                                                     <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white text-black uppercase tracking-widest shadow-lg">
-                                                        {post.topic || 'News'}
+                                                        {post.tags[0] || 'Research'}
                                                     </span>
                                                     <span className="flex items-center gap-1.5 text-xs font-medium text-white/90 uppercase tracking-wide bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
                                                         <Clock className="w-3 h-3" />
@@ -485,14 +433,6 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                             <div className="min-h-[50px]">
                                                 <TypewriterText text={summaryText} shouldSkip={skipTypewriter} />
                                             </div>
-
-                                            {/* Programmatic Ad Container */}
-                                            {!isPremium && (
-                                                <div className="w-full min-h-[250px] bg-zinc-900/30 rounded-2xl flex items-center justify-center overflow-hidden border border-white/5">
-                                                    {/* @ts-ignore */}
-                                                    <div ta-ad-container="" className="w-full h-full" />
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -509,10 +449,10 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                             className="h-12 px-8 rounded-full font-bold text-base tracking-wide shadow-lg bg-white text-black hover:bg-zinc-200"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                window.open(post.link, "_blank");
+                                                window.open(post.landingPageUrl || post.pdfUrl || '#', "_blank");
                                             }}
                                         >
-                                            Read Full Story <ExternalLink className="w-4 h-4 ml-2" />
+                                            Read Full Paper <ExternalLink className="w-4 h-4 ml-2" />
                                         </Button>
 
                                         <div className="w-px h-6 bg-white/10 mx-1" />

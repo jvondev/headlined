@@ -3,9 +3,9 @@
 import React, { FC, useEffect, useState, useCallback } from "react";
 import { Greeting } from "@/components/dashboard/greeting";
 import { Clock } from "@/components/dashboard/clock";
-import { getAllPostsFromIndexedDB, getReadHistory } from "@repo/lib/utils/indexeddb";
+import { getAllPostsFromIndexedDB, getReadHistory } from "@/lib/indexeddb";
 import { useSubscribedFeeds } from "@repo/lib/hooks/use-subscribed-feeds";
-import { Post } from "@/types";
+import { CompendiaPost } from "@/types";
 import { Card } from "@repo/ui/components/ui/card";
 import { Button } from "@repo/ui/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -36,9 +36,9 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
   const { hasAccess: hasArchiveAccess } = useArchiveAccess();
   const usage = useAppUsage();
   const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
-  const [recentPosts, setRecentPosts] = useState<Post[]>([]);
-  const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
-  const [readHistory, setReadHistory] = useState<(Post & { readAt: string })[]>([]);
+  const [recentPosts, setRecentPosts] = useState<CompendiaPost[]>([]);
+  const [trendingPosts, setTrendingPosts] = useState<CompendiaPost[]>([]);
+  const [readHistory, setReadHistory] = useState<(CompendiaPost & { readAt: string })[]>([]);
   const [savedCount, setSavedCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [viewState, setViewState] = useState<"intro" | "dashboard">(() => {
@@ -140,8 +140,8 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
       }
 
       const subscribedNames = subscribedTopics.map(t => t.name);
-      const subscribed = filteredPosts.filter(p => p.topic && subscribedNames.includes(p.topic));
-      const others = filteredPosts.filter(p => !p.topic || !subscribedNames.includes(p.topic));
+      const subscribed = filteredPosts.filter(p => p.tags && p.tags.some(tag => subscribedNames.includes(tag)));
+      const others = filteredPosts.filter(p => !p.tags || !p.tags.some(tag => subscribedNames.includes(tag)));
 
       setRecentPosts(subscribed.slice(0, 10));
       setTrendingPosts(others.slice(0, 5));
@@ -181,19 +181,20 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
     }
   }, [viewState, setIsIntroMode]);
 
-  // Group history by Topics (based on post.topic field)
+  // Group history by Topics (based on post.tags field)
   const groupedTopics = readHistory.reduce((acc, post) => {
-    const topicName = post.topic;
-    if (topicName && subscribedTopics.some(t => t.name === topicName)) {
+    const topicName = post.tags && post.tags.length > 0 ? post.tags[0] : 'Uncategorized';
+    // For Compendia, we might not have subscribedTopics matching exactly, so let's just group by tag
+    if (topicName) {
       if (!acc[topicName]) acc[topicName] = [];
       acc[topicName].push(post);
     }
     return acc;
-  }, {} as Record<string, (Post & { readAt: string })[]>);
+  }, {} as Record<string, (CompendiaPost & { readAt: string })[]>);
 
-  // Get all post slugs that are already in topics
-  const topicPostSlugs = new Set(
-    Object.values(groupedTopics).flat().map(post => post.slug)
+  // Get all post ids that are already in topics
+  const topicPostIds = new Set(
+    Object.values(groupedTopics).flat().map(post => post.id)
   );
 
   // Calculate stats for topics only
@@ -211,25 +212,25 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
   // Exclude posts that are already categorized under topics
   const groupedInterests = readHistory.reduce((acc, post) => {
     // Skip if this post is already in a topic
-    if (topicPostSlugs.has(post.slug)) {
+    if (topicPostIds.has(post.id)) {
       return acc;
     }
 
     subscribedInterests.forEach(interest => {
       const searchTerms = [interest.name, ...(interest.aliases || [])];
-      const content = `${post.title} ${post.description || ''}`.toLowerCase();
+      const content = `${post.title} ${post.abstract || ''}`.toLowerCase();
 
       const isMatch = searchTerms.some(term => content.includes(term.toLowerCase()));
 
       if (isMatch) {
         if (!acc[interest.name]) acc[interest.name] = [];
-        if (!acc[interest.name].some(p => p.slug === post.slug)) {
+        if (!acc[interest.name].some(p => p.id === post.id)) {
           acc[interest.name].push(post);
         }
       }
     });
     return acc;
-  }, {} as Record<string, (Post & { readAt: string })[]>);
+  }, {} as Record<string, (CompendiaPost & { readAt: string })[]>);
 
   // Calculate stats for interests only
   const interestStats = Object.entries(groupedInterests)
@@ -275,13 +276,18 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
 
   // Mock Data for Preview Mode
   const mockHistory = Array(5).fill(null).map((_, i) => ({
-    slug: `mock-${i}`,
+    id: `mock-${i}`,
     title: "Premium Article Content Preview",
-    description: "This content is available for premium supporters.",
+    abstract: "This content is available for premium supporters.",
     readAt: new Date().toISOString(),
-    topic: ["Technology", "Science", "Health", "Design", "Business"][i % 5],
-    thumbnail_url: null
-  })) as (Post & { readAt: string })[];
+    tags: [["Technology", "Science", "Health", "Design", "Business"][i % 5]],
+    pdfUrl: null,
+    landingPageUrl: null,
+    authors: [],
+    journal: "Mock Journal",
+    date: new Date().toISOString(),
+    citationCount: 0
+  })) as (CompendiaPost & { readAt: string })[];
 
   const mockTopicStats = [
     { topic: "Technology", count: 15, percentage: 45 },
@@ -300,21 +306,21 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
   const displayInterestStats = isPreviewMode ? mockInterestStats : interestStats;
 
   // Dynamic Mock Data based on User Subscriptions
-  const displayGroupedTopics = isPreviewMode ? (
+  const displayGroupedTopics: Record<string, (CompendiaPost & { readAt: string })[]> = isPreviewMode ? (
     subscribedTopics.length > 0 ?
       subscribedTopics.reduce((acc, topic) => {
         acc[topic.name] = mockHistory.slice(0, Math.floor(Math.random() * 3) + 1);
         return acc;
-      }, {} as Record<string, (Post & { readAt: string })[]>)
+      }, {} as Record<string, (CompendiaPost & { readAt: string })[]>)
       : { "Technology": mockHistory.slice(0, 3), "Science": mockHistory.slice(2, 4) } // Fallback if no subs
   ) : groupedTopics;
 
-  const displayGroupedInterests = isPreviewMode ? (
+  const displayGroupedInterests: Record<string, (CompendiaPost & { readAt: string })[]> = isPreviewMode ? (
     subscribedInterests.length > 0 ?
       subscribedInterests.reduce((acc, interest) => {
         acc[interest.name] = mockHistory.slice(0, Math.floor(Math.random() * 3) + 1);
         return acc;
-      }, {} as Record<string, (Post & { readAt: string })[]>)
+      }, {} as Record<string, (CompendiaPost & { readAt: string })[]>)
       : { "AI": mockHistory.slice(0, 2), "Space": mockHistory.slice(3, 5) } // Fallback if no subs
   ) : groupedInterests;
 
@@ -482,7 +488,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                           <>
                             <div className={cn(isPreviewMode && "blur-sm select-none pointer-events-none")}>
                               {displayHistory.slice(0, timelineItemsToShow).map((post, i) => (
-                                <div key={post.slug || i} className="relative group mb-8 last:mb-0">
+                                <div key={post.id || i} className="relative group mb-8 last:mb-0">
                                   <span className="absolute -left-[29px] top-1.5 w-2.5 h-2.5 rounded-full bg-background border-2 border-primary z-10 group-hover:scale-125 transition-transform duration-300" />
                                   <div className="flex flex-col gap-1">
                                     <span className="text-[10px] text-muted-foreground font-mono font-medium">
@@ -546,11 +552,8 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                                   <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
                                 </div>
                                 <div className="space-y-2">
-                                  {posts.slice(0, 3).map((post, i) => (
-                                    <div key={post.slug || i} className="flex items-center gap-3 group cursor-pointer">
-                                      {post.thumbnail_url && (
-                                        <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
-                                      )}
+                                  {posts.slice(0, 3).map((post: CompendiaPost, i: number) => (
+                                    <div key={post.id || i} className="flex items-center gap-3 group cursor-pointer">
                                       <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
                                     </div>
                                   ))}
@@ -581,11 +584,8 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                                   <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded text-muted-foreground">{posts.length}</span>
                                 </div>
                                 <div className="space-y-2">
-                                  {posts.slice(0, 3).map((post, i) => (
-                                    <div key={post.slug || i} className="flex items-center gap-3 group cursor-pointer">
-                                      {post.thumbnail_url && (
-                                        <img src={post.thumbnail_url} className="w-6 h-6 rounded object-cover bg-muted shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
-                                      )}
+                                  {posts.slice(0, 3).map((post: CompendiaPost, i: number) => (
+                                    <div key={post.id || i} className="flex items-center gap-3 group cursor-pointer">
                                       <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">{post.title}</span>
                                     </div>
                                   ))}

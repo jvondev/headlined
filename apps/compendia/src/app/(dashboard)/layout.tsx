@@ -1,7 +1,10 @@
+import { DashboardClient } from "@/components/dashboard/dashboard-client";
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="h-screen w-full">
-            {children}
-        </div>
+        <>
+            <DashboardClient />
+            <div className="hidden">{children}</div>
+        </>
     );
 }

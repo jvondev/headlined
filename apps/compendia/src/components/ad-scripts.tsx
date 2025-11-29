@@ -5,6 +5,10 @@ import Script from "next/script";
 import { checkLicenseStatus } from "@repo/lib/utils/license-manager";
 
 export function AdScripts() {
+    // Temporarily disabled to prevent console errors and external script issues
+    return null;
+
+    /*
     const [isPremium, setIsPremium] = useState<boolean | null>(null);
 
     useEffect(() => {
@@ -24,4 +28,5 @@ export function AdScripts() {
             />
         </>
     );
+    */
 }
