@@ -2,20 +2,27 @@
 import type { NextConfig } from 'next';
 import withPWA from 'next-pwa';
 
-const withPWAConfig = withPWA({
-  dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
-});
+// Disable PWA in production (static export for Cloudflare Pages)
+const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+const withPWAConfig = isProduction
+  ? (config: NextConfig) => config // No PWA for production static export
+  : withPWA({
+    dest: 'public',
+    disable: isDevelopment,
+  });
 
 const nextConfig: NextConfig = {
-  // output: 'export', // Commented out to allow headers and server features
-  ...withPWAConfig,
+  output: 'export', // Static export for Cloudflare Pages
   /* config options here */
+  // Development: fast builds with checks disabled
+  // Production: strict validation enabled
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: !isProduction,
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: !isProduction,
   },
   images: {
     unoptimized: true,
@@ -38,19 +45,6 @@ const nextConfig: NextConfig = {
       }
     ],
   },
-  async headers() {
-    return [
-      {
-        source: '/favicon.ico',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ]
-  },
   transpilePackages: [
     "@radix-ui/react-toast",
     "class-variance-authority",
@@ -58,4 +52,4 @@ const nextConfig: NextConfig = {
   ],
 };
 
-export default withPWAConfig(nextConfig as any);
+export default withPWAConfig(nextConfig);

@@ -25,7 +25,7 @@ async function getSearchableData(): Promise<SearchableItem[]> {
             type: 'post',
             title: post.title,
             content: `${post.title} ${post.description}`,
-            icon: 'Info', 
+            icon: 'Info',
         });
     });
 
@@ -34,38 +34,38 @@ async function getSearchableData(): Promise<SearchableItem[]> {
 }
 
 async function initializeSearch() {
-  if (searchIndex || isIndexing) {
-    return indexingPromise;
-  }
-
-  isIndexing = true;
-  indexingPromise = (async () => {
-    try {
-      const searchableItems = await getSearchableData();
-      const newIndex = createSearchIndex();
-      
-      searchableItems.forEach(doc => {
-        newIndex.add(doc);
-      });
-      
-      searchIndex = newIndex;
-    } catch (error) {
-      console.error("Failed to initialize search index:", error);
-    } finally {
-      isIndexing = false;
+    if (searchIndex || isIndexing) {
+        return indexingPromise;
     }
-  })();
-  return indexingPromise;
+
+    isIndexing = true;
+    indexingPromise = (async () => {
+        try {
+            const searchableItems = await getSearchableData();
+            const newIndex = createSearchIndex();
+
+            searchableItems.forEach(doc => {
+                newIndex.add(doc);
+            });
+
+            searchIndex = newIndex;
+        } catch (error) {
+            console.error("Failed to initialize search index:", error);
+        } finally {
+            isIndexing = false;
+        }
+    })();
+    return indexingPromise;
 }
 
 
 export function useSearch() {
     const [isReady, setIsReady] = useState(!!searchIndex);
     const [results, setResults] = useState<SearchResult[]>([]);
-    
+
     useEffect(() => {
         let isMounted = true;
-        
+
         async function init() {
             if (!searchIndex) {
                 await initializeSearch();
@@ -74,7 +74,7 @@ export function useSearch() {
                 setIsReady(true);
             }
         }
-        
+
         init();
 
         return () => {
@@ -117,20 +117,20 @@ export function useSearch() {
             setResults([]);
             return;
         }
-        
+
         const allPosts = await getAllPostsForSearch();
         const postsMap = new Map<string, Post>(allPosts.map(i => [i.slug, i]));
-        
+
         const enrichedResults: SearchResult[] = finalResults
             .map(item => {
                 if (!item) return null;
-                
+
                 const post = postsMap.get(item.slug);
                 if (!post) return null;
 
                 return {
                     ...item,
-                    topic_id: post.topic_id,
+                    topic: post.topic,
                 };
             })
             .filter((r): r is SearchResult => r !== null)
@@ -141,7 +141,7 @@ export function useSearch() {
                 if (!aTitleMatch && bTitleMatch) return 1;
                 return 0;
             });
-        
+
         setResults(enrichedResults);
 
     }, [isReady]);

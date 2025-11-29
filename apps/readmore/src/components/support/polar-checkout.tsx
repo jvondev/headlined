@@ -23,9 +23,7 @@ export function PolarCheckout({
 
         const openCheckout = async () => {
             try {
-                const checkout = await PolarEmbedCheckout.create(checkoutUrl, {
-                    theme,
-                });
+                const checkout = await PolarEmbedCheckout.create(checkoutUrl, theme as "light" | "dark");
 
                 isInitialized.current = true;
 

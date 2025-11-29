@@ -1,21 +1,21 @@
 
-import { Suspense, use } from 'react'; // Import use
+import { Suspense } from 'react';
 import { SearchResultsClient, SearchResultsClientSkeleton } from './client';
 import { SearchHeader } from './header';
 
 type SearchPageProps = {
-    params: Promise<{ // params is now a Promise
+    params: Promise<{
         query: string;
     }>;
 };
 
 export async function generateStaticParams() {
-  // This function is intentionally left empty for client-side search.
-  return [{ query: 'initial' }]; // Return a dummy path
+    // This function is intentionally left empty for client-side search.
+    return [{ query: 'initial' }]; // Return a dummy path
 }
 
-export default function SearchPage({ params }: SearchPageProps) {
-    const resolvedParams = use(params); // Unwrap the Promise
+export default async function SearchPage({ params }: SearchPageProps) {
+    const resolvedParams = await params; // Await the Promise
     const currentQuery = resolvedParams.query;
     const query = currentQuery || '';
 
