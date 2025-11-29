@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,8 +5,10 @@
 @layer base {
   :root {
     --radius: 0.5rem;
-    --background: 0 0% 94.1%; /* #F0F0F0 */
-    --foreground: 0 0% 20%;   /* #333333 */
+    --background: 0 0% 94.1%;
+    /* #F0F0F0 */
+    --foreground: 0 0% 20%;
+    /* #333333 */
     --card: 0 0% 94.1%;
     --card-foreground: 0 0% 20%;
     --popover: 0 0% 94.1%;
@@ -18,7 +19,8 @@
     --secondary-foreground: 0 0% 20%;
     --muted: 0 0% 90%;
     --muted-foreground: 0 0% 40%;
-    --accent: 0 0% 46.7%;     /* #777777 */
+    --accent: 0 0% 46.7%;
+    /* #777777 */
     --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -33,14 +35,17 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
 
-    --deep-dive-card-background: 0 0% 100%; /* White card for contrast */
+    --deep-dive-card-background: 0 0% 100%;
+    /* White card for contrast */
     --deep-dive-card-foreground: 0 0% 20%;
   }
 
   .dark {
     --radius: 0.5rem;
-    --background: 0 0% 10%;    /* Dark Gray */
-    --foreground: 0 0% 92%;    /* Light Gray */
+    --background: 0 0% 10%;
+    /* Dark Gray */
+    --foreground: 0 0% 92%;
+    /* Light Gray */
     --card: 0 0% 10%;
     --card-foreground: 0 0% 92%;
     --popover: 0 0% 10%;
@@ -66,7 +71,8 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
-    --deep-dive-card-background: 0 0% 12%; /* Slightly lighter card */
+    --deep-dive-card-background: 0 0% 12%;
+    /* Slightly lighter card */
     --deep-dive-card-foreground: 0 0% 92%;
   }
 }
@@ -75,6 +81,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -84,24 +91,32 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
+
   @keyframes line-shadow {
     0% {
       background-position: 0 0;
     }
+
     100% {
       background-position: 100% -100%;
     }
   }
+
   .animate-line-shadow {
     animation: line-shadow 30s linear infinite;
   }
+
   .glass-card {
     @apply bg-white/30 backdrop-blur-lg border border-white/50;
   }
+
   .dark .glass-card {
     @apply bg-black/30 backdrop-blur-lg border border-black/50;
   }
