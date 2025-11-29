@@ -42,10 +42,8 @@ export function PostCarousel({ view }: PostCarouselProps) {
       if (!hasMore && page > 1) return;
 
       setLoading(true);
-      console.log(`[PostCarousel] Loading posts for view=${view}, page=${page}`);
 
       const newPosts = await getFeedPosts(view, page);
-      console.log(`[PostCarousel] Received ${newPosts.length} posts`);
 
       if (newPosts.length < 10) {
         setHasMore(false);
@@ -68,7 +66,6 @@ export function PostCarousel({ view }: PostCarouselProps) {
 
   // When view changes, reset pagination
   useEffect(() => {
-    console.log(`[PostCarousel] View changed to: ${view}, resetting pagination`);
     setPage(1);
     setHasMore(true);
     setActiveSlideIndex(0);
