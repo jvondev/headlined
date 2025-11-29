@@ -27,17 +27,25 @@ function decodeAbstract(invertedIndex: { [key: string]: number[] } | null): stri
     return words.join(" ");
 }
 
-export async function fetchRecentWorks(page = 1, perPage = 10): Promise<CompendiaPost[]> {
-    // Get date for 7 days ago
+export async function fetchRecentWorks(page = 1, perPage = 10, filters?: { fromDate?: string; toDate?: string }): Promise<CompendiaPost[]> {
+    // Get date for 7 days ago as default
     const sevenDaysAgo = subDays(new Date(), 7);
-    const fromDate = format(sevenDaysAgo, "yyyy-MM-dd");
+    const defaultFromDate = format(sevenDaysAgo, "yyyy-MM-dd");
+
+    const fromDate = filters?.fromDate || defaultFromDate;
 
     // Build query
     // filter=from_publication_date:2023-10-20
     // sort=cited_by_count:desc (to get popular ones, or maybe publication_date:desc)
     // Let's mix it: sort by publication date desc to get latest
+
+    let filterString = `from_publication_date:${fromDate},has_abstract:true`;
+    if (filters?.toDate) {
+        filterString += `,to_publication_date:${filters.toDate}`;
+    }
+
     const params = new URLSearchParams({
-        filter: `from_publication_date:${fromDate},has_abstract:true`,
+        filter: filterString,
         sort: "publication_date:desc",
         page: page.toString(),
         per_page: perPage.toString(),

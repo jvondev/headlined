@@ -5,8 +5,13 @@ import { CompendiaPost } from "@/types";
 import { fetchRecentWorks } from "@repo/lib/utils/openalex";
 import { PostCard } from "./post-card";
 import { Loader2 } from "lucide-react";
+import { format, subDays } from "date-fns";
 
-export function VerticalFeed() {
+interface VerticalFeedProps {
+    view?: string;
+}
+
+export function VerticalFeed({ view }: VerticalFeedProps) {
     const [posts, setPosts] = useState<CompendiaPost[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -14,12 +19,31 @@ export function VerticalFeed() {
     useEffect(() => {
         async function loadPosts() {
             setLoading(true);
-            const newPosts = await fetchRecentWorks(page);
+
+            let filters: { fromDate?: string; toDate?: string } = {};
+            const today = new Date();
+
+            if (view === 'today') {
+                const dateStr = format(today, 'yyyy-MM-dd');
+                filters = { fromDate: dateStr, toDate: dateStr };
+            } else if (view === 'yesterday') {
+                const yesterday = subDays(today, 1);
+                const dateStr = format(yesterday, 'yyyy-MM-dd');
+                filters = { fromDate: dateStr, toDate: dateStr };
+            } else if (view === 'this-week') {
+                const lastWeek = subDays(today, 7);
+                filters = { fromDate: format(lastWeek, 'yyyy-MM-dd') };
+            } else if (view === 'this-month') {
+                const lastMonth = subDays(today, 30);
+                filters = { fromDate: format(lastMonth, 'yyyy-MM-dd') };
+            }
+
+            const newPosts = await fetchRecentWorks(page, 10, filters);
             setPosts((prev) => [...prev, ...newPosts]);
             setLoading(false);
         }
         loadPosts();
-    }, [page]);
+    }, [page, view]);
 
     // Simple infinite scroll handler (can be improved with IntersectionObserver)
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
