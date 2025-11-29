@@ -180,78 +180,118 @@ export function PostCarousel({ view }: PostCarouselProps) {
   }
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center bg-background">
-      <div className="overflow-hidden h-full w-full touch-none overscroll-y-none overscroll-contain" ref={emblaRef}>
-        <div className="flex flex-col h-full backface-visibility-hidden">
-          {!loading && posts.length === 0 && (
-            <div className="flex flex-col items-center justify-center h-full max-w-md mx-auto px-6 text-center animate-in fade-in zoom-in duration-500">
-              <div className="relative mb-8 group cursor-pointer" onClick={() => setShowSupportModal(true)}>
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500" />
-                <div className="relative w-24 h-24 bg-gradient-to-br from-background to-muted rounded-2xl border border-border/50 shadow-2xl flex items-center justify-center transform group-hover:scale-105 transition-transform duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent rounded-2xl opacity-50" />
-                  <Loader2 className="w-10 h-10 text-primary relative z-10 animate-spin" />
+    <div className="relative flex h-full w-full flex-col bg-background">
+      {/* Dashboard Header with Greeting */}
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+        <div className="container mx-auto px-4 py-6 md:py-8">
+          <div className="flex items-center justify-between">
+            {/* Left: Greeting */}
+            <div className="flex-1">
+              <h1 className="text-2xl md:text-4xl font-bold tracking-tight font-headline text-foreground">
+                {(() => {
+                  const hour = new Date().getHours();
+                  if (hour < 5) return "Good Night";
+                  if (hour < 12) return "Good Morning";
+                  if (hour < 18) return "Good Afternoon";
+                  return "Good Evening";
+                })()}
+              </h1>
+              <p className="text-sm md:text-base text-muted-foreground mt-1">
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+              </p>
+            </div>
+
+            {/* Right: Clock and Stats */}
+            <div className="flex items-center gap-4 md:gap-6">
+              <div className="text-right hidden sm:block">
+                <div className="text-3xl md:text-5xl font-bold tabular-nums">
+                  {(() => {
+                    const now = new Date();
+                    const hours = now.getHours().toString().padStart(2, '0');
+                    const minutes = now.getMinutes().toString().padStart(2, '0');
+                    return `${hours}:${minutes}`;
+                  })()}
+                </div>
+                <div className="text-xs md:text-sm text-muted-foreground">
+                  {posts.length} papers found
                 </div>
               </div>
-
-              <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 mb-3">
-                No Posts Found
-              </h2>
-
-              <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-                We couldn't find any papers for this period. Try checking a different time range or explore the archive.
-              </p>
-
-              <div className="flex flex-col gap-3 w-full sm:w-auto min-w-[200px]">
-                <SupportButton
-                  onClick={() => setShowSupportModal(true)}
-                  className="w-full h-12 text-base font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
-                />
-              </div>
             </div>
-          )}
-          {posts.map((post, index) => {
-            // Virtualization: Only render slides within a buffer
-            const shouldRender = Math.abs(index - activeSlideIndex) <= 3;
+          </div>
+        </div>
+      </div>
 
-            return (
-              <div
-                className="relative min-w-0 flex-[0_0_100%] h-full flex justify-center py-2 px-4 md:py-4 md:px-8 lg:py-8 lg:px-16 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
-                key={post.id}
-              >
-                {shouldRender ? (
-                  <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
-                    <PostView
-                      post={post}
-                      isActive={index === activeSlideIndex}
-                      emblaApi={emblaApi}
-                      isLocked={false}
-                      isPremium={isPremium}
-                      onShare={() => {
-                        if (navigator.share) {
-                          navigator.share({
-                            title: post.title,
-                            text: post.abstract || undefined,
-                            url: post.landingPageUrl || window.location.href,
-                          }).catch(console.error);
-                        } else {
-                          // Fallback to clipboard
-                          navigator.clipboard.writeText(post.landingPageUrl || window.location.href);
-                          // You might want to add a toast here if available
-                        }
-                      }}
-                    />
+      {/* Feed Content */}
+      <div className="flex-1 overflow-hidden">
+        <div className="overflow-hidden h-full w-full touch-none overscroll-y-none overscroll-contain" ref={emblaRef}>
+          <div className="flex flex-col h-full backface-visibility-hidden">
+            {!loading && posts.length === 0 && (
+              <div className="flex flex-col items-center justify-center h-full max-w-md mx-auto px-6 text-center animate-in fade-in zoom-in duration-500">
+                <div className="relative mb-8 group cursor-pointer" onClick={() => setShowSupportModal(true)}>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500" />
+                  <div className="relative w-24 h-24 bg-gradient-to-br from-background to-muted rounded-2xl border border-border/50 shadow-2xl flex items-center justify-center transform group-hover:scale-105 transition-transform duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent rounded-2xl opacity-50" />
+                    <Loader2 className="w-10 h-10 text-primary relative z-10 animate-spin" />
                   </div>
-                ) : (
-                  <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh] bg-muted/10 rounded-3xl animate-pulse" />
-                )}
+                </div>
+
+                <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 mb-3">
+                  No Posts Found
+                </h2>
+
+                <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+                  We couldn't find any papers for this period. Try checking a different time range or explore the archive.
+                </p>
+
+                <div className="flex flex-col gap-3 w-full sm:w-auto min-w-[200px]">
+                  <SupportButton
+                    onClick={() => setShowSupportModal(true)}
+                    className="w-full h-12 text-base font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                  />
+                </div>
               </div>
-            );
-          })}
-          {loading && posts.length > 0 && (
-            <div className="relative min-w-0 flex-[0_0_100%] h-full flex items-center justify-center">
-              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-            </div>
-          )}
+            )}
+            {posts.map((post, index) => {
+              const shouldRender = Math.abs(index - activeSlideIndex) <= 3;
+
+              return (
+                <div
+                  className="relative min-w-0 flex-[0_0_100%] h-full flex justify-center py-2 px-4 md:py-4 md:px-8 lg:py-8 lg:px-16 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
+                  key={post.id}
+                >
+                  {shouldRender ? (
+                    <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
+                      <PostView
+                        post={post}
+                        isActive={index === activeSlideIndex}
+                        emblaApi={emblaApi}
+                        isLocked={false}
+                        isPremium={isPremium}
+                        onShare={() => {
+                          if (navigator.share) {
+                            navigator.share({
+                              title: post.title,
+                              text: post.abstract || undefined,
+                              url: post.landingPageUrl || window.location.href,
+                            }).catch(console.error);
+                          } else {
+                            navigator.clipboard.writeText(post.landingPageUrl || window.location.href);
+                          }
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh] bg-muted/10 rounded-3xl animate-pulse" />
+                  )}
+                </div>
+              );
+            })}
+            {loading && posts.length > 0 && (
+              <div className="relative min-w-0 flex-[0_0_100%] h-full flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <PremiumModal isOpen={showSupportModal} onClose={() => setShowSupportModal(false)} />
