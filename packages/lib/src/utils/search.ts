@@ -1,5 +1,5 @@
 
-import { Document } from 'flexsearch';
+import FlexSearch from 'flexsearch';
 import type { SearchableItem } from '../types';
 
 // This defines the structure of the search index document.
@@ -8,11 +8,12 @@ export type SearchDocument = SearchableItem;
 
 // The type for our search index.
 // The `true` parameter enables the storage of documents, which can be useful.
-export type SearchIndex = Document<SearchDocument, true>;
+// We use a type assertion or any here because FlexSearch types can be tricky with default imports
+export type SearchIndex = any;
 
 // This function creates a new search index with a specific configuration.
 export function createSearchIndex(): SearchIndex {
-    return new Document({
+    return new FlexSearch.Document({
         document: {
             id: 'id',
             index: ['title', 'content'], // We want to search within title and content.
