@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getSubscribedTopics, getSubscribedInterests, subscribeToFeed, unsubscribeFromFeed } from '@/lib/local-storage';
+import { getSubscribedTopics, getSubscribedInterests, subscribeToFeed, unsubscribeFromFeed } from '../utils/local-storage';
 import type { Topic, Interest } from '@/types';
 
 export const useSubscribedFeeds = () => {

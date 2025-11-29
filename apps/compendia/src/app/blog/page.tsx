@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, User } from 'lucide-react';
 
-import {Header} from '@/components/common/Header';
+import {Header} from '@repo/ui/components/common/Header';
 import { Badge } from '@repo/ui/components/ui/badge';
 import { motion } from 'framer-motion';
 import { LineShadowText } from '@repo/ui/components/ui/line-shadow-text';

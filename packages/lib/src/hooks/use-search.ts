@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import { SearchIndex, createSearchIndex } from '@/lib/search';
+import { SearchIndex, createSearchIndex } from '../utils/search';
 import type { Post, SearchResult, SearchableItem } from '@/types';
-import { getAllPostsForSearch } from '@/lib/client-posts';
+import { getAllPostsForSearch } from '../utils/client-posts';
 
 let searchIndex: SearchIndex | null = null;
 let searchableItemsCache: SearchableItem[] | null = null;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { checkLicenseStatus } from "@/lib/license-manager";
-import { useAppUsage } from "@/hooks/use-app-usage";
+import { checkLicenseStatus } from "../utils/license-manager";
+import { useAppUsage } from "../hooks/use-app-usage";
 
 export function useArchiveAccess() {
     const [isPremium, setIsPremium] = useState<boolean>(false);

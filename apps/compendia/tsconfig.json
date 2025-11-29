@@ -25,6 +25,12 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@repo/ui/*": [
+        "../../packages/ui/src/*"
+      ],
+      "@repo/lib/*": [
+        "../../packages/lib/src/*"
       ]
     }
   },

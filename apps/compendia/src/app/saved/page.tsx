@@ -1,6 +1,6 @@
 'use client';
 
-import { getPostsBySlugs } from "@/lib/client-posts";
+import { getPostsBySlugs } from "@repo/lib/utils/client-posts";
 import { SavedPageHeader } from "@/components/saved/saved-page-header";
 import SavedPageClient from "./client";
 import type { SavedItem, Post } from "@/types";

@@ -2,10 +2,10 @@
 
 import { useState, useCallback } from 'react';
 import { Toaster } from "@repo/ui/components/ui/toaster";
-import { ThemeProvider } from '@/components/theme-provider';
-import { FullScreenContext } from '@/context/full-screen-context';
-import { BackgroundSyncProvider } from '@/components/background-sync-provider';
-import { FooterWrapper } from '@/components/common/FooterWrapper';
+import { ThemeProvider } from '@repo/ui/components/common/theme-provider';
+import { FullScreenContext } from '@repo/lib/context/full-screen-context';
+import { BackgroundSyncProvider } from '@repo/ui/components/common/background-sync-provider';
+import { FooterWrapper } from '@repo/ui/components/common/FooterWrapper';
 
 import { AdScripts } from '@/components/ad-scripts';
 

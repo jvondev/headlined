@@ -3,7 +3,7 @@
 import { CompendiaPost } from "@/types";
 import { motion } from "framer-motion";
 import { Calendar, FileText, Share2, Quote, ExternalLink } from "lucide-react";
-import { cn, truncateWords } from "@/lib/utils";
+import { cn, truncateWords } from "@repo/lib/utils/utils";
 import { useState } from "react";
 
 interface PostCardProps {

@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
 import { topicsData } from "@/data/topics-data";
 import { interestsData } from "@/data/interests-data";
-import { OnboardingProvider } from "@/context/onboarding-provider";
+import { OnboardingProvider } from "@repo/lib/context/onboarding-provider";
 import { SynchronizedCarousel } from "@/components/synchronized-carousel";
 
 function TopicCarousel() {

@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Header } from '@/components/common/Header';
+import { Header } from '@repo/ui/components/common/Header';
 
 export default function AboutPage() {
   return (

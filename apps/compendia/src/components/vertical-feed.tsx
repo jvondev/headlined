@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CompendiaPost } from "@/types";
-import { fetchRecentWorks } from "@/lib/openalex";
+import { fetchRecentWorks } from "@repo/lib/utils/openalex";
 import { PostCard } from "./post-card";
 import { Loader2 } from "lucide-react";
 

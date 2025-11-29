@@ -3,7 +3,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { useSavedItems } from "@/hooks/use-saved-items";
+import { useSavedItems } from "@repo/lib/hooks/use-saved-items";
 import { Button } from "@repo/ui/components/ui/button";
 import { X, BookmarkX, Shuffle, Download } from "lucide-react";
 import type { Post, SavedItem } from "@/types";
