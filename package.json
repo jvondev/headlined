@@ -8,12 +8,15 @@
         "format": "prettier --write \"**/*.{ts,tsx,md}\""
     },
     "devDependencies": {
-        "turbo": "latest",
-        "prettier": "latest"
+        "prettier": "latest",
+        "turbo": "latest"
     },
     "packageManager": "npm@11.0.0",
     "workspaces": [
         "apps/*",
         "packages/*"
-    ]
+    ],
+    "dependencies": {
+        "@swc/helpers": "^0.5.17"
+    }
 }
