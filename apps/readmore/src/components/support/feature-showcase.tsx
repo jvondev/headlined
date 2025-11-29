@@ -2,7 +2,7 @@
 
 import { BeforeAfterCard } from "./before-after-card";
 import { motion } from "framer-motion";
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "@repo/ui/components/ui/separator";
 
 export function FeatureShowcase() {
     const features = [

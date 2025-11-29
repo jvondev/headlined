@@ -12,7 +12,7 @@ import {
   MobileNavHeader,
   MobileNavToggle,
   MobileNavMenu,
-} from "@/components/ui/resizable-navbar";
+} from "@repo/ui/components/ui/resizable-navbar";
 
 
 const ReadMoreLogo = () => {

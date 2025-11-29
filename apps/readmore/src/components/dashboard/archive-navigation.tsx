@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { CalendarDays, Clock, Calendar, ChevronDown, History, Sparkles } from "lucide-react";
 import { useEffect, useState, useMemo, Suspense } from "react";
@@ -14,7 +14,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@repo/ui/components/ui/dropdown-menu";
 
 import { PremiumModal } from "@/components/support/premium-modal";
 import { Heart } from "lucide-react";

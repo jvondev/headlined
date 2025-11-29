@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Filter, ArrowRight, Rss, Lock } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Input } from '@repo/ui/components/ui/input';
+import { Button } from '@repo/ui/components/ui/button';
+import { Card } from '@repo/ui/components/ui/card';
+import { Badge } from '@repo/ui/components/ui/badge';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { topicsData } from '@/data/topics-data';

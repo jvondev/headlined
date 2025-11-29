@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useDistractionSettings } from "@/hooks/use-distraction-settings";
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Switch } from "@repo/ui/components/ui/switch";
+import { Input } from "@repo/ui/components/ui/input";
+import { Button } from "@repo/ui/components/ui/button";
+import { Badge } from "@repo/ui/components/ui/badge";
 import { X, Plus, Zap, Lock, Check } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@repo/ui/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { DISTRACTION_FILTERS } from "@/data/distraction-filters";

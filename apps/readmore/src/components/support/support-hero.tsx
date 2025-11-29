@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Slider } from "@repo/ui/components/ui/slider";
+import { Button } from "@repo/ui/components/ui/button";
+import { Switch } from "@repo/ui/components/ui/switch";
+import { Label } from "@repo/ui/components/ui/label";
 import { PolarCheckout } from "./polar-checkout";
 import { LicenseValidationModal } from "./license-validation-modal";
 import { Heart, Sparkles, Zap, Crown } from "lucide-react";

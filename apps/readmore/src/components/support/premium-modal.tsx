@@ -1,8 +1,8 @@
 "use client";
 
-import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from "@repo/ui/components/ui/dialog";
 import { SupportHero } from "@/components/support/support-hero";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
 import { FeatureShowcase } from "@/components/support/feature-showcase";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

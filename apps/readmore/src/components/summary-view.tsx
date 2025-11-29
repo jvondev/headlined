@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import type { Summary } from "@/types";
-import { Button } from '@/components/ui/button';
+import { Button } from '@repo/ui/components/ui/button';
 import Link from 'next/link';
 import { DynamicIcon } from './dynamic-icon';
 import { Quote as QuoteIcon } from "lucide-react";

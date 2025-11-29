@@ -3,8 +3,8 @@
 import { FC, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search as SearchIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@repo/ui/components/ui/button";
+import { Input } from "@repo/ui/components/ui/input";
 import { cn } from "@/lib/utils";
 
 type SearchPageHeaderProps = {

@@ -2,8 +2,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@repo/ui/components/ui/sheet";
+import { Button } from "@repo/ui/components/ui/button";
 import TextareaAutosize from "react-textarea-autosize";
 import type { SavedItem } from "@/types";
 import { X, Save } from "lucide-react";

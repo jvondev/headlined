@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 
 type FilterType = "all" | "saved" | "note";
 

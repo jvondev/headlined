@@ -6,7 +6,7 @@ import { SynchronizedCarousel } from "@/components/post-carousel";
 import { OnboardingProvider } from "@/context/onboarding-provider";
 import { Post } from "@/types";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 interface ArchivePageWrapperProps {

@@ -12,7 +12,7 @@ import {
   CommandItem,
   CommandList,
   CommandLoading,
-} from "@/components/ui/command";
+} from "@repo/ui/components/ui/command";
 import { DynamicIcon } from "./dynamic-icon";
 import type { SearchResult } from "@/types";
 import { Button } from "./ui/button";

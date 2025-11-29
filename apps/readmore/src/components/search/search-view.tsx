@@ -7,7 +7,7 @@ import { getFilteredPosts } from '@/lib/client-posts';
 import { Post } from '@/types';
 import { PostView } from '@/components/post-view';
 import { checkLicenseStatus } from '@/lib/license-manager';
-import { Button } from '@/components/ui/button';
+import { Button } from '@repo/ui/components/ui/button';
 import { PostCarousel } from '@/components/post-carousel';
 import { ArrowLeft } from 'lucide-react';
 import { PremiumModal } from '@/components/support/premium-modal';

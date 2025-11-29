@@ -5,8 +5,8 @@ import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton
 import { topicsData } from "@/data/topics-data";
 import { interestsData } from "@/data/interests-data";
 import { DynamicIcon } from "@/components/dynamic-icon";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardTitle } from "@repo/ui/components/ui/card";
+import { Button } from "@repo/ui/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Topic, Interest } from "@/types";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";

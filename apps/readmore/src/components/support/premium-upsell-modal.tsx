@@ -1,11 +1,11 @@
 "use client";
 
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@repo/ui/components/ui/dialog";
 import { SupportHero } from "./support-hero";
 import { FeatureShowcase } from "./feature-showcase";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
 import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 import { useState } from "react";
 
 interface PremiumUpsellModalProps {

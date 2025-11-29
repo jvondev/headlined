@@ -4,7 +4,7 @@ import type { FC } from "react";
 import dynamic from "next/dynamic";
 import type { LucideProps } from "lucide-react";
 import React from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 // Cache for loaded icon components

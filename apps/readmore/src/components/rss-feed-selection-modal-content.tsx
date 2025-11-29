@@ -4,8 +4,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 // import { getFeedCategories, getRssFeeds } from "@/data/rss-feeds"; // Data now comes from props
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/ui/card";
+import { Button } from "@repo/ui/components/ui/button";
 import { RssFeed } from "@/types";
 
 import { TopicSelector } from "@/components/topic-selector";

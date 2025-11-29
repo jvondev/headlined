@@ -1,6 +1,6 @@
 import type { Post, SavedItem } from "@/types";
 import { FC } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@repo/ui/components/ui/card";
 
 import { cn } from "@/lib/utils";
 import { DynamicIcon } from "./dynamic-icon";

@@ -9,7 +9,7 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from "@/components/ui/toast"
+} from "@repo/ui/components/ui/toast"
 import { useEffect, useState } from "react"
 
 export function Toaster() {

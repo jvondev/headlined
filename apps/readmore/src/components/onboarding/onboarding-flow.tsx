@@ -9,10 +9,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from "@repo/ui/components/ui/alert-dialog";
+import { Button } from "@repo/ui/components/ui/button";
+import { Badge } from "@repo/ui/components/ui/badge";
+import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
 import { DynamicIcon } from "@/components/dynamic-icon";
 import { Topic, Interest } from "@/types";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";

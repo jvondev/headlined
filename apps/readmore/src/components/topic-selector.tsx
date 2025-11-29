@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react"; // Import useRef and useEffect
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react"; // Import the icon
 

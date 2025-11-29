@@ -1,17 +1,17 @@
 'use client';
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { BentoCard, BentoGrid } from '@/components/ui/bento-grid';
-import { AnimatedList } from '@/components/ui/animated-list';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@repo/ui/components/ui/accordion';
+import { Badge } from '@repo/ui/components/ui/badge';
+import { Button } from '@repo/ui/components/ui/button';
+import { BentoCard, BentoGrid } from '@repo/ui/components/ui/bento-grid';
+import { AnimatedList } from '@repo/ui/components/ui/animated-list';
 import { ArrowRight, GalleryVerticalEnd, BookText, Plane, PartyPopper, UserCheck, Twitter, MessageCircle, AppWindow, Sparkles, Clock, CheckCircle, Sun, Repeat, AlertCircle, Meh, Film, Square, Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Header } from '@/components/common/Header';
 import { ReactElement } from 'react';
-import { LineShadowText } from '@/components/ui/line-shadow-text';
+import { LineShadowText } from '@repo/ui/components/ui/line-shadow-text';
 
 const topics = [
   '💡 Artificial Intelligence', '💰 Stock Market', '🎨 UX Design', '🌍 Climate Change',
