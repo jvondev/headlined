@@ -52,6 +52,36 @@ const openDatabase = (): Promise<IDBDatabase> => {
     });
 };
 
+export const pruneOldPosts = async (limit: number = 5000): Promise<void> => {
+    const database = await openDatabase();
+    const transaction = database.transaction(STORE_NAME, 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    const index = store.index('date');
+
+    return new Promise((resolve, reject) => {
+        const countRequest = store.count();
+        countRequest.onsuccess = () => {
+            if (countRequest.result > limit) {
+                const deleteCount = countRequest.result - limit;
+                let deleted = 0;
+                const cursorRequest = index.openCursor(); // Ascending order (oldest first)
+
+                cursorRequest.onsuccess = (e) => {
+                    const cursor = (e.target as IDBRequest).result as IDBCursorWithValue;
+                    if (cursor && deleted < deleteCount) {
+                        cursor.delete();
+                        deleted++;
+                        cursor.continue();
+                    }
+                };
+            }
+        };
+
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = (event) => reject((event.target as IDBTransaction).error);
+    });
+};
+
 export const addPosts = async (posts: CompendiaPost[]): Promise<void> => {
     const database = await openDatabase();
     const transaction = database.transaction(STORE_NAME, 'readwrite');
@@ -62,7 +92,15 @@ export const addPosts = async (posts: CompendiaPost[]): Promise<void> => {
     });
 
     return new Promise((resolve, reject) => {
-        transaction.oncomplete = () => resolve();
+        transaction.oncomplete = async () => {
+            try {
+                await pruneOldPosts();
+                resolve();
+            } catch (e) {
+                console.error("Failed to prune posts:", e);
+                resolve(); // Resolve anyway, pruning failure shouldn't block
+            }
+        };
         transaction.onerror = (event) => reject((event.target as IDBTransaction).error);
     });
 };
@@ -138,6 +176,18 @@ export const getReadHistory = async (): Promise<(CompendiaPost & { readAt: strin
             const results = request.result as (CompendiaPost & { readAt: string })[];
             resolve(results.reverse());
         };
+        request.onerror = (event) => reject((event.target as IDBRequest).error);
+    });
+};
+
+export const getPostById = async (id: string): Promise<CompendiaPost | undefined> => {
+    const database = await openDatabase();
+    const transaction = database.transaction(STORE_NAME, 'readonly');
+    const store = transaction.objectStore(STORE_NAME);
+
+    return new Promise((resolve, reject) => {
+        const request = store.get(id);
+        request.onsuccess = () => resolve(request.result as CompendiaPost | undefined);
         request.onerror = (event) => reject((event.target as IDBRequest).error);
     });
 };

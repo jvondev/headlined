@@ -8,24 +8,28 @@ export const getFeedPosts = async (view: string = 'today', page: number = 1): Pr
     let toDate: string | undefined;
     const today = new Date();
 
+    // 1. Determine Date Range
+    const todayStr = format(today, 'yyyy-MM-dd');
+
     if (view === 'today') {
-        const threeDaysAgo = subDays(today, 3);
-        fromDate = format(threeDaysAgo, 'yyyy-MM-dd');
-        toDate = format(today, 'yyyy-MM-dd');
+        fromDate = todayStr;
+        toDate = todayStr;
     } else if (view === 'yesterday') {
-        const fourDaysAgo = subDays(today, 4);
         const yesterday = subDays(today, 1);
-        fromDate = format(fourDaysAgo, 'yyyy-MM-dd');
-        toDate = format(yesterday, 'yyyy-MM-dd');
+        const yesterdayStr = format(yesterday, 'yyyy-MM-dd');
+        fromDate = yesterdayStr;
+        toDate = yesterdayStr;
     } else if (view === 'this-week') {
         const lastWeek = subDays(today, 7);
         fromDate = format(lastWeek, 'yyyy-MM-dd');
+        toDate = todayStr;
     } else {
         const lastMonth = subDays(today, 30);
         fromDate = format(lastMonth, 'yyyy-MM-dd');
+        toDate = todayStr;
     }
 
-    // Try IndexedDB first
+    // 2. Check IndexedDB
     let localPosts: CompendiaPost[] = [];
     try {
         if (toDate) {
@@ -35,55 +39,45 @@ export const getFeedPosts = async (view: string = 'today', page: number = 1): Pr
             localPosts = await getPostsDateRange(fromDate, futureDate);
         }
     } catch (e) {
-        // Ignore cache errors
+        console.error("Failed to read from IndexedDB:", e);
     }
 
-    if (localPosts.length > 0 && page === 1) {
-        refreshInBackground(page, { fromDate, toDate });
-        return localPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    }
+    // Sort local posts by date descending
+    localPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    // Fetch from API
-    try {
-        const apiPosts = await fetchRecentWorks(page, 10, { fromDate, toDate });
+    // 3. If we have enough local data, return it (unless it's page 1 and we want to ensure freshness, but for now we trust the cache if it's substantial)
+    // If we have > 20 posts, we assume we have a good cache for this view.
+    if (localPosts.length >= 20) {
+        // If requesting page 1, return all local posts (client-side pagination can handle slicing if needed, 
+        // or we can slice here. But the carousel expects a full list or appends).
+        // The carousel logic appends. If we return a huge list, it might duplicate if not handled.
+        // But here we are just returning the "source of truth".
 
-        if (apiPosts.length > 0) {
-            await addPosts(apiPosts);
-            return apiPosts;
-        }
-
-        // Fallback for 'today'
-        if (view === 'today' && page === 1) {
-            const lastWeek = subDays(today, 7);
-            const fallbackPosts = await fetchRecentWorks(page, 10, { fromDate: format(lastWeek, 'yyyy-MM-dd') });
-            if (fallbackPosts.length > 0) {
-                await addPosts(fallbackPosts);
-                return fallbackPosts;
-            }
-        }
-
-        // Absolute fallback
-        if (page === 1 && apiPosts.length === 0) {
-            const latestPosts = await fetchRecentWorks(1, 10);
-            if (latestPosts.length > 0) {
-                await addPosts(latestPosts);
-                return latestPosts;
-            }
-        }
-
-        return [];
-    } catch (error) {
+        // If we are on page 1, we might want to try a background refresh if the latest post is old?
+        // For now, let's keep it simple: Use Cache if available.
         return localPosts;
     }
-};
 
-const refreshInBackground = async (page: number, filters: any) => {
-    try {
-        const apiPosts = await fetchRecentWorks(page, 10, filters);
-        if (apiPosts.length > 0) {
-            await addPosts(apiPosts);
+    // 4. If insufficient data, Fetch from API (Batch of 200)
+    // Only fetch if we are on page 1 (or if we really ran out, but with 200 items that shouldn't happen often for a single session)
+    if (page === 1 || localPosts.length === 0) {
+        try {
+            console.log(`Fetching 200 posts for view: ${view} (${fromDate} - ${toDate || 'now'})`);
+            // Use random sampling to get a diverse set of papers
+            const apiPosts = await fetchRecentWorks(1, 200, { fromDate, toDate, random: true });
+
+            if (apiPosts.length > 0) {
+                // Store in DB (this triggers pruning)
+                await addPosts(apiPosts);
+
+                // Return the API posts (sorted)
+                return apiPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            }
+        } catch (error) {
+            console.error("Failed to fetch from API:", error);
         }
-    } catch (e) {
-        // Ignore
     }
-}
+
+    // Fallback: Return whatever local data we have
+    return localPosts;
+};

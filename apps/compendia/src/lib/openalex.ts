@@ -27,7 +27,7 @@ function decodeAbstract(invertedIndex: { [key: string]: number[] } | null): stri
     return words.join(" ");
 }
 
-export async function fetchRecentWorks(page = 1, perPage = 10, filters?: { fromDate?: string; toDate?: string }): Promise<CompendiaPost[]> {
+export async function fetchRecentWorks(page = 1, perPage = 10, filters?: { fromDate?: string; toDate?: string; random?: boolean }): Promise<CompendiaPost[]> {
     // Get date for 7 days ago as default
     const sevenDaysAgo = subDays(new Date(), 7);
     const defaultFromDate = format(sevenDaysAgo, "yyyy-MM-dd");
@@ -43,10 +43,19 @@ export async function fetchRecentWorks(page = 1, perPage = 10, filters?: { fromD
     // We remove 'select' to ensure we get all fields including new ones like topics and keywords
     const params = new URLSearchParams({
         filter: filterString,
-        sort: "publication_date:desc",
-        page: page.toString(),
         per_page: perPage.toString(),
     });
+
+    if (filters?.random) {
+        // Use sample for random results
+        // Note: 'sample' parameter in OpenAlex takes the count directly, e.g. sample=10
+        // It overrides 'page' and 'sort'
+        params.set('sample', perPage.toString());
+        // We don't set 'sort' or 'page' when using sample
+    } else {
+        params.set('sort', "publication_date:desc");
+        params.set('page', page.toString());
+    }
 
     try {
         const response = await fetch(`${OPENALEX_API_URL}?${params.toString()}`);
