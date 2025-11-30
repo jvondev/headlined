@@ -7,7 +7,7 @@ import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { ExternalLink, X, Sparkles, Clock, Lock, Bookmark, Download, Quote, FileText, Globe, BookOpen, Calendar, Hash } from "lucide-react";
+import { ExternalLink, X, Sparkles, Clock, Lock, Bookmark, Download, Quote, FileText, Globe, BookOpen, Calendar, Hash, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
 import { PostExportTemplate } from "./post-export-template";
@@ -38,11 +38,77 @@ const stripHtml = (html: string) => {
     return tmp.textContent || tmp.innerText || "";
 };
 
+// Highlighting Component
+const HighlightedAbstract: FC<{ text: string; keywords: string[]; topics: string[]; concepts: string[] }> = ({ text, keywords, topics, concepts }) => {
+    const parts = useMemo(() => {
+        if (!text) return [];
+
+        // Create a map of terms to their type/color
+        const terms = new Map<string, string>();
+
+        // Sort by length descending to match longest phrases first
+        const allTerms = [
+            ...topics.map(t => ({ term: t.toLowerCase(), type: 'topic', color: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-900 dark:text-emerald-100' })),
+            ...keywords.map(k => ({ term: k.toLowerCase(), type: 'keyword', color: 'bg-sky-100 dark:bg-sky-900/40 text-sky-900 dark:text-sky-100' })),
+            ...concepts.map(c => ({ term: c.toLowerCase(), type: 'concept', color: 'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-100' }))
+        ].sort((a, b) => b.term.length - a.term.length);
+
+        // Escape regex special characters
+        const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+        // Build a single regex for all terms
+        if (allTerms.length === 0) return [{ text, highlight: null }];
+
+        const pattern = new RegExp(`\\b(${allTerms.map(t => escapeRegExp(t.term)).join('|')})\\b`, 'gi');
+
+        const result = [];
+        let lastIndex = 0;
+        let match;
+
+        while ((match = pattern.exec(text)) !== null) {
+            if (match.index > lastIndex) {
+                result.push({ text: text.slice(lastIndex, match.index), highlight: null });
+            }
+
+            const matchedTerm = match[0].toLowerCase();
+            const termInfo = allTerms.find(t => t.term === matchedTerm);
+
+            result.push({
+                text: match[0],
+                highlight: termInfo ? termInfo.color : null
+            });
+
+            lastIndex = pattern.lastIndex;
+        }
+
+        if (lastIndex < text.length) {
+            result.push({ text: text.slice(lastIndex), highlight: null });
+        }
+
+        return result;
+    }, [text, keywords, topics, concepts]);
+
+    return (
+        <span>
+            {parts.map((part, i) => (
+                part.highlight ? (
+                    <mark key={i} className={cn("rounded-sm px-0.5 font-medium mx-0.5", part.highlight)}>
+                        {part.text}
+                    </mark>
+                ) : (
+                    <span key={i}>{part.text}</span>
+                )
+            ))}
+        </span>
+    );
+};
+
 const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest, onSave, isSaved, onShare, isPremium }) => {
     const router = useRouter();
     const [isExpanded, setIsExpanded] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
+    const [copiedDoi, setCopiedDoi] = useState(false);
     const exportRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -85,6 +151,15 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             return;
         }
         setIsExpanded(!isExpanded);
+    };
+
+    const handleCopyDoi = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (post.doi) {
+            navigator.clipboard.writeText(post.doi);
+            setCopiedDoi(true);
+            setTimeout(() => setCopiedDoi(false), 2000);
+        }
     };
 
     const handleDownload = async () => {
@@ -147,6 +222,15 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
         const minutes = Math.max(1, Math.ceil(words / 200));
         return `${minutes} min read`;
     }, [summaryText]);
+
+    // Extract terms for highlighting
+    const highlightTerms = useMemo(() => {
+        return {
+            keywords: post.keywords?.map(k => k.display_name) || [],
+            topics: post.topics?.map(t => t.display_name) || [],
+            concepts: post.concepts?.map(c => c.display_name) || []
+        };
+    }, [post]);
 
     const handleTouchStart = (e: React.TouchEvent) => {
         const scrollContainer = scrollContainerRef.current;
@@ -235,7 +319,11 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                         <div className="flex items-center gap-3 md:gap-4 text-[9px] md:text-[10px] font-sans text-zinc-500 uppercase tracking-wider">
                             <div className="flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />
-                                <span>{new Date(post.date).getFullYear()}</span>
+                                <span>
+                                    {post.publication_date
+                                        ? new Date(post.publication_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+                                        : new Date(post.date).getFullYear()}
+                                </span>
                             </div>
                             {post.volume && (
                                 <div className="flex items-center gap-1">
@@ -267,7 +355,12 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                         <div className="flex-1 overflow-hidden relative">
                             <h4 className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest font-sans text-zinc-400 mb-1 md:mb-2">Abstract</h4>
                             <p className="text-xs md:text-[13px] leading-[1.6] text-zinc-800 font-serif text-justify line-clamp-[6] md:line-clamp-[8]">
-                                {summaryText}
+                                <HighlightedAbstract
+                                    text={summaryText}
+                                    keywords={highlightTerms.keywords}
+                                    topics={highlightTerms.topics}
+                                    concepts={highlightTerms.concepts}
+                                />
                             </p>
                             {/* Fade out at bottom */}
                             <div className="absolute bottom-0 left-0 right-0 h-12 md:h-16 bg-gradient-to-t from-[#fdfdfd] to-transparent" />
@@ -347,7 +440,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                         <div className="flex items-center gap-3 text-xs font-sans text-zinc-500 uppercase tracking-widest mb-4 md:mb-6 flex-wrap">
                                             <span className="font-bold text-zinc-900">{post.journal || "Journal Article"}</span>
                                             <span>•</span>
-                                            <span>{new Date(post.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                            <span>{post.publication_date || new Date(post.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                                             {post.isOpenAccess && (
                                                 <span className="ml-auto md:ml-0 flex items-center gap-1 text-emerald-700 font-bold border border-emerald-200 px-2 py-0.5 rounded-full bg-emerald-50">
                                                     <BookOpen className="w-3 h-3" /> Open Access
@@ -377,24 +470,93 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                     <div className="mb-12">
                                         <h3 className="text-sm font-bold uppercase tracking-widest font-sans text-zinc-900 mb-4 border-b border-zinc-100 pb-2 inline-block">Abstract</h3>
                                         <p className="text-base md:text-lg leading-[1.8] text-zinc-800 text-justify font-serif">
-                                            {summaryText}
+                                            <HighlightedAbstract
+                                                text={summaryText}
+                                                keywords={highlightTerms.keywords}
+                                                topics={highlightTerms.topics}
+                                                concepts={highlightTerms.concepts}
+                                            />
                                         </p>
                                     </div>
 
-                                    {/* Keywords */}
-                                    <div className="flex flex-wrap gap-2 mb-16">
-                                        {post.tags.map(tag => (
-                                            <span key={tag} className="px-3 py-1 bg-zinc-100 text-zinc-600 text-xs font-sans font-medium rounded-full border border-zinc-200">
-                                                {tag}
-                                            </span>
-                                        ))}
+                                    {/* Detailed Metadata Grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                                        {/* Topics */}
+                                        {post.topics && post.topics.length > 0 && (
+                                            <div>
+                                                <h4 className="text-xs font-bold uppercase tracking-widest font-sans text-zinc-400 mb-3">Topics</h4>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {post.topics.slice(0, 5).map((topic, i) => (
+                                                        <span key={i} className="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-sans font-medium rounded border border-emerald-100">
+                                                            {topic.display_name}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Keywords */}
+                                        {post.keywords && post.keywords.length > 0 && (
+                                            <div>
+                                                <h4 className="text-xs font-bold uppercase tracking-widest font-sans text-zinc-400 mb-3">Keywords</h4>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {post.keywords.slice(0, 8).map((keyword, i) => (
+                                                        <span key={i} className="px-2 py-1 bg-sky-50 text-sky-700 text-xs font-sans font-medium rounded border border-sky-100">
+                                                            {keyword.display_name}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Concepts */}
+                                        {post.concepts && post.concepts.length > 0 && (
+                                            <div>
+                                                <h4 className="text-xs font-bold uppercase tracking-widest font-sans text-zinc-400 mb-3">Concepts</h4>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {post.concepts.slice(0, 8).map((concept, i) => (
+                                                        <span key={i} className="px-2 py-1 bg-amber-50 text-amber-700 text-xs font-sans font-medium rounded border border-amber-100">
+                                                            {concept.display_name}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Metrics */}
+                                        <div>
+                                            <h4 className="text-xs font-bold uppercase tracking-widest font-sans text-zinc-400 mb-3">Impact Metrics</h4>
+                                            <div className="flex flex-col gap-2 text-sm font-sans text-zinc-600">
+                                                <div className="flex justify-between border-b border-zinc-100 pb-1">
+                                                    <span>Citations</span>
+                                                    <span className="font-bold">{post.citationCount}</span>
+                                                </div>
+                                                {post.fwci && (
+                                                    <div className="flex justify-between border-b border-zinc-100 pb-1">
+                                                        <span>Field-Weighted Citation Impact</span>
+                                                        <span className="font-bold">{post.fwci.toFixed(2)}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
 
                                     {/* DOI / Link */}
                                     {post.doi && (
-                                        <div className="p-4 bg-zinc-50 rounded-lg border border-zinc-100 text-sm font-sans text-zinc-500 mb-24 flex items-center gap-2 flex-wrap">
-                                            <span className="font-bold text-zinc-700">DOI:</span>
-                                            <a href={post.doi} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline break-all">{post.doi}</a>
+                                        <div className="p-4 bg-zinc-50 rounded-lg border border-zinc-100 text-sm font-sans text-zinc-500 mb-24 flex items-center gap-2 flex-wrap justify-between">
+                                            <div className="flex items-center gap-2 overflow-hidden">
+                                                <span className="font-bold text-zinc-700 shrink-0">DOI:</span>
+                                                <a href={post.doi} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline truncate">{post.doi}</a>
+                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-8 text-xs gap-1 text-zinc-500 hover:text-zinc-900"
+                                                onClick={handleCopyDoi}
+                                            >
+                                                {copiedDoi ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                                {copiedDoi ? "Copied" : "Copy DOI"}
+                                            </Button>
                                         </div>
                                     )}
                                 </div>

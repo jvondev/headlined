@@ -110,14 +110,15 @@ export interface OpenAlexWork {
   };
   open_access: {
     is_oa: boolean;
+    oa_status: string;
     oa_url: string | null;
+    any_repository_has_fulltext: boolean;
   };
   authorships: {
-    author: {
-      id: string;
-      display_name: string;
-    };
+    author: { display_name: string; id: string; orcid?: string };
     raw_affiliation_string: string;
+    institutions: { display_name: string; id: string; country_code: string }[];
+    is_corresponding: boolean;
   }[];
   biblio: {
     volume: string | null;
@@ -127,11 +128,17 @@ export interface OpenAlexWork {
   };
   cited_by_count: number;
   abstract_inverted_index: { [key: string]: number[] } | null;
-  concepts: {
-    id: string;
+  concepts: { display_name: string; score: number; level: number }[];
+  topics: {
     display_name: string;
     score: number;
+    domain: { display_name: string };
+    field: { display_name: string };
+    subfield: { display_name: string };
   }[];
+  keywords: { display_name: string; score: number }[];
+  fwci: number | null;
+  citation_normalized_percentile: { value: number; is_in_top_1_percent: boolean; is_in_top_10_percent: boolean } | null;
 }
 
 export interface CompendiaPost {
@@ -146,8 +153,16 @@ export interface CompendiaPost {
   pdfUrl: string | null;
   landingPageUrl: string | null;
   tags: string[];
+  keywords: { display_name: string; score: number }[];
+  topics: { display_name: string; score: number; domain: string; field: string; subfield: string }[];
+  concepts: { display_name: string; score: number; level: number }[];
   doi: string | null;
   isOpenAccess: boolean;
+  openAccess: { status: string; is_oa: boolean; oa_url: string | null; oa_status: string };
   volume: string | null;
   issue: string | null;
+  publication_date: string;
+  fwci: number | null;
+  citation_normalized_percentile: { value: number; is_in_top_1_percent: boolean; is_in_top_10_percent: boolean } | null;
+  primary_location: { source: string; license: string | null; version: string | null } | null;
 }

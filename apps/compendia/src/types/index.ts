@@ -55,8 +55,16 @@ export interface CompendiaPost {
     pdfUrl: string | null;
     landingPageUrl: string | null;
     tags: string[];
+    keywords: { display_name: string; score: number }[];
+    topics: { display_name: string; score: number; domain: string; field: string; subfield: string }[];
+    concepts: { display_name: string; score: number; level: number }[];
     doi: string | null;
     isOpenAccess: boolean;
+    openAccess: { status: string; is_oa: boolean; oa_url: string | null; oa_status: string };
     volume: string | null;
     issue: string | null;
+    publication_date: string;
+    fwci: number | null;
+    citation_normalized_percentile: { value: number; is_in_top_1_percent: boolean; is_in_top_10_percent: boolean } | null;
+    primary_location: { source: string; license: string | null; version: string | null } | null;
 }

@@ -75,16 +75,39 @@ export async function fetchRecentWorks(page = 1, perPage = 10, filters?: { fromD
             abstract: decodeAbstract(work.abstract_inverted_index),
             authors: work.authorships.map((a: { author: { display_name: any; }; }) => a.author.display_name),
             affiliations: work.authorships.map((a: { raw_affiliation_string: any; }) => a.raw_affiliation_string).filter(Boolean),
-            journal: work.primary_location?.source?.display_name || "Unknown Source",
+            journal: (work.primary_location as any)?.source?.display_name || "Unknown Source",
             date: work.publication_date,
             citationCount: work.cited_by_count,
-            pdfUrl: work.primary_location?.pdf_url || work.open_access?.oa_url,
-            landingPageUrl: work.primary_location?.landing_page_url || work.ids.doi || null,
-            tags: work.concepts.slice(0, 3).map((c: { display_name: any; }) => c.display_name),
+            pdfUrl: (work.primary_location as any)?.pdf_url || work.open_access?.oa_url,
+            landingPageUrl: (work.primary_location as any)?.landing_page_url || work.ids.doi || null,
+            tags: work.keywords?.map((k: { display_name: any; }) => k.display_name).slice(0, 5) || [],
+            keywords: work.keywords?.map((k: { display_name: any; score: any; }) => ({ display_name: k.display_name, score: k.score })) || [],
+            topics: work.topics?.map((t: { display_name: any; score: any; domain: { display_name: any; }; field: { display_name: any; }; subfield: { display_name: any; }; }) => ({
+                display_name: t.display_name,
+                score: t.score,
+                domain: t.domain.display_name,
+                field: t.field.display_name,
+                subfield: t.subfield.display_name
+            })) || [],
+            concepts: work.concepts?.map((c: { display_name: any; score: any; level: any; }) => ({ display_name: c.display_name, score: c.score, level: c.level })) || [],
             doi: work.doi,
             isOpenAccess: work.open_access?.is_oa || false,
+            openAccess: {
+                status: work.open_access?.oa_status || "closed",
+                is_oa: work.open_access?.is_oa || false,
+                oa_url: work.open_access?.oa_url || null,
+                oa_status: work.open_access?.oa_status || "closed"
+            },
             volume: work.biblio?.volume || null,
             issue: work.biblio?.issue || null,
+            publication_date: work.publication_date,
+            fwci: work.fwci,
+            citation_normalized_percentile: work.citation_normalized_percentile,
+            primary_location: work.primary_location ? {
+                source: (work.primary_location as any).source?.display_name || "Unknown Source",
+                license: (work.primary_location as any).license || null,
+                version: (work.primary_location as any).version || null
+            } : null,
         }));
     } catch (error) {
         console.error("Failed to fetch works:", error);
