@@ -211,20 +211,20 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-multiply" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }} />
 
                     {/* Header: Journal Info & Metadata */}
-                    <div className="p-6 md:p-8 pb-4 border-b border-zinc-200 relative">
-                        <div className="flex items-start justify-between mb-4">
-                            <div className="flex flex-col gap-1">
-                                <span className="text-[9px] uppercase tracking-[0.2em] font-sans text-zinc-400 font-semibold">Original Research</span>
-                                <h3 className="text-lg font-bold font-serif italic text-zinc-800 leading-tight max-w-[200px] truncate">
+                    <div className="p-4 md:p-8 pb-3 md:pb-4 border-b border-zinc-200 relative">
+                        <div className="flex items-start justify-between mb-3 md:mb-4">
+                            <div className="flex flex-col gap-1 pr-2">
+                                <span className="text-[8px] md:text-[9px] uppercase tracking-[0.2em] font-sans text-zinc-400 font-semibold">Original Research</span>
+                                <h3 className="text-base md:text-lg font-bold font-serif italic text-zinc-800 leading-tight line-clamp-2">
                                     {post.journal || "Open Research"}
                                 </h3>
                             </div>
-                            <div className="flex flex-col items-end gap-1">
-                                <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-white font-serif font-bold italic shadow-sm">
+                            <div className="flex flex-col items-end gap-1 shrink-0">
+                                <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-zinc-900 flex items-center justify-center text-white font-serif font-bold italic shadow-sm text-xs md:text-sm">
                                     R
                                 </div>
                                 {post.isOpenAccess && (
-                                    <div className="flex items-center gap-1 text-[9px] font-sans font-bold text-emerald-700 uppercase tracking-wider">
+                                    <div className="flex items-center gap-1 text-[8px] md:text-[9px] font-sans font-bold text-emerald-700 uppercase tracking-wider">
                                         <BookOpen className="w-3 h-3" /> OA
                                     </div>
                                 )}
@@ -232,7 +232,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                         </div>
 
                         {/* Key Metadata Row */}
-                        <div className="flex items-center gap-4 text-[10px] font-sans text-zinc-500 uppercase tracking-wider">
+                        <div className="flex items-center gap-3 md:gap-4 text-[9px] md:text-[10px] font-sans text-zinc-500 uppercase tracking-wider">
                             <div className="flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />
                                 <span>{new Date(post.date).getFullYear()}</span>
@@ -251,37 +251,37 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                     </div>
 
                     {/* Content Body */}
-                    <div className="flex-1 flex flex-col p-6 md:p-8 pt-6 overflow-hidden relative">
+                    <div className="flex-1 flex flex-col p-4 md:p-8 pt-4 md:pt-6 overflow-hidden relative">
                         {/* Title */}
-                        <h1 className="text-2xl md:text-[1.75rem] font-bold leading-[1.15] text-zinc-900 font-serif mb-3 tracking-tight">
+                        <h1 className="text-xl md:text-[1.75rem] font-bold leading-[1.2] md:leading-[1.15] text-zinc-900 font-serif mb-2 md:mb-3 tracking-tight line-clamp-3 md:line-clamp-none">
                             {decodedTitle}
                         </h1>
 
                         {/* Authors */}
-                        <div className="text-sm text-zinc-600 italic font-serif mb-6 border-l-2 border-zinc-300 pl-3">
+                        <div className="text-xs md:text-sm text-zinc-600 italic font-serif mb-4 md:mb-6 border-l-2 border-zinc-300 pl-3">
                             {post.authors.slice(0, 3).join(", ")}
                             {post.authors.length > 3 && " et al."}
                         </div>
 
                         {/* Abstract Section */}
                         <div className="flex-1 overflow-hidden relative">
-                            <h4 className="text-[10px] font-bold uppercase tracking-widest font-sans text-zinc-400 mb-2">Abstract</h4>
-                            <p className="text-[13px] leading-[1.6] text-zinc-800 font-serif text-justify line-clamp-[6] md:line-clamp-[8]">
+                            <h4 className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest font-sans text-zinc-400 mb-1 md:mb-2">Abstract</h4>
+                            <p className="text-xs md:text-[13px] leading-[1.6] text-zinc-800 font-serif text-justify line-clamp-[6] md:line-clamp-[8]">
                                 {summaryText}
                             </p>
                             {/* Fade out at bottom */}
-                            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#fdfdfd] to-transparent" />
+                            <div className="absolute bottom-0 left-0 right-0 h-12 md:h-16 bg-gradient-to-t from-[#fdfdfd] to-transparent" />
                         </div>
                     </div>
 
                     {/* Footer: Keywords & DOI */}
-                    <div className="px-6 md:px-8 py-4 border-t border-zinc-100 bg-zinc-50/50 flex items-center justify-between text-[10px] font-sans text-zinc-500">
-                        <div className="flex items-center gap-2 overflow-hidden">
+                    <div className="px-4 md:px-8 py-3 md:py-4 border-t border-zinc-100 bg-zinc-50/50 flex items-center justify-between text-[9px] md:text-[10px] font-sans text-zinc-500">
+                        <div className="flex items-center gap-2 overflow-hidden max-w-[60%]">
                             <span className="font-bold text-zinc-700 shrink-0">Keywords:</span>
                             <span className="italic truncate">{post.tags.slice(0, 3).join(", ")}</span>
                         </div>
                         {post.doi && (
-                            <div className="shrink-0 font-mono text-zinc-400">
+                            <div className="shrink-0 font-mono text-zinc-400 truncate max-w-[35%]">
                                 {post.doi.replace('https://doi.org/', 'DOI: ')}
                             </div>
                         )}
@@ -340,31 +340,31 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                 {/* Scrollable Content */}
                                 <div
                                     ref={scrollContainerRef}
-                                    className="flex-1 overflow-y-auto no-scrollbar overscroll-contain p-8 md:p-16 font-serif"
+                                    className="flex-1 overflow-y-auto no-scrollbar overscroll-contain p-6 md:p-16 font-serif"
                                 >
                                     {/* Header Info */}
-                                    <div className="border-b border-zinc-200 pb-8 mb-10">
-                                        <div className="flex items-center gap-3 text-xs font-sans text-zinc-500 uppercase tracking-widest mb-6">
+                                    <div className="border-b border-zinc-200 pb-6 md:pb-8 mb-8 md:mb-10">
+                                        <div className="flex items-center gap-3 text-xs font-sans text-zinc-500 uppercase tracking-widest mb-4 md:mb-6 flex-wrap">
                                             <span className="font-bold text-zinc-900">{post.journal || "Journal Article"}</span>
                                             <span>•</span>
                                             <span>{new Date(post.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                                             {post.isOpenAccess && (
-                                                <span className="ml-auto flex items-center gap-1 text-emerald-700 font-bold border border-emerald-200 px-2 py-0.5 rounded-full bg-emerald-50">
+                                                <span className="ml-auto md:ml-0 flex items-center gap-1 text-emerald-700 font-bold border border-emerald-200 px-2 py-0.5 rounded-full bg-emerald-50">
                                                     <BookOpen className="w-3 h-3" /> Open Access
                                                 </span>
                                             )}
                                         </div>
 
-                                        <h1 className="text-3xl md:text-5xl font-bold leading-[1.1] text-zinc-900 mb-8 tracking-tight">
+                                        <h1 className="text-2xl md:text-5xl font-bold leading-[1.1] text-zinc-900 mb-6 md:mb-8 tracking-tight">
                                             {decodedTitle}
                                         </h1>
 
                                         <div className="space-y-4">
-                                            <div className="text-xl italic text-zinc-700 font-serif">
+                                            <div className="text-lg md:text-xl italic text-zinc-700 font-serif">
                                                 {post.authors.join(", ")}
                                             </div>
                                             {post.affiliations && post.affiliations.length > 0 && (
-                                                <div className="text-sm text-zinc-500 font-sans border-l-2 border-zinc-200 pl-4">
+                                                <div className="text-xs md:text-sm text-zinc-500 font-sans border-l-2 border-zinc-200 pl-4">
                                                     {post.affiliations.map((aff, i) => (
                                                         <div key={i} className="mb-1">{aff}</div>
                                                     ))}
@@ -376,7 +376,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                     {/* Abstract */}
                                     <div className="mb-12">
                                         <h3 className="text-sm font-bold uppercase tracking-widest font-sans text-zinc-900 mb-4 border-b border-zinc-100 pb-2 inline-block">Abstract</h3>
-                                        <p className="text-lg leading-[1.8] text-zinc-800 text-justify font-serif">
+                                        <p className="text-base md:text-lg leading-[1.8] text-zinc-800 text-justify font-serif">
                                             {summaryText}
                                         </p>
                                     </div>
@@ -392,7 +392,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
 
                                     {/* DOI / Link */}
                                     {post.doi && (
-                                        <div className="p-4 bg-zinc-50 rounded-lg border border-zinc-100 text-sm font-sans text-zinc-500 mb-24 flex items-center gap-2">
+                                        <div className="p-4 bg-zinc-50 rounded-lg border border-zinc-100 text-sm font-sans text-zinc-500 mb-24 flex items-center gap-2 flex-wrap">
                                             <span className="font-bold text-zinc-700">DOI:</span>
                                             <a href={post.doi} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline break-all">{post.doi}</a>
                                         </div>
@@ -408,7 +408,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                 >
                                     <div className="flex items-center gap-2 p-2 rounded-full bg-zinc-900/95 backdrop-blur-xl shadow-2xl pointer-events-auto border border-zinc-800">
                                         <Button
-                                            className="h-12 px-8 rounded-full font-bold text-base tracking-wide shadow-lg bg-white text-black hover:bg-zinc-200 font-sans"
+                                            className="h-12 px-6 md:px-8 rounded-full font-bold text-sm md:text-base tracking-wide shadow-lg bg-white text-black hover:bg-zinc-200 font-sans"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 window.open(post.landingPageUrl || post.pdfUrl || '#', "_blank");
