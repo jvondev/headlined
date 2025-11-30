@@ -294,12 +294,12 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                     {/* Subtle Gradient Background */}
                     <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black" />
                     {/* Background Image */}
-                    <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute inset-0 overflow-hidden rounded-[32px]" style={{ WebkitTouchCallout: 'none', WebkitUserSelect: 'none', userSelect: 'none' }}>
                         {post.thumbnail_url ? (
                             <motion.img
                                 src={post.thumbnail_url}
                                 alt=""
-                                className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-110"
+                                className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-110 select-none pointer-events-none"
                                 layoutId={`image-${uniqueId}`}
                             />
                         ) : (
@@ -310,8 +310,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                         )}
 
                         {/* Multi-layer Gradients */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/90" />
-                        <div className="absolute inset-0 bg-gradient-to-tr from-white/3 via-transparent to-white/2" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/90 pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-tr from-white/3 via-transparent to-white/2 pointer-events-none" />
                     </div>
 
                     {/* Card Content */}
