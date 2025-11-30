@@ -37,29 +37,35 @@ const stripHtml = (html: string) => {
     tmp.innerHTML = html;
     return tmp.textContent || tmp.innerText || "";
 };
-
 // Highlighting Component
 const HighlightedAbstract: FC<{ text: string; keywords: string[]; topics: string[]; concepts: string[] }> = ({ text, keywords, topics, concepts }) => {
     const parts = useMemo(() => {
         if (!text) return [];
 
-        // Create a map of terms to their type/color
-        const terms = new Map<string, string>();
+        // Helper to generate flexible regex pattern for a term
+        const getPattern = (term: string) => {
+            // Escape special chars
+            const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            // Allow for common suffixes (plural, past tense, etc.)
+            // e.g. "agreement" -> "agreements", "agree" -> "agreed", "agreeing"
+            // We use a non-capturing group for suffixes
+            return `${escaped}(?:s|es|d|ed|ing|ion|ions|al|ic|ive|ly|ment|ments|ness|ity|ty|ance|ence|er|or|ist|ism|able|ible)?`;
+        };
 
-        // Sort by length descending to match longest phrases first
+        // Create a map of terms to their type/color
+        // We prioritize longer terms to avoid partial matches within longer phrases
         const allTerms = [
-            ...topics.map(t => ({ term: t.toLowerCase(), type: 'topic', color: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-900 dark:text-emerald-100' })),
-            ...keywords.map(k => ({ term: k.toLowerCase(), type: 'keyword', color: 'bg-sky-100 dark:bg-sky-900/40 text-sky-900 dark:text-sky-100' })),
-            ...concepts.map(c => ({ term: c.toLowerCase(), type: 'concept', color: 'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-100' }))
+            ...topics.map(t => ({ term: t, pattern: getPattern(t), type: 'topic', color: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-900 dark:text-emerald-100 border-b-2 border-emerald-200' })),
+            ...keywords.map(k => ({ term: k, pattern: getPattern(k), type: 'keyword', color: 'bg-sky-100 dark:bg-sky-900/40 text-sky-900 dark:text-sky-100 border-b-2 border-sky-200' })),
+            ...concepts.map(c => ({ term: c, pattern: getPattern(c), type: 'concept', color: 'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-100 border-b-2 border-amber-200' }))
         ].sort((a, b) => b.term.length - a.term.length);
 
-        // Escape regex special characters
-        const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-        // Build a single regex for all terms
         if (allTerms.length === 0) return [{ text, highlight: null }];
 
-        const pattern = new RegExp(`\\b(${allTerms.map(t => escapeRegExp(t.term)).join('|')})\\b`, 'gi');
+        // Build a single regex for all terms
+        // We use word boundaries \b to ensure we match whole words (or words with allowed suffixes)
+        const patternString = `\\b(${allTerms.map(t => t.pattern).join('|')})\\b`;
+        const pattern = new RegExp(patternString, 'gi');
 
         const result = [];
         let lastIndex = 0;
@@ -70,11 +76,16 @@ const HighlightedAbstract: FC<{ text: string; keywords: string[]; topics: string
                 result.push({ text: text.slice(lastIndex, match.index), highlight: null });
             }
 
-            const matchedTerm = match[0].toLowerCase();
-            const termInfo = allTerms.find(t => t.term === matchedTerm);
+            const matchedText = match[0];
+            // Find the term that matched. Since we allow suffixes, we check if the matched text starts with the term
+            // or if the term is contained in the match (fuzzy check)
+            const termInfo = allTerms.find(t => {
+                const regex = new RegExp(`^${t.pattern}$`, 'i');
+                return regex.test(matchedText);
+            });
 
             result.push({
-                text: match[0],
+                text: matchedText,
                 highlight: termInfo ? termInfo.color : null
             });
 
@@ -92,7 +103,7 @@ const HighlightedAbstract: FC<{ text: string; keywords: string[]; topics: string
         <span>
             {parts.map((part, i) => (
                 part.highlight ? (
-                    <mark key={i} className={cn("rounded-sm px-0.5 font-medium mx-0.5", part.highlight)}>
+                    <mark key={i} className={cn("rounded-[2px] px-0.5 font-medium mx-0.5 bg-opacity-80", part.highlight)}>
                         {part.text}
                     </mark>
                 ) : (

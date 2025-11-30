@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useSavedItems } from "@repo/lib/hooks/use-saved-items";
 import { Button } from "@repo/ui/components/ui/button";
 import { X, BookmarkX, Shuffle, Download } from "lucide-react";
-import type { Post, SavedItem } from "@repo/lib/types";
+import type { CompendiaPost, SavedItem } from "@/types";
 import { SavedItemPreviewCard } from "@/components/saved-item-preview";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@repo/ui/components/ui/alert-dialog";
 import { useInterval } from "react-use";
@@ -14,7 +14,7 @@ import { SavedItemsFilter } from "@/components/saved-items-filter";
 
 type FilterType = "all" | "saved" | "note";
 
-export default function SavedPageClient({ initialPosts }: { initialPosts: (Post & { savedItem: SavedItem })[] }) {
+export default function SavedPageClient({ initialPosts }: { initialPosts: (CompendiaPost & { savedItem: SavedItem })[] }) {
     const { savedItems, removeSavedItem, isLoaded } = useSavedItems();
     const [filter, setFilter] = useState<FilterType>("all");
 
@@ -25,8 +25,8 @@ export default function SavedPageClient({ initialPosts }: { initialPosts: (Post 
     const [isAnimating, setIsAnimating] = useState(false);
 
     const postsMap = useMemo(() => {
-        const map = new Map<string, Post>();
-        initialPosts.forEach(post => map.set(post.slug, post));
+        const map = new Map<string, CompendiaPost>();
+        initialPosts.forEach(post => map.set(post.id, post)); // Use id instead of slug
         return map;
     }, [initialPosts]);
 

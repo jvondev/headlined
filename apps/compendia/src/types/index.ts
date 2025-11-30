@@ -68,3 +68,13 @@ export interface CompendiaPost {
     citation_normalized_percentile: { value: number; is_in_top_1_percent: boolean; is_in_top_10_percent: boolean } | null;
     primary_location: { source: string; license: string | null; version: string | null } | null;
 }
+
+export interface SavedItem {
+    id: string;
+    slug: string;
+    title: string;
+    type: string;
+    savedAt: string;
+    note?: string;
+}
+

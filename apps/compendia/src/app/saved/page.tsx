@@ -1,39 +1,40 @@
 'use client';
 
-import { getPostsBySlugs } from "@repo/lib/utils/client-posts";
+import { getPostsBySlugs } from "@/lib/client-posts";
 import { SavedPageHeader } from "@/components/saved/saved-page-header";
 import SavedPageClient from "./client";
-import type { SavedItem, Post } from "@/types";
+import type { SavedItem, CompendiaPost } from "@/types";
 import { useEffect, useState } from 'react';
 
 // Client-side function to get saved items from localStorage
 function getSavedItemsClient(): SavedItem[] {
-  if (typeof window === 'undefined') return [];
-  const savedItemsCookie = localStorage.getItem('savedItems');
-  if (savedItemsCookie) {
-    try {
-      return JSON.parse(savedItemsCookie);
-    } catch (e) {
-      console.error('Error parsing saved items from localStorage:', e);
-      return [];
+    if (typeof window === 'undefined') return [];
+    const savedItemsCookie = localStorage.getItem('savedItems');
+    if (savedItemsCookie) {
+        try {
+            return JSON.parse(savedItemsCookie);
+        } catch (e) {
+            console.error('Error parsing saved items from localStorage:', e);
+            return [];
+        }
     }
-  }
-  return [];
+    return [];
 }
 
 export default function SavedPage() {
-    const [postsWithSavedData, setPostsWithSavedData] = useState<Array<Post & { savedItem: SavedItem }>>([]);
+    const [postsWithSavedData, setPostsWithSavedData] = useState<Array<CompendiaPost & { savedItem: SavedItem }>>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchSavedPosts() {
             setLoading(true);
             const savedItems = getSavedItemsClient();
-            const postSlugs = savedItems.map(item => item.slug);
-            const posts = await getPostsBySlugs(postSlugs);
+            // Use id instead of slug for CompendiaPosts
+            const postIds = savedItems.map(item => item.slug); // slug holds the id for compendia
+            const posts = await getPostsBySlugs(postIds);
 
             const combinedData = posts.map(post => {
-                const savedItem = savedItems.find(item => item.slug === post.slug)!;
+                const savedItem = savedItems.find(item => item.slug === post.id)!;
                 return { ...post, savedItem };
             });
             setPostsWithSavedData(combinedData);
