@@ -484,16 +484,21 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                                 <span className="text-xs font-medium text-zinc-500">{readingTime}</span>
                                             </div>
 
+
                                             {/* Typewriter Summary */}
                                             <div className="min-h-[50px]">
                                                 <TypewriterText text={summaryText} shouldSkip={skipTypewriter} />
                                             </div>
 
                                             {/* Programmatic Ad Container */}
-                                            {!isPremium && (
+                                            {!isPremium && mounted && (
                                                 <div className="w-full min-h-[250px] bg-zinc-900/30 rounded-2xl flex items-center justify-center overflow-hidden border border-white/5">
                                                     {/* @ts-ignore */}
-                                                    <div ta-ad-container="" className="w-full h-full" />
+                                                    <div
+                                                        ta-ad-container=""
+                                                        id={`ad-container-${uniqueId}`}
+                                                        className="w-full h-full"
+                                                    />
                                                 </div>
                                             )}
                                         </div>
