@@ -273,6 +273,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                 whileHover={{ scale: 0.985, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                style={{ WebkitTapHighlightColor: 'transparent' }}
             >
                 {/* Outer Ring - Museum Glass Boundary */}
                 <div
@@ -287,24 +288,25 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                 />
 
                 {/* Main Card Container - The "Art Piece" */}
-                <div className="absolute inset-4 md:inset-5 rounded-[32px] overflow-hidden bg-zinc-950 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] border border-white/10 z-10 group-hover:scale-[1.01] transition-transform duration-700 ease-out">
+                <div className="absolute inset-4 md:inset-5 rounded-[32px] overflow-hidden bg-zinc-950 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] border border-white/10 z-10 group-hover:scale-[1.01] transition-transform duration-700 ease-out" style={{ WebkitTapHighlightColor: 'transparent' }}>
                     {/* Premium Texture Overlay (Noise) - Adds tactile "paper" feel */}
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-50 mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }} />
 
                     {/* Subtle Gradient Background */}
                     <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black" />
                     {/* Background Image */}
-                    <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute inset-0 overflow-hidden rounded-[32px]">
                         {post.thumbnail_url ? (
                             <motion.img
                                 src={post.thumbnail_url}
                                 alt=""
-                                className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-110"
+                                className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-110 rounded-[32px]"
                                 layoutId={`image-${uniqueId}`}
+                                style={{ WebkitTapHighlightColor: 'transparent' }}
                             />
                         ) : (
                             <motion.div
-                                className="w-full h-full bg-gradient-to-br from-zinc-800 via-zinc-900 to-black"
+                                className="w-full h-full bg-gradient-to-br from-zinc-800 via-zinc-900 to-black rounded-[32px]"
                                 layoutId={`image-${uniqueId}`}
                             />
                         )}
@@ -429,13 +431,14 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                     className="flex-1 overflow-y-auto no-scrollbar overscroll-contain"
                                 >
                                     {/* Hero Section - Scrolls with content */}
-                                    <div className="relative w-full h-[45vh] md:h-[55vh]">
+                                    <div className="relative w-full h-[45vh] md:h-[55vh] overflow-hidden">
                                         {post.thumbnail_url ? (
                                             <motion.img
                                                 src={post.thumbnail_url}
                                                 alt=""
                                                 className="w-full h-full object-cover"
                                                 layoutId={`image-${uniqueId}`}
+                                                style={{ WebkitTapHighlightColor: 'transparent' }}
                                             />
                                         ) : (
                                             <motion.div
