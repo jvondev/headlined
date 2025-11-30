@@ -7,7 +7,7 @@ import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { ExternalLink, X, Sparkles, Clock, Lock, Bookmark, Download, Quote, FileText, Globe, BookOpen } from "lucide-react";
+import { ExternalLink, X, Sparkles, Clock, Lock, Bookmark, Download, Quote, FileText, Globe, BookOpen, Calendar, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
 import { PostExportTemplate } from "./post-export-template";
@@ -29,6 +29,13 @@ const decodeHtmlEntities = (text: string) => {
     const textArea = document.createElement('textarea');
     textArea.innerHTML = text;
     return textArea.value;
+};
+
+const stripHtml = (html: string) => {
+    if (typeof window === 'undefined') return html;
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
 };
 
 const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest, onSave, isSaved, onShare, isPremium }) => {
@@ -128,7 +135,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     }, [isActive]);
 
     const summaryText = useMemo(() => {
-        return decodeHtmlEntities(post.abstract || "No abstract available.");
+        const decoded = decodeHtmlEntities(post.abstract || "No abstract available.");
+        return stripHtml(decoded);
     }, [post]);
 
     const uniqueId = post.id || Math.random().toString();
@@ -198,82 +206,85 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                 <div className="absolute top-2 left-2 right-[-2px] bottom-[-2px] bg-black/5 rounded-[2px] z-0" />
 
                 {/* Main Paper Surface */}
-                <div className="absolute inset-0 bg-[#fdfdfd] text-zinc-900 overflow-hidden shadow-md border border-zinc-200 z-10 flex flex-col p-6 md:p-8 font-serif">
+                <div className="absolute inset-0 bg-[#fdfdfd] text-zinc-900 overflow-hidden shadow-md border border-zinc-200 z-10 flex flex-col font-serif">
+                    {/* Premium Noise Texture */}
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-multiply" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }} />
 
-                    {/* Header: Journal Info */}
-                    <div className="flex items-start justify-between border-b-2 border-zinc-800 pb-4 mb-6">
-                        <div className="flex flex-col">
-                            <span className="text-[10px] uppercase tracking-widest font-sans text-zinc-500 mb-1">Available online at ReadMore</span>
-                            <div className="flex items-baseline gap-2">
-                                <h3 className="text-xl font-bold font-serif italic text-zinc-800">{post.journal || "Open Research"}</h3>
-                                {post.volume && <span className="text-xs font-sans text-zinc-500">Vol. {post.volume}</span>}
+                    {/* Header: Journal Info & Metadata */}
+                    <div className="p-6 md:p-8 pb-4 border-b border-zinc-200 relative">
+                        <div className="flex items-start justify-between mb-4">
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[9px] uppercase tracking-[0.2em] font-sans text-zinc-400 font-semibold">Original Research</span>
+                                <h3 className="text-lg font-bold font-serif italic text-zinc-800 leading-tight max-w-[200px] truncate">
+                                    {post.journal || "Open Research"}
+                                </h3>
+                            </div>
+                            <div className="flex flex-col items-end gap-1">
+                                <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-white font-serif font-bold italic shadow-sm">
+                                    R
+                                </div>
+                                {post.isOpenAccess && (
+                                    <div className="flex items-center gap-1 text-[9px] font-sans font-bold text-emerald-700 uppercase tracking-wider">
+                                        <BookOpen className="w-3 h-3" /> OA
+                                    </div>
+                                )}
                             </div>
                         </div>
-                        <div className="flex flex-col items-end">
-                            <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-white font-serif font-bold italic">
-                                R
+
+                        {/* Key Metadata Row */}
+                        <div className="flex items-center gap-4 text-[10px] font-sans text-zinc-500 uppercase tracking-wider">
+                            <div className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                <span>{new Date(post.date).getFullYear()}</span>
+                            </div>
+                            {post.volume && (
+                                <div className="flex items-center gap-1">
+                                    <Hash className="w-3 h-3" />
+                                    <span>Vol. {post.volume}</span>
+                                </div>
+                            )}
+                            <div className="flex items-center gap-1">
+                                <Quote className="w-3 h-3" />
+                                <span>{post.citationCount || 0} Citations</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Content Body */}
-                    <div className="flex-1 flex flex-col space-y-4 overflow-hidden">
+                    <div className="flex-1 flex flex-col p-6 md:p-8 pt-6 overflow-hidden relative">
                         {/* Title */}
-                        <h1 className="text-2xl md:text-3xl font-bold leading-tight text-zinc-900 font-serif">
+                        <h1 className="text-2xl md:text-[1.75rem] font-bold leading-[1.15] text-zinc-900 font-serif mb-3 tracking-tight">
                             {decodedTitle}
                         </h1>
 
                         {/* Authors */}
-                        <div className="text-sm text-zinc-600 italic font-serif">
-                            {post.authors.join(", ")}
+                        <div className="text-sm text-zinc-600 italic font-serif mb-6 border-l-2 border-zinc-300 pl-3">
+                            {post.authors.slice(0, 3).join(", ")}
+                            {post.authors.length > 3 && " et al."}
                         </div>
 
-                        {/* Affiliations (if available) - Show first one */}
-                        {post.affiliations && post.affiliations.length > 0 && (
-                            <div className="text-[10px] text-zinc-500 font-sans leading-tight line-clamp-2">
-                                {post.affiliations[0]}
-                            </div>
-                        )}
-
                         {/* Abstract Section */}
-                        <div className="mt-4 flex-1 overflow-hidden relative">
-                            <h4 className="text-xs font-bold uppercase tracking-wider font-sans text-zinc-900 mb-2">Abstract</h4>
-                            <p className="text-sm leading-relaxed text-zinc-800 font-serif text-justify line-clamp-[8] md:line-clamp-[10]">
+                        <div className="flex-1 overflow-hidden relative">
+                            <h4 className="text-[10px] font-bold uppercase tracking-widest font-sans text-zinc-400 mb-2">Abstract</h4>
+                            <p className="text-[13px] leading-[1.6] text-zinc-800 font-serif text-justify line-clamp-[6] md:line-clamp-[8]">
                                 {summaryText}
                             </p>
                             {/* Fade out at bottom */}
-                            <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#fdfdfd] to-transparent" />
+                            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#fdfdfd] to-transparent" />
                         </div>
                     </div>
 
-                    {/* Footer: Metadata */}
-                    <div className="mt-auto pt-4 border-t border-zinc-200 flex items-center justify-between text-[10px] font-sans text-zinc-500">
-                        <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                                <span className="font-bold text-zinc-700">Keywords:</span>
-                                <span className="italic truncate max-w-[150px]">{post.tags.slice(0, 3).join(", ")}</span>
-                            </div>
-                            {post.doi && (
-                                <div className="flex items-center gap-1">
-                                    <span>DOI:</span>
-                                    <span className="font-mono">{post.doi.replace('https://doi.org/', '')}</span>
-                                </div>
-                            )}
+                    {/* Footer: Keywords & DOI */}
+                    <div className="px-6 md:px-8 py-4 border-t border-zinc-100 bg-zinc-50/50 flex items-center justify-between text-[10px] font-sans text-zinc-500">
+                        <div className="flex items-center gap-2 overflow-hidden">
+                            <span className="font-bold text-zinc-700 shrink-0">Keywords:</span>
+                            <span className="italic truncate">{post.tags.slice(0, 3).join(", ")}</span>
                         </div>
-
-                        <div className="flex items-center gap-3">
-                            {post.isOpenAccess && (
-                                <div className="flex items-center gap-1 px-1.5 py-0.5 border border-zinc-300 rounded text-zinc-600">
-                                    <BookOpen className="w-3 h-3" />
-                                    <span>OA</span>
-                                </div>
-                            )}
-                            <div className="flex items-center gap-1">
-                                <Quote className="w-3 h-3" />
-                                <span>{post.citationCount || 0}</span>
+                        {post.doi && (
+                            <div className="shrink-0 font-mono text-zinc-400">
+                                {post.doi.replace('https://doi.org/', 'DOI: ')}
                             </div>
-                            <span className="font-medium">{new Date(post.date).getFullYear()}</span>
-                        </div>
+                        )}
                     </div>
 
                     {/* Lock Overlay */}
@@ -288,16 +299,13 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                 </div>
             </motion.div>
 
-            {/* EXPANDED VIEW PORTAL - Keeping Dark Mode for Reading Experience? Or matching paper style? 
-                User asked for "Research Paper", usually reading PDFs is white. 
-                Let's make the expanded view also paper-like but optimized for screen reading.
-            */}
+            {/* EXPANDED VIEW PORTAL */}
             {mounted && createPortal(
                 <AnimatePresence>
                     {isExpanded && (
                         <motion.div
                             layoutId={`card-container-${uniqueId}`}
-                            className="fixed inset-0 z-[100] flex flex-col bg-[#f0f0f0] backdrop-blur-xl overscroll-none text-zinc-900"
+                            className="fixed inset-0 z-[100] flex flex-col bg-[#e5e5e5] backdrop-blur-xl overscroll-none text-zinc-900"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -309,7 +317,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                             </div>
 
                             <motion.div
-                                className="relative w-full h-full flex flex-col will-change-transform touch-pan-y max-w-4xl mx-auto bg-white shadow-2xl my-0 md:my-8 md:rounded-lg overflow-hidden"
+                                className="relative w-full h-full flex flex-col will-change-transform touch-pan-y max-w-4xl mx-auto bg-[#fdfdfd] shadow-2xl my-0 md:my-8 md:rounded-lg overflow-hidden"
                                 style={{ x, y, opacity: opacityScale, scale: scaleAnim }}
                                 onTouchStart={handleTouchStart}
                                 onTouchMove={handleTouchMove}
@@ -332,34 +340,33 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                 {/* Scrollable Content */}
                                 <div
                                     ref={scrollContainerRef}
-                                    className="flex-1 overflow-y-auto no-scrollbar overscroll-contain p-8 md:p-12 font-serif"
+                                    className="flex-1 overflow-y-auto no-scrollbar overscroll-contain p-8 md:p-16 font-serif"
                                 >
                                     {/* Header Info */}
-                                    <div className="border-b border-zinc-200 pb-6 mb-8">
-                                        <div className="flex items-center gap-2 text-xs font-sans text-zinc-500 uppercase tracking-wider mb-4">
-                                            <span>{post.journal || "Journal Article"}</span>
+                                    <div className="border-b border-zinc-200 pb-8 mb-10">
+                                        <div className="flex items-center gap-3 text-xs font-sans text-zinc-500 uppercase tracking-widest mb-6">
+                                            <span className="font-bold text-zinc-900">{post.journal || "Journal Article"}</span>
                                             <span>•</span>
-                                            <span>{new Date(post.date).toLocaleDateString()}</span>
+                                            <span>{new Date(post.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                                             {post.isOpenAccess && (
-                                                <>
-                                                    <span>•</span>
-                                                    <span className="flex items-center gap-1 text-emerald-600 font-bold"><BookOpen className="w-3 h-3" /> Open Access</span>
-                                                </>
+                                                <span className="ml-auto flex items-center gap-1 text-emerald-700 font-bold border border-emerald-200 px-2 py-0.5 rounded-full bg-emerald-50">
+                                                    <BookOpen className="w-3 h-3" /> Open Access
+                                                </span>
                                             )}
                                         </div>
 
-                                        <h1 className="text-3xl md:text-5xl font-bold leading-tight text-zinc-900 mb-6">
+                                        <h1 className="text-3xl md:text-5xl font-bold leading-[1.1] text-zinc-900 mb-8 tracking-tight">
                                             {decodedTitle}
                                         </h1>
 
-                                        <div className="space-y-2">
-                                            <div className="text-lg italic text-zinc-700">
+                                        <div className="space-y-4">
+                                            <div className="text-xl italic text-zinc-700 font-serif">
                                                 {post.authors.join(", ")}
                                             </div>
                                             {post.affiliations && post.affiliations.length > 0 && (
-                                                <div className="text-sm text-zinc-500 font-sans">
+                                                <div className="text-sm text-zinc-500 font-sans border-l-2 border-zinc-200 pl-4">
                                                     {post.affiliations.map((aff, i) => (
-                                                        <div key={i}>{aff}</div>
+                                                        <div key={i} className="mb-1">{aff}</div>
                                                     ))}
                                                 </div>
                                             )}
@@ -368,16 +375,16 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
 
                                     {/* Abstract */}
                                     <div className="mb-12">
-                                        <h3 className="text-sm font-bold uppercase tracking-widest font-sans text-zinc-900 mb-4">Abstract</h3>
-                                        <p className="text-lg leading-relaxed text-zinc-800 text-justify">
+                                        <h3 className="text-sm font-bold uppercase tracking-widest font-sans text-zinc-900 mb-4 border-b border-zinc-100 pb-2 inline-block">Abstract</h3>
+                                        <p className="text-lg leading-[1.8] text-zinc-800 text-justify font-serif">
                                             {summaryText}
                                         </p>
                                     </div>
 
                                     {/* Keywords */}
-                                    <div className="flex flex-wrap gap-2 mb-12">
+                                    <div className="flex flex-wrap gap-2 mb-16">
                                         {post.tags.map(tag => (
-                                            <span key={tag} className="px-3 py-1 bg-zinc-100 text-zinc-600 text-xs font-sans rounded-full">
+                                            <span key={tag} className="px-3 py-1 bg-zinc-100 text-zinc-600 text-xs font-sans font-medium rounded-full border border-zinc-200">
                                                 {tag}
                                             </span>
                                         ))}
@@ -385,8 +392,9 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
 
                                     {/* DOI / Link */}
                                     {post.doi && (
-                                        <div className="text-sm font-sans text-zinc-500 mb-24">
-                                            <span className="font-bold">DOI:</span> <a href={post.doi} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{post.doi}</a>
+                                        <div className="p-4 bg-zinc-50 rounded-lg border border-zinc-100 text-sm font-sans text-zinc-500 mb-24 flex items-center gap-2">
+                                            <span className="font-bold text-zinc-700">DOI:</span>
+                                            <a href={post.doi} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline break-all">{post.doi}</a>
                                         </div>
                                     )}
                                 </div>
@@ -398,7 +406,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.3, type: "spring", stiffness: 200, damping: 20 }}
                                 >
-                                    <div className="flex items-center gap-2 p-2 rounded-full bg-zinc-900/90 backdrop-blur-xl shadow-2xl pointer-events-auto">
+                                    <div className="flex items-center gap-2 p-2 rounded-full bg-zinc-900/95 backdrop-blur-xl shadow-2xl pointer-events-auto border border-zinc-800">
                                         <Button
                                             className="h-12 px-8 rounded-full font-bold text-base tracking-wide shadow-lg bg-white text-black hover:bg-zinc-200 font-sans"
                                             onClick={(e) => {
