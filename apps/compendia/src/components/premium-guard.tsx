@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { checkLicenseStatus } from "@repo/lib/utils/license-manager";
+import { checkLicenseStatus } from "@/lib/license-manager";
 
 import { PremiumModal } from "@/components/support/premium-modal";
 

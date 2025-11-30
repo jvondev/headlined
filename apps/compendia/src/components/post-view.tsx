@@ -236,11 +236,13 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
 
     // Extract terms for highlighting
     const highlightTerms = useMemo(() => {
-        return {
+        const terms = {
             keywords: post.keywords?.map(k => k.display_name) || [],
             topics: post.topics?.map(t => t.display_name) || [],
             concepts: post.concepts?.map(c => c.display_name) || []
         };
+        console.log("Highlight Terms:", terms);
+        return terms;
     }, [post]);
 
     const handleTouchStart = (e: React.TouchEvent) => {

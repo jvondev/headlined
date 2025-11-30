@@ -10,7 +10,7 @@ import { Button } from "@repo/ui/components/ui/button";
 import { cn } from "@repo/lib/utils/utils";
 import type { Topic, Interest } from "@/types";
 import { useSubscribedFeeds } from "@repo/lib/hooks/use-subscribed-feeds";
-import { checkIfFeedHasPosts } from "@repo/lib/utils/client-posts";
+import { checkIfFeedHasPosts } from "@/lib/utils";
 
 type ExploreContentProps = {
   isLoading?: boolean;

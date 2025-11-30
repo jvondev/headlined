@@ -1,24 +1,14 @@
-
 import FlexSearch from 'flexsearch';
-import type { SearchableItem } from '../types';
 
-// This defines the structure of the search index document.
-// We are telling FlexSearch that each document has an `id` and `content` field.
-export type SearchDocument = SearchableItem;
-
-// The type for our search index.
-// The `true` parameter enables the storage of documents, which can be useful.
-// We use a type assertion or any here because FlexSearch types can be tricky with default imports
 export type SearchIndex = any;
 
-// This function creates a new search index with a specific configuration.
 export function createSearchIndex(): SearchIndex {
     return new FlexSearch.Document({
         document: {
             id: 'id',
-            index: ['title', 'content'], // We want to search within title and content.
-            store: true, // We need to store the document to enrich results.
+            index: ['title', 'content'],
+            store: ['title', 'slug', 'type', 'icon']
         },
-        tokenize: 'forward' // "forward" is a good balance for substring matching.
+        tokenize: 'forward'
     });
 }

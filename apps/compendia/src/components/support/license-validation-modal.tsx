@@ -7,7 +7,7 @@ import { Input } from "@repo/ui/components/ui/input";
 import { Label } from "@repo/ui/components/ui/label";
 import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { validateLicense as validateLicenseKey } from "@repo/lib/utils/license-manager";
+import { validateLicense as validateLicenseKey } from "@/lib/license-manager";
 import { useRouter } from "next/navigation";
 
 interface LicenseValidationModalProps {

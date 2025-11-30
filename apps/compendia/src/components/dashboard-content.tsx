@@ -14,7 +14,7 @@ import Link from "next/link";
 import { cn } from "@repo/lib/utils/utils";
 import { ArchiveNavigation } from "@/components/dashboard/archive-navigation";
 import { useArchiveAccess } from "@repo/lib/hooks/use-archive-access";
-import { checkLicenseStatus } from "@repo/lib/utils/license-manager";
+import { checkLicenseStatus } from "@/lib/license-manager";
 import { DistractionSettings } from "@/components/support/distraction-settings";
 import { useAppUsage } from "@repo/lib/hooks/use-app-usage";
 import { PremiumModal } from "@/components/support/premium-modal";

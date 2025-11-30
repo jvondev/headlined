@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Script from "next/script";
-import { checkLicenseStatus } from "@repo/lib/utils/license-manager";
+import { checkLicenseStatus } from "@/lib/license-manager";
 
 export function AdScripts() {
     // Temporarily disabled to prevent console errors and external script issues

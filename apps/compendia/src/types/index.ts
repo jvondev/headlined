@@ -20,6 +20,7 @@ export interface OpenAlexWork {
     open_access: {
         is_oa: boolean;
         oa_url: string | null;
+        oa_status: string;
     };
     authorships: {
         author: {
@@ -40,7 +41,18 @@ export interface OpenAlexWork {
         id: string;
         display_name: string;
         score: number;
+        level: number;
     }[];
+    topics: {
+        display_name: string;
+        score: number;
+        domain: { display_name: string };
+        field: { display_name: string };
+        subfield: { display_name: string };
+    }[];
+    keywords: { display_name: string; score: number }[];
+    fwci: number | null;
+    citation_normalized_percentile: { value: number; is_in_top_1_percent: boolean; is_in_top_10_percent: boolean } | null;
 }
 
 export interface CompendiaPost {

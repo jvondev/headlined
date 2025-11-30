@@ -7,7 +7,7 @@ import { PostView } from "./post-view";
 import { Loader2 } from "lucide-react";
 import useEmblaCarousel, { UseEmblaCarouselType } from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import { checkLicenseStatus } from "@repo/lib/utils/license-manager";
+import { checkLicenseStatus } from "@/lib/license-manager";
 import { SupportButton } from "@/components/support-button";
 import { PremiumModal } from "@/components/support/premium-modal";
 

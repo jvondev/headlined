@@ -1,7 +1,7 @@
 import { CompendiaPost } from '@/types';
 
 const DB_NAME = 'CompendiaDB';
-const DB_VERSION = 2; // Incremented for read_history
+const DB_VERSION = 3;
 const STORE_NAME = 'posts';
 const READ_HISTORY_STORE_NAME = 'read_history';
 

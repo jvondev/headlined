@@ -1,5 +1,5 @@
 import { CompendiaPost } from '@/types';
-import { fetchRecentWorks } from '@repo/lib/utils/openalex';
+import { fetchRecentWorks } from './openalex';
 import { addPosts, getPostsDateRange } from './indexeddb';
 import { subDays, format } from 'date-fns';
 

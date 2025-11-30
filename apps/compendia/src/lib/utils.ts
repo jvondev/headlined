@@ -133,3 +133,17 @@ export function truncateWords(str: string, numWords: number): string {
     }
     return words.slice(0, numWords).join(" ") + "...";
 }
+
+/**
+ * Check if a feed has posts (stub for compendia)
+ * Compendia uses OpenAlex API - always return true to show all feeds
+ * Posts are fetched on-demand when user visits the feed
+ */
+export const checkIfFeedHasPosts = async (
+    feedType: 'topic' | 'interest',
+    feedName: string,
+    date?: string,
+    dateRange?: { start: string; end: string }
+): Promise<boolean> => {
+    return true;
+};

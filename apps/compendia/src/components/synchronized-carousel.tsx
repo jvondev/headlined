@@ -6,8 +6,8 @@ import { MainContentCarousel } from "@/components/main-content-carousel";
 import type { Topic, Interest } from "@/types";
 import { usePathname } from "next/navigation";
 import { useSubscribedFeeds } from "@repo/lib/hooks/use-subscribed-feeds";
-import { checkIfFeedHasPosts } from "@repo/lib/utils/client-posts";
-import { checkLicenseStatus } from "@repo/lib/utils/license-manager";
+import { checkIfFeedHasPosts } from "@/lib/utils";
+import { checkLicenseStatus } from "@/lib/license-manager";
 import { KeyboardShortcutsHint } from "@/components/keyboard-shortcuts-hint";
 
 type CarouselItem = {

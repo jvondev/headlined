@@ -7,7 +7,7 @@ import React, { useState, useEffect } from "react";
 import { UseEmblaCarouselType } from "embla-carousel-react";
 import { DynamicIcon } from "@/components/dynamic-icon";
 import Link from "next/link";
-import { checkLicenseStatus } from "@repo/lib/utils/license-manager";
+import { checkLicenseStatus } from "@/lib/license-manager";
 
 type CarouselItem = {
     name: string;

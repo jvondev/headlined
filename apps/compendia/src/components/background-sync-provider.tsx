@@ -1,13 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
-import { fetchAllPosts } from '@repo/lib/utils/client-posts';
-
+// Compendia doesn't need background sync of posts
+// It fetches from OpenAlex API on-demand via client-openalex.ts
 export function BackgroundSyncProvider() {
-  useEffect(() => {
-    // Trigger the background sync when the component mounts
-    fetchAllPosts();
-  }, []);
-
-  return null; // This component doesn't render anything visible
+  return null;
 }

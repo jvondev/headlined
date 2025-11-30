@@ -27,21 +27,25 @@ function decodeAbstract(invertedIndex: { [key: string]: number[] } | null): stri
     return words.join(" ");
 }
 
-export async function fetchRecentWorks(page = 1, perPage = 10): Promise<CompendiaPost[]> {
-    // Get date for 7 days ago
+export async function fetchRecentWorks(page = 1, perPage = 10, filters?: { fromDate?: string; toDate?: string }): Promise<CompendiaPost[]> {
+    // Get date for 7 days ago as default
     const sevenDaysAgo = subDays(new Date(), 7);
-    const fromDate = format(sevenDaysAgo, "yyyy-MM-dd");
+    const defaultFromDate = format(sevenDaysAgo, "yyyy-MM-dd");
+
+    const fromDate = filters?.fromDate || defaultFromDate;
 
     // Build query
-    // filter=from_publication_date:2023-10-20
-    // sort=cited_by_count:desc (to get popular ones, or maybe publication_date:desc)
-    // Let's mix it: sort by publication date desc to get latest
+    let filterString = `from_publication_date:${fromDate}`;
+    if (filters?.toDate) {
+        filterString += `,to_publication_date:${filters.toDate}`;
+    }
+
+    // We remove 'select' to ensure we get all fields including new ones like topics and keywords
     const params = new URLSearchParams({
-        filter: `from_publication_date:${fromDate},has_abstract:true`,
+        filter: filterString,
         sort: "publication_date:desc",
         page: page.toString(),
         per_page: perPage.toString(),
-        select: "id,doi,title,display_name,publication_year,publication_date,ids,primary_location,open_access,authorships,cited_by_count,abstract_inverted_index,concepts"
     });
 
     try {
@@ -51,19 +55,53 @@ export async function fetchRecentWorks(page = 1, perPage = 10): Promise<Compendi
         }
 
         const data = await response.json();
+
+        if (!data.results || !Array.isArray(data.results)) {
+            console.warn("OpenAlex API returned unexpected format:", data);
+            return [];
+        }
+
         const works: OpenAlexWork[] = data.results;
 
         return works.map((work) => ({
             id: work.id,
             title: work.display_name || work.title,
             abstract: decodeAbstract(work.abstract_inverted_index),
-            authors: work.authorships.map((a) => a.author.display_name),
-            journal: work.primary_location?.source?.display_name || "Unknown Source",
+            authors: work.authorships.map((a: any) => a.author.display_name),
+            affiliations: work.authorships.map((a: any) => a.raw_affiliation_string).filter(Boolean),
+            journal: (work.primary_location as any)?.source?.display_name || "Unknown Source",
             date: work.publication_date,
             citationCount: work.cited_by_count,
-            pdfUrl: work.primary_location?.pdf_url || work.open_access?.oa_url,
-            landingPageUrl: work.primary_location?.landing_page_url || work.ids.doi || null,
-            tags: work.concepts.slice(0, 3).map((c) => c.display_name),
+            pdfUrl: (work.primary_location as any)?.pdf_url || work.open_access?.oa_url,
+            landingPageUrl: (work.primary_location as any)?.landing_page_url || work.ids.doi || null,
+            tags: work.keywords?.map((k: any) => k.display_name).slice(0, 5) || [],
+            keywords: work.keywords?.map((k: any) => ({ display_name: k.display_name, score: k.score })) || [],
+            topics: work.topics?.map((t: any) => ({
+                display_name: t.display_name,
+                score: t.score,
+                domain: t.domain.display_name,
+                field: t.field.display_name,
+                subfield: t.subfield.display_name
+            })) || [],
+            concepts: work.concepts?.map((c: any) => ({ display_name: c.display_name, score: c.score, level: c.level })) || [],
+            doi: work.doi,
+            isOpenAccess: work.open_access?.is_oa || false,
+            openAccess: {
+                status: work.open_access?.oa_status || "closed",
+                is_oa: work.open_access?.is_oa || false,
+                oa_url: work.open_access?.oa_url || null,
+                oa_status: work.open_access?.oa_status || "closed"
+            },
+            volume: work.biblio?.volume || null,
+            issue: work.biblio?.issue || null,
+            publication_date: work.publication_date,
+            fwci: work.fwci,
+            citation_normalized_percentile: work.citation_normalized_percentile,
+            primary_location: work.primary_location ? {
+                source: (work.primary_location as any).source?.display_name || "Unknown Source",
+                license: (work.primary_location as any).license || null,
+                version: (work.primary_location as any).version || null
+            } : null,
         }));
     } catch (error) {
         console.error("Failed to fetch works:", error);
