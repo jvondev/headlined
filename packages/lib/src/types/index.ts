@@ -119,6 +119,12 @@ export interface OpenAlexWork {
     };
     raw_affiliation_string: string;
   }[];
+  biblio: {
+    volume: string | null;
+    issue: string | null;
+    first_page: string | null;
+    last_page: string | null;
+  };
   cited_by_count: number;
   abstract_inverted_index: { [key: string]: number[] } | null;
   concepts: {
@@ -133,10 +139,15 @@ export interface CompendiaPost {
   title: string;
   abstract: string;
   authors: string[];
+  affiliations: string[];
   journal: string;
   date: string;
   citationCount: number;
   pdfUrl: string | null;
   landingPageUrl: string | null;
   tags: string[];
+  doi: string | null;
+  isOpenAccess: boolean;
+  volume: string | null;
+  issue: string | null;
 }

@@ -74,12 +74,17 @@ export async function fetchRecentWorks(page = 1, perPage = 10, filters?: { fromD
             title: work.display_name || work.title,
             abstract: decodeAbstract(work.abstract_inverted_index),
             authors: work.authorships.map((a: { author: { display_name: any; }; }) => a.author.display_name),
+            affiliations: work.authorships.map((a: { raw_affiliation_string: any; }) => a.raw_affiliation_string).filter(Boolean),
             journal: work.primary_location?.source?.display_name || "Unknown Source",
             date: work.publication_date,
             citationCount: work.cited_by_count,
             pdfUrl: work.primary_location?.pdf_url || work.open_access?.oa_url,
             landingPageUrl: work.primary_location?.landing_page_url || work.ids.doi || null,
             tags: work.concepts.slice(0, 3).map((c: { display_name: any; }) => c.display_name),
+            doi: work.doi,
+            isOpenAccess: work.open_access?.is_oa || false,
+            volume: work.biblio?.volume || null,
+            issue: work.biblio?.issue || null,
         }));
     } catch (error) {
         console.error("Failed to fetch works:", error);

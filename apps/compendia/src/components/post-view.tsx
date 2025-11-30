@@ -7,9 +7,8 @@ import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { ExternalLink, X, Sparkles, Clock, Lock, Bookmark, Download } from "lucide-react";
+import { ExternalLink, X, Sparkles, Clock, Lock, Bookmark, Download, Quote, FileText, Globe, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Post } from "@repo/lib/types";
 import html2canvas from "html2canvas";
 import { PostExportTemplate } from "./post-export-template";
 
@@ -32,57 +31,10 @@ const decodeHtmlEntities = (text: string) => {
     return textArea.value;
 };
 
-const TypewriterText = ({ text, onComplete, shouldSkip }: { text: string; onComplete?: () => void; shouldSkip: boolean }) => {
-    const [displayedText, setDisplayedText] = useState("");
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const hasCompleted = useRef(false);
-
-    const textChars = useMemo(() => Array.from(text), [text]);
-
-    useEffect(() => {
-        setDisplayedText("");
-        setCurrentIndex(0);
-        hasCompleted.current = false;
-    }, [text]);
-
-    useEffect(() => {
-        if (currentIndex < textChars.length) {
-            let delay = 30;
-            let charsToAdd = 1;
-
-            if (shouldSkip) {
-                delay = 2;
-                charsToAdd = 5;
-            } else {
-                const progress = currentIndex / textChars.length;
-                delay = Math.max(5, 30 * (1 - progress));
-            }
-
-            const timer = setTimeout(() => {
-                const nextIndex = Math.min(currentIndex + charsToAdd, textChars.length);
-                setDisplayedText(textChars.slice(0, nextIndex).join(''));
-                setCurrentIndex(nextIndex);
-            }, delay);
-            return () => clearTimeout(timer);
-        } else if (currentIndex === textChars.length && !hasCompleted.current) {
-            hasCompleted.current = true;
-            onComplete?.();
-        }
-    }, [currentIndex, textChars, onComplete, shouldSkip]);
-
-    return (
-        <p className="text-lg md:text-xl leading-relaxed font-serif text-zinc-300">
-            {displayedText}
-            {currentIndex < textChars.length && <span className="inline-block w-[2px] h-5 ml-1 bg-white animate-pulse align-middle" />}
-        </p>
-    );
-};
-
 const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest, onSave, isSaved, onShare, isPremium }) => {
     const router = useRouter();
     const [isExpanded, setIsExpanded] = useState(false);
     const [mounted, setMounted] = useState(false);
-    const [skipTypewriter, setSkipTypewriter] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const exportRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -110,7 +62,6 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             document.body.style.touchAction = 'none';
             y.set(0);
             x.set(0);
-            setSkipTypewriter(false);
         } else {
             document.body.style.overflow = '';
             document.body.style.touchAction = '';
@@ -126,9 +77,6 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             onUnlockRequest?.();
             return;
         }
-        if (!isExpanded) {
-            // Expand logic
-        }
         setIsExpanded(!isExpanded);
     };
 
@@ -137,7 +85,6 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
         setIsExporting(true);
 
         try {
-            // Small delay to ensure render
             await new Promise(resolve => setTimeout(resolve, 100));
 
             const element = exportRef.current;
@@ -148,14 +95,13 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             }
 
             const canvas = await html2canvas(element, {
-                scale: 1, // 1:1 scale since we set width/height explicitly
+                scale: 1,
                 useCORS: true,
-                backgroundColor: null, // Transparent background
+                backgroundColor: null,
                 logging: false,
                 width: 1080,
                 height: 1350,
                 onclone: (clonedDoc) => {
-                    // Ensure the cloned element is visible and properly styled if needed
                     const clonedElement = clonedDoc.getElementById('post-export-template');
                     if (clonedElement) {
                         clonedElement.style.display = 'block';
@@ -194,10 +140,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
         return `${minutes} min read`;
     }, [summaryText]);
 
-    // Enhanced Touch Handling for "Award Worthy" Feel
     const handleTouchStart = (e: React.TouchEvent) => {
         const scrollContainer = scrollContainerRef.current;
-        // Allow gesture if at top of scroll
         if (scrollContainer && scrollContainer.scrollTop > 5) return;
 
         touchStart.current = {
@@ -217,13 +161,9 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
         const deltaY = currentY - touchStart.current.y;
         const deltaX = currentX - touchStart.current.x;
 
-        // Only allow dragging DOWN to close
         if (deltaY > 0) {
-            // Add resistance
             const resistance = 0.5;
             y.set(deltaY * resistance);
-
-            // Optional: slight horizontal movement for natural feel
             x.set(deltaX * 0.2);
         }
     };
@@ -232,11 +172,9 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
         touchStart.current = null;
         const verticalDistance = y.get();
 
-        // Threshold to close
         if (verticalDistance > 120) {
             setIsExpanded(false);
         } else {
-            // Spring back
             animate(y, 0, { type: "spring", stiffness: 400, damping: 40 });
             animate(x, 0, { type: "spring", stiffness: 400, damping: 40 });
         }
@@ -244,127 +182,138 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
 
     return (
         <>
-            {/* PREMIUM COLLAPSED CARD */}
+            {/* RESEARCH PAPER / MANUSCRIPT CARD */}
             <motion.div
                 className={cn(
-                    "relative w-full h-full cursor-pointer group",
+                    "relative w-full h-full cursor-pointer group perspective-1000",
                     isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
                 )}
                 layoutId={`card-container-${uniqueId}`}
                 onClick={handleCardClick}
-                whileHover={{ scale: 0.985, y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                whileHover={{ scale: 1.01, y: -2 }}
+                whileTap={{ scale: 0.99 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
             >
-                {/* Outer Ring - Museum Glass Boundary */}
-                <div
-                    className="absolute inset-0 rounded-[48px] z-20 pointer-events-none transition-all duration-500"
-                    style={{
-                        // The "Museum Glass" Effect:
-                        // 1. 1px subtle dark stroke (defines the physical edge)
-                        // 2. White inner highlight (cut glass edge)
-                        // 3. Subtle inner shadow (simulates thickness/depth of the glass block)
-                        boxShadow: "0 0 0 1px rgba(0,0,0,0.06), inset 0 0 0 1.5px rgba(255,255,255,0.8), inset 0 0 20px rgba(0,0,0,0.02)"
-                    }}
-                />
+                {/* Paper Shadow/Depth */}
+                <div className="absolute top-2 left-2 right-[-2px] bottom-[-2px] bg-black/5 rounded-[2px] z-0" />
 
-                {/* Main Card Container - The "Art Piece" */}
-                <div className="absolute inset-4 md:inset-5 rounded-[32px] overflow-hidden bg-zinc-950 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] border border-white/10 z-10 group-hover:scale-[1.01] transition-transform duration-700 ease-out">
-                    {/* Premium Texture Overlay (Noise) - Adds tactile "paper" feel */}
-                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-50 mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }} />
+                {/* Main Paper Surface */}
+                <div className="absolute inset-0 bg-[#fdfdfd] text-zinc-900 overflow-hidden shadow-md border border-zinc-200 z-10 flex flex-col p-6 md:p-8 font-serif">
 
-                    {/* Subtle Gradient Background */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black" />
-                    {/* Background Image */}
-                    <div className="absolute inset-0 overflow-hidden">
-                        <motion.div
-                            className="w-full h-full bg-gradient-to-br from-zinc-800 via-zinc-900 to-black"
-                            layoutId={`image-${uniqueId}`}
-                        />
-
-                        {/* Multi-layer Gradients */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/90" />
-                        <div className="absolute inset-0 bg-gradient-to-tr from-white/3 via-transparent to-white/2" />
-                    </div>
-
-                    {/* Card Content */}
-                    <div className="absolute inset-0 flex flex-col justify-between p-7 md:p-10">
-                        <motion.div layoutId={`header-${uniqueId}`} className="space-y-5 pt-2">
-                            {/* Meta Info */}
-                            <div className="flex items-center gap-3 flex-wrap">
-                                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-xs font-semibold text-white tracking-wide uppercase shadow-lg">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                                    {post.tags[0] || 'Research'}
-                                </span>
-                                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/30 border border-white/10 text-xs font-medium text-white/80">
-                                    <Clock className="w-3 h-3" />
-                                    <span>{new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                                </div>
-                            </div>
-
-                            {/* Title */}
-                            <h2 className="font-sans text-[2rem] md:text-[2.5rem] lg:text-5xl font-black text-white leading-[1.1] tracking-tight text-balance drop-shadow-2xl">
-                                {decodedTitle}
-                            </h2>
-
-                            {/* Preview */}
-                            <p className="text-white/70 text-sm md:text-base leading-relaxed font-light line-clamp-2 opacity-80">
-                                {summaryText.substring(0, 120)}...
-                            </p>
-                        </motion.div>
-
-                        {/* Bottom Section */}
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
-                                    <Sparkles className="w-3.5 h-3.5 text-white" />
-                                    <span className="text-xs font-medium text-white/90">{readingTime}</span>
-                                </div>
+                    {/* Header: Journal Info */}
+                    <div className="flex items-start justify-between border-b-2 border-zinc-800 pb-4 mb-6">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] uppercase tracking-widest font-sans text-zinc-500 mb-1">Available online at ReadMore</span>
+                            <div className="flex items-baseline gap-2">
+                                <h3 className="text-xl font-bold font-serif italic text-zinc-800">{post.journal || "Open Research"}</h3>
+                                {post.volume && <span className="text-xs font-sans text-zinc-500">Vol. {post.volume}</span>}
                             </div>
                         </div>
+                        <div className="flex flex-col items-end">
+                            <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-white font-serif font-bold italic">
+                                R
+                            </div>
+                        </div>
+                    </div>
 
-                        {/* Locked Overlay */}
-                        {isLocked && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md z-20">
-                                <div className="flex flex-col items-center gap-4 p-6 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 shadow-2xl">
-                                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-800 flex items-center justify-center shadow-xl">
-                                        <Lock className="w-7 h-7 text-white" />
-                                    </div>
-                                    <div className="text-center space-y-1">
-                                        <p className="text-sm font-bold text-white">Premium Content</p>
-                                        <p className="text-xs text-white/70">Support to unlock</p>
-                                    </div>
-                                </div>
+                    {/* Content Body */}
+                    <div className="flex-1 flex flex-col space-y-4 overflow-hidden">
+                        {/* Title */}
+                        <h1 className="text-2xl md:text-3xl font-bold leading-tight text-zinc-900 font-serif">
+                            {decodedTitle}
+                        </h1>
+
+                        {/* Authors */}
+                        <div className="text-sm text-zinc-600 italic font-serif">
+                            {post.authors.join(", ")}
+                        </div>
+
+                        {/* Affiliations (if available) - Show first one */}
+                        {post.affiliations && post.affiliations.length > 0 && (
+                            <div className="text-[10px] text-zinc-500 font-sans leading-tight line-clamp-2">
+                                {post.affiliations[0]}
                             </div>
                         )}
+
+                        {/* Abstract Section */}
+                        <div className="mt-4 flex-1 overflow-hidden relative">
+                            <h4 className="text-xs font-bold uppercase tracking-wider font-sans text-zinc-900 mb-2">Abstract</h4>
+                            <p className="text-sm leading-relaxed text-zinc-800 font-serif text-justify line-clamp-[8] md:line-clamp-[10]">
+                                {summaryText}
+                            </p>
+                            {/* Fade out at bottom */}
+                            <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#fdfdfd] to-transparent" />
+                        </div>
                     </div>
+
+                    {/* Footer: Metadata */}
+                    <div className="mt-auto pt-4 border-t border-zinc-200 flex items-center justify-between text-[10px] font-sans text-zinc-500">
+                        <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                                <span className="font-bold text-zinc-700">Keywords:</span>
+                                <span className="italic truncate max-w-[150px]">{post.tags.slice(0, 3).join(", ")}</span>
+                            </div>
+                            {post.doi && (
+                                <div className="flex items-center gap-1">
+                                    <span>DOI:</span>
+                                    <span className="font-mono">{post.doi.replace('https://doi.org/', '')}</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            {post.isOpenAccess && (
+                                <div className="flex items-center gap-1 px-1.5 py-0.5 border border-zinc-300 rounded text-zinc-600">
+                                    <BookOpen className="w-3 h-3" />
+                                    <span>OA</span>
+                                </div>
+                            )}
+                            <div className="flex items-center gap-1">
+                                <Quote className="w-3 h-3" />
+                                <span>{post.citationCount || 0}</span>
+                            </div>
+                            <span className="font-medium">{new Date(post.date).getFullYear()}</span>
+                        </div>
+                    </div>
+
+                    {/* Lock Overlay */}
+                    {isLocked && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-[2px] z-20">
+                            <div className="flex flex-col items-center gap-2">
+                                <Lock className="w-6 h-6 text-zinc-400" />
+                                <span className="text-xs font-medium text-zinc-500">Premium Content</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </motion.div>
 
-            {/* EXPANDED VIEW PORTAL */}
+            {/* EXPANDED VIEW PORTAL - Keeping Dark Mode for Reading Experience? Or matching paper style? 
+                User asked for "Research Paper", usually reading PDFs is white. 
+                Let's make the expanded view also paper-like but optimized for screen reading.
+            */}
             {mounted && createPortal(
                 <AnimatePresence>
                     {isExpanded && (
                         <motion.div
                             layoutId={`card-container-${uniqueId}`}
-                            className="fixed inset-0 z-[100] flex flex-col bg-zinc-950 backdrop-blur-xl overscroll-none"
+                            className="fixed inset-0 z-[100] flex flex-col bg-[#f0f0f0] backdrop-blur-xl overscroll-none text-zinc-900"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                         >
-                            {/* Hidden Export Template - Rendered off-screen */}
+                            {/* Hidden Export Template */}
                             <div style={{ position: 'fixed', left: '-9999px', top: 0, zIndex: -1 }}>
                                 <PostExportTemplate ref={exportRef} post={post} isLocked={isLocked} />
                             </div>
 
                             <motion.div
-                                className="relative w-full h-full flex flex-col will-change-transform touch-pan-y"
+                                className="relative w-full h-full flex flex-col will-change-transform touch-pan-y max-w-4xl mx-auto bg-white shadow-2xl my-0 md:my-8 md:rounded-lg overflow-hidden"
                                 style={{ x, y, opacity: opacityScale, scale: scaleAnim }}
                                 onTouchStart={handleTouchStart}
                                 onTouchMove={handleTouchMove}
                                 onTouchEnd={handleTouchEnd}
-                                onClick={() => setSkipTypewriter(true)}
                             >
                                 {/* Close Button */}
                                 <motion.button
@@ -372,7 +321,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                         e.stopPropagation();
                                         setIsExpanded(false);
                                     }}
-                                    className="absolute top-6 right-6 z-[60] p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all active:scale-95 shadow-lg"
+                                    className="absolute top-6 right-6 z-[60] p-2 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 transition-all"
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: 0.2 }}
@@ -380,82 +329,87 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                     <X className="w-5 h-5" />
                                 </motion.button>
 
-                                {/* Single Scrollable Container */}
+                                {/* Scrollable Content */}
                                 <div
                                     ref={scrollContainerRef}
-                                    className="flex-1 overflow-y-auto no-scrollbar overscroll-contain"
+                                    className="flex-1 overflow-y-auto no-scrollbar overscroll-contain p-8 md:p-12 font-serif"
                                 >
-                                    {/* Hero Section - Scrolls with content */}
-                                    <div className="relative w-full h-[45vh] md:h-[55vh]">
-                                        <motion.div
-                                            className="w-full h-full bg-gradient-to-br from-zinc-800 to-black"
-                                            layoutId={`image-${uniqueId}`}
-                                        />
-                                        {/* Gradient Overlay for Text Readability */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent opacity-90" />
+                                    {/* Header Info */}
+                                    <div className="border-b border-zinc-200 pb-6 mb-8">
+                                        <div className="flex items-center gap-2 text-xs font-sans text-zinc-500 uppercase tracking-wider mb-4">
+                                            <span>{post.journal || "Journal Article"}</span>
+                                            <span>•</span>
+                                            <span>{new Date(post.date).toLocaleDateString()}</span>
+                                            {post.isOpenAccess && (
+                                                <>
+                                                    <span>•</span>
+                                                    <span className="flex items-center gap-1 text-emerald-600 font-bold"><BookOpen className="w-3 h-3" /> Open Access</span>
+                                                </>
+                                            )}
+                                        </div>
 
-                                        {/* Title on Image */}
-                                        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 pb-12 flex flex-col justify-end z-20">
-                                            <motion.div layoutId={`header-${uniqueId}`} className="space-y-4">
-                                                <div className="flex items-center gap-3">
-                                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white text-black uppercase tracking-widest shadow-lg">
-                                                        {post.tags[0] || 'Research'}
-                                                    </span>
-                                                    <span className="flex items-center gap-1.5 text-xs font-medium text-white/90 uppercase tracking-wide bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
-                                                        <Clock className="w-3 h-3" />
-                                                        {new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
-                                                    </span>
+                                        <h1 className="text-3xl md:text-5xl font-bold leading-tight text-zinc-900 mb-6">
+                                            {decodedTitle}
+                                        </h1>
+
+                                        <div className="space-y-2">
+                                            <div className="text-lg italic text-zinc-700">
+                                                {post.authors.join(", ")}
+                                            </div>
+                                            {post.affiliations && post.affiliations.length > 0 && (
+                                                <div className="text-sm text-zinc-500 font-sans">
+                                                    {post.affiliations.map((aff, i) => (
+                                                        <div key={i}>{aff}</div>
+                                                    ))}
                                                 </div>
-                                                <h1 className="font-sans text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tighter text-balance drop-shadow-2xl">
-                                                    {decodedTitle}
-                                                </h1>
-                                            </motion.div>
+                                            )}
                                         </div>
                                     </div>
 
-                                    {/* Content Body - Dark Mode */}
-                                    <div className="relative z-10 bg-zinc-950 px-6 md:px-10 py-10 pb-32 -mt-6 rounded-t-[30px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border-t border-white/5">
-                                        {/* Drag Handle Indicator */}
-                                        <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-8" />
-
-                                        <div className="max-w-3xl mx-auto space-y-8">
-                                            {/* Summary Header */}
-                                            <div className="flex items-center gap-3 pb-4 border-b border-white/10">
-                                                <div className="p-2 rounded-full bg-white/5 border border-white/5">
-                                                    <Sparkles className="w-4 h-4 text-white" />
-                                                </div>
-                                                <span className="text-sm font-bold text-zinc-200 uppercase tracking-widest">Executive Summary</span>
-                                                <div className="flex-1" />
-                                                <span className="text-xs font-medium text-zinc-500">{readingTime}</span>
-                                            </div>
-
-                                            {/* Typewriter Summary */}
-                                            <div className="min-h-[50px]">
-                                                <TypewriterText text={summaryText} shouldSkip={skipTypewriter} />
-                                            </div>
-                                        </div>
+                                    {/* Abstract */}
+                                    <div className="mb-12">
+                                        <h3 className="text-sm font-bold uppercase tracking-widest font-sans text-zinc-900 mb-4">Abstract</h3>
+                                        <p className="text-lg leading-relaxed text-zinc-800 text-justify">
+                                            {summaryText}
+                                        </p>
                                     </div>
+
+                                    {/* Keywords */}
+                                    <div className="flex flex-wrap gap-2 mb-12">
+                                        {post.tags.map(tag => (
+                                            <span key={tag} className="px-3 py-1 bg-zinc-100 text-zinc-600 text-xs font-sans rounded-full">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    {/* DOI / Link */}
+                                    {post.doi && (
+                                        <div className="text-sm font-sans text-zinc-500 mb-24">
+                                            <span className="font-bold">DOI:</span> <a href={post.doi} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{post.doi}</a>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Floating Action Dock */}
                                 <motion.div
-                                    className="fixed bottom-8 left-0 right-0 flex justify-center z-50 pointer-events-none"
+                                    className="absolute bottom-8 left-0 right-0 flex justify-center z-50 pointer-events-none"
                                     initial={{ y: 100, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.3, type: "spring", stiffness: 200, damping: 20 }}
                                 >
-                                    <div className="flex items-center gap-2 p-2 rounded-full bg-zinc-900/80 backdrop-blur-xl border border-white/10 shadow-2xl pointer-events-auto">
+                                    <div className="flex items-center gap-2 p-2 rounded-full bg-zinc-900/90 backdrop-blur-xl shadow-2xl pointer-events-auto">
                                         <Button
-                                            className="h-12 px-8 rounded-full font-bold text-base tracking-wide shadow-lg bg-white text-black hover:bg-zinc-200"
+                                            className="h-12 px-8 rounded-full font-bold text-base tracking-wide shadow-lg bg-white text-black hover:bg-zinc-200 font-sans"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 window.open(post.landingPageUrl || post.pdfUrl || '#', "_blank");
                                             }}
                                         >
-                                            Read Full Paper <ExternalLink className="w-4 h-4 ml-2" />
+                                            View Original <ExternalLink className="w-4 h-4 ml-2" />
                                         </Button>
 
-                                        <div className="w-px h-6 bg-white/10 mx-1" />
+                                        <div className="w-px h-6 bg-white/20 mx-1" />
 
                                         {onSave && (
                                             <Button
