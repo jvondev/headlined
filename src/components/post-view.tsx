@@ -93,6 +93,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     const [skipTypewriter, setSkipTypewriter] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [exportPlatform, setExportPlatform] = useState<'tiktok' | 'instagram'>('tiktok');
+    const [base64Thumbnail, setBase64Thumbnail] = useState<string | null>(null);
     const exportRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -157,24 +158,44 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
         setIsExporting(true);
 
         try {
-            // Wait for image to load if present
+            // Pre-process image to Base64 to avoid CORS/Loading issues with html2canvas
             if (post.thumbnail_url) {
-                await new Promise<void>((resolve) => {
-                    const img = new Image();
-                    img.crossOrigin = "anonymous";
-                    img.src = post.thumbnail_url!;
-                    if (img.complete) {
-                        resolve();
-                    } else {
-                        img.onload = () => resolve();
-                        img.onerror = () => resolve(); // Proceed even if fails
+                try {
+                    const response = await fetch(post.thumbnail_url);
+                    const blob = await response.blob();
+                    await new Promise<void>((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                            if (reader.result) {
+                                setBase64Thumbnail(reader.result as string);
+                            }
+                            resolve();
+                        };
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (e) {
+                    console.warn("Direct fetch failed, trying proxy...", e);
+                    try {
+                        const proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(post.thumbnail_url!)}&output=jpg`;
+                        const response = await fetch(proxyUrl);
+                        const blob = await response.blob();
+                        await new Promise<void>((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                                if (reader.result) {
+                                    setBase64Thumbnail(reader.result as string);
+                                }
+                                resolve();
+                            };
+                            reader.readAsDataURL(blob);
+                        });
+                    } catch (proxyError) {
+                        console.error("Proxy fetch also failed", proxyError);
                     }
-                    // Timeout after 5s to avoid hanging
-                    setTimeout(resolve, 5000);
-                });
+                }
             }
 
-            // Small delay to ensure render after loading
+            // Small delay to ensure React renders the new Base64 src
             await new Promise(resolve => setTimeout(resolve, 500));
 
             const element = exportRef.current;
@@ -427,7 +448,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                         >
                             {/* Hidden Export Template - Rendered off-screen */}
                             <div style={{ position: 'fixed', left: '-9999px', top: 0, zIndex: -1 }}>
-                                <PostExportTemplate ref={exportRef} post={post} isLocked={isLocked} variant={exportPlatform} />
+                                <PostExportTemplate ref={exportRef} post={post} isLocked={isLocked} variant={exportPlatform} thumbnailOverride={base64Thumbnail} />
                             </div>
 
                             <motion.div
@@ -604,7 +625,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                                     <div className="p-1.5 rounded-md bg-zinc-800 group-focus:bg-zinc-700 transition-colors">
                                                         <Music2 className="w-3.5 h-3.5 text-zinc-400 group-focus:text-white" />
                                                     </div>
-                                                    <span>TikTok Story</span>
+                                                    <span>TikTok</span>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
                                                     onClick={(e) => {

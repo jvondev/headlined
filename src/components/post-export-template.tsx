@@ -7,10 +7,11 @@ interface PostExportTemplateProps {
     post: Post;
     isLocked?: boolean;
     variant?: 'tiktok' | 'instagram';
+    thumbnailOverride?: string | null;
 }
 
 export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateProps>(
-    ({ post, isLocked, variant = 'tiktok' }, ref) => {
+    ({ post, isLocked, variant = 'tiktok', thumbnailOverride }, ref) => {
         const decodeHtmlEntities = (text: string) => {
             if (typeof window === 'undefined') return text;
             const textArea = document.createElement('textarea');
@@ -42,30 +43,39 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
                     )}
                     style={{
                         boxShadow: variant === 'instagram'
-                            ? "0 0 60px rgba(0,0,0,0.1), inset 0 0 40px rgba(0,0,0,0.05)"
+                            ? "0 0 60px rgba(255,255,255,0.03), inset 0 0 40px rgba(255,255,255,0.03)"
                             : "0 0 60px rgba(255,255,255,0.05), inset 0 0 40px rgba(255,255,255,0.05)"
                     }}
                 />
 
                 {/* Main Content Card - Floating inside the ring */}
                 <div className={cn(
-                    "absolute inset-10 rounded-[48px] overflow-hidden bg-zinc-950 border shadow-2xl m-4",
-                    variant === 'instagram' ? "border-zinc-200" : "border-white/10"
+                    "absolute inset-10 rounded-[48px] overflow-hidden border shadow-2xl m-4",
+                    variant === 'instagram' ? "bg-white border-zinc-200" : "bg-zinc-950 border-white/10"
                 )}>
                     {/* Background Image */}
-                    <div className="absolute inset-0 overflow-hidden bg-zinc-900">
-                        {post.thumbnail_url ? (
-                            <img
-                                src={post.thumbnail_url}
-                                alt=""
-                                className="w-full h-full object-cover"
-                                crossOrigin="anonymous"
-                            />
-                        ) : (
+                    <div
+                        className={cn(
+                            "absolute inset-0 overflow-hidden",
+                            variant === 'instagram' ? "bg-white" : "bg-zinc-900"
+                        )}
+                        style={{
+                            backgroundImage: (thumbnailOverride || post.thumbnail_url) ? `url(${thumbnailOverride || post.thumbnail_url})` : undefined,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            backgroundRepeat: 'no-repeat',
+                        }}
+                    >
+                        {!(thumbnailOverride || post.thumbnail_url) && (
                             <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900" />
                         )}
                         {/* Gradient Overlay - Smooth fade for text readability */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/20 to-black/90" />
+                        <div className={cn(
+                            "absolute inset-0 bg-gradient-to-b",
+                            variant === 'instagram'
+                                ? "from-black/40 via-transparent to-black/80"
+                                : "from-black/70 via-black/20 to-black/90"
+                        )} />
                     </div>
 
                     {/* Card Content - Increased padding for aesthetic bleed */}
