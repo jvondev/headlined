@@ -113,7 +113,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
           {allFilterItems.map((item, index) => {
             return (
               <div
-                key={item.name}
+                key={`${item.name}-${index}`}
                 className="flex-[0_0_100%] h-full will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
               >
                 {item.name === "Saved" && <SavedContent />}

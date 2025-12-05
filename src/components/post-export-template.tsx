@@ -6,10 +6,11 @@ import { Lock } from "lucide-react";
 interface PostExportTemplateProps {
     post: Post;
     isLocked?: boolean;
+    variant?: 'tiktok' | 'instagram';
 }
 
 export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateProps>(
-    ({ post, isLocked }, ref) => {
+    ({ post, isLocked, variant = 'tiktok' }, ref) => {
         const decodeHtmlEntities = (text: string) => {
             if (typeof window === 'undefined') return text;
             const textArea = document.createElement('textarea');
@@ -24,33 +25,43 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
             <div
                 ref={ref}
                 id="post-export-template"
-                className="relative bg-[#000000]"
+                className={cn(
+                    "relative",
+                    variant === 'instagram' ? "bg-[#ffffff]" : "bg-[#000000]"
+                )}
                 style={{
                     width: "1080px",
                     height: "1350px",
                 }}
             >
                 {/* Outer "Glass" Border Ring - Thicker & bolder */}
-                < div
-                    className="absolute inset-2 rounded-[64px] border-[6px] border-white/20 z-50 pointer-events-none m-4"
+                <div
+                    className={cn(
+                        "absolute inset-2 rounded-[64px] border-[6px] z-50 pointer-events-none m-4",
+                        variant === 'instagram' ? "border-zinc-200" : "border-white/20"
+                    )}
                     style={{
-                        boxShadow: "0 0 60px rgba(255,255,255,0.05), inset 0 0 40px rgba(255,255,255,0.05)"
+                        boxShadow: variant === 'instagram'
+                            ? "0 0 60px rgba(0,0,0,0.1), inset 0 0 40px rgba(0,0,0,0.05)"
+                            : "0 0 60px rgba(255,255,255,0.05), inset 0 0 40px rgba(255,255,255,0.05)"
                     }}
                 />
 
                 {/* Main Content Card - Floating inside the ring */}
-                <div className="absolute inset-10 rounded-[48px] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl m-4">
+                <div className={cn(
+                    "absolute inset-10 rounded-[48px] overflow-hidden bg-zinc-950 border shadow-2xl m-4",
+                    variant === 'instagram' ? "border-zinc-200" : "border-white/10"
+                )}>
                     {/* Background Image */}
-                    <div
-                        className="absolute inset-0 overflow-hidden bg-zinc-900"
-                        style={{
-                            backgroundImage: post.thumbnail_url ? `url(${post.thumbnail_url})` : undefined,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat',
-                        }}
-                    >
-                        {!post.thumbnail_url && (
+                    <div className="absolute inset-0 overflow-hidden bg-zinc-900">
+                        {post.thumbnail_url ? (
+                            <img
+                                src={post.thumbnail_url}
+                                alt=""
+                                className="w-full h-full object-cover"
+                                crossOrigin="anonymous"
+                            />
+                        ) : (
                             <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900" />
                         )}
                         {/* Gradient Overlay - Smooth fade for text readability */}

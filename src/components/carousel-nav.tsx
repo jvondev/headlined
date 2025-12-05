@@ -59,7 +59,7 @@ export function CarouselNav({
                         const isActive = selectedIndex === index;
 
                         return (
-                            <div key={item.name} className={cn("flex-[0_0_auto] mr-3 last:mr-4", {
+                            <div key={`${item.name}-${index}`} className={cn("flex-[0_0_auto] mr-3 last:mr-4", {
                                 "pl-0": index === 0,
                             })}>
                                 <Button
