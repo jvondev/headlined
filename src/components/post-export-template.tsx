@@ -105,7 +105,7 @@ export const PostExportTemplate = forwardRef<HTMLDivElement, PostExportTemplateP
                         {/* Footer Branding */}
                         <div className="flex items-center justify-between mt-auto">
                             <div className="flex items-center gap-4 text-3xl font-bold text-white tracking-tight drop-shadow-lg">
-                                <span className="opacity-90">Headlined.in</span>
+                                <span className="opacity-90">Headlined.app</span>
                             </div>
                         </div>
 
