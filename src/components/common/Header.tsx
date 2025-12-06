@@ -34,10 +34,6 @@ export function Header() {
       name: "Contact",
       link: "/contact",
     },
-    {
-      name: "Blog",
-      link: "/blog",
-    },
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
