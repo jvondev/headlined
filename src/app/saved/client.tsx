@@ -17,7 +17,7 @@ type FilterType = "all" | "saved" | "note";
 export default function SavedPageClient({ initialPosts }: { initialPosts: (Post & { savedItem: SavedItem })[] }) {
     const { savedItems, removeSavedItem, isLoaded } = useSavedItems();
     const [filter, setFilter] = useState<FilterType>("all");
-    
+
     // Shuffle state
     const [isShuffling, setIsShuffling] = useState(false);
     const [shuffledItem, setShuffledItem] = useState<SavedItem | null>(null);
@@ -50,10 +50,10 @@ export default function SavedPageClient({ initialPosts }: { initialPosts: (Post 
         },
         isAnimating ? 100 : null // Run every 100ms when animating
     );
-    
+
     const handleShuffleClick = () => {
         if (filteredItems.length < 1) return;
-        
+
         setIsShuffling(true);
         setIsAnimating(true);
         setShuffledItem(null);
@@ -66,7 +66,7 @@ export default function SavedPageClient({ initialPosts }: { initialPosts: (Post 
             const finalItem = filteredItems[finalRandomIndex];
             setShuffledItem(finalItem);
             setShuffleAnimationItem(finalItem); // Set animation to final item
-        }, 1500); 
+        }, 1500);
     };
 
     const closeShuffleDialog = () => {
@@ -81,14 +81,14 @@ export default function SavedPageClient({ initialPosts }: { initialPosts: (Post 
 
     const getLinkHref = (item: SavedItem | null): string => {
         if (!item) return '#';
-        
+
         let href = `/post/${item.slug}`;
-            
+
         href += `?from=saved`;
-        
+
         return href;
     }
-    
+
     const handleExport = () => {
         if (!savedItems.length) return;
 
@@ -96,7 +96,7 @@ export default function SavedPageClient({ initialPosts }: { initialPosts: (Post 
             .map(item => {
                 const link = `${window.location.origin}${getLinkHref(item)}`;
                 const itemType = item.type.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                
+
                 let noteSection = '';
                 if (item.note && item.note.trim().length > 0) {
                     noteSection = `
@@ -120,7 +120,7 @@ ${item.note.trim()}`;
         const url = URL.createObjectURL(blob);
         const linkElement = document.createElement('a');
         linkElement.href = url;
-        linkElement.download = 'ReadMore_saved_items.md';
+        linkElement.download = 'Headlined_saved_items.md';
         document.body.appendChild(linkElement);
         linkElement.click();
         document.body.removeChild(linkElement);
@@ -132,16 +132,16 @@ ${item.note.trim()}`;
     }
 
     const handleRemove = (id: string) => {
-      // Prevent the link from firing
-      event?.preventDefault();
-      event?.stopPropagation();
-      removeSavedItem(id);
+        // Prevent the link from firing
+        event?.preventDefault();
+        event?.stopPropagation();
+        removeSavedItem(id);
     }
-    
+
     const renderContent = () => {
         if (savedItems.length === 0) {
             return (
-                 <div className="flex flex-col items-center justify-center h-[60vh] text-center">
+                <div className="flex flex-col items-center justify-center h-[60vh] text-center">
                     <BookmarkX className="size-16 text-muted-foreground" />
                     <h2 className="mt-6 text-2xl font-bold font-headline">No Saved Items</h2>
                     <p className="mt-2 text-muted-foreground">
@@ -156,18 +156,18 @@ ${item.note.trim()}`;
                 {filteredItems.map(item => {
                     const post = postsMap.get(item.slug);
                     const hasNote = item.note && item.note.trim().length > 0;
-                    
+
                     if (!post) return null;
 
                     return (
-                       <div key={item.id} className={hasNote ? "col-span-2 group relative" : "group relative"}>
+                        <div key={item.id} className={hasNote ? "col-span-2 group relative" : "group relative"}>
                             <Link href={getLinkHref(item)} className="block w-full h-full">
                                 <SavedItemPreviewCard
                                     item={item}
                                     post={post}
                                 />
                             </Link>
-                             <Button
+                            <Button
                                 variant="destructive"
                                 size="icon"
                                 className="absolute top-2 right-2 z-20 size-7 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -176,7 +176,7 @@ ${item.note.trim()}`;
                                 <X className="size-4" />
                                 <span className="sr-only">Remove</span>
                             </Button>
-                       </div>
+                        </div>
                     );
                 })}
             </div>
@@ -194,47 +194,47 @@ ${item.note.trim()}`;
                     </Button>
                 </div>
             )}
-            
+
             {renderContent()}
 
             {filteredItems.length > 0 && (
                 <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-20">
-                    <Button 
+                    <Button
                         onClick={handleShuffleClick}
-                        variant="outline" 
-                        size="icon" 
-                        aria-label="Shuffle Saved Item" 
+                        variant="outline"
+                        size="icon"
+                        aria-label="Shuffle Saved Item"
                         className="bg-background/50 backdrop-blur-sm rounded-full"
                     >
                         <Shuffle />
                     </Button>
                 </div>
             )}
-            
+
             <AlertDialog open={isShuffling} onOpenChange={setIsShuffling}>
                 <AlertDialogContent className="max-w-md w-full">
                     <AlertDialogHeader>
                         <AlertDialogTitle>
-                           {isAnimating ? 'Shuffling...' : 'Your random post is...'}
+                            {isAnimating ? 'Shuffling...' : 'Your random post is...'}
                         </AlertDialogTitle>
                         {isAnimating && (
-                             <AlertDialogDescription>
+                            <AlertDialogDescription>
                                 Finding a great piece of content for you to revisit.
                             </AlertDialogDescription>
                         )}
                     </AlertDialogHeader>
-                    
+
                     <div className="flex items-center justify-center my-4">
-                       {shuffleAnimationItem && (
-                           <div className="w-full max-w-[300px]">
-                                <SavedItemPreviewCard 
+                        {shuffleAnimationItem && (
+                            <div className="w-full max-w-[300px]">
+                                <SavedItemPreviewCard
                                     item={shuffleAnimationItem}
                                     post={postsMap.get(shuffleAnimationItem.slug)!}
                                 />
-                           </div>
-                       )}
+                            </div>
+                        )}
                     </div>
-                    
+
                     <AlertDialogFooter>
                         <AlertDialogCancel onClick={closeShuffleDialog}>Cancel</AlertDialogCancel>
                         <AlertDialogAction asChild disabled={!shuffledItem}>

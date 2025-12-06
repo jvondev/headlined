@@ -2,7 +2,7 @@
 title: "How Bill Gates Reads (and What That Says About How We Learn)"
 date: "2025-08-24"
 description: "Bill Gates' reading habits reveal a transformative approach to lifelong learning—one that is centered on focus, curiosity, and reflection, rather than speed or volume. His habits are not just about reading, but about learning and understanding profoundly."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/736x/8e/bf/f1/8ebff15b2bb9033571a230ff961a05f8.jpg"
 tags: ["Bill Gates","Reading Habits", "Lifelong Learning", "Critical Thinking", "Self Improvement"]
 
@@ -41,7 +41,7 @@ Why? Because active reading makes learning *stick*. When you pause to annotate, 
 
 Passive reading feels soothing but slippery. You nod along, agree vaguely, and forget everything by next week. Active reading, on the other hand, creates friction—and friction builds retention.  
 
-This is also where tools can help. Some readers use physical notebooks, while others use digital highlights or reading logs. Apps like **[ReadMore.in](https://readmore.in)**, for example, turn reading into a small daily practice, surfacing snippets and summaries that prompt reflection—like revisiting your own margin notes, but across multiple sources.  
+This is also where tools can help. Some readers use physical notebooks, while others use digital highlights or reading logs. Apps like **[Headlined.in](https://headlined.in)**, for example, turn reading into a small daily practice, surfacing snippets and summaries that prompt reflection—like revisiting your own margin notes, but across multiple sources.  
 
 The goal isn't to document your reading, but to engage in dialogue with it. Every note is a question: *Do I really believe this? What would this look like in my world?*  
 

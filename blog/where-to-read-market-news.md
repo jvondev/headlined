@@ -2,7 +2,7 @@
 title: "Where to Read Market News If You Actually Want to Understand What's Going On"
 date: "2025-08-29"
 description: "A guide to finding market and finance news that builds real understanding—not just quick updates."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/1200x/d3/52/a8/d352a838ac5ab04e342ef2ccc2e5b1e7.jpg"
 tags: ["Market news", "Investing mindset", "Economic literacy","Lifelong Learning", "Information Overload"]
 ---
@@ -39,7 +39,7 @@ Curiosity is a powerful tool, but without a structured approach, it can lead to 
 
 A helpful principle: choose *fewer sources, more consistently.* Instead of scanning five apps hoping something will make sense, select one or two places you trust—and read them at a time when your mind is open, not drained.
 
-This is where tools like [ReadMore.in](https://readmore.in) can quietly help. It doesn't try to be a breaking-news machine. It provides you with curated perspectives—across finance, technology, policy, and science—that build context over time—a gentle daily nudge, not a firehose.
+This is where tools like [Headlined.in](https://headlined.in) can quietly help. It doesn't try to be a breaking-news machine. It provides you with curated perspectives—across finance, technology, policy, and science—that build context over time—a gentle daily nudge, not a firehose.
 
 Routine turns learning into something stable. It removes the pressure to know *everything right now.* Instead, you learn steadily, like watering a plant instead of drowning it.
 
@@ -53,7 +53,7 @@ If our goal is understanding, not urgency, the most useful sources fall into thr
 
 **Thoughtful interpretation** comes from analysts, economists, seasoned investors, or long-form publications that explain cause-and-effect relationships in detail. They don't say "markets fell because investors were scared"—they explain *what they were scared of, and why it matters.*
 
-**Curated summaries** bridge the gap between depth and daily life. They show you what changed, but they also hint at why it might matter. This is what tools like [ReadMore.in](https://readmore.in), mailing lists, or weekly market digests are quietly good at—they don't pretend to solve everything, they give you good entry points.
+**Curated summaries** bridge the gap between depth and daily life. They show you what changed, but they also hint at why it might matter. This is what tools like [Headlined.in](https://headlined.in), mailing lists, or weekly market digests are quietly good at—they don't pretend to solve everything, they give you good entry points.
 
 What rarely works long-term? Treating social media as a primary financial source. It's great for discovering ideas, but not for forming judgment.
 

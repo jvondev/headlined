@@ -2,7 +2,7 @@
 title: "A Simple System for Keeping Up With Tech"
 date: "2025-08-28"
 description: "Feeling overwhelmed by new tech? Here's a calm and thoughtful system to stay updated without getting overwhelmed by information."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/1200x/88/1d/61/881d61155a37692d764766cdbe732d23.jpg"
 tags: ["Technology Learning", "Digital Mindset", "Personal Knowledge Systems","Lifelong Learning", "Information Overload"]
 ---
@@ -29,7 +29,7 @@ We assume that scrolling through feeds, newsletters, or trending topics keeps us
 
 Information is useful only when it lands somewhere solid — a project, a conversation, a decision. Scattered consumption rarely turns into understanding because it isn't connected to anything. The brain remembers what it *uses*, not what it passively encounters.
 
-Instead of passive intake, shift to **intentional collection**. Save what matters, skip what doesn't, and revisit it later. Apps like [ReadMore.in](https://readmore.in) help here — not as a place to binge information, but as a quiet, structured shelf for things worth coming back to. When your ideas have somewhere to land, learning stops feeling like a leaking bucket.
+Instead of passive intake, shift to **intentional collection**. Save what matters, skip what doesn't, and revisit it later. Apps like [Headlined.in](https://headlined.in) help here — not as a place to binge information, but as a quiet, structured shelf for things worth coming back to. When your ideas have somewhere to land, learning stops feeling like a leaking bucket.
 
 ---
 
@@ -53,7 +53,7 @@ A better approach is to design a **minimum viable system** — one that even a t
 - A place to **return to them** later.
 - A moment to **act on one** when you're ready.
 
-This could be as simple as bookmarks, a notes app, and a weekly check-in. For some, tools like [ReadMore.in](https://readmore.in) fit naturally into this flow, providing curated insights you can skim and save without pressure. The structure doesn't need to be fancy. It just needs to survive real life.
+This could be as simple as bookmarks, a notes app, and a weekly check-in. For some, tools like [Headlined.in](https://headlined.in) fit naturally into this flow, providing curated insights you can skim and save without pressure. The structure doesn't need to be fancy. It just needs to survive real life.
 
 And here's the overlooked part: every system must include *permission to ignore things*. If something sits untouched for weeks, delete it. Clutter isn't a sign of curiosity — it's a sign of indecision.
 

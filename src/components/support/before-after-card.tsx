@@ -24,7 +24,7 @@ export function BeforeAfterCard({
     beforeImage,
     afterImage,
     beforeLabel = "Free",
-    afterLabel = "ReadMore+",
+    afterLabel = "Headlined+",
     beforeTitle = "Standard Experience",
     beforeDescription = "Limited access or basic functionality.",
     afterTitle = "Premium Experience",

@@ -78,7 +78,7 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({
       <AlertDialogContent className="max-w-xl h-[80vh] flex flex-col p-6">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-3xl font-bold text-center mb-2">
-            Welcome to ReadMore!
+            Welcome to Headlined!
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center text-lg text-muted-foreground">
             To get started, please tell us what you're interested in.
@@ -140,7 +140,7 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({
             <LicenseValidationModal
               trigger={
                 <Button variant="link" size="sm" className="text-muted-foreground">
-                  Have a ReadMore+ key?
+                  Have a Headlined+ key?
                 </Button>
               }
             />

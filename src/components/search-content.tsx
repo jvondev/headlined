@@ -29,7 +29,7 @@ export const SearchContent: FC<SearchContentProps> = ({ isLoading }) => {
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 space-y-8">
       <div className="text-center space-y-4 max-w-lg">
         <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tight">
-          Search <span className="text-primary">ReadMore</span>
+          Search <span className="text-primary">Headlined</span>
         </h1>
         <p className="text-lg text-muted-foreground">
           Find exactly what you're looking for across all topics and interests.

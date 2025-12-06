@@ -2,7 +2,7 @@
 title: "Is There a Better Alternative to TikTok and Instagram?"
 date: "2025-09-03"
 description: "Tired of social media but still want inspiration? This article explores quieter, more meaningful alternatives to scrolling."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/1200x/b4/ee/a9/b4eea9bb01d9fb57a52b941ac07e0593.jpg"
 tags: ["Digital Well-being", "Mindfulness", "Attention and Focus","Social Media Alternatives", "Slow Living"]
 ---
@@ -45,7 +45,7 @@ Start with this question: *Does the content give me something I can return to la
 
 The principle here: choose inputs that expand, not compress, your mind. That might involve essays instead of quotes, conversations instead of comments, or platforms that encourage follow-up rather than scrolling through.
 
-This is where tools like **[ReadMore.in](https://readmore.in)** can quietly fit—not as a replacement for social media, but as an alternative rhythm. Instead of infinite distractions, it delivers thoughtful readings, ideas, and daily updates across topics you care about—just enough to stay curious, not overwhelmed.
+This is where tools like **[Headlined.in](https://headlined.in)** can quietly fit—not as a replacement for social media, but as an alternative rhythm. Instead of infinite distractions, it delivers thoughtful readings, ideas, and daily updates across topics you care about—just enough to stay curious, not overwhelmed.
 
 The logic continues naturally: when your input becomes calmer, your mind does too. And that calm makes better choices easier, without forcing them.
 
@@ -59,7 +59,7 @@ One guiding idea: attention is not only something you control—it's something y
 
 A common mistake is adopting an all-or-nothing approach: either a full detox or full immersion. But balance lives in the middle—replacing, not just removing. Keep your favorite apps, but pair them with spaces that give you clarity instead of noise.
 
-A simple practice: for every few minutes you scroll, give yourself a few minutes of slower input—an article, a saved idea, a thoughtful newsletter, or even a [ReadMore.in](https://readmore.in) digest. Over time, this ratio changes the default texture of your attention.
+A simple practice: for every few minutes you scroll, give yourself a few minutes of slower input—an article, a saved idea, a thoughtful newsletter, or even a [Headlined.in](https://headlined.in) digest. Over time, this ratio changes the default texture of your attention.
 
 ---
 

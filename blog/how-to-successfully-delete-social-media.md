@@ -2,7 +2,7 @@
 title: "How to Successfully Delete Social Media (Without Losing Yourself)"
 date: "2025-09-11"
 description: "Learn how to step away from social media thoughtfully — without isolation, guilt, or fear of missing out."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/736x/fd/57/0f/fd570f6cdf32cb03e79f29eb234fddc1.jpg"
 tags: ["Digital Minimalism", "Mindfulness", "Attention and Focus","Social Media", "Slow Living"]
 ---
@@ -41,7 +41,7 @@ That's why a two-week "digital detox" often leads right back to the same pattern
 
 A better approach: think of it not as removal, but as replacement.* You're not quitting dopamine; you're redesigning where it comes from.
 
-Perhaps that means rediscovering longer forms of engagement — things that don't demand your attention but reward it quietly. Reading, gardening, or engaging in a hobby are good examples. Apps like [ReadMore.in](https://readmore.in) exist for this reason: to give you something nourishing to open instead of something numbing. It's not a detox — it's a redirection.
+Perhaps that means rediscovering longer forms of engagement — things that don't demand your attention but reward it quietly. Reading, gardening, or engaging in a hobby are good examples. Apps like [Headlined.in](https://headlined.in) exist for this reason: to give you something nourishing to open instead of something numbing. It's not a detox — it's a redirection.
 
 ---
 

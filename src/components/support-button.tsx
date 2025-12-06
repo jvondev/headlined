@@ -29,7 +29,7 @@ export function SupportButton({ className, ...props }: SupportButtonProps) {
 
             <span className="relative z-10 flex items-center gap-2 font-bold tracking-wide">
                 <Heart className="w-4 h-4 fill-current group-hover:scale-110 transition-transform duration-300" />
-                Support ReadMore+
+                Support Headlined+
             </span>
         </Button>
     );

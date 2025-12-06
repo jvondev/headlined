@@ -2,7 +2,7 @@
 title: "It's Weird Not to Scroll Something — But I Don't Want to Become Doom"
 date: "2025-09-17"
 description: "What happens when constant scrolling feels empty, but silence feels stranger? A quiet guide to reclaiming your attention without quitting the world."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/1200x/11/03/c9/1103c98327ad0bd743e53ee441c76f0f.jpg"
 tags: ["Doomscrolling", "Social Media", "Personal Growth", "Slow Living", "Mindfullness"]
 ---
@@ -41,7 +41,7 @@ That's why even smart scrolling can feel hollow. You might save articles, highli
 
 A better model might be: *depth per unit of attention*. How deeply did this idea move you? Did it change something small about how you see or act? If not, maybe it's just mental sugar — satisfying but fleeting.
 
-A subtle practice: for every three things you read, pick one actually to think about. Return to it later. Summarize it aloud. Perhaps you use a tool like [**ReadMore.in**](https://readmore.in) to keep your learning organized, but instead of skimming the day's content, pause on what truly catches your attention. Slow learning isn't less — it's what makes knowledge stick.
+A subtle practice: for every three things you read, pick one actually to think about. Return to it later. Summarize it aloud. Perhaps you use a tool like [**Headlined.in**](https://headlined.in) to keep your learning organized, but instead of skimming the day's content, pause on what truly catches your attention. Slow learning isn't less — it's what makes knowledge stick.
 
 ---
 

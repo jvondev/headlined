@@ -6,7 +6,7 @@ export function Footer() {
     <footer className="bg-background border-t">
       <div className="container mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row justify-between items-center">
         <p className="text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} ReadMore. All rights reserved.
+          &copy; {new Date().getFullYear()} Headlined. All rights reserved.
         </p>
         <div className="flex space-x-6 mt-4 sm:mt-0">
           <Link href="/about" className="text-sm text-muted-foreground hover:text-primary">

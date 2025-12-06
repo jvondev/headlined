@@ -2,7 +2,7 @@
 title: "When Boredom Knocks: What Is It Really Asking You?"
 date: "2025-09-22"
 description: "Feeling bored but unsure what to do? Explore boredom as a signal, not a problem — and learn how to turn it into curiosity, clarity, and quiet growth."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/736x/dc/71/72/dc717288566077277e66a68041f8d700.jpg"
 tags: ["Boredom", "Intentional Living", "Personal Growth", "Slow Living", "Mindfullness"]
 ---
@@ -41,7 +41,7 @@ If boredom is hunger for meaning, what are you feeding it? We often consume info
 
 The principle: the quality of your attention is shaped by the quality of your inputs. Curiosity thrives on diversity, depth, and rhythm — not constant noise. That's why a quiet page in a book can sometimes feel more alive than an endless stream of updates. By nurturing your curiosity, you can turn boredom into an opportunity to explore new ideas and perspectives, inspiring and motivating you to engage with the world in a more meaningful way.
 
-The problem with constant stimulation isn't that it's shallow — it's that it leaves no space for your own thoughts to form. Learning tools like **[ReadMore.in](https://readmore.in)** can be useful here, not because they fill every quiet moment, but because they offer thoughtful material at your pace — news, ideas, and topics that you can dip into without being overwhelmed. The key is using them to invite curiosity, not escape feeling.
+The problem with constant stimulation isn't that it's shallow — it's that it leaves no space for your own thoughts to form. Learning tools like **[Headlined.in](https://headlined.in)** can be useful here, not because they fill every quiet moment, but because they offer thoughtful material at your pace — news, ideas, and topics that you can dip into without being overwhelmed. The key is using them to invite curiosity, not escape feeling.
 
 And this leads to another question: once your mind is fed, what do you do with the thoughts that appear?
 

@@ -4,8 +4,8 @@ import type { Post } from "@/types";
 import { PostView } from "@/components/post-view";
 import { FC } from "react";
 
-// Define readmoreHomepagePost here for use in this component
-const readmoreHomepagePost: Post = {
+// Define headlinedHomepagePost here for use in this component
+const headlinedHomepagePost: Post = {
   slug: "home",
   title: "Free No-Login RSS Feeds & News Reader that Scroll like TikTok",
   description: "Start reading instantly — no signup.",
@@ -18,7 +18,7 @@ const readmoreHomepagePost: Post = {
 export const HomepagePostSlide: FC = () => {
   return (
     <PostView
-      post={readmoreHomepagePost}
+      post={headlinedHomepagePost}
       isActive={true} // Always active as it's a static homepage slide
     />
   );

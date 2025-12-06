@@ -2,7 +2,7 @@
 title: "The Best Free Apps to Stay Up to Date"
 date: "2025-09-10"
 description: "A clear, thoughtful guide to the best free apps that help you stay informed consistently and on your own terms."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/1200x/c4/d3/14/c4d314ef080cb8617e9a40a2cc01f880.jpg"
 tags: ["Tools", "News", "Productivity","Lifelong Learning", "Reading"]
 ---
@@ -30,9 +30,9 @@ There are countless free apps that claim to "keep you updated." Most are either 
 
 ---
 
-### **1. [ReadMore.in](https://readmore.in) — A Daily Updates Companion**
+### **1. [Headlined.in](https://headlined.in) — A Daily Updates Companion**
 
-Why it works: [ReadMore.in](https://readmore.in) delivers concise, thoughtful updates across various topics, including tech, business, science, and more. Rather than a live feed, it offers curated summaries.
+Why it works: [Headlined.in](https://headlined.in) delivers concise, thoughtful updates across various topics, including tech, business, science, and more. Rather than a live feed, it offers curated summaries.
 
 **What makes it different:**
 - Gentle daily briefing instead of constant notifications  
@@ -121,7 +121,7 @@ Ask yourself:
 - Do I need one app daily and another weekly?
 
 **A balanced example setup:**
-- **Daily pulse:** Google News or [ReadMore.in](https://readmore.in) 
+- **Daily pulse:** Google News or [Headlined.in](https://headlined.in) 
 - **Focused topics:** Feedly or Inoreader  
 - **Weekend discovery:** Flipboard or long-form newsletters
 
@@ -150,7 +150,7 @@ Information matters when it changes how you think. Skimming alone rarely does th
 - *What surprised me?* or  
 - *What question does this raise?*
 
-Apps like Feedly, Inoreader, or [ReadMore.in](https://readmore.in). Make it easy to save and revisit articles. Use those features as a curated shelf, not a storage attic.
+Apps like Feedly, Inoreader, or [Headlined.in](https://headlined.in). Make it easy to save and revisit articles. Use those features as a curated shelf, not a storage attic.
 
 ---
 

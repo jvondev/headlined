@@ -139,7 +139,7 @@ export function FeatureShowcase() {
                 },
                 {
                     title: "Support Solo Development",
-                    description: "Directly support the ongoing development of ReadMore.",
+                    description: "Directly support the ongoing development of Headlined.",
                     beforeLabel: "User",
                     afterLabel: "Patron",
                     beforeImage: "",
@@ -147,7 +147,7 @@ export function FeatureShowcase() {
                     beforeTitle: "Free User",
                     beforeDescription: "Enjoying the app for free.",
                     afterTitle: "Patron",
-                    afterDescription: "Directly funding the developer's coffee and server costs to keep ReadMore alive."
+                    afterDescription: "Directly funding the developer's coffee and server costs to keep Headlined alive."
                 },
             ],
         },

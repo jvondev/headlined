@@ -22,7 +22,7 @@ export function PremiumModal({ isOpen, onClose }: PremiumModalProps) {
                     <span className="sr-only">Close</span>
                 </DialogClose>
 
-                <DialogTitle className="sr-only">Unlock ReadMore+</DialogTitle>
+                <DialogTitle className="sr-only">Unlock Headlined+</DialogTitle>
                 <DialogDescription className="sr-only">Support independent development and unlock premium features.</DialogDescription>
 
                 <ScrollArea className="h-full w-full">

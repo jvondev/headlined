@@ -138,7 +138,7 @@ function ArchiveNavigationContent() {
                                 className="rounded-lg bg-primary/10 text-primary focus:bg-primary/20 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200"
                             >
                                 <Heart className="w-4 h-4 mr-3 fill-primary text-primary" />
-                                <span className="font-medium">Support ReadMore+</span>
+                                <span className="font-medium">Support Headlined+</span>
                             </DropdownMenuItem>
                         </>
                     )}

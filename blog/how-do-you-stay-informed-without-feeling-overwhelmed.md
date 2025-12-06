@@ -2,7 +2,7 @@
 title: "How Do You Stay Informed Without Feeling Overwhelmed?"
 date: "2025-08-27"
 description: "A thoughtful guide to staying updated with what matters to you—without drowning in endless news or distractions."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/1200x/f9/ab/b5/f9abb582e88ed796d98bd0fafe188ff8.jpg"
 tags: ["Information Overload", "Learning Habits", "Curiosity and Growth","Digital Minimalism", "Staying Informed"]
 ---
@@ -29,7 +29,7 @@ It's strange: we consume more content than ever, yet often feel less informed an
 
 Most information isn't built to help you think—it's built to grab your attention. Endless scrolling works against retention. You jump from headline to headline, opinion to opinion, but nothing connects. The key principle here is depth over volume: meaningful updates accumulate when they build on what you already know.
 
-This is why curated, consistent sources matter. A daily email from a trusted writer, a weekly digest from a researcher, or a well-curated platform like **[ReadMore.in](https://readmore.in)**—where you can follow topics and get thoughtful updates—gives your brain a fixed place to return to. You stop chasing information across dozens of sites and instead let relevant insights come to you.
+This is why curated, consistent sources matter. A daily email from a trusted writer, a weekly digest from a researcher, or a well-curated platform like **[Headlined.in](https://headlined.in)**—where you can follow topics and get thoughtful updates—gives your brain a fixed place to return to. You stop chasing information across dozens of sites and instead let relevant insights come to you.
 
 The problem with most approaches is inconsistency: today it's a podcast, tomorrow a random thread, next week nothing at all. Knowledge has compounding effects only when it's connected. A simple habit, such as saving articles in one place or subscribing to only a few reliable sources, builds a quiet rhythm of learning.
 
@@ -41,7 +41,7 @@ When do you stop? When is your curiosity satisfied for the day? This is where ma
 
 The principle here is sufficiency: being informed doesn't require endless consumption. It requires just enough to make sense of your world. You don't need to read every analysis on a topic—just enough to understand the main shape of things and recognize when something truly new happens.
 
-Why do many people feel overwhelmed? Because they try to keep up with everything. That's not necessary. Instead, choose a time limit or a content boundary. For example: "I'll read one long-form article in the morning," or "I'll check my saved articles for fifteen minutes." Tools like [ReadMore.in](https://readmore.in) are useful here not because they give you more content, but because they help you see just what matters, and in moderation. You can also use techniques like setting a timer or using productivity apps to manage your time effectively.
+Why do many people feel overwhelmed? Because they try to keep up with everything. That's not necessary. Instead, choose a time limit or a content boundary. For example: "I'll read one long-form article in the morning," or "I'll check my saved articles for fifteen minutes." Tools like [Headlined.in](https://headlined.in) are useful here not because they give you more content, but because they help you see just what matters, and in moderation. You can also use techniques like setting a timer or using productivity apps to manage your time effectively.
 
 Sufficiency is freeing. Once you've hit your limit, step away. Trust that if something significant happens, it will resurface.
 
@@ -55,7 +55,7 @@ One way is to shift from passive consumption to active collecting. This means sa
 
 Common approaches fail because they treat information as something to finish rather than something to revisit. But knowledge compounds when you see ideas more than once, in different contexts. Rereading a saved article days later helps it stick in your mind more than skimming ten new ones.
 
-This is why readers who keep a small repository—whether a folder, a note app, or even a curated feed like on **[ReadMore.in](https://readmore.in)**—often feel more grounded and less frantic. They know where their curiosity lives, and they can return anytime.
+This is why readers who keep a small repository—whether a folder, a note app, or even a curated feed like on **[Headlined.in](https://headlined.in)**—often feel more grounded and less frantic. They know where their curiosity lives, and they can return anytime.
 
 ---
 

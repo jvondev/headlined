@@ -49,7 +49,7 @@ export function CarouselNav({
         <div className="flex items-center w-full pl-4">
             <Button variant="outline" className="mr-4 flex-shrink-0 font-bold text-md tracking-tight px-4 rounded-lg" asChild>
                 <Link href={isPremium ? "/today" : "/support"}>
-                    ReadMore
+                    Headlined
                     {isPremium && <sup className="-ml-2 text-md">+</sup>}
                 </Link>
             </Button>

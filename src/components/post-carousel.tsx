@@ -507,7 +507,7 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
             </h2>
 
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-              Support ReadMore+ to access your complete posts history.
+              Support Headlined+ to access your complete posts history.
             </p>
 
             <div className="flex flex-col gap-3 w-full sm:w-auto min-w-[200px]">

@@ -13,12 +13,12 @@ export default function PrivacyPolicyPage() {
 
           <div className="space-y-6 text-lg text-muted-foreground">
             <p>
-              ReadMore ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website.
+              Headlined ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website.
             </p>
 
             <h2 className="text-2xl font-semibold pt-4">1. Information We Collect</h2>
             <p>
-              Since ReadMore does not require user registration, we collect minimal information. The data we collect is limited to:
+              Since Headlined does not require user registration, we collect minimal information. The data we collect is limited to:
               <ul>
                 <li><strong>Usage Data:</strong> We may automatically collect information about your device and how you interact with our website. This may include your IP address, browser type, operating system, and browsing behavior.</li>
                 <li><strong>Cookies:</strong> We use cookies to enhance your experience, such as remembering your preferred topics and settings.</li>

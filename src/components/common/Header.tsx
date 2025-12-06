@@ -15,11 +15,11 @@ import {
 } from "@/components/ui/resizable-navbar";
 
 
-const ReadMoreLogo = () => {
+const HeadlinedLogo = () => {
   return (
     <Link href="/" className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black">
-      <Image src="/readmore_icon.webp" alt="ReadMore Logo" width={30} height={30} className="rounded-lg"/>
-      <span className="font-medium text-black dark:text-white">ReadMore</span>
+      <Image src="/headlined-logo.svg" alt="Headlined Logo" width={30} height={30} className="rounded-lg" />
+      <span className="font-medium text-black dark:text-white">Headlined</span>
     </Link>
   );
 };
@@ -48,7 +48,7 @@ export function Header() {
         <Navbar className="rounded-lg border">
           {/* Desktop Navigation */}
           <NavBody>
-            <ReadMoreLogo />
+            <HeadlinedLogo />
             <NavItems items={navItems} />
             <div className="flex items-center gap-4">
               <NavbarButton as={Link} href="/today" variant="primary" className="rounded-lg">
@@ -60,7 +60,7 @@ export function Header() {
           {/* Mobile Navigation */}
           <MobileNav className="rounded-lg border">
             <MobileNavHeader>
-              <ReadMoreLogo />
+              <HeadlinedLogo />
               <MobileNavToggle
                 isOpen={isMobileMenuOpen}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -83,15 +83,15 @@ export function Header() {
                 </a>
               ))}
               <div className="flex w-full flex-col gap-4">
-                  <NavbarButton
-                      as={Link}
-                      href="/today"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      variant="primary"
-                      className="w-full rounded-lg"
-                  >
-                      Start Reading <span className="text-xs">(no login)</span>
-                  </NavbarButton>
+                <NavbarButton
+                  as={Link}
+                  href="/today"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  variant="primary"
+                  className="w-full rounded-lg"
+                >
+                  Start Reading <span className="text-xs">(no login)</span>
+                </NavbarButton>
               </div>
             </MobileNavMenu>
           </MobileNav>

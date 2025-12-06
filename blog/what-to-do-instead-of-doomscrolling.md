@@ -2,7 +2,7 @@
 title: "What to Do Instead of Doomscrolling?"
 date: "2025-09-13"
 description: "A thoughtful guide to breaking doomscrolling habits by understanding why we do it and what to do instead—calm, clear, and genuinely useful."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/736x/92/fb/b9/92fbb95fa129fcb8d9891f48f1f1b13a.jpg"
 tags: ["Doomscrolling", "Digital Minimalism", "Mindfulness", "Attention and Focus", "Social Media"]
 ---
@@ -33,7 +33,7 @@ A useful principle: information is only valuable when it changes how you think, 
 
 Why do most approaches fail? They focus on quantity—consume *less* news, *less* social media—without asking what kind of information actually nourishes understanding. You don't need to unplug from the world; you need better filters.
 
-One way to filter is to choose sources that value depth over noise. For example, some people use tools like **[ReadMore.in](https://readmore.in)** to receive thoughtful daily reading in a limited, curated stream. Not to escape the world, but to engage with it more patiently and intelligently.
+One way to filter is to choose sources that value depth over noise. For example, some people use tools like **[Headlined.in](https://headlined.in)** to receive thoughtful daily reading in a limited, curated stream. Not to escape the world, but to engage with it more patiently and intelligently.
 
 Try this: set one or two specific times a day to check news—no more, no less. Let knowledge arrive, not chase you.
 
@@ -61,7 +61,7 @@ A helpful insight: doomscrolling hijacks your curiosity and turns it toward cata
 
 Why do typical solutions—like jumping straight to meditation or journaling—often fail? Because they treat attention like a switch that can be flipped. But curiosity needs a direction. It helps to have something ready to explore, even in small pieces.
 
-Reading long-form articles, learning a new concept, or diving into a niche topic can scratch the same itch for novelty—without draining you. Platforms like **[ReadMore.in](https://readmore.in)** work well here, not because they pull you away from the world, but because they feed you thoughtful content in small servings you can actually finish.
+Reading long-form articles, learning a new concept, or diving into a niche topic can scratch the same itch for novelty—without draining you. Platforms like **[Headlined.in](https://headlined.in)** work well here, not because they pull you away from the world, but because they feed you thoughtful content in small servings you can actually finish.
 
 A tiny swap: instead of opening a social feed, open a saved article or book. Train your thumb to reach for something that returns energy, rather than stealing it.
 

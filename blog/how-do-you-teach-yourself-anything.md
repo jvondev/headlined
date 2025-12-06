@@ -2,7 +2,7 @@
 title: "How Do You Teach Yourself Anything?"
 date: "2025-09-15"
 description: "A thoughtful guide to learning on your own—without burnout, perfectionism, or endless distraction."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/736x/81/ae/42/81ae420d64b7b50150150b6bbcb1521e.jpg"
 tags: ["Self Learning", "Curiosity", "Personal Growth", "Lifelong Learning", "Education"]
 ---
@@ -35,7 +35,7 @@ Instead of racing through material, slow down at the parts that don't make sense
 
 A helpful trick is to keep a lightweight, ongoing log—what you're exploring, what confuses you, and what clicks. It doesn't have to be public or polished. It just has to help your brain remember that this thing matters.
 
-And if you want a gentle way to stay in touch with what you're learning, tools like **[ReadMore.in](https://readmore.in)** can act like a daily nudge—offering fresh ideas or news in topics you care about, so your attention returns, naturally.
+And if you want a gentle way to stay in touch with what you're learning, tools like **[Headlined.in](https://headlined.in)** can act like a daily nudge—offering fresh ideas or news in topics you care about, so your attention returns, naturally.
 
 ---
 
@@ -59,7 +59,7 @@ Most people assume they've lost motivation or they're just not "naturally discip
 
 Instead of trying to stay constantly motivated, make learning cost less energy. Shrink the sessions. Lower the stakes. Ten honest minutes of focus every day beats a heroic five-hour sprint once a month.
 
-Use friction in your favor. If your learning requires seventeen steps to set up, you won't do it. But if your book is already open, your notes already on your desk, or your learning app queued with articles (like what [ReadMore.in](https://readmore.in) can quietly provide), you've already bypassed the hardest part—starting.
+Use friction in your favor. If your learning requires seventeen steps to set up, you won't do it. But if your book is already open, your notes already on your desk, or your learning app queued with articles (like what [Headlined.in](https://headlined.in) can quietly provide), you've already bypassed the hardest part—starting.
 
 ---
 

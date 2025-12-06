@@ -66,7 +66,7 @@ function SuccessContent() {
                             transition={{ delay: 0.3 }}
                             className="text-4xl md:text-5xl font-bold mb-4"
                         >
-                            Welcome to ReadMore<span className="text-primary">+</span>
+                            Welcome to Headlined<span className="text-primary">+</span>
                         </motion.h1>
 
                         <motion.p

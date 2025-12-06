@@ -1,1 +1,1 @@
-# ReadMore Blog
+# Headlined Blog

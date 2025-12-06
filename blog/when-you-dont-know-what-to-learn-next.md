@@ -2,7 +2,7 @@
 title: "When You Don't Know What to Learn Next"
 date: "2025-09-24"
 description: "Feeling stuck about what to learn next? Here's a calm, clear way to choose what matters—without wasting time or burning out."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/1200x/d2/8a/2a/d28a2ae1f399c65b075085cf53e502c1.jpg"
 tags: ["Self Learning", "Curiosity", "Personal Growth", "Lifelong Learning", "Education"]
 ---
@@ -39,7 +39,7 @@ Many learning paths fail not because the subject is wrong, but because it doesn'
 
 Once you understand the life pattern you want, the skill choices narrow naturally. Want a life with fewer dependencies? Learn how to build basic tools. Want a life full of deep conversations? Learn to read more effectively, listen more attentively, and ask more insightful questions. This alignment is empowering, putting you in control of your learning journey.
 
-This is where tools like [ReadMore.in](https://readmore.in) can help—not as a solution, but as a quiet companion. Reading a small number of thoughtful articles daily, from different fields, enables you to notice which ideas keep pulling at you.
+This is where tools like [Headlined.in](https://headlined.in) can help—not as a solution, but as a quiet companion. Reading a small number of thoughtful articles daily, from different fields, enables you to notice which ideas keep pulling at you.
 
 ---
 
@@ -63,7 +63,7 @@ These small pulls often reveal the right direction more honestly than big dreams
 
 The principle here is: pay attention to your attention. Your habits, your boredom, your envy, your admiration—all of these are signals. And while they're not instructions, they are clues.
 
-Instead of hunting for a perfect path, start collecting these signals. You can use a note-taking app, a journal, or simply bookmark articles that spark your interest—tools like [ReadMore.in](https://readmore.in) make this easy, as you receive a steady stream of ideas and can track what repeatedly draws you in.
+Instead of hunting for a perfect path, start collecting these signals. You can use a note-taking app, a journal, or simply bookmark articles that spark your interest—tools like [Headlined.in](https://headlined.in) make this easy, as you receive a steady stream of ideas and can track what repeatedly draws you in.
 
 Once you have a handful of recurring signals, a pattern usually appears. That pattern is your learning map.
 

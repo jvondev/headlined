@@ -26,7 +26,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-2xl bg-background/95 backdrop-blur-xl border-border/50 p-6 md:p-8 rounded-3xl shadow-2xl">
                 <DialogHeader className="mb-4">
-                    <DialogTitle className="text-2xl font-bold tracking-tight text-center">Search ReadMore</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold tracking-tight text-center">Search Headlined</DialogTitle>
                 </DialogHeader>
                 <div className="py-2">
                     <SearchInput onSearch={handleSearch} autoFocus />

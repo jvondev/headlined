@@ -2,7 +2,7 @@
 title: "Don't Waste Your Wait Time"
 date: "2025-09-17"
 description: "Waiting feels like lost time — but it doesn't have to be. Here's how to turn pauses into quiet progress without forcing productivity."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/736x/30/f6/4d/30f64da5b9860506a55dd39d68a75ef4.jpg"
 tags: ["Time Management", "Slow Living", "Personal Growth", "Slow Living", "Mindfullness"]
 ---
@@ -35,7 +35,7 @@ The instinct to stay busy is a powerful one. But why? Maybe because silence make
 
 The key insight: busyness isn't the opposite of waiting; it's a mask for it. Doing something to avoid feeling idle isn't the same as using time well. In fact, it can make us feel more restless, not less.
 
-A better approach is to create tiny anchors — simple, repeatable activities that require little setup or emotional energy — such as reading one paragraph of a book, writing down a loose idea, or using tools like [ReadMore.in](https://readmore.in) to explore a short insight or daily perspective you wouldn't have discovered otherwise. Not to "be productive," but to gently feed your mind so waiting doesn't turn into drifting. When silence becomes a space for small nourishment instead of noise, you stop trying to outrun it, and you can finally feel at ease in these moments.
+A better approach is to create tiny anchors — simple, repeatable activities that require little setup or emotional energy — such as reading one paragraph of a book, writing down a loose idea, or using tools like [Headlined.in](https://headlined.in) to explore a short insight or daily perspective you wouldn't have discovered otherwise. Not to "be productive," but to gently feed your mind so waiting doesn't turn into drifting. When silence becomes a space for small nourishment instead of noise, you stop trying to outrun it, and you can finally feel at ease in these moments.
 
 When silence becomes a space for small nourishment instead of noise, you stop trying to outrun it.
 

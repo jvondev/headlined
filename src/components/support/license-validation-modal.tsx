@@ -57,7 +57,7 @@ export function LicenseValidationModal({ trigger }: LicenseValidationModalProps)
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Activate ReadMore+</DialogTitle>
+                    <DialogTitle>Activate Headlined+</DialogTitle>
                     <DialogDescription>
                         Enter your license key from your purchase email to unlock premium features.
                     </DialogDescription>
@@ -95,7 +95,7 @@ export function LicenseValidationModal({ trigger }: LicenseValidationModalProps)
                                 className="flex items-center gap-2 text-sm text-green-600 bg-green-50 p-3 rounded-md border border-green-200"
                             >
                                 <CheckCircle className="w-4 h-4" />
-                                <span>License activated successfully! Welcome to ReadMore+.</span>
+                                <span>License activated successfully! Welcome to Headlined+.</span>
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -103,7 +103,7 @@ export function LicenseValidationModal({ trigger }: LicenseValidationModalProps)
                     <div className="flex justify-end">
                         {status === "success" ? (
                             <Button className="w-full" onClick={() => router.push('/today')}>
-                                Continue to ReadMore
+                                Continue to Headlined
                             </Button>
                         ) : (
                             <Button

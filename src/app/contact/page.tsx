@@ -15,7 +15,7 @@ export default function ContactPage() {
           <p className="text-lg text-muted-foreground mb-8">
             We'd love to hear from you! Whether you have a question, a feature request, or just want to say hello, feel free to reach out to us.
           </p>
-          
+
           <form className="space-y-6">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -58,7 +58,7 @@ export default function ContactPage() {
 
           <div className="mt-12">
             <p className="text-lg text-muted-foreground">
-              You can also reach us directly at <a href="mailto:support@readmore.com" className="text-primary hover:underline">support@readmore.com</a>.
+              You can also reach us directly at <a href="mailto:support@headlined.com" className="text-primary hover:underline">support@headlined.com</a>.
             </p>
           </div>
         </div>

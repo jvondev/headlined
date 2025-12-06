@@ -224,7 +224,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             const image = canvas.toDataURL("image/png");
             const link = document.createElement("a");
             link.href = image;
-            link.download = `readmore-${post.slug || 'post'}.png`;
+            link.download = `headlined-${post.slug || 'post'}.png`;
             link.click();
         } catch (error) {
             console.error("Export failed:", error);

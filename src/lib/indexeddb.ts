@@ -1,6 +1,6 @@
 import { Post } from '@/types';
 
-const DB_NAME = 'ReadMoreDB';
+const DB_NAME = 'HeadlinedDB';
 const DB_VERSION = 4;
 const STORE_NAME = 'posts';
 const READ_HISTORY_STORE_NAME = 'read_history';

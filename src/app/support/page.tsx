@@ -3,8 +3,8 @@ import { FeatureShowcase } from "@/components/support/feature-showcase";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Support ReadMore+ | Pay What You Want",
-    description: "Support independent development and unlock premium features with ReadMore+.",
+    title: "Support Headlined+ | Pay What You Want",
+    description: "Support independent development and unlock premium features with Headlined+.",
 };
 
 export default function SupportPage() {
@@ -14,7 +14,7 @@ export default function SupportPage() {
             <FeatureShowcase />
 
             <div className="py-12 text-center text-muted-foreground text-sm">
-                <p>© {new Date().getFullYear()} ReadMore. All rights reserved.</p>
+                <p>© {new Date().getFullYear()} Headlined. All rights reserved.</p>
                 <p className="mt-2">Thank you for supporting independent software.</p>
             </div>
         </main>

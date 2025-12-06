@@ -2,7 +2,7 @@
 title: "Top Things to Do in the Morning—Other Than Exercise, Journaling, and Cold Showers"
 date: "2025-09-06"
 description: "A thoughtful look at morning routines beyond the habits—built on clarity, attention, and sustainable energy."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/1200x/61/02/05/6102051d9a2f73508f32e0b71c670fbe.jpg"
 tags: ["Morning Routines", "Mindfulness", "Productivity","Daily Habits", "Slow Living"]
 ---
@@ -21,7 +21,7 @@ The principle is simple: mornings aren't for doing more. They're for setting dir
 
 Rather than planning your entire day, try orienting around one thing that matters. A quiet mental note, like "Today, I want to respond more than I react," can shape what you notice and how you act. It's not a to-do list. It's a compass.
 
-This type of orientation also helps protect attention. It's easy to reach for your phone and get lost in someone else's priorities. Tools like [ReadMore.in](https://readmore.in) can help if you want to feed your mind intentionally—offering meaningful content rather than random noise—but the key is to choose what enters your headspace, not let algorithms decide.
+This type of orientation also helps protect attention. It's easy to reach for your phone and get lost in someone else's priorities. Tools like [Headlined.in](https://headlined.in) can help if you want to feed your mind intentionally—offering meaningful content rather than random noise—but the key is to choose what enters your headspace, not let algorithms decide.
 
 ---
 
@@ -33,7 +33,7 @@ The principle here is presence before input. Mornings are sensitive real estate:
 
 The problem with common advice like "just avoid screens" is that it treats distraction as a moral failure. It isn't. It's a behavior without a better alternative. Instead, try replacing 'input' with 'presence'. Step outside for a minute, sit by a window, notice light and temperature—anything that reminds you the world is real, not just something happening on a screen.
 
-This builds a subtle confidence: you don't need to borrow stimulation from the world to exist in it. Once you're mentally present, then choose your inputs with intention. That could mean opening [ReadMore.in](https://readmore.in) to explore a thoughtful article in philosophy, technology, or science—something that gives rather than drains, empowering you to control what influences your day.
+This builds a subtle confidence: you don't need to borrow stimulation from the world to exist in it. Once you're mentally present, then choose your inputs with intention. That could mean opening [Headlined.in](https://headlined.in) to explore a thoughtful article in philosophy, technology, or science—something that gives rather than drains, empowering you to control what influences your day.
 
 ---
 
@@ -45,7 +45,7 @@ The core insight: attention doesn't need guarding. It needs direction and respec
 
 Typical routines suggest complex rituals—such as breathwork and affirmations—assuming attention requires elaborate structures. However, often a simple practice works better: do one task slowly and thoroughly. Make coffee without multitasking. Wash your face without checking anything else. It's less about the task and more about practicing the ability to focus on one thing at a time.
 
-This connects naturally to learning and curiosity. Once your attention feels steady, your mind becomes open—not just to tasks, but also to exploration and new possibilities. That's where morning reading can be nourishing. A platform like [ReadMore.in](https://readmore.in), offering small bites of knowledge across topics, can fit easily here—not as a routine you must follow, but as a place to direct a calm mind.
+This connects naturally to learning and curiosity. Once your attention feels steady, your mind becomes open—not just to tasks, but also to exploration and new possibilities. That's where morning reading can be nourishing. A platform like [Headlined.in](https://headlined.in), offering small bites of knowledge across topics, can fit easily here—not as a routine you must follow, but as a place to direct a calm mind.
 
 ---
 
@@ -67,7 +67,7 @@ Many people build morning routines to feel in control. But control is exhausting
 
 The principle here is that mornings are for openness, not rigidity. Structure is useful only if it makes space—not if it becomes another performance. When routines fail, it's usually because they're built on pressure rather than curiosity.
 
-Try replacing "I must do these five things" with "I wonder what would make this morning feel more alive." This shift turns routines into experiments, fostering a sense of curiosity and exploration. Some days that means reading one essay on [ReadMore.in](https://readmore.in), while other days it's tidying your room, or simply sitting and taking a breath.
+Try replacing "I must do these five things" with "I wonder what would make this morning feel more alive." This shift turns routines into experiments, fostering a sense of curiosity and exploration. Some days that means reading one essay on [Headlined.in](https://headlined.in), while other days it's tidying your room, or simply sitting and taking a breath.
 
 The logic leads here: when you stop trying to perfect your morning, you start actually living in it, feeling liberated from the pressure of getting it right every time.
 

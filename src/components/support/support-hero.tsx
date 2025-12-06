@@ -84,7 +84,7 @@ export function SupportHero() {
         <div className="w-full max-w-3xl mx-auto py-12 px-4 text-center space-y-8">
             <div className="space-y-4">
                 <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
-                    Support <span className="text-primary">ReadMore+</span>
+                    Support <span className="text-primary">Headlined+</span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                     Pay what you want to unlock premium features and support independent development.

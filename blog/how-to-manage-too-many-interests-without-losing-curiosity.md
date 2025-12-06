@@ -2,7 +2,7 @@
 title: "How to manage too many interests without losing curiosity"
 date: "2025-08-31"
 description: "A practical approach to juggling many interests—reframe priorities, design low-cost experiments, and build a gentle system for lasting learning."
-author: "ReadMore"
+author: "Headlined"
 image: "https://i.pinimg.com/736x/5e/0c/bd/5e0cbd422b6aba0067815fc136a0ed78.jpg"
 tags: ["Time Management", "Focus", "Productivity","Lifelong Learning", "Hobby"]
 ---
@@ -67,7 +67,7 @@ Why do interests gather dust even when you care about them? Because memory and c
 
 A good system creates a gentle invitation to return. It can be a simple list of bookmarked experiments with one-line notes, a calendar block for "returning to X," or a habit of checking a daily learning feed. Tools that surface concise, relevant content can help—if they respect your attention and make revisiting easy. That makes it simple to pick up where you left off when a cycle ends or curiosity rekindles.
 
-[ReadMore.in](https://readmore.in): a curated daily feed can surface short, relevant reads that remind you why you loved an interest in the first place, making the pull to revisit gentler and smarter.
+[Headlined.in](https://headlined.in): a curated daily feed can surface short, relevant reads that remind you why you loved an interest in the first place, making the pull to revisit gentler and smarter.
 
 *Practical application:* Keep a single "Interest Inbox" (a note, folder, or app) with three fields: idea, why it matters, and test planned. Check it weekly and choose one item to experiment with.
 
