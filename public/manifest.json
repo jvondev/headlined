@@ -1,31 +1,32 @@
 {
-  "name": "ReadMore",
-  "short_name": "ReadMore",
-  "description": "Online Daily Updates (free & no login) with UI/UX like TikTok scrolling.",
+  "name": "Headlined",
+  "short_name": "Headlined",
+  "description": "Your personalized Daily updates",
   "start_url": "/today",
   "display": "standalone",
   "background_color": "#f0f0f0",
-  "theme_color": "#0a0a0a",
+  "theme_color": "#f0f0f0",
   "icons": [
     {
-      "src": "/readmore_icon.webp",
+      "src": "/headlined-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/headlined-icon-192.png",
       "sizes": "192x192",
-      "type": "image/webp"
+      "type": "image/png"
     },
     {
-      "src": "/readmore_icon.webp",
+      "src": "/headlined-icon-512.png",
       "sizes": "512x512",
-      "type": "image/webp"
+      "type": "image/png"
     },
     {
-      "src": "/readmore_icon.webp",
-      "sizes": "192x192",
-      "type": "image/webp"
-    },
-    {
-      "src": "/readmore_icon.webp",
+      "src": "/headlined-icon-512.png",
       "sizes": "512x512",
-      "type": "image/webp"
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

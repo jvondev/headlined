@@ -4,8 +4,8 @@ import Script from 'next/script';
 import { ClientLayout } from './client-layout';
 
 export const metadata: Metadata = {
-  title: 'ReadMore',
-  description: 'Your personalized Daily updates',
+  title: 'Headlined',
+  description: 'Made for digital minimalists who quit social media but still want to know what’s going on. A simple swipe news app showing the day’s most important stories, so you can stay informed without doomscrolling.',
 };
 
 export default function RootLayout({
@@ -18,7 +18,8 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
         <link rel="manifest" href="/manifest.json" crossOrigin="use-credentials" />
-        <meta name="theme-color" content="#000000" />
+        <link rel="icon" href="/headlined-logo.svg" type="image/svg+xml" />
+        <meta name="theme-color" content="#f0f0f0" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
