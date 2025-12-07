@@ -7,7 +7,6 @@ import { SEO_DATA_URL } from '../lib/seo-config';
 // So we MUST use the CDN URL or a fallback. 
 // BUT, for development velocity, if env is local, we check local folder first.
 
-const LOCAL_SCRAPER_PATH = path.join(process.cwd(), 'scraper-repo', 'output');
 const CACHE_DIR = path.join(process.cwd(), 'src', 'data', 'static-cache');
 const MANIFEST_CACHE_FILE = path.join(CACHE_DIR, 'manifest.json');
 
@@ -24,23 +23,14 @@ async function run() {
     }
 
     let manifest: any[] = [];
-    let useLocal = false;
 
-    // 1. Try Local First (For Dev Speed)
-    if (fs.existsSync(path.join(LOCAL_SCRAPER_PATH, 'manifest.json'))) {
-        console.log("Found local scraper output. Using local files.");
-        const content = fs.readFileSync(path.join(LOCAL_SCRAPER_PATH, 'manifest.json'), 'utf-8');
-        manifest = JSON.parse(content);
-        useLocal = true;
-    } else {
-        // 2. Fallback to CDN
-        console.log(`Fetching manifest from CDN: ${SEO_DATA_URL}/manifest.json`);
-        try {
-            manifest = await fetchJson(`${SEO_DATA_URL}/manifest.json`);
-        } catch (e) {
-            console.error("Failed to fetch manifest from CDN. Build will have NO SEO pages.", e);
-            return;
-        }
+    // Force CDN Usage
+    console.log(`Fetching manifest from CDN: ${SEO_DATA_URL}/manifest.json`);
+    try {
+        manifest = await fetchJson(`${SEO_DATA_URL}/manifest.json`);
+    } catch (e) {
+        console.error("Failed to fetch manifest from CDN. Build will have NO SEO pages.", e);
+        return;
     }
 
     // Save Manifest
@@ -63,32 +53,12 @@ async function run() {
             if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
             const targetFile = path.join(targetDir, `${slug}.json`);
 
-            // Optimization: If file exists, maybe skip? 
-            // Real Incremental Logic: Compare item.lastUpdated with local file mtime or a separate cache map.
-            // For now, simple existence check if speed is needed, otherwise overwrite.
-            // User requested robust "Incremental". 
-
-            // Check if local file exists
-            if (fs.existsSync(targetFile)) {
-                // If using local scraper, we just copy again (fast).
-                // If using CDN, we check timestamps?
-                // For now, always overwrite to ensure "freshness" on build unless we persist cache.
-            }
-
-            if (useLocal) {
-                const sourceFile = path.join(LOCAL_SCRAPER_PATH, 'data', category, `${slug}.json`);
-                if (fs.existsSync(sourceFile)) {
-                    fs.copyFileSync(sourceFile, targetFile);
-                    downloaded++;
-                }
-            } else {
-                try {
-                    const data = await fetchJson(`${SEO_DATA_URL}/data/${category}/${slug}.json`);
-                    fs.writeFileSync(targetFile, JSON.stringify(data, null, 2));
-                    downloaded++;
-                } catch (e) {
-                    console.error(`Failed to download ${category}/${slug}`, e);
-                }
+            try {
+                const data = await fetchJson(`${SEO_DATA_URL}/data/${category}/${slug}.json`);
+                fs.writeFileSync(targetFile, JSON.stringify(data, null, 2));
+                downloaded++;
+            } catch (e) {
+                console.error(`Failed to download ${category}/${slug}`, e);
             }
         }));
     }

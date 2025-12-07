@@ -1,0 +1,56 @@
+[
+  {
+    "slug": "how-us-employers-can-meet-the-healthcare-needs-of-younger-wo",
+    "title": "How U.S. Employers Can Meet the Healthcare Needs of Younger Workers",
+    "description": "Employers and health systems can do a better job of serving the specific healthcare needs of Millennials and Gen Zers by embracing the following seven approaches: 1) Enlist AI in the design of benefits and the delivery of care; 2) Harness virtual technologies to boost employees’ engagement in choosing and making the most of their healthcare benefits; 3) Shift to prepayment reimbursement models, which emphasize maintaining patients’ health rather than generating revenue when patients become ill; 4) Train physicians to connect with younger patients both technologically and culturally; 5) Combat the physician shortage by supporting educational programs and advocating for legislation to increase residency slots; 6) Treat mental health as an essential part of overall health; and 7) Adopting ways to make care for younger workers more affordable.",
+    "link": "https://hbr.org/2025/12/how-u-s-employers-can-meet-the-healthcare-needs-of-younger-workers",
+    "thumbnail_url": "/resources/images/article_assets/2025/12/Dec25_03_187311174_88305781_unsplash.jpg",
+    "created_at": "2025-12-05T03:45:47.177Z",
+    "topic": "business"
+  },
+  {
+    "slug": "exclusive-angle-health-raises-134-million-series-b-to-grow-i",
+    "title": "Exclusive: Angle Health raises $134 million Series B to grow its AI-driven healthcare benefits offerings",
+    "description": "Angle Health has raised a $134 million Series B, led by Portage, Fortune has exclusively learned.",
+    "link": "https://fortune.com/2025/12/03/exclusive-angle-health-raises-134-million-series-b-to-grow-its-ai-driven-healthcare-benefits-offerings/",
+    "thumbnail_url": "https://fortune.com/img-assets/wp-content/uploads/2025/12/ANGLE-HEALTH-2-e1764735370484.jpg?resize=1200,600",
+    "created_at": "2025-12-04T03:46:40.233Z",
+    "topic": "business"
+  },
+  {
+    "slug": "in-tough-times-psychological-safety-is-a-requirement-not-a-l",
+    "title": "In Tough Times, Psychological Safety Is a Requirement, Not a Luxury",
+    "description": "When budgets tighten, programs that promote psychological safety—the freedom to speak up without fear of retribution—are often cut. New research shows that’s a mistake. A study of 27,000 healthcare workers during the pandemic found that feeling psychologically safe significantly reduces burnout and turnover, even when resources are severely constrained. Employees who felt safe enough to voice concerns also proved to be  more resilient and more likely to stay in their jobs. Building this “social resource” before a crisis pays dividends when uncertainty spikes.",
+    "link": "https://hbr.org/2025/11/in-tough-times-psychological-safety-is-a-requirement-not-a-luxury",
+    "thumbnail_url": "/resources/images/article_assets/2025/11/Nov25_22_1418997312.jpg",
+    "created_at": "2025-11-25T03:43:11.415Z",
+    "topic": "business"
+  },
+  {
+    "slug": "trumps-aca-reforms-could-be-worse-than-losing-subsidies-anal",
+    "title": "Trump's ACA reforms could be worse than losing subsidies: Analyst",
+    "description": "President Trump is reportedly considering extending the Affordable Care Act (ACA) subsidies, conditional on significant reforms. Raymond James managing director and Washington health policy research analyst, Chris Meekins, joins Market Domination Overtime to discuss the reported changes and what they could mean for the healthcare industry. To watch more expert insights and analysis on the latest market action, check out more Market Domination Overtime.",
+    "link": "https://finance.yahoo.com/video/trumps-aca-reforms-could-worse-221356517.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/6FLqjqYA80t0.vooDE743A--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://s.yimg.com/os/creatr-uploaded-images/2025-11/e804d3c0-c981-11f0-a1bd-e9114fffac3a",
+    "created_at": "2025-11-25T03:39:43.366Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "health-insurers-rise-on-report-trump-considering-aca-subsidy",
+    "title": "Health insurers rise on report Trump considering ACA subsidy extension",
+    "description": "health insurers jumped on Monday following a media report the White House was preparing to unveil ​a policy framework that would extend Affordable Care Act premium subsidies - ‌also known as Obamacare - for two years and add new eligibility limits. Shares of Centene jumped about ‌7% and Molina Healthcare gained around 4%, while Elevance Health climbed more than 2% in early trading.",
+    "link": "https://finance.yahoo.com/news/health-insurers-rise-report-trump-145024067.html",
+    "thumbnail_url": "https://media.zenfs.com/en/reuters.com/f7a66bc99a5f2268d796b4a515c6f0b3",
+    "created_at": "2025-11-25T03:39:36.753Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "trellis-ai-yc-w24-is-hiring-streamline-access-to-lifesaving",
+    "title": "Trellis AI (YC W24) Is Hiring: Streamline access to life-saving therapies",
+    "description": "Trellis builds and deploys computer use agents to get patients access to life-saving medicine.\nOur computer-use AI agents process billions of dollars worth of therapies annually with patients in all fifty states. We do this by automating document intake, prior authorizations, and appeals at scale to streamline operations and accelerate care. We classify medical referrals, understand chart notes, and automate contract and reimbursement search to provide patients with accurate coverage determinations and cost responsibility. Think of us as the Stripe of healthcare billing and reimbursements.",
+    "link": "https://www.ycombinator.com/companies/trellis-ai/jobs/f4GWvH0-forward-deployed-engineer-full-time",
+    "thumbnail_url": "https://bookface-images.s3.amazonaws.com/logos/d681b1370ee5c0b4d24b781aa8bc8a11b2c1d375.png?1746931057",
+    "created_at": "2025-11-21T16:48:05.531Z",
+    "topic": "jobs"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "slug": "this-windows-update-popup-is-a-scam",
+    "title": "This Windows Update Pop-Up Is a Scam",
+    "description": "It's actually a ClickFix attack that delivers malware to your computer.",
+    "link": "https://lifehacker.com/tech/windows-update-pop-up-clickfix-scam?utm_medium=RSS",
+    "thumbnail_url": "https://lifehacker.com/imagery/articles/01KBK2SENEP0XTH9T90WPKGE98/hero-image.fill.size_1200x675.jpg",
+    "created_at": "2025-12-05T03:45:42.989Z",
+    "topic": "tech"
+  },
+  {
+    "slug": "from-jpmorganbranded-beer-foam-to-gym-views-tiktoks-are-reve",
+    "title": "From JPMorgan-branded beer foam to gym views, TikToks are revealing details of the bank's 270 Park headquarters",
+    "description": "Videos on TikTok of what appear to be the building's interior show floor-to-ceiling windows, rows of cardio machines, and branded beer.",
+    "link": "https://www.businessinsider.com/jpmorgan-new-headquarters-270-park-tiktok-videos-interior-gym-scanner-2025-10",
+    "thumbnail_url": "https://i.insider.com/68e7e8a35dbc4fd10daa8a48?width=1200&format=jpeg",
+    "created_at": "2025-12-03T03:45:33.070Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "microsoft-doesnt-understand-the-dislike-for-windows-new-dire",
+    "title": "Microsoft doesn't understand the dislike for Windows' new direction",
+    "description": "You don't need to ask them twice.",
+    "link": "https://www.xda-developers.com/microsoft-doesnt-understand-dislike-windows-new-direction/",
+    "thumbnail_url": "https://static0.xdaimages.com/wordpress/wp-content/uploads/wm/2025/10/powertoys-on-windows-11.jpg?w=1600&h=900&fit=crop",
+    "created_at": "2025-11-25T03:39:51.875Z",
+    "topic": "tech"
+  },
+  {
+    "slug": "microsoft-will-preload-windows-11-file-explorer-to-fix-bad-p",
+    "title": "Microsoft Will Preload Windows 11 File Explorer to Fix Bad Performance",
+    "description": "Hello Windows Insiders, today we are releasing Windows 11 Insider Preview Build 26220.7271 (KB5070307) to the Dev & Beta Channels.",
+    "link": "https://blogs.windows.com/windows-insider/2025/11/21/announcing-windows-11-insider-preview-build-26100-7271-dev-beta-channels/",
+    "thumbnail_url": "https://winblogs.thesourcemediaassets.com/sites/44/2021/08/social-media-graphic.png",
+    "created_at": "2025-11-22T03:17:53.268Z",
+    "topic": "tech"
+  }
+]
