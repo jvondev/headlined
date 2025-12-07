@@ -26,7 +26,9 @@ export function SeoCover({ category, slug, title, intro, posts, relatedTopics }:
 
     // Calculate Stats
     const totalArticles = posts.length;
-    const latestUpdate = posts[0]?.date ? new Date(posts[0].date).toLocaleDateString() : 'Recently';
+    const latestUpdate = posts[0]?.date
+        ? new Date(posts[0].date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        : 'Recently';
 
     // Extract top topics/keywords
     const allTopics = posts.map(p => p.topic).filter(Boolean);
