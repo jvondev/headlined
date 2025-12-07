@@ -44,19 +44,19 @@ export function SeoCover({ category, slug, title, intro, posts, relatedTopics }:
         setIsVisible(false);
     };
 
-    // Handle Wheel (Desktop Scroll)
+    // Handle Wheel (Desktop/Trackpad Scroll)
     useEffect(() => {
         if (!isVisible) return;
 
-        const handleWheel = (e: WheelEvent) => {
-            // If scrolling down significantly or at the end of horizontal scroll?
-            // Actually user said "scroll up close modal". 
-            // "Scroll up" action moves content DOWN? Or "Scroll Down" moves content UP?
-            // "scroll up it expose the post card view carousel". 
-            // Usually this means swiping content UP (scrolling down the page).
+        let accumulateDelta = 0;
 
-            if (e.deltaY > 20) {
-                handleDismiss();
+        const handleWheel = (e: WheelEvent) => {
+            // Dismiss on vertical scroll down
+            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+                accumulateDelta += e.deltaY;
+                if (accumulateDelta > 50) { // Threshold for trackpad swipe
+                    handleDismiss();
+                }
             }
         };
 
@@ -65,7 +65,8 @@ export function SeoCover({ category, slug, title, intro, posts, relatedTopics }:
     }, [isVisible]);
 
     const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-        if (info.offset.y < -50 || info.velocity.y < -500) {
+        // If dragged up (finger moves up, content moves up) -> Dismiss
+        if (info.offset.y < -50 || info.velocity.y < -300) {
             handleDismiss();
         } else {
             controls.start({ y: 0 });
@@ -86,10 +87,7 @@ export function SeoCover({ category, slug, title, intro, posts, relatedTopics }:
             onDragEnd={onDragEnd}
         >
             {/* Horizontal Scroll Container */}
-            <div className="flex-1 flex overflow-x-auto snap-x snap-mandatory no-scrollbar"
-                onWheel={(e) => e.stopPropagation()} // Stop propagation to allow horizontal scroll without triggering vertical dismiss immediately unless vertical delta is high?
-            // Actually, native scroll handles this.
-            >
+            <div className="flex-1 flex overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x">
 
                 {/* SLIDE 1: INTRO */}
                 <div className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 relative">
