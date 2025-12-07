@@ -313,9 +313,20 @@ async function processItem(item: any, source: any): Promise<any | null> {
     };
 }
 
+import { Classifier } from './classifier';
+import { BucketManager } from './bucket-manager';
+
+// ... (keep previous imports and constants)
+
+// --- Main Logic ---
+// ... (keep processItem)
+
 async function run() {
     console.log("Starting job...");
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const start = Date.now();
+
+    // 1. Standard Daily Scrape
+    const today = new Date().toISOString().split('T')[0];
     const dailyFile = path.join(OUTPUT_DIR, `${today}.json`);
 
     // Load existing index (list of links already scraped)
@@ -339,9 +350,21 @@ async function run() {
         }
     }
 
+    // TEST MODE LOGIC
+    let activeSources = sourcesData;
+    if (process.argv.includes('--test')) {
+        console.log("⚠️ RUNNING IN TEST MODE: Limiting to 1 source and 10 items.");
+        activeSources = [sourcesData[1]]; // Use Hacker News (index 1) or first one. Let's use index 1 as it's tech focused might be better? Or just index 0. user said "just 1". 
+        // Let's us index 0 (Yahoo News) usually, but user might want something specific. Let's stick to sourcesData[0].
+        // Actually sources[1] (Hacker News) is fast. Let's use sourcesData.slice(0, 1).
+        activeSources = sourcesData.slice(0, 1);
+        activeSources.forEach(s => s.max_items = 10);
+    }
+
     let newItemsCount = 0;
 
-    for (const source of sourcesData) {
+    for (const source of activeSources) {
+        // ... (standard logic)
         console.log(`Processing source: ${source.name}`);
         try {
             const feed = await parser.parseURL(source.url);
@@ -351,7 +374,6 @@ async function run() {
                 try {
                     const processed = await processItem(item, source);
                     if (processed && processed.link) {
-                        // Check duplicates
                         if (!indexSet.has(processed.link)) {
                             dailyData.push(processed);
                             indexSet.add(processed.link);
@@ -359,19 +381,60 @@ async function run() {
                         }
                     }
                 } catch (err) {
-                    console.error(`Error processing item from ${source.name}:`, err);
+                    console.error(`Error processing item from source ${source.name}`, err);
                 }
             }
         } catch (e) {
-            console.error(`Error fetching source ${source.name}:`, e);
+            console.error(`Error fetching source ${source.name}`, e);
         }
     }
 
-    // Save updated data with explicit UTF-8 encoding
+    // Save daily data
     fs.writeFileSync(dailyFile, JSON.stringify(dailyData, null, 2), 'utf-8');
     fs.writeFileSync(INDEX_FILE, JSON.stringify(Array.from(indexSet), null, 2), 'utf-8');
 
-    console.log(`Job finished. Added ${newItemsCount} new items. Saved to ${dailyFile}`);
+    console.log(`Scrape finished. Added ${newItemsCount} items.`);
+
+    // 2. Programmatic SEO Aggregation (The "Transformer")
+    console.log("Starting Aggregation & Classification...");
+
+    const classifier = new Classifier();
+    const bucketManager = new BucketManager(OUTPUT_DIR);
+    await bucketManager.init();
+
+    // Load ALL daily files to ensure complete retroactive classification
+    // This allows us to add a new category regex today and instantly populate it with old data
+    const files = fs.readdirSync(OUTPUT_DIR).filter(f => f.match(/^\d{4}-\d{2}-\d{2}\.json$/));
+
+    console.log(`Processing ${files.length} daily files for classification...`);
+
+    let totalClassified = 0;
+
+    for (const file of files) {
+        try {
+            const content = fs.readFileSync(path.join(OUTPUT_DIR, file), 'utf-8');
+            const posts = JSON.parse(content);
+
+            for (const post of posts) {
+                // Classify
+                const classifications = classifier.classify(post.title, post.description);
+                if (classifications.length > 0) {
+                    for (const cls of classifications) {
+                        bucketManager.addPost(post, cls);
+                    }
+                    totalClassified++;
+                }
+            }
+        } catch (e) {
+            console.error(`Error processing file ${file}:`, e);
+        }
+    }
+
+    // Flush to disk (Sort, Prune, Save)
+    await bucketManager.flush();
+
+    const end = Date.now();
+    console.log(`Job Complete in ${((end - start) / 1000).toFixed(2)}s. Classified ${totalClassified} posts into topics.`);
 }
 
 run().catch(console.error);
