@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import * as fs from 'fs';
 import * as path from 'path';
 import { SeoFeed } from '@/components/seo/SeoFeed';
-import { InternalLinks } from '@/components/seo/InternalLinks';
+import { SeoCover } from '@/components/seo/seo-cover';
 import { SEO_CONFIG, CategoryId } from '@/lib/seo-config';
 
 // Define Parameter Type
@@ -106,38 +106,39 @@ export default async function SeoTopicPage({ params }: Props) {
         }
     };
 
+    // Map Scraper Data to Post Type for SeoCover
+    const mappedPosts: any[] = data.map((p: any) => ({
+        slug: p.slug || '',
+        title: p.title,
+        description: p.description,
+        link: p.link,
+        thumbnail_url: p.thumbnail_url,
+        topic: p.topic || category,
+        summaries: [],
+        date: p.created_at || new Date().toISOString()
+    }));
+
     return (
-        <main className="h-screen w-full bg-background flex flex-col pt-16 overflow-hidden">
+        <main className="h-screen w-full bg-background flex flex-col overflow-hidden relative">
             {/* Schema Injection */}
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
 
-            {/* Header / Shell Content */}
-            <div className="shrink-0 px-4 pb-2 z-10 bg-background/80 backdrop-blur-md border-b">
-                <header className="max-w-4xl mx-auto">
-                    <h1 className="text-2xl font-extrabold tracking-tight capitalize truncate">
-                        {h1}
-                    </h1>
-                    <p className="text-sm text-muted-foreground leading-snug line-clamp-1">
-                        {intro}
-                    </p>
-                </header>
-            </div>
+            {/* The Cover Layer (Landing Experience) */}
+            <SeoCover
+                category={category}
+                slug={slug}
+                title={h1}
+                intro={intro}
+                posts={mappedPosts}
+                relatedTopics={data[0]?.relatedTopics}
+            />
 
-            {/* Client Feed */}
-            <div className="flex-1 min-h-0 w-full relative">
+            {/* Client Feed (Background Layer, revealed on dismiss) */}
+            <div className="flex-1 w-full relative z-0 flex items-center justify-center">
                 <SeoFeed category={category} slug={slug} initialPosts={data} />
-            </div>
-
-            {/* Internal Links & Footer Area */}
-            <div className="shrink-0 border-t bg-background z-10">
-                <InternalLinks
-                    category={category as CategoryId}
-                    slug={slug}
-                    relatedTopics={data[0]?.relatedTopics}
-                />
             </div>
         </main>
     );
