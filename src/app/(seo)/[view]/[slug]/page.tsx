@@ -8,7 +8,7 @@ import { SEO_CONFIG, CategoryId } from '@/lib/seo-config';
 
 // Define Parameter Type
 type Props = {
-    params: { view: string; slug: string }
+    params: Promise<{ view: string; slug: string }>
 };
 
 const CACHE_DIR = path.join(process.cwd(), 'src', 'data', 'static-cache');
@@ -43,7 +43,7 @@ function getTopicData(category: string, slug: string) {
 
 // 3. Dynamic Metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { view, slug } = params;
+    const { view, slug } = await params;
     const category = view; // Alias for clarity
     const config = SEO_CONFIG[category as CategoryId] || SEO_CONFIG['keywords'];
 
@@ -69,8 +69,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // 4. Page Component
-export default function SeoTopicPage({ params }: Props) {
-    const { view, slug } = params;
+export default async function SeoTopicPage({ params }: Props) {
+    const { view, slug } = await params;
     const category = view; // Alias
 
     // Validate Category
@@ -107,7 +107,7 @@ export default function SeoTopicPage({ params }: Props) {
     };
 
     return (
-        <main className="min-h-screen bg-background pt-20">
+        <main className="h-screen w-full bg-background flex flex-col pt-16 overflow-hidden">
             {/* Schema Injection */}
             <script
                 type="application/ld+json"
@@ -115,24 +115,30 @@ export default function SeoTopicPage({ params }: Props) {
             />
 
             {/* Header / Shell Content */}
-            <header className="w-full max-w-4xl mx-auto px-4 mb-8">
-                <h1 className="text-4xl font-extrabold tracking-tight mb-4 capitalize">
-                    {h1}
-                </h1>
-                <p className="text-xl text-muted-foreground leading-relaxed">
-                    {intro}
-                </p>
-            </header>
+            <div className="shrink-0 px-4 pb-2 z-10 bg-background/80 backdrop-blur-md border-b">
+                <header className="max-w-4xl mx-auto">
+                    <h1 className="text-2xl font-extrabold tracking-tight capitalize truncate">
+                        {h1}
+                    </h1>
+                    <p className="text-sm text-muted-foreground leading-snug line-clamp-1">
+                        {intro}
+                    </p>
+                </header>
+            </div>
 
             {/* Client Feed */}
-            <SeoFeed category={category} slug={slug} initialPosts={data} />
+            <div className="flex-1 min-h-0 w-full relative">
+                <SeoFeed category={category} slug={slug} initialPosts={data} />
+            </div>
 
             {/* Internal Links & Footer Area */}
-            <InternalLinks
-                category={category as CategoryId}
-                slug={slug}
-                relatedTopics={data[0]?.relatedTopics}
-            />
+            <div className="shrink-0 border-t bg-background z-10">
+                <InternalLinks
+                    category={category as CategoryId}
+                    slug={slug}
+                    relatedTopics={data[0]?.relatedTopics}
+                />
+            </div>
         </main>
     );
 }
