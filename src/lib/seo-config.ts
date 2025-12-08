@@ -669,6 +669,7 @@ export function getSeoMetadata(category: CategoryId, slug: string) {
         intro: introTemplate.replace(/{Title}/g, richTitle),
         faqs: selectedFaqs,
         richTitle,
-        aliases: keywordDef?.aliases || []
+        aliases: keywordDef?.aliases || [],
+        wikidata: keywordDef?.wikidata
     };
 }

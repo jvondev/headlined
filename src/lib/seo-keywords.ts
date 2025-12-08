@@ -2,6 +2,7 @@ export interface SeoKeywordDef {
     slug: string; // The URL-friendly version (e.g., 'ai')
     title: string; // The rich display title (e.g., 'Artificial Intelligence')
     aliases: string[]; // Variations for scraper matching (e.g., 'LLM', 'GPT')
+    wikidata?: string; // Wikidata entity ID for Entity Salience (e.g., 'Q11660' for AI)
 }
 
 export type CategoryId =
@@ -34,18 +35,18 @@ export const SEO_CATEGORIES: Record<CategoryId, SeoKeywordDef[]> = {
         { slug: 'ottawa', title: 'Ottawa', aliases: ['Ottawa'] }
     ],
     people: [
-        { slug: 'trump', title: 'Donald Trump', aliases: ['Trump', 'Donald Trump', 'DJT'] },
-        { slug: 'biden', title: 'Joe Biden', aliases: ['Biden', 'Joe Biden', 'POTUS'] },
-        { slug: 'musk', title: 'Elon Musk', aliases: ['Musk', 'Elon Musk'] },
-        { slug: 'zuckerberg', title: 'Mark Zuckerberg', aliases: ['Zuckerberg', 'Mark Zuckerberg', 'Zuck'] },
-        { slug: 'putin', title: 'Vladimir Putin', aliases: ['Putin', 'Vladimir Putin'] },
-        { slug: 'zelenskyy', title: 'Volodymyr Zelenskyy', aliases: ['Zelenskyy', 'Zelensky'] },
-        { slug: 'xi-jinping', title: 'Xi Jinping', aliases: ['Xi Jinping', 'President Xi'] },
-        { slug: 'modi', title: 'Narendra Modi', aliases: ['Modi', 'Narendra Modi'] },
-        { slug: 'netanyahu', title: 'Benjamin Netanyahu', aliases: ['Netanyahu', 'Bibi'] },
-        { slug: 'macron', title: 'Emmanuel Macron', aliases: ['Macron', 'Emmanuel Macron'] },
-        { slug: 'sunak', title: 'Rishi Sunak', aliases: ['Sunak', 'Rishi Sunak'] },
-        { slug: 'scholz', title: 'Olaf Scholz', aliases: ['Scholz', 'Olaf Scholz'] }
+        { slug: 'trump', title: 'Donald Trump', aliases: ['Trump', 'Donald Trump', 'DJT'], wikidata: 'Q22686' },
+        { slug: 'biden', title: 'Joe Biden', aliases: ['Biden', 'Joe Biden', 'POTUS'], wikidata: 'Q6279' },
+        { slug: 'musk', title: 'Elon Musk', aliases: ['Musk', 'Elon Musk'], wikidata: 'Q317521' },
+        { slug: 'zuckerberg', title: 'Mark Zuckerberg', aliases: ['Zuckerberg', 'Mark Zuckerberg', 'Zuck'], wikidata: 'Q36215' },
+        { slug: 'putin', title: 'Vladimir Putin', aliases: ['Putin', 'Vladimir Putin'], wikidata: 'Q7747' },
+        { slug: 'zelenskyy', title: 'Volodymyr Zelenskyy', aliases: ['Zelenskyy', 'Zelensky'], wikidata: 'Q3570727' },
+        { slug: 'xi-jinping', title: 'Xi Jinping', aliases: ['Xi Jinping', 'President Xi'], wikidata: 'Q15031' },
+        { slug: 'modi', title: 'Narendra Modi', aliases: ['Modi', 'Narendra Modi'], wikidata: 'Q1058' },
+        { slug: 'netanyahu', title: 'Benjamin Netanyahu', aliases: ['Netanyahu', 'Bibi'], wikidata: 'Q160973' },
+        { slug: 'macron', title: 'Emmanuel Macron', aliases: ['Macron', 'Emmanuel Macron'], wikidata: 'Q3052772' },
+        { slug: 'sunak', title: 'Rishi Sunak', aliases: ['Sunak', 'Rishi Sunak'], wikidata: 'Q7306714' },
+        { slug: 'scholz', title: 'Olaf Scholz', aliases: ['Scholz', 'Olaf Scholz'], wikidata: 'Q61044' }
     ],
     media: [
         { slug: 'bbc', title: 'BBC', aliases: ['BBC', 'British Broadcasting Corporation'] },
@@ -94,9 +95,9 @@ export const SEO_CATEGORIES: Record<CategoryId, SeoKeywordDef[]> = {
         { slug: 'technology', title: 'Technology Sector', aliases: ['Technology', 'Tech Sector', 'SaaS'] }
     ],
     interest: [
-        { slug: 'ai', title: 'Artificial Intelligence', aliases: ['AI', 'Artificial Intelligence', 'Machine Learning', 'LLM', 'Generative AI', 'ChatGPT', 'OpenAI', 'Anthropic'] },
-        { slug: 'crypto', title: 'Cryptocurrency', aliases: ['Crypto', 'Cryptocurrency', 'Bitcoin', 'Ethereum', 'Blockchain', 'Web3'] },
-        { slug: 'gaming', title: 'Gaming', aliases: ['Gaming', 'Video Games', 'Esports'] },
+        { slug: 'ai', title: 'Artificial Intelligence', aliases: ['AI', 'Artificial Intelligence', 'Machine Learning', 'LLM', 'Generative AI', 'ChatGPT', 'OpenAI', 'Anthropic'], wikidata: 'Q11660' },
+        { slug: 'crypto', title: 'Cryptocurrency', aliases: ['Crypto', 'Cryptocurrency', 'Bitcoin', 'Ethereum', 'Blockchain', 'Web3'], wikidata: 'Q13479982' },
+        { slug: 'gaming', title: 'Gaming', aliases: ['Gaming', 'Video Games', 'Esports'], wikidata: 'Q7889' },
         { slug: 'fitness', title: 'Fitness', aliases: ['Fitness', 'Workout', 'Gym'] },
         { slug: 'travel', title: 'Travel', aliases: ['Travel', 'Tourism', 'Vacation'] },
         { slug: 'cooking', title: 'Cooking', aliases: ['Cooking', 'Recipes', 'Food'] },
@@ -106,16 +107,16 @@ export const SEO_CATEGORIES: Record<CategoryId, SeoKeywordDef[]> = {
         { slug: 'coding', title: 'Programming', aliases: ['Coding', 'Programming', 'Software Development', 'Web Development'] }
     ],
     company: [
-        { slug: 'apple', title: 'Apple', aliases: ['Apple', 'AAPL', 'iPhone Maker'] },
-        { slug: 'google', title: 'Google', aliases: ['Google', 'Alphabet', 'GOOGL'] },
-        { slug: 'microsoft', title: 'Microsoft', aliases: ['Microsoft', 'MSFT', 'Windows Maker'] },
-        { slug: 'amazon', title: 'Amazon', aliases: ['Amazon', 'AMZN', 'AWS'] },
-        { slug: 'meta', title: 'Meta', aliases: ['Meta', 'Facebook', 'Instagram', 'META'] },
-        { slug: 'tesla', title: 'Tesla', aliases: ['Tesla', 'TSLA'] },
-        { slug: 'nvidia', title: 'Nvidia', aliases: ['Nvidia', 'NVDA', 'GPU Maker'] },
-        { slug: 'samsung', title: 'Samsung', aliases: ['Samsung'] },
-        { slug: 'toyota', title: 'Toyota', aliases: ['Toyota'] },
-        { slug: 'volkswagen', title: 'Volkswagen', aliases: ['Volkswagen', 'VW'] }
+        { slug: 'apple', title: 'Apple', aliases: ['Apple', 'AAPL', 'iPhone Maker'], wikidata: 'Q312' },
+        { slug: 'google', title: 'Google', aliases: ['Google', 'Alphabet', 'GOOGL'], wikidata: 'Q95' },
+        { slug: 'microsoft', title: 'Microsoft', aliases: ['Microsoft', 'MSFT', 'Windows Maker'], wikidata: 'Q2283' },
+        { slug: 'amazon', title: 'Amazon', aliases: ['Amazon', 'AMZN', 'AWS'], wikidata: 'Q3884' },
+        { slug: 'meta', title: 'Meta', aliases: ['Meta', 'Facebook', 'Instagram', 'META'], wikidata: 'Q380' },
+        { slug: 'tesla', title: 'Tesla', aliases: ['Tesla', 'TSLA'], wikidata: 'Q478214' },
+        { slug: 'nvidia', title: 'Nvidia', aliases: ['Nvidia', 'NVDA', 'GPU Maker'], wikidata: 'Q182477' },
+        { slug: 'samsung', title: 'Samsung', aliases: ['Samsung'], wikidata: 'Q20718' },
+        { slug: 'toyota', title: 'Toyota', aliases: ['Toyota'], wikidata: 'Q53268' },
+        { slug: 'volkswagen', title: 'Volkswagen', aliases: ['Volkswagen', 'VW'], wikidata: 'Q246' }
     ],
     event: [
         { slug: 'election', title: 'Election', aliases: ['Election', 'Vote', 'Polls'] },

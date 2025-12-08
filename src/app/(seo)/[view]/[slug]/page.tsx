@@ -182,6 +182,18 @@ export default async function SeoTopicPage({ params }: Props) {
         }
     ];
 
+    // Add Entity Thing schema if Wikidata ID exists (Entity Salience)
+    if (seo.wikidata) {
+        schemas.push({
+            "@context": "https://schema.org",
+            "@type": "Thing",
+            "name": seo.richTitle,
+            "description": seo.intro,
+            "sameAs": `https://www.wikidata.org/wiki/${seo.wikidata}`,
+            "url": `https://headlined.app/${category}/${slug}`
+        } as any);
+    }
+
     // Map Scraper Data to Post Type for SeoCover
     const mappedPosts: any[] = data.map((p: any) => ({
         slug: p.slug || '',

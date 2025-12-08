@@ -201,14 +201,19 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                                 <p className="text-lg leading-relaxed font-medium">
                                     Current coverage on <span className="text-primary">{displayTitle}</span> is dominated by top stories including:
                                 </p>
-                                <ul className="space-y-2">
-                                    {posts.slice(0, 3).map((p, i) => (
-                                        <li key={i} className="flex items-start gap-2 text-muted-foreground">
-                                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                                            <span>{p.title}</span>
-                                        </li>
-                                    ))}
-                                </ul>
+
+                                {/* AI Overview Optimized: Ordered List */}
+                                <section id="top-headlines" aria-label="Top headlines">
+                                    <h4 className="text-sm font-semibold text-muted-foreground mb-3">Top 5 {displayTitle} Headlines This Week</h4>
+                                    <ol className="space-y-2 list-decimal list-inside marker:text-primary marker:font-bold">
+                                        {posts.slice(0, 5).map((p, i) => (
+                                            <li key={i} className="text-muted-foreground">
+                                                <strong className="text-foreground">{p.title}</strong>
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </section>
+
                                 <p className="text-sm text-muted-foreground mt-4 italic">
                                     *Analysis based on {totalArticles} active sources.
                                 </p>
@@ -222,7 +227,13 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                             </div>
                             <div className="p-6 bg-card rounded-2xl border shadow-sm">
                                 <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Freshness</h3>
-                                <p className="text-4xl font-bold">{latestUpdate}</p>
+                                <time
+                                    dateTime={posts[0]?.date || new Date().toISOString()}
+                                    className="text-4xl font-bold block"
+                                >
+                                    {latestUpdate}
+                                </time>
+                                <span className="text-xs text-muted-foreground mt-1 block">Last article updated</span>
                             </div>
                         </div>
 
