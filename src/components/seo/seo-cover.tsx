@@ -8,6 +8,7 @@ import { CategoryId, SEO_CONFIG } from "@/lib/seo-config";
 import { Post } from "@/types";
 import { cn } from "@/lib/utils";
 import { FaqAccordion } from "./FaqAccordion";
+import { InternalLinks } from "./InternalLinks";
 
 interface SeoCoverProps {
     category: string;
@@ -23,6 +24,7 @@ interface SeoCoverProps {
 
 export function SeoCover({ category, slug, title, intro, richTitle, aliases, faqs, posts, relatedTopics }: SeoCoverProps) {
     const [isVisible, setIsVisible] = useState(true);
+    const [isDismissing, setIsDismissing] = useState(false);
     const controls = useAnimation();
     const y = useMotionValue(0);
     const opacity = useTransform(y, [0, -200], [1, 0]);
@@ -49,6 +51,8 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
         .map(([name]) => name);
 
     const handleDismiss = async () => {
+        if (isDismissing) return;
+        setIsDismissing(true);
         await controls.start({
             y: "-100%",
             transition: {
@@ -61,7 +65,7 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
 
     // Handle Wheel (Desktop/Trackpad Scroll)
     useEffect(() => {
-        if (!isVisible) return;
+        if (!isVisible || isDismissing) return;
 
         let accumulateDelta = 0;
 
@@ -93,7 +97,10 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
     return (
         <motion.div
             ref={containerRef}
-            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-3xl overflow-hidden flex flex-col"
+            className={cn(
+                "fixed inset-0 z-50 bg-background/95 backdrop-blur-3xl overflow-hidden flex flex-col",
+                isDismissing && "pointer-events-none"
+            )}
             animate={controls}
             style={{ y, opacity }}
             drag="y"
@@ -235,20 +242,26 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                             </div>
                         </div>
 
-                        {/* FAQ Section */}
-                        {faqs && faqs.length > 0 && (
-                            <div className="mt-12">
-                                <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
-                                    <HelpCircle className="w-5 h-5 text-muted-foreground" />
-                                    Frequently Asked Questions
-                                </h3>
-                                <FaqAccordion faqs={faqs} />
-                            </div>
-                        )}
+                        {/* FAQ Section REMOVED from here */}
                     </div>
                 </div>
 
-                {/* SLIDE 3: NETWORK / LINKS */}
+                {/* SLIDE 3: FAQ */}
+                {faqs && faqs.length > 0 && (
+                    <div className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 overflow-y-auto">
+                        <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
+                            <div className="flex items-center gap-3 mb-8 text-primary">
+                                <HelpCircle className="w-8 h-8" />
+                                <h2 className="text-3xl font-bold">Common Questions</h2>
+                            </div>
+                            <div className="bg-card/30 rounded-2xl p-2 border border-border/50">
+                                <FaqAccordion faqs={faqs} />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* SLIDE 4: NETWORK / LINKS */}
                 <div className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12">
                     <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
                         <div className="flex items-center gap-3 mb-8 text-primary">
@@ -257,25 +270,31 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                         </div>
 
                         {relatedTopics && relatedTopics.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                {relatedTopics.map((topic, i) => (
-                                    <Link
-                                        key={i}
-                                        href={`/${topic.category}/${topic.slug}`}
-                                        className="group block p-4 bg-card hover:bg-accent rounded-xl border transition-all hover:scale-[1.02] active:scale-[0.98]"
-                                    >
-                                        <h4 className="font-semibold group-hover:text-primary transition-colors capitalize">
-                                            {topic.title}
-                                        </h4>
-                                        <span className="text-xs text-muted-foreground capitalize">
-                                            {topic.slug.replace(/-/g, ' ')}
-                                        </span>
-                                    </Link>
-                                ))}
+                            <div className="space-y-12">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                    {relatedTopics.map((topic, i) => (
+                                        <Link
+                                            key={i}
+                                            href={`/${topic.category}/${topic.slug}`}
+                                            className="group block p-4 bg-card hover:bg-accent rounded-xl border transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                        >
+                                            <h4 className="font-semibold group-hover:text-primary transition-colors capitalize">
+                                                {topic.title}
+                                            </h4>
+                                            <span className="text-xs text-muted-foreground capitalize">
+                                                {topic.slug.replace(/-/g, ' ')}
+                                            </span>
+                                        </Link>
+                                    ))}
+                                </div>
+                                <InternalLinks currentCategory={category as CategoryId} currentSlug={slug} />
                             </div>
                         ) : (
-                            <div className="text-center py-12 text-muted-foreground">
-                                No related topics connected yet.
+                            <div className="space-y-12">
+                                <div className="text-center py-12 text-muted-foreground">
+                                    No direct related topics.
+                                </div>
+                                <InternalLinks currentCategory={category as CategoryId} currentSlug={slug} />
                             </div>
                         )}
 

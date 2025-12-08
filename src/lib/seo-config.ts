@@ -558,6 +558,76 @@ export const SEO_CONFIG: Record<CategoryId, SeoTemplateFull> = {
 export const SEO_DATA_URL = 'https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-@main/output';
 
 // Dynamic Text Generator
+const FAQ_POOLS: Record<string, { qV: string[], aV: string[] }[]> = {
+    general: [
+        {
+            qV: ["What is the latest news about {Title}?", "What is happening with {Title} today?", "Where can I find breaking news on {Title}?"],
+            aV: ["Our feed aggregates real-time updates from verified sources to keep you informed about {Title}.", "Stay current with the latest headlines and developments involving {Title} on our live tracker.", "We monitor thousands of trusted outlets to bring you comprehensive coverage of {Title}."]
+        },
+        {
+            qV: ["Why is {Title} trending right now?", "What are the key discussions around {Title}?", "Why is everyone talking about {Title}?"],
+            aV: ["{Title} is currently driving conversations due to recent events and high media interest.", "The latest reports highlight significant developments in {Title}, sparking widespread discussion.", "Breaking news and emerging trends have spotlighted {Title} in today's news cycle."]
+        },
+        {
+            qV: ["How can I follow updates for {Title}?", "What is the best way to track {Title} news?", "Is there a live feed for {Title}?"],
+            aV: ["You can follow our dedicated {Title} feed which is updated 24/7 with the latest stories.", "Bookmark this page for instant access to curated news, analysis, and reports on {Title}.", "Yes, our real-time dashboard provides immediate updates and diverse perspectives on {Title}."]
+        }
+    ],
+    // Add specific pools for high-value categories
+    location: [
+        {
+            qV: ["What are the top stories in {Title} today?", "What is happening locally in {Title}?", "What are the latest events in {Title}?"],
+            aV: ["Top stories include breaking local news, weather updates, and community events shaping {Title} today.", "Current reports focus on local politics, development projects, and cultural happenings in {Title}.", "The latest updates cover everything from municipal announcements to local business news in {Title}."]
+        },
+        {
+            qV: ["Is there any breaking news in {Title}?", "Are there traffic or safety alerts for {Title}?", "What should residents of {Title} know right now?"],
+            aV: ["Our system tracks emergency broadcasts and breaking news alerts for {Title} in real-time.", "We provide immediate updates on traffic, safety, and urgent community alerts for {Title} residents.", "Stay alert with our live feed covering critical updates and safety information for the {Title} area."]
+        }
+    ],
+    people: [
+        {
+            qV: ["What did {Title} say recently?", "What is {Title}'s latest statement?", "Has {Title} responded to the recent news?"],
+            aV: ["Recent reports highlight the latest public statements and interviews given by {Title}.", "{Title} has addressed current topics in recent appearances, as detailed in our latest articles.", "Follow our timeline of accurate quotes and official responses from {Title}."]
+        },
+        {
+            qV: ["What is {Title} working on now?", "What are {Title}'s upcoming projects?", "What is next for {Title}?"],
+            aV: ["Media reports suggest {Title} is currently focused on new initiatives and upcoming public engagements.", "{Title} is making headlines with new projects and strategic moves in the industry.", "Analysts are closely watching {Title}'s next steps following recent announcements."]
+        }
+    ],
+    business: [ // Industry, Company, Product
+        {
+            qV: ["How is {Title} performing in the market?", "What is the market outlook for {Title}?", "Is {Title} growing?"],
+            aV: ["Market analysis indicates significant activity around {Title}, with experts weighing in on future trends.", "Recent data shows dynamic shifts in the {Title} sector, influencing market performance.", "Investors and analysts are tracking {Title} closely amidst evolving market conditions."]
+        },
+        {
+            qV: ["What are the latest innovations in {Title}?", "Are there new products related to {Title}?", "How is technology changing {Title}?"],
+            aV: ["Innovation is driving change in {Title}, with new technologies reshaping the landscape.", "Recent launches and tech advancements are setting new standards in the world of {Title}.", "The {Title} sector is seeing rapid evolution driven by technological breakthroughs."]
+        }
+    ]
+};
+
+function getFaqPool(category: string) {
+    if (['location'].includes(category)) return [...FAQ_POOLS.general, ...FAQ_POOLS.location];
+    if (['people', 'team'].includes(category)) return [...FAQ_POOLS.general, ...FAQ_POOLS.people];
+    if (['industry', 'company', 'product', 'marketing'].includes(category)) return [...FAQ_POOLS.general, ...FAQ_POOLS.business];
+    return FAQ_POOLS.general;
+}
+
+// Pseudo-random number generator seeded by string
+function sfc32(a: number, b: number, c: number, d: number) {
+    return function () {
+        a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+        var t = (a + b) | 0;
+        a = b ^ b >>> 9;
+        b = c + (c << 3) | 0;
+        c = (c << 21) | (c >>> 11);
+        d = (d + 1) | 0;
+        t = (t + d) | 0;
+        c = (c + t) | 0;
+        return (t >>> 0) / 4294967296;
+    }
+}
+
 export function getSeoMetadata(category: CategoryId, slug: string) {
     const config = SEO_CONFIG[category] || SEO_CONFIG.keywords;
     const keywordDef = getKeywordFromSlug(category, slug);
@@ -572,15 +642,32 @@ export function getSeoMetadata(category: CategoryId, slug: string) {
     const h1Template = pickVariation(slug, config.h1Variations);
     const introTemplate = pickVariation(slug, config.introVariations);
 
+    // FAQ Logic
+    // seeder
+    let seed = 0;
+    for (let i = 0; i < slug.length; i++) seed += slug.charCodeAt(i);
+    const rand = sfc32(seed, seed ^ 0xDEADBEEF, seed ^ 0xCAFEBABE, seed ^ 0xFACEFEED);
+
+    // Get relevant pool
+    const pool = getFaqPool(category);
+
+    // Shuffle and pick 3
+    const shuffledPool = [...pool].sort(() => rand() - 0.5);
+    const selectedFaqs = shuffledPool.slice(0, 3).map(item => {
+        const qTemplate = item.qV[Math.floor(rand() * item.qV.length)];
+        const aTemplate = item.aV[Math.floor(rand() * item.aV.length)];
+        return {
+            q: qTemplate.replace(/{Title}/g, richTitle),
+            a: aTemplate.replace(/{Title}/g, richTitle)
+        };
+    });
+
     return {
         title: titleTemplate.replace(/{Title}/g, richTitle).replace(/{Aliases}/g, aliases),
         description: descTemplate.replace(/{Title}/g, richTitle).replace(/{Aliases}/g, aliases),
         h1: h1Template.replace(/{Title}/g, richTitle),
         intro: introTemplate.replace(/{Title}/g, richTitle),
-        faqs: config.faqTemplates.map(f => ({
-            q: f.q.replace(/{Title}/g, richTitle),
-            a: f.a.replace(/{Title}/g, richTitle)
-        })),
+        faqs: selectedFaqs,
         richTitle,
         aliases: keywordDef?.aliases || []
     };

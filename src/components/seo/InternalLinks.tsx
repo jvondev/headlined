@@ -11,13 +11,14 @@ interface InternalLinksProps {
 }
 
 export function InternalLinks({ currentCategory, currentSlug }: InternalLinksProps) {
-    // Get category configuration from the SEO_CATEGORIES array
-    const categoryConfig = SEO_CATEGORIES.find((cat) => cat.id === currentCategory);
+    // Access Record directly
+    // @ts-ignore - Validating category existence
+    const categoryItems = SEO_CATEGORIES[currentCategory];
 
-    if (!categoryConfig) return null;
+    if (!categoryItems) return null;
 
     // Filter out current slug and limit to 8 items
-    const relatedLinks = categoryConfig.items
+    const relatedLinks = categoryItems
         .filter((item: SeoKeywordDef) => item.slug !== currentSlug)
         .slice(0, 8);
 
@@ -28,7 +29,7 @@ export function InternalLinks({ currentCategory, currentSlug }: InternalLinksPro
             <div className="flex items-center gap-2 mb-4">
                 <Network className="w-4 h-4 text-muted-foreground" />
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                    More in {categoryConfig.label}
+                    More in {currentCategory}
                 </h3>
             </div>
 
