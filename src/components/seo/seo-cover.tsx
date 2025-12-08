@@ -237,22 +237,6 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                             </div>
                         </div>
 
-                        <div>
-                            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                                <Hash className="w-5 h-5 text-muted-foreground" />
-                                Trending Keywords
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {topTopics.length > 0 ? topTopics.map(t => (
-                                    <span key={t} className="px-4 py-2 bg-background border rounded-full text-sm font-medium hover:bg-muted transition-colors cursor-default">
-                                        #{t}
-                                    </span>
-                                )) : (
-                                    <span className="text-muted-foreground italic">No keywords data available</span>
-                                )}
-                            </div>
-                        </div>
-
                         {/* FAQ Section REMOVED from here */}
                     </div>
                 </section>
@@ -267,6 +251,23 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                             </div>
                             <div className="bg-card/30 rounded-2xl p-2 border border-border/50">
                                 <FaqAccordion faqs={faqs} />
+                            </div>
+
+                            {/* Trending Keywords */}
+                            <div className="mt-8">
+                                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                    <Hash className="w-5 h-5 text-muted-foreground" />
+                                    Trending Keywords
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {topTopics.length > 0 ? topTopics.map(t => (
+                                        <span key={t} className="px-4 py-2 bg-background border rounded-full text-sm font-medium hover:bg-muted transition-colors cursor-default">
+                                            #{t}
+                                        </span>
+                                    )) : (
+                                        <span className="text-muted-foreground italic">No keywords data available</span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </section>
