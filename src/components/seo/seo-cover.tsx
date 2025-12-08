@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, useAnimation, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import Link from 'next/link';
 import { ChevronRight, BarChart3, Globe, ChevronDown, ArrowRight, Rss, Hash, Tag, HelpCircle, Network } from "lucide-react";
-import { CategoryId, SEO_CONFIG } from "@/lib/seo-config";
+import { CategoryId } from "@/lib/seo-config";
+import { SEO_CATEGORIES, SeoKeywordDef } from "@/lib/seo-keywords";
 import { Post } from "@/types";
 import { cn } from "@/lib/utils";
 import { FaqAccordion } from "./FaqAccordion";
@@ -29,6 +30,7 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
     const y = useMotionValue(0);
     const opacity = useTransform(y, [0, -200], [1, 0]);
     const containerRef = useRef<HTMLDivElement>(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     // Use rich title if provided, otherwise format slug
     const displayTitle = richTitle || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
@@ -63,6 +65,13 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
         setIsVisible(false);
     };
 
+    const handleExploreData = () => {
+        if (scrollRef.current) {
+            const width = scrollRef.current.offsetWidth;
+            scrollRef.current.scrollTo({ left: width, behavior: 'smooth' });
+        }
+    };
+
     // Handle Wheel (Desktop/Trackpad Scroll)
     useEffect(() => {
         if (!isVisible || isDismissing) return;
@@ -80,7 +89,11 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
         };
 
         window.addEventListener("wheel", handleWheel, { passive: true });
-        return () => window.removeEventListener("wheel", handleWheel);
+        containerRef.current?.addEventListener("wheel", handleWheel, { passive: true }); // Attach to container too
+        return () => {
+            window.removeEventListener("wheel", handleWheel);
+            containerRef.current?.removeEventListener("wheel", handleWheel);
+        };
     }, [isVisible]);
 
     const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -93,6 +106,12 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
     };
 
     if (!isVisible) return null;
+
+    // Get fallback topics if relatedTopics is empty
+    const fallbackTopics = (!relatedTopics || relatedTopics.length === 0)
+        // @ts-ignore
+        ? (SEO_CATEGORIES[category] || []).filter((k: SeoKeywordDef) => k.slug !== slug).slice(0, 6) // Limit to 6 for balance
+        : [];
 
     return (
         <motion.div
@@ -109,163 +128,194 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
             onDragEnd={onDragEnd}
         >
             {/* Horizontal Scroll Container */}
-            <div className="flex-1 flex overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x">
+            <div ref={scrollRef} className="flex-1 flex overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x">
 
                 {/* SLIDE 1: INTRO */}
-                <header className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 relative">
-                    <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
-                        <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground mb-6">
-                            <ol className="flex items-center gap-2">
-                                <li><Link href="/" className="hover:text-foreground hover:underline underline-offset-4">Home</Link></li>
-                                <ChevronRight className="h-4 w-4" />
+                <header className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 relative overflow-y-auto bg-background">
+                    <div className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full">
+                        <nav aria-label="Breadcrumb" className="mb-8">
+                            <ol className="flex items-center gap-2 text-sm text-muted-foreground/60 font-medium tracking-wide uppercas">
+                                <li><Link href="/" className="hover:text-foreground transition-colors">Home</Link></li>
+                                <span className="opacity-30">/</span>
                                 <li>
-                                    <Link href={`/${category}`} className="hover:text-foreground capitalize hover:underline underline-offset-4">{category}</Link>
+                                    <Link href={`/${category}`} className="hover:text-foreground transition-colors capitalize">{category}</Link>
                                 </li>
-                                <ChevronRight className="h-4 w-4" />
-                                <li className="font-medium text-foreground capitalize">
+                                <span className="opacity-30">/</span>
+                                <li className="text-foreground capitalize">
                                     {displayTitle}
                                 </li>
                             </ol>
                         </nav>
 
-                        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tighter mb-6 capitalize leading-tight">
-                            {title}
-                        </h1>
-                        <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mb-8 intro-text">
-                            {intro}
-                        </p>
+                        <div className="space-y-6">
+                            <motion.h1
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                className="text-5xl md:text-7xl font-bold tracking-tighter capitalize text-foreground"
+                            >
+                                {title}
+                            </motion.h1>
 
-                        {/* Aliases Display */}
-                        {aliases && aliases.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-2 mb-8">
-                                <Tag className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-sm text-muted-foreground mr-2">Also known as:</span>
-                                {aliases.slice(0, 5).map(alias => (
-                                    <span key={alias} className="text-xs bg-secondary/50 px-2.5 py-1 rounded-md text-foreground/80 font-medium">
-                                        {alias}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
+                            <motion.p
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                                className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl font-light intro-text"
+                            >
+                                {intro}
+                            </motion.p>
+                        </div>
 
-                        {/* E-E-A-T Signals (NEW) */}
-                        <div className="flex flex-wrap gap-4 mb-12">
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 text-green-500 rounded-full text-xs font-semibold uppercase tracking-wider border border-green-500/20">
-                                <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                                </span>
+                        {/* Premium Badges - Monochrome & Minimal */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 1, delay: 0.3 }}
+                            className="flex flex-wrap gap-3 mt-10 mb-12"
+                        >
+                            <div className="flex items-center gap-2 px-4 py-2 bg-foreground/5 backdrop-blur-sm rounded-full text-xs font-medium tracking-wider uppercase border border-foreground/10 text-foreground/80">
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary/80" />
                                 Live Feed
                             </div>
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 text-blue-500 rounded-full text-xs font-semibold uppercase tracking-wider border border-blue-500/20">
-                                <Globe className="w-3 h-3" />
+                            <div className="flex items-center gap-2 px-4 py-2 bg-foreground/5 backdrop-blur-sm rounded-full text-xs font-medium tracking-wider uppercase border border-foreground/10 text-foreground/80">
+                                <Globe className="w-3.5 h-3.5" />
                                 Verified Sources
                             </div>
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-500/10 text-purple-500 rounded-full text-xs font-semibold uppercase tracking-wider border border-purple-500/20">
-                                <Rss className="w-3 h-3" />
-                                {totalArticles}+ Articles
+                            <div className="flex items-center gap-2 px-4 py-2 bg-foreground/5 backdrop-blur-sm rounded-full text-xs font-medium tracking-wider uppercase border border-foreground/10 text-foreground/80">
+                                <Rss className="w-3.5 h-3.5" />
+                                {totalArticles} Updates
                             </div>
-                        </div>
+                            {aliases && aliases.length > 0 && (
+                                <div className="flex items-center gap-2 px-4 py-2 bg-transparent rounded-full text-xs font-medium tracking-wider uppercase text-muted-foreground border border-dashed border-foreground/10">
+                                    AKA: {aliases[0]}
+                                </div>
+                            )}
+                        </motion.div>
 
-                        <div className="mt-4 flex items-center gap-4 animate-bounce">
-                            <div className="flex flex-col items-center gap-2">
-                                <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Swipe Right for Data</span>
-                                <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                        <motion.div
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.8 }}
+                            className="flex items-center gap-4 group cursor-pointer w-fit opacity-60 hover:opacity-100 transition-opacity"
+                            onClick={handleExploreData}
+                        >
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground">Explore Data</span>
+                                <div className="h-[1px] w-full bg-foreground/20 group-hover:bg-foreground/50 transition-colors" />
                             </div>
-                        </div>
+                            <motion.div
+                                animate={{ x: [0, 5, 0] }}
+                                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                            >
+                                <ArrowRight className="w-4 h-4 text-foreground" />
+                            </motion.div>
+                        </motion.div>
                     </div>
 
-                    <div className="absolute bottom-10 left-0 right-0 flex justify-center pb-8 safe-area-bottom">
-                        <div className="flex flex-col items-center gap-2 cursor-pointer" onClick={handleDismiss}>
-                            <span className="text-xs font-semibold uppercase tracking-widest text-foreground/50">Scroll Down to Read Articles</span>
-                            <ChevronDown className="w-6 h-6 text-foreground/50" />
-                        </div>
+                    <div className="absolute bottom-10 left-0 right-0 flex justify-center pb-8 safe-area-bottom pointer-events-none">
+                        <motion.div
+                            className="flex flex-col items-center gap-3"
+                            animate={{ y: [0, 5, 0] }}
+                            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                        >
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/50">Scroll to Read</span>
+                        </motion.div>
                     </div>
                 </header>
 
                 {/* SLIDE 2: DASHBOARD */}
-                <section aria-label="Topic Statistics" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 bg-secondary/5">
-                    <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
-                        <div className="flex items-center gap-3 mb-8 text-primary">
-                            <BarChart3 className="w-8 h-8" />
-                            <h2 className="text-3xl font-bold">Topic Insights</h2>
+                <section aria-label="Topic Statistics" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 bg-background overflow-y-auto">
+                    <div className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full">
+                        <div className="flex items-center gap-4 mb-12 opacity-80">
+                            <div className="p-3 rounded-full bg-primary/5 border border-primary/10">
+                                <BarChart3 className="w-6 h-6 text-primary" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold tracking-tight">Intelligence Brief</h2>
+                                <p className="text-sm text-muted-foreground">Key metrics and top headlines</p>
+                            </div>
                         </div>
 
-                        {/* Executive Summary (NEW) */}
-                        <div className="mb-10 p-6 bg-card rounded-2xl border shadow-sm">
-                            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <Rss className="w-4 h-4" />
-                                Executive Summary
+                        {/* Executive Summary - Glass & Clean */}
+                        <div className="mb-8 p-8 rounded-3xl border border-border/40 bg-card/40 backdrop-blur-sm hover:bg-card/60 transition-colors">
+                            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
+                                <span className="w-1 h-1 rounded-full bg-primary"></span>
+                                Top Stories
                             </h3>
-                            <div className="space-y-3">
-                                <p className="text-lg leading-relaxed font-medium">
-                                    Current coverage on <span className="text-primary">{displayTitle}</span> is dominated by top stories including:
-                                </p>
 
-                                {/* AI Overview Optimized: Ordered List */}
-                                <section id="top-headlines" aria-label="Top headlines">
-                                    <h4 className="text-sm font-semibold text-muted-foreground mb-3">Top 5 {displayTitle} Headlines This Week</h4>
-                                    <ol className="space-y-2 list-decimal list-inside marker:text-primary marker:font-bold">
-                                        {posts.slice(0, 5).map((p, i) => (
-                                            <li key={i} className="text-muted-foreground">
-                                                <strong className="text-foreground">{p.title}</strong>
-                                            </li>
-                                        ))}
-                                    </ol>
-                                </section>
+                            <section id="top-headlines" aria-label="Top headlines">
+                                <ol className="space-y-4">
+                                    {posts.slice(0, 5).map((p, i) => (
+                                        <li key={i} className="flex items-start gap-3 group">
+                                            <span className="text-xs font-mono text-muted-foreground/50 mt-1">0{i + 1}</span>
+                                            <strong className="text-base font-medium text-foreground/90 group-hover:text-primary transition-colors leading-snug">
+                                                {p.title}
+                                            </strong>
+                                        </li>
+                                    ))}
+                                </ol>
+                            </section>
 
-                                <p className="text-sm text-muted-foreground mt-4 italic">
-                                    *Analysis based on {totalArticles} active sources.
-                                </p>
+                            <div className="mt-6 pt-6 border-t border-border/30 flex items-center gap-4 text-xs text-muted-foreground">
+                                <span>Based on {totalArticles} sources</span>
+                                <span className="w-1 h-1 rounded-full bg-border"></span>
+                                <span>AI Curated</span>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                            <div className="p-6 bg-card rounded-2xl border shadow-sm">
-                                <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Coverage Volume</h3>
-                                <p className="text-4xl font-bold">{totalArticles} <span className="text-lg text-muted-foreground font-normal">verified articles</span></p>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="p-6 rounded-3xl border border-border/40 bg-card/20 backdrop-blur-sm">
+                                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">Coverage</h3>
+                                <div className="flex items-baseline gap-2">
+                                    <span className="text-4xl font-bold tracking-tighter">{totalArticles}</span>
+                                    <span className="text-xs text-muted-foreground font-medium">Articles</span>
+                                </div>
                             </div>
-                            <div className="p-6 bg-card rounded-2xl border shadow-sm">
-                                <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Freshness</h3>
+                            <div className="p-6 rounded-3xl border border-border/40 bg-card/20 backdrop-blur-sm">
+                                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">Freshness</h3>
                                 <time
                                     dateTime={posts[0]?.date || new Date().toISOString()}
-                                    className="text-4xl font-bold block"
+                                    className="text-4xl font-bold tracking-tighter block truncate"
                                 >
-                                    {latestUpdate}
+                                    {latestUpdate.split(',')[0]}
                                 </time>
-                                <span className="text-xs text-muted-foreground mt-1 block">Last article updated</span>
                             </div>
                         </div>
-
-                        {/* FAQ Section REMOVED from here */}
                     </div>
                 </section>
 
                 {/* SLIDE 3: FAQ */}
                 {faqs && faqs.length > 0 && (
-                    <section aria-label="Common Questions" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 overflow-y-auto">
-                        <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
-                            <div className="flex items-center gap-3 mb-8 text-primary">
-                                <HelpCircle className="w-8 h-8" />
-                                <h2 className="text-3xl font-bold">Common Questions</h2>
+                    <section aria-label="Common Questions" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 overflow-y-auto bg-background/50">
+                        <div className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full">
+                            <div className="flex items-center gap-4 mb-12 opacity-80">
+                                <div className="p-3 rounded-full bg-primary/5 border border-primary/10">
+                                    <HelpCircle className="w-6 h-6 text-primary" />
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl font-bold tracking-tight">Deep Dive</h2>
+                                    <p className="text-sm text-muted-foreground">Expert analysis & common queries</p>
+                                </div>
                             </div>
-                            <div className="bg-card/30 rounded-2xl p-2 border border-border/50">
+
+                            <div className="bg-card/20 backdrop-blur-sm rounded-3xl p-1 border border-border/40">
                                 <FaqAccordion faqs={faqs} />
                             </div>
 
-                            {/* Trending Keywords */}
-                            <div className="mt-8">
-                                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                                    <Hash className="w-5 h-5 text-muted-foreground" />
-                                    Trending Keywords
+                            {/* Trending Keywords - Minimal Pills */}
+                            <div className="mt-12">
+                                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
+                                    <Hash className="w-3.5 h-3.5" />
+                                    Related Entities
                                 </h3>
-                                <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-wrap gap-3">
                                     {topTopics.length > 0 ? topTopics.map(t => (
-                                        <span key={t} className="px-4 py-2 bg-background border rounded-full text-sm font-medium hover:bg-muted transition-colors cursor-default">
-                                            #{t}
+                                        <span key={t} className="px-4 py-2 bg-foreground/5 border border-foreground/5 rounded-full text-sm font-medium hover:bg-foreground/10 hover:border-foreground/20 transition-all cursor-default text-muted-foreground hover:text-foreground">
+                                            {t}
                                         </span>
                                     )) : (
-                                        <span className="text-muted-foreground italic">No keywords data available</span>
+                                        <span className="text-muted-foreground italic text-sm">No entities available</span>
                                     )}
                                 </div>
                             </div>
@@ -274,28 +324,37 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                 )}
 
                 {/* SLIDE 4: NETWORK / LINKS */}
-                <nav aria-label="Explore Network" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12">
-                    <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
-                        <div className="flex items-center gap-3 mb-8 text-primary">
-                            <Globe className="w-8 h-8" />
-                            <h2 className="text-3xl font-bold">Explore Network</h2>
+                <nav aria-label="Explore Network" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 bg-background overflow-y-auto">
+                    <div className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full">
+                        <div className="flex items-center gap-4 mb-12 opacity-80">
+                            <div className="p-3 rounded-full bg-primary/5 border border-primary/10">
+                                <Network className="w-6 h-6 text-primary" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold tracking-tight">Network Graph</h2>
+                                <p className="text-sm text-muted-foreground">Explore connected topics</p>
+                            </div>
                         </div>
 
                         {relatedTopics && relatedTopics.length > 0 ? (
                             <div className="space-y-12">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {relatedTopics.map((topic, i) => (
                                         <Link
                                             key={i}
                                             href={`/${topic.category}/${topic.slug}`}
-                                            className="group block p-4 bg-card hover:bg-accent rounded-xl border transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                            className="group relative overflow-hidden p-6 bg-card/40 hover:bg-card/80 rounded-3xl border border-border/40 hover:border-border/80 transition-all hover:scale-[1.01] hover:shadow-lg hover:shadow-primary/5"
                                         >
-                                            <h4 className="font-semibold group-hover:text-primary transition-colors capitalize">
-                                                {topic.title}
-                                            </h4>
-                                            <span className="text-xs text-muted-foreground capitalize">
-                                                {topic.slug.replace(/-/g, ' ')}
-                                            </span>
+                                            <div className="flex flex-col gap-3 relative z-10">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">{topic.category}</span>
+                                                    <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                                                </div>
+                                                <h4 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors capitalize leading-tight">
+                                                    {topic.title}
+                                                </h4>
+                                            </div>
+                                            <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </Link>
                                     ))}
                                 </div>
@@ -303,18 +362,43 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                             </div>
                         ) : (
                             <div className="space-y-12">
-                                <div className="text-center py-12 text-muted-foreground">
-                                    No direct related topics.
+                                {/* Fallback: Show keywords from current category formatted as big cards SAME as above */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {fallbackTopics.map((k: SeoKeywordDef) => (
+                                        <Link
+                                            key={k.slug}
+                                            href={`/${category}/${k.slug}`}
+                                            className="group relative overflow-hidden p-6 bg-card/40 hover:bg-card/80 rounded-3xl border border-border/40 hover:border-border/80 transition-all hover:scale-[1.01] hover:shadow-lg hover:shadow-primary/5"
+                                        >
+                                            <div className="flex flex-col gap-3 relative z-10">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">{category}</span>
+                                                    <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                                                </div>
+                                                <h4 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors capitalize leading-tight">
+                                                    {k.title}
+                                                </h4>
+                                            </div>
+                                            <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </Link>
+                                    ))}
                                 </div>
-                                <InternalLinks currentCategory={category as CategoryId} currentSlug={slug} />
+                                {/* NOTE: InternalLinks NOT shown here to avoid duplication as we just showed them as big cards */}
                             </div>
                         )}
 
-                        <div className="mt-12 pt-8 border-t flex flex-col items-center">
-                            <div className="flex flex-col items-center gap-2 cursor-pointer group" onClick={handleDismiss}>
-                                <span className="text-sm font-semibold uppercase tracking-widest text-primary group-hover:underline">Start Reading Feed</span>
-                                <ChevronDown className="w-6 h-6 text-primary animate-bounce decoration-transparent" />
-                            </div>
+                        <div className="mt-auto pt-12 flex flex-col items-center pb-safe">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="group flex flex-col items-center gap-3 cursor-pointer"
+                                onClick={handleDismiss}
+                            >
+                                <span className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/60 group-hover:text-foreground transition-colors">Start Feed</span>
+                                <div className="p-4 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                                    <ChevronDown className="w-6 h-6 text-primary group-hover:translate-y-1 transition-transform" />
+                                </div>
+                            </motion.button>
                         </div>
                     </div>
                 </nav>
