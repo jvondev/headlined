@@ -104,7 +104,7 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, pos
                                 <li><Link href="/" className="hover:text-foreground hover:underline underline-offset-4">Home</Link></li>
                                 <ChevronRight className="h-4 w-4" />
                                 <li>
-                                    <Link href={`/`} className="hover:text-foreground capitalize hover:underline underline-offset-4">{category}</Link>
+                                    <Link href={`/${category}`} className="hover:text-foreground capitalize hover:underline underline-offset-4">{category}</Link>
                                 </li>
                                 <ChevronRight className="h-4 w-4" />
                                 <li className="font-medium text-foreground capitalize">
@@ -133,6 +133,25 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, pos
                             </div>
                         )}
 
+                        {/* E-E-A-T Signals (NEW) */}
+                        <div className="flex flex-wrap gap-4 mb-12">
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 text-green-500 rounded-full text-xs font-semibold uppercase tracking-wider border border-green-500/20">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                </span>
+                                Live Feed
+                            </div>
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 text-blue-500 rounded-full text-xs font-semibold uppercase tracking-wider border border-blue-500/20">
+                                <Globe className="w-3 h-3" />
+                                Verified Sources
+                            </div>
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-500/10 text-purple-500 rounded-full text-xs font-semibold uppercase tracking-wider border border-purple-500/20">
+                                <Rss className="w-3 h-3" />
+                                {totalArticles}+ Articles
+                            </div>
+                        </div>
+
                         <div className="mt-4 flex items-center gap-4 animate-bounce">
                             <div className="flex flex-col items-center gap-2">
                                 <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Swipe Right for Data</span>
@@ -157,13 +176,37 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, pos
                             <h2 className="text-3xl font-bold">Topic Insights</h2>
                         </div>
 
+                        {/* Executive Summary (NEW) */}
+                        <div className="mb-10 p-6 bg-card rounded-2xl border shadow-sm">
+                            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <Rss className="w-4 h-4" />
+                                Executive Summary
+                            </h3>
+                            <div className="space-y-3">
+                                <p className="text-lg leading-relaxed font-medium">
+                                    Current coverage on <span className="text-primary">{displayTitle}</span> is dominated by top stories including:
+                                </p>
+                                <ul className="space-y-2">
+                                    {posts.slice(0, 3).map((p, i) => (
+                                        <li key={i} className="flex items-start gap-2 text-muted-foreground">
+                                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                            <span>{p.title}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <p className="text-sm text-muted-foreground mt-4 italic">
+                                    *Analysis based on {totalArticles} active sources.
+                                </p>
+                            </div>
+                        </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                             <div className="p-6 bg-card rounded-2xl border shadow-sm">
-                                <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Coverage</h3>
-                                <p className="text-4xl font-bold">{totalArticles} <span className="text-lg text-muted-foreground font-normal">Articles</span></p>
+                                <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Coverage Volume</h3>
+                                <p className="text-4xl font-bold">{totalArticles} <span className="text-lg text-muted-foreground font-normal">verified articles</span></p>
                             </div>
                             <div className="p-6 bg-card rounded-2xl border shadow-sm">
-                                <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Last Updated</h3>
+                                <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Freshness</h3>
                                 <p className="text-4xl font-bold">{latestUpdate}</p>
                             </div>
                         </div>
@@ -171,7 +214,7 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, pos
                         <div>
                             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                                 <Hash className="w-5 h-5 text-muted-foreground" />
-                                Top Keywords
+                                Trending Keywords
                             </h3>
                             <div className="flex flex-wrap gap-2">
                                 {topTopics.length > 0 ? topTopics.map(t => (

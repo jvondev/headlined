@@ -4,3 +4,5 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /blog/
+
+Sitemap: https://headlined.app/sitemap.xml
