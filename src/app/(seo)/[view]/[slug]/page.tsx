@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { SeoFeed } from '@/components/seo/SeoFeed';
 import { SeoCover } from '@/components/seo/seo-cover';
-import { SEO_CONFIG, CategoryId } from '@/lib/seo-config';
+import { SEO_CONFIG, getSeoMetadata, CategoryId } from '@/lib/seo-config';
 
 // Define Parameter Type
 type Props = {
@@ -44,67 +44,103 @@ function getTopicData(category: string, slug: string) {
 // 3. Dynamic Metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { view, slug } = await params;
-    const category = view; // Alias for clarity
-    const config = SEO_CONFIG[category as CategoryId] || SEO_CONFIG['keywords'];
+    const category = view as CategoryId;
 
-    // Format slug for display (e.g. "san-diego" -> "San Diego")
-    const formattedSlug = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-
-    const title = config.titleTemplate.replace(/{Slug}/g, formattedSlug);
-    const description = config.descriptionTemplate.replace(/{Slug}/g, formattedSlug);
+    // Get dynamic metadata from engine
+    const seo = getSeoMetadata(category, slug);
 
     return {
-        title: title,
-        description: description,
+        title: seo.title,
+        description: seo.description,
         openGraph: {
-            title: title,
-            description: description,
+            title: seo.title,
+            description: seo.description,
             type: 'website',
             // images: ... (could add default OG image logic)
         },
         alternates: {
-            canonical: `https://headlined.app/${category}/${slug}` // Update domain
-        }
+            canonical: `https://headlined.app/${category}/${slug}`
+        },
+        keywords: seo.aliases
     };
 }
 
 // 4. Page Component
 export default async function SeoTopicPage({ params }: Props) {
     const { view, slug } = await params;
-    const category = view; // Alias
+    const category = view as CategoryId;
 
     // Validate Category
-    if (!SEO_CONFIG[category as CategoryId]) {
+    if (!SEO_CONFIG[category]) {
         notFound();
     }
 
     const data = getTopicData(category, slug);
     if (!data) {
-        notFound(); // Should not happen if generateStaticParams is correct
+        notFound();
     }
 
-    const config = SEO_CONFIG[category as CategoryId];
-    const formattedSlug = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    const h1 = config.h1Template.replace(/{Slug}/g, formattedSlug);
-    const intro = config.introTemplate.replace(/{Slug}/g, formattedSlug);
+    // Get all dynamic texts
+    const seo = getSeoMetadata(category, slug);
 
-    // Schema.org logic
-    const jsonLd = {
-        "@context": "https://schema.org",
-        "@type": "CollectionPage",
-        "headline": h1,
-        "description": intro,
-        "url": `https://headlined.app/${category}/${slug}`,
-        "mainEntity": {
-            "@type": "ItemList",
-            "itemListElement": data.map((post: any, index: number) => ({
-                "@type": "ListItem",
-                "position": index + 1,
-                "url": post.link,
-                "name": post.title
+    // Stacked Schema Logic
+    const schemas = [
+        {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": seo.title,
+            "headline": seo.h1,
+            "description": seo.intro,
+            "url": `https://headlined.app/${category}/${slug}`,
+            "mainEntity": {
+                "@type": "ItemList",
+                "itemListElement": data.map((post: any, index: number) => ({
+                    "@type": "ListItem",
+                    "position": index + 1,
+                    "url": post.link,
+                    "name": post.title
+                }))
+            }
+        },
+        // FAQ Schema for Rich Snippets
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": seo.faqs.map(faq => ({
+                "@type": "Question",
+                "name": faq.q,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": faq.a
+                }
             }))
+        },
+        // Breadcrumb Schema
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://headlined.app"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": category.charAt(0).toUpperCase() + category.slice(1),
+                    "item": `https://headlined.app/${category}`
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": seo.richTitle,
+                    "item": `https://headlined.app/${category}/${slug}`
+                }
+            ]
         }
-    };
+    ];
 
     // Map Scraper Data to Post Type for SeoCover
     const mappedPosts: any[] = data.map((p: any) => ({
@@ -120,18 +156,25 @@ export default async function SeoTopicPage({ params }: Props) {
 
     return (
         <main className="h-screen w-full bg-background flex flex-col overflow-hidden relative">
-            {/* Schema Injection */}
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-            />
+            {/* Inject Schemas */}
+            {schemas.map((schema, i) => (
+                <script
+                    key={i}
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+                />
+            ))}
 
             {/* The Cover Layer (Landing Experience) */}
             <SeoCover
                 category={category}
                 slug={slug}
-                title={h1}
-                intro={intro}
+                title={seo.h1}
+                intro={seo.intro}
+                // @ts-ignore - Assuming SeoCover needs update
+                richTitle={seo.richTitle}
+                // @ts-ignore
+                aliases={seo.aliases}
                 posts={mappedPosts}
                 relatedTopics={data[0]?.relatedTopics}
             />

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useAnimation, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import Link from 'next/link';
-import { ChevronRight, BarChart3, Globe, ChevronDown, ArrowRight, Rss, Hash } from "lucide-react";
+import { ChevronRight, BarChart3, Globe, ChevronDown, ArrowRight, Rss, Hash, Tag } from "lucide-react";
 import { CategoryId, SEO_CONFIG } from "@/lib/seo-config";
 import { Post } from "@/types";
 import { cn } from "@/lib/utils";
@@ -13,16 +13,21 @@ interface SeoCoverProps {
     slug: string;
     title: string;
     intro: string;
+    richTitle?: string;
+    aliases?: string[];
     posts: Post[];
     relatedTopics?: { category: string; slug: string; title: string }[];
 }
 
-export function SeoCover({ category, slug, title, intro, posts, relatedTopics }: SeoCoverProps) {
+export function SeoCover({ category, slug, title, intro, richTitle, aliases, posts, relatedTopics }: SeoCoverProps) {
     const [isVisible, setIsVisible] = useState(true);
     const controls = useAnimation();
     const y = useMotionValue(0);
     const opacity = useTransform(y, [0, -200], [1, 0]);
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Use rich title if provided, otherwise format slug
+    const displayTitle = richTitle || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
     // Calculate Stats
     const totalArticles = posts.length;
@@ -103,7 +108,7 @@ export function SeoCover({ category, slug, title, intro, posts, relatedTopics }:
                                 </li>
                                 <ChevronRight className="h-4 w-4" />
                                 <li className="font-medium text-foreground capitalize">
-                                    {slug.replace(/-/g, ' ')}
+                                    {displayTitle}
                                 </li>
                             </ol>
                         </nav>
@@ -111,11 +116,24 @@ export function SeoCover({ category, slug, title, intro, posts, relatedTopics }:
                         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tighter mb-6 capitalize leading-tight">
                             {title}
                         </h1>
-                        <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl">
+                        <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mb-8">
                             {intro}
                         </p>
 
-                        <div className="mt-12 flex items-center gap-4 animate-bounce">
+                        {/* Aliases Display */}
+                        {aliases && aliases.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-2 mb-8">
+                                <Tag className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-sm text-muted-foreground mr-2">Also known as:</span>
+                                {aliases.slice(0, 5).map(alias => (
+                                    <span key={alias} className="text-xs bg-secondary/50 px-2.5 py-1 rounded-md text-foreground/80 font-medium">
+                                        {alias}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="mt-4 flex items-center gap-4 animate-bounce">
                             <div className="flex flex-col items-center gap-2">
                                 <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Swipe Right for Data</span>
                                 <ArrowRight className="w-5 h-5 text-muted-foreground" />
