@@ -171,10 +171,9 @@ export default async function SeoTopicPage({ params }: Props) {
                 slug={slug}
                 title={seo.h1}
                 intro={seo.intro}
-                // @ts-ignore - Assuming SeoCover needs update
                 richTitle={seo.richTitle}
-                // @ts-ignore
                 aliases={seo.aliases}
+                faqs={seo.faqs}
                 posts={mappedPosts}
                 relatedTopics={data[0]?.relatedTopics}
             />

@@ -3,10 +3,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useAnimation, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import Link from 'next/link';
-import { ChevronRight, BarChart3, Globe, ChevronDown, ArrowRight, Rss, Hash, Tag } from "lucide-react";
+import { ChevronRight, BarChart3, Globe, ChevronDown, ArrowRight, Rss, Hash, Tag, HelpCircle, Network } from "lucide-react";
 import { CategoryId, SEO_CONFIG } from "@/lib/seo-config";
 import { Post } from "@/types";
 import { cn } from "@/lib/utils";
+import { FaqAccordion } from "./FaqAccordion";
 
 interface SeoCoverProps {
     category: string;
@@ -15,11 +16,12 @@ interface SeoCoverProps {
     intro: string;
     richTitle?: string;
     aliases?: string[];
+    faqs?: { q: string; a: string; }[];
     posts: Post[];
     relatedTopics?: { category: string; slug: string; title: string }[];
 }
 
-export function SeoCover({ category, slug, title, intro, richTitle, aliases, posts, relatedTopics }: SeoCoverProps) {
+export function SeoCover({ category, slug, title, intro, richTitle, aliases, faqs, posts, relatedTopics }: SeoCoverProps) {
     const [isVisible, setIsVisible] = useState(true);
     const controls = useAnimation();
     const y = useMotionValue(0);
@@ -232,6 +234,17 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, pos
                                 )}
                             </div>
                         </div>
+
+                        {/* FAQ Section */}
+                        {faqs && faqs.length > 0 && (
+                            <div className="mt-12">
+                                <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
+                                    <HelpCircle className="w-5 h-5 text-muted-foreground" />
+                                    Frequently Asked Questions
+                                </h3>
+                                <FaqAccordion faqs={faqs} />
+                            </div>
+                        )}
                     </div>
                 </div>
 
