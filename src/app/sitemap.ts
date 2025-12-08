@@ -4,6 +4,8 @@ import * as path from 'path';
 
 const CACHE_DIR = path.join(process.cwd(), 'src', 'data', 'static-cache');
 
+export const dynamic = 'force-static';
+
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://headlined.app';
     const now = new Date().toISOString();
