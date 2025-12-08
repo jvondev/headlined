@@ -560,12 +560,26 @@ async function run() {
         activeSources = sourcesData.slice(0, 1);
         testModeLimit = 10;
     } else if (batch !== null && totalBatches !== null) {
+        // Auto-scaling: Calculate how many batches are actually needed
+        // Target: ~5 sources per batch, minimum 1 batch, max 8 batches
+        const targetSourcesPerBatch = 5;
+        const neededBatches = Math.min(
+            totalBatches,
+            Math.max(1, Math.ceil(sourcesData.length / targetSourcesPerBatch))
+        );
+
+        // Skip this batch if not needed
+        if (batch >= neededBatches) {
+            console.log(`⏭️ Batch ${batch + 1} not needed (only ${neededBatches} batches required for ${sourcesData.length} sources). Skipping.`);
+            return;
+        }
+
         // Split sources into batches
-        const sourcesPerBatch = Math.ceil(sourcesData.length / totalBatches);
+        const sourcesPerBatch = Math.ceil(sourcesData.length / neededBatches);
         const startIdx = batch * sourcesPerBatch;
         const endIdx = Math.min(startIdx + sourcesPerBatch, sourcesData.length);
         activeSources = sourcesData.slice(startIdx, endIdx);
-        console.log(`Processing sources ${startIdx + 1} to ${endIdx} of ${sourcesData.length}`);
+        console.log(`🔄 Batch ${batch + 1}/${neededBatches} | Processing sources ${startIdx + 1}-${endIdx} of ${sourcesData.length}`);
     }
 
     let newItemsCount = 0;
