@@ -47,13 +47,13 @@ export function CarouselNav({
 
     return (
         <div className="flex items-center w-full pl-4">
-            <Button variant="outline" className="mr-4 flex-shrink-0 font-bold text-md tracking-tight px-4 rounded-lg" asChild>
+            <Button variant="outline" className="mr-4 flex-shrink-0 font-bold text-md tracking-tight px-4 rounded-lg pointer-events-auto" asChild>
                 <Link href={isPremium ? "/today" : "/support"}>
                     Headlined
                     {isPremium && <sup className="-ml-2 text-md">+</sup>}
                 </Link>
             </Button>
-            <div className="overflow-hidden flex-1" ref={emblaRef}>
+            <div className="overflow-hidden flex-1 pointer-events-auto" ref={emblaRef}>
                 <div className="flex items-center">
                     {allFilterItems.map((item, index) => {
                         const isActive = selectedIndex === index;

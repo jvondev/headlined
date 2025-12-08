@@ -192,7 +192,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     return (
         <div className="flex flex-col h-full relative">
             {showNav && (
-                <div className="fixed top-0 left-0 right-0 z-20 w-full bg-background py-2">
+                <div className="fixed top-0 left-0 right-0 z-20 w-full bg-transparent py-2 pointer-events-none">
                     <CarouselNav
                         emblaRef={navEmblaRef}
                         emblaApi={navEmblaApi}
@@ -213,7 +213,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 dateRange={dateRange}
                 setIsDashboardIntro={setIsDashboardIntro}
                 initialViewState={initialViewState}
-                className="pt-[52px]"
+                className="pt-[60px] md:pt-[48px]"
                 isIntroPaused={isIntroPaused}
                 periodLabel={periodLabel}
             />

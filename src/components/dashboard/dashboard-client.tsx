@@ -160,7 +160,7 @@ function DashboardContent() {
     }, [view, searchParams, availableTopics, availableInterests]);
 
     return (
-        <main className="h-screen w-full bg-background">
+        <main className="h-screen w-full bg-transparent">
             <OnboardingProvider>
                 <OnboardingFlow
                     isOpen={showOnboarding}
