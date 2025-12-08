@@ -226,7 +226,7 @@ export default async function SeoTopicPage({ params }: Props) {
             />
 
             {/* Client Feed (Background Layer, revealed on dismiss) */}
-            <div className="flex-1 w-full relative z-0 flex items-center justify-center">
+            <div className="flex-1 w-full relative z-0 flex items-center justify-center pt-10">
                 <SeoFeed category={category} slug={slug} initialPosts={data} />
             </div>
         </main>

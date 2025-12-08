@@ -227,29 +227,29 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                 {/* SLIDE 2: DASHBOARD */}
                 <section aria-label="Topic Statistics" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 bg-background overflow-y-auto">
                     <div className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full">
-                        <div className="flex items-center gap-4 mb-12 opacity-80">
+                        <div className="flex items-center gap-4 mb-8 md:mb-12 opacity-80">
                             <div className="p-3 rounded-full bg-primary/5 border border-primary/10">
                                 <BarChart3 className="w-6 h-6 text-primary" />
                             </div>
                             <div>
-                                <h2 className="text-2xl font-bold tracking-tight">Intelligence Brief</h2>
-                                <p className="text-sm text-muted-foreground">Key metrics and top headlines</p>
+                                <h2 className="text-xl md:text-2xl font-bold tracking-tight">Intelligence Brief</h2>
+                                <p className="text-xs md:text-sm text-muted-foreground">Key metrics and top headlines</p>
                             </div>
                         </div>
 
-                        {/* Executive Summary - Glass & Clean */}
-                        <div className="mb-8 p-8 rounded-3xl border border-border/40 bg-card/40 backdrop-blur-sm hover:bg-card/60 transition-colors">
-                            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
+                        {/* Executive Summary - Compact for Mobile */}
+                        <div className="mb-4 md:mb-8 p-6 md:p-8 rounded-3xl border border-border/40 bg-card/40 backdrop-blur-sm hover:bg-card/60 transition-colors">
+                            <h3 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 flex items-center gap-2">
                                 <span className="w-1 h-1 rounded-full bg-primary"></span>
                                 Top Stories
                             </h3>
 
                             <section id="top-headlines" aria-label="Top headlines">
-                                <ol className="space-y-4">
-                                    {posts.slice(0, 5).map((p, i) => (
+                                <ol className="space-y-3">
+                                    {posts.slice(0, 3).map((p, i) => (
                                         <li key={i} className="flex items-start gap-3 group">
-                                            <span className="text-xs font-mono text-muted-foreground/50 mt-1">0{i + 1}</span>
-                                            <strong className="text-base font-medium text-foreground/90 group-hover:text-primary transition-colors leading-snug">
+                                            <span className="text-[10px] md:text-xs font-mono text-muted-foreground/50 mt-0.5">0{i + 1}</span>
+                                            <strong className="text-sm md:text-base font-medium text-foreground/90 group-hover:text-primary transition-colors leading-snug line-clamp-2">
                                                 {p.title}
                                             </strong>
                                         </li>
@@ -257,26 +257,26 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                                 </ol>
                             </section>
 
-                            <div className="mt-6 pt-6 border-t border-border/30 flex items-center gap-4 text-xs text-muted-foreground">
+                            <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-border/30 flex items-center gap-4 text-[10px] md:text-xs text-muted-foreground">
                                 <span>Based on {totalArticles} sources</span>
                                 <span className="w-1 h-1 rounded-full bg-border"></span>
                                 <span>AI Curated</span>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="p-6 rounded-3xl border border-border/40 bg-card/20 backdrop-blur-sm">
-                                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">Coverage</h3>
+                        <div className="grid grid-cols-2 gap-3 md:gap-4">
+                            <div className="p-4 md:p-6 rounded-3xl border border-border/40 bg-card/20 backdrop-blur-sm">
+                                <h3 className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">Coverage</h3>
                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-4xl font-bold tracking-tighter">{totalArticles}</span>
-                                    <span className="text-xs text-muted-foreground font-medium">Articles</span>
+                                    <span className="text-2xl md:text-4xl font-bold tracking-tighter">{totalArticles}</span>
+                                    <span className="text-[10px] md:text-xs text-muted-foreground font-medium">Articles</span>
                                 </div>
                             </div>
-                            <div className="p-6 rounded-3xl border border-border/40 bg-card/20 backdrop-blur-sm">
-                                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">Freshness</h3>
+                            <div className="p-4 md:p-6 rounded-3xl border border-border/40 bg-card/20 backdrop-blur-sm">
+                                <h3 className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">Freshness</h3>
                                 <time
                                     dateTime={posts[0]?.date || new Date().toISOString()}
-                                    className="text-4xl font-bold tracking-tighter block truncate"
+                                    className="text-2xl md:text-4xl font-bold tracking-tighter block truncate"
                                 >
                                     {latestUpdate.split(',')[0]}
                                 </time>
@@ -289,13 +289,13 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                 {faqs && faqs.length > 0 && (
                     <section aria-label="Common Questions" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 overflow-y-auto bg-background/50">
                         <div className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full">
-                            <div className="flex items-center gap-4 mb-12 opacity-80">
+                            <div className="flex items-center gap-4 mb-8 md:mb-12 opacity-80">
                                 <div className="p-3 rounded-full bg-primary/5 border border-primary/10">
                                     <HelpCircle className="w-6 h-6 text-primary" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold tracking-tight">Deep Dive</h2>
-                                    <p className="text-sm text-muted-foreground">Expert analysis & common queries</p>
+                                    <h2 className="text-xl md:text-2xl font-bold tracking-tight">Deep Dive</h2>
+                                    <p className="text-xs md:text-sm text-muted-foreground">Expert analysis & common queries</p>
                                 </div>
                             </div>
 
@@ -303,15 +303,15 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                                 <FaqAccordion faqs={faqs} />
                             </div>
 
-                            {/* Trending Keywords - Minimal Pills */}
-                            <div className="mt-12">
-                                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
+                            {/* Trending Keywords */}
+                            <div className="mt-8 md:mt-12">
+                                <h3 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <Hash className="w-3.5 h-3.5" />
                                     Related Entities
                                 </h3>
-                                <div className="flex flex-wrap gap-3">
+                                <div className="flex flex-wrap gap-2 md:gap-3">
                                     {topTopics.length > 0 ? topTopics.map(t => (
-                                        <span key={t} className="px-4 py-2 bg-foreground/5 border border-foreground/5 rounded-full text-sm font-medium hover:bg-foreground/10 hover:border-foreground/20 transition-all cursor-default text-muted-foreground hover:text-foreground">
+                                        <span key={t} className="px-3 py-1.5 md:px-4 md:py-2 bg-foreground/5 border border-foreground/5 rounded-full text-xs md:text-sm font-medium hover:bg-foreground/10 hover:border-foreground/20 transition-all cursor-default text-muted-foreground hover:text-foreground">
                                             {t}
                                         </span>
                                     )) : (
@@ -326,31 +326,31 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                 {/* SLIDE 4: NETWORK / LINKS */}
                 <nav aria-label="Explore Network" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 bg-background overflow-y-auto">
                     <div className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full">
-                        <div className="flex items-center gap-4 mb-12 opacity-80">
+                        <div className="flex items-center gap-4 mb-8 md:mb-12 opacity-80">
                             <div className="p-3 rounded-full bg-primary/5 border border-primary/10">
                                 <Network className="w-6 h-6 text-primary" />
                             </div>
                             <div>
-                                <h2 className="text-2xl font-bold tracking-tight">Network Graph</h2>
-                                <p className="text-sm text-muted-foreground">Explore connected topics</p>
+                                <h2 className="text-xl md:text-2xl font-bold tracking-tight">Network Graph</h2>
+                                <p className="text-xs md:text-sm text-muted-foreground">Explore connected topics</p>
                             </div>
                         </div>
 
                         {relatedTopics && relatedTopics.length > 0 ? (
                             <div className="space-y-12">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                                     {relatedTopics.map((topic, i) => (
                                         <Link
                                             key={i}
                                             href={`/${topic.category}/${topic.slug}`}
-                                            className="group relative overflow-hidden p-6 bg-card/40 hover:bg-card/80 rounded-3xl border border-border/40 hover:border-border/80 transition-all hover:scale-[1.01] hover:shadow-lg hover:shadow-primary/5"
+                                            className="group relative overflow-hidden p-4 md:p-6 bg-card/40 hover:bg-card/80 rounded-3xl border border-border/40 hover:border-border/80 transition-all hover:scale-[1.01] hover:shadow-lg hover:shadow-primary/5"
                                         >
-                                            <div className="flex flex-col gap-3 relative z-10">
+                                            <div className="flex flex-col gap-2 md:gap-3 relative z-10">
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">{topic.category}</span>
-                                                    <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                                                    <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-muted-foreground/70">{topic.category}</span>
+                                                    <ArrowRight className="w-3 md:w-4 h-3 md:h-4 text-primary opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
                                                 </div>
-                                                <h4 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors capitalize leading-tight">
+                                                <h4 className="text-sm md:text-lg font-semibold text-foreground group-hover:text-primary transition-colors capitalize leading-tight line-clamp-2">
                                                     {topic.title}
                                                 </h4>
                                             </div>
@@ -362,20 +362,20 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                             </div>
                         ) : (
                             <div className="space-y-12">
-                                {/* Fallback: Show keywords from current category formatted as big cards SAME as above */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {/* Fallback: Show keywords from current category formatted as big cards */}
+                                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                                     {fallbackTopics.map((k: SeoKeywordDef) => (
                                         <Link
                                             key={k.slug}
                                             href={`/${category}/${k.slug}`}
-                                            className="group relative overflow-hidden p-6 bg-card/40 hover:bg-card/80 rounded-3xl border border-border/40 hover:border-border/80 transition-all hover:scale-[1.01] hover:shadow-lg hover:shadow-primary/5"
+                                            className="group relative overflow-hidden p-4 md:p-6 bg-card/40 hover:bg-card/80 rounded-3xl border border-border/40 hover:border-border/80 transition-all hover:scale-[1.01] hover:shadow-lg hover:shadow-primary/5"
                                         >
-                                            <div className="flex flex-col gap-3 relative z-10">
+                                            <div className="flex flex-col gap-2 md:gap-3 relative z-10">
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">{category}</span>
-                                                    <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                                                    <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-muted-foreground/70">{category}</span>
+                                                    <ArrowRight className="w-3 md:w-4 h-3 md:h-4 text-primary opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
                                                 </div>
-                                                <h4 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors capitalize leading-tight">
+                                                <h4 className="text-sm md:text-lg font-semibold text-foreground group-hover:text-primary transition-colors capitalize leading-tight line-clamp-2">
                                                     {k.title}
                                                 </h4>
                                             </div>
