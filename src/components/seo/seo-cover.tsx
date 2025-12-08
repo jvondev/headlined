@@ -10,6 +10,7 @@ import { Post } from "@/types";
 import { cn } from "@/lib/utils";
 import { FaqAccordion } from "./FaqAccordion";
 import { InternalLinks } from "./InternalLinks";
+import { TypewriterText } from "./typewriter-text";
 
 interface SeoCoverProps {
     category: string;
@@ -133,7 +134,8 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                 {/* SLIDE 1: INTRO */}
                 <header className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 relative overflow-y-auto bg-background">
                     <div className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full">
-                        <nav aria-label="Breadcrumb" className="mb-8">
+                        {/* Breadcrumb - appears first */}
+                        <nav aria-label="Breadcrumb" className="mb-6 opacity-0 animate-[fadeIn_0.5s_ease-out_0.2s_forwards]">
                             <ol className="flex items-center gap-2 text-sm text-muted-foreground/60 font-medium tracking-wide uppercas">
                                 <li><Link href="/" className="hover:text-foreground transition-colors">Home</Link></li>
                                 <span className="opacity-30">/</span>
@@ -148,32 +150,33 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                         </nav>
 
                         <div className="space-y-6">
-                            <motion.h1
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                                className="text-5xl md:text-7xl font-bold tracking-tighter capitalize text-foreground"
-                            >
-                                {title}
-                            </motion.h1>
+                            {/* Title - typewriter effect */}
+                            <div className="min-h-[60px] md:min-h-[60px]">
+                                <TypewriterText
+                                    text={title}
+                                    delay={600}
+                                    speed={40}
+                                    as="h1"
+                                    className="text-5xl md:text-7xl font-bold tracking-tighter capitalize text-foreground"
+                                    onComplete={() => { }}
+                                />
+                            </div>
 
-                            <motion.p
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                                className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl font-light intro-text"
-                            >
-                                {intro}
-                            </motion.p>
+                            {/* Intro - typewriter effect */}
+                            <div className="min-h-[40px]">
+                                <TypewriterText
+                                    text={intro}
+                                    delay={1200}
+                                    speed={20}
+                                    as="p"
+                                    className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl font-light intro-text"
+                                    onComplete={() => { }}
+                                />
+                            </div>
                         </div>
 
-                        {/* Premium Badges - Monochrome & Minimal */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 1, delay: 0.3 }}
-                            className="flex flex-wrap gap-3 mt-10 mb-12"
-                        >
+                        {/* Premium Badges - fade in after intro */}
+                        <div className="flex flex-wrap gap-3 mt-10 mb-12 opacity-0 animate-[fadeIn_0.6s_ease-out_2s_forwards]">
                             <div className="flex items-center gap-2 px-4 py-2 bg-foreground/5 backdrop-blur-sm rounded-full text-xs font-medium tracking-wider uppercase border border-foreground/10 text-foreground/80">
                                 <span className="w-1.5 h-1.5 rounded-full bg-primary/80" />
                                 Live Feed
@@ -191,26 +194,26 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                                     AKA: {aliases[0]}
                                 </div>
                             )}
-                        </motion.div>
+                        </div>
 
-                        <motion.div
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.8 }}
-                            className="flex items-center gap-4 group cursor-pointer w-fit opacity-60 hover:opacity-100 transition-opacity"
-                            onClick={handleExploreData}
-                        >
-                            <div className="flex flex-col gap-1">
-                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground">Explore Data</span>
-                                <div className="h-[1px] w-full bg-foreground/20 group-hover:bg-foreground/50 transition-colors" />
-                            </div>
-                            <motion.div
-                                animate={{ x: [0, 5, 0] }}
-                                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                        {/* Explore Data button - appears last */}
+                        <div className="opacity-0 animate-[fadeIn_0.4s_ease-out_2.5s_forwards]">
+                            <div
+                                className="flex items-center gap-4 group cursor-pointer w-fit opacity-60 hover:opacity-100 transition-opacity"
+                                onClick={handleExploreData}
                             >
-                                <ArrowRight className="w-4 h-4 text-foreground" />
-                            </motion.div>
-                        </motion.div>
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground">Explore Data</span>
+                                    <div className="h-[1px] w-full bg-foreground/20 group-hover:bg-foreground/50 transition-colors" />
+                                </div>
+                                <motion.div
+                                    animate={{ x: [0, 5, 0] }}
+                                    transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                                >
+                                    <ArrowRight className="w-4 h-4 text-foreground" />
+                                </motion.div>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="absolute bottom-10 left-0 right-0 flex justify-center pb-8 safe-area-bottom pointer-events-none">

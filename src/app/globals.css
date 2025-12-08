@@ -124,4 +124,16 @@
   .dark .glass-card {
     @apply bg-black/30 backdrop-blur-lg border border-black/50;
   }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
