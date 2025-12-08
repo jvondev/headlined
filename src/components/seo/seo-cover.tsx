@@ -47,7 +47,13 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, pos
         .map(([name]) => name);
 
     const handleDismiss = async () => {
-        await controls.start({ y: "-100%", transition: { duration: 0.5, ease: "easeInOut" } });
+        await controls.start({
+            y: "-100%",
+            transition: {
+                duration: 0.65,
+                ease: [0.16, 1, 0.3, 1]
+            }
+        });
         setIsVisible(false);
     };
 
