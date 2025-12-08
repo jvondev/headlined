@@ -2,14 +2,9 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import * as fs from 'fs';
 import * as path from 'path';
-import dynamic from 'next/dynamic';
+import { SeoFeed } from '@/components/seo/SeoFeed';
 import { SeoCover } from '@/components/seo/seo-cover';
 import { SEO_CONFIG, getSeoMetadata, CategoryId } from '@/lib/seo-config';
-
-const SeoFeed = dynamic(() => import('@/components/seo/SeoFeed').then(mod => mod.SeoFeed), {
-    ssr: false,
-    loading: () => <div className="w-full h-full bg-background animate-pulse" />
-});
 
 // Define Parameter Type
 type Props = {
