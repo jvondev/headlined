@@ -1,1 +1,162 @@
-'use strict';function a0_0x299a(){const _0x445316=['set','existsSync','8633000PMheWR','utf-8','3440250TYcAZT','lastUpdated','373447glmUud','/sitemaps/','readFileSync','parse','sitemaps','manifestsDir','init','create','4YTVQDI','BucketManager','params','mkdirSync','baseUrl','slice','created_at','.xml</loc>\x0a\x20\x20\x20\x20<lastmod>','writable','flat','__esModule','4196bJbBOC','slug','length','generateSitemapIndex','split','join','get','call','keys','.json','<?xml\x20version=\x221.0\x22\x20encoding=\x22UTF-8\x22?>\x0a<sitemapindex\x20xmlns=\x22http://www.sitemaps.org/schemas/sitemap/0.9\x22>\x0a','map','\x20\x20<sitemap>\x0a\x20\x20\x20\x20<loc>','534CdztdZ','.xml','push','outputDir','\x0a</urlset>','</lastmod>\x0a\x20\x20\x20\x20<changefreq>daily</changefreq>\x0a\x20\x20</url>','default','4697541URJJds','flush','2615440LDKqiU','908604EdZSLx','values','now','50OhyXjc','some','writeFileSync','entries','__importStar','link','</lastmod>\x0a\x20\x20</sitemap>','toISOString','dataDir','\x20\x20<url>\x0a\x20\x20\x20\x20<loc>','generateSitemap','sitemap-index.xml','hasOwnProperty','category','manifests','buckets','sitemapsDir','7tkEPzy','getTime','stringify','defineProperty'];a0_0x299a=function(){return _0x445316;};return a0_0x299a();}const a0_0x5cba06=a0_0x538f;(function(_0x4f0a0a,_0x4bad50){const _0x33ff17=a0_0x538f,_0x234c38=_0x4f0a0a();while(!![]){try{const _0x5a9aad=parseInt(_0x33ff17(0x1c2))/0x1*(parseInt(_0x33ff17(0x1ca))/0x2)+parseInt(_0x33ff17(0x1e2))/0x3*(parseInt(_0x33ff17(0x1d5))/0x4)+-parseInt(_0x33ff17(0x1eb))/0x5+parseInt(_0x33ff17(0x1ec))/0x6*(parseInt(_0x33ff17(0x1b8))/0x7)+parseInt(_0x33ff17(0x1be))/0x8+parseInt(_0x33ff17(0x1e9))/0x9+-parseInt(_0x33ff17(0x1ef))/0xa*(parseInt(_0x33ff17(0x1c0))/0xb);if(_0x5a9aad===_0x4bad50)break;else _0x234c38['push'](_0x234c38['shift']());}catch(_0x108611){_0x234c38['push'](_0x234c38['shift']());}}}(a0_0x299a,0x924f6));var __createBinding=this&&this['__createBinding']||(Object[a0_0x5cba06(0x1c9)]?function(_0x6f366b,_0x54a308,_0x322ef5,_0x953e8a){const _0x5dbf1f=a0_0x5cba06;if(_0x953e8a===undefined)_0x953e8a=_0x322ef5;var _0x2ab72e=Object['getOwnPropertyDescriptor'](_0x54a308,_0x322ef5);(!_0x2ab72e||(_0x5dbf1f(0x1db)in _0x2ab72e?!_0x54a308[_0x5dbf1f(0x1d4)]:_0x2ab72e[_0x5dbf1f(0x1d2)]||_0x2ab72e['configurable']))&&(_0x2ab72e={'enumerable':!![],'get':function(){return _0x54a308[_0x322ef5];}}),Object[_0x5dbf1f(0x1bb)](_0x6f366b,_0x953e8a,_0x2ab72e);}:function(_0x500127,_0x1d18b8,_0x16f3a1,_0x514e6c){if(_0x514e6c===undefined)_0x514e6c=_0x16f3a1;_0x500127[_0x514e6c]=_0x1d18b8[_0x16f3a1];}),__setModuleDefault=this&&this['__setModuleDefault']||(Object[a0_0x5cba06(0x1c9)]?function(_0x2f10e7,_0xca84d6){const _0x4e5139=a0_0x5cba06;Object[_0x4e5139(0x1bb)](_0x2f10e7,_0x4e5139(0x1e8),{'enumerable':!![],'value':_0xca84d6});}:function(_0x172acd,_0x3d8d60){const _0x5e2868=a0_0x5cba06;_0x172acd[_0x5e2868(0x1e8)]=_0x3d8d60;}),__importStar=this&&this[a0_0x5cba06(0x1f3)]||(function(){var _0x205a6d=function(_0x495c12){return _0x205a6d=Object['getOwnPropertyNames']||function(_0x4c31d1){const _0xe89a4c=a0_0x538f;var _0x1d8be7=[];for(var _0x23d08 in _0x4c31d1)if(Object['prototype'][_0xe89a4c(0x1fb)][_0xe89a4c(0x1dc)](_0x4c31d1,_0x23d08))_0x1d8be7[_0x1d8be7[_0xe89a4c(0x1d7)]]=_0x23d08;return _0x1d8be7;},_0x205a6d(_0x495c12);};return function(_0x5327b6){const _0x48bb58=a0_0x538f;if(_0x5327b6&&_0x5327b6[_0x48bb58(0x1d4)])return _0x5327b6;var _0x27e2d0={};if(_0x5327b6!=null){for(var _0x304918=_0x205a6d(_0x5327b6),_0x3f1f1d=0x0;_0x3f1f1d<_0x304918[_0x48bb58(0x1d7)];_0x3f1f1d++)if(_0x304918[_0x3f1f1d]!==_0x48bb58(0x1e8))__createBinding(_0x27e2d0,_0x5327b6,_0x304918[_0x3f1f1d]);}return __setModuleDefault(_0x27e2d0,_0x5327b6),_0x27e2d0;};}());Object[a0_0x5cba06(0x1bb)](exports,a0_0x5cba06(0x1d4),{'value':!![]}),exports['BucketManager']=void 0x0;const fs=__importStar(require('fs')),path=__importStar(require('path'));function a0_0x538f(_0x4a03d7,_0x2c80b0){const _0x299af3=a0_0x299a();return a0_0x538f=function(_0x538f31,_0x416fe5){_0x538f31=_0x538f31-0x1b8;let _0x2023c3=_0x299af3[_0x538f31];return _0x2023c3;},a0_0x538f(_0x4a03d7,_0x2c80b0);}class BucketManager{constructor(_0x52e261){const _0x3b36d9=a0_0x5cba06;this[_0x3b36d9(0x1fe)]=new Map(),this['manifest']=[],this[_0x3b36d9(0x1ce)]='https://headlined.app',this['outputDir']=_0x52e261,this[_0x3b36d9(0x1f7)]=path['join'](_0x52e261,'data'),this['manifestsDir']=path['join'](_0x52e261,_0x3b36d9(0x1fd)),this[_0x3b36d9(0x1ff)]=path['join'](_0x52e261,_0x3b36d9(0x1c6));}async[a0_0x5cba06(0x1c8)](){const _0x5818e3=a0_0x5cba06;if(!fs[_0x5818e3(0x1bd)](this[_0x5818e3(0x1f7)]))fs['mkdirSync'](this[_0x5818e3(0x1f7)],{'recursive':!![]});if(!fs[_0x5818e3(0x1bd)](this[_0x5818e3(0x1c7)]))fs[_0x5818e3(0x1cd)](this[_0x5818e3(0x1c7)],{'recursive':!![]});if(!fs[_0x5818e3(0x1bd)](this['sitemapsDir']))fs[_0x5818e3(0x1cd)](this[_0x5818e3(0x1ff)],{'recursive':!![]});}['addPost'](_0x4ae214,_0x3ec49d){const _0x21b828=a0_0x5cba06,_0x30411e=_0x3ec49d[_0x21b828(0x1fc)]+'/'+_0x3ec49d[_0x21b828(0x1d6)];if(!this[_0x21b828(0x1fe)]['has'](_0x30411e)){const _0x454446=path[_0x21b828(0x1da)](this[_0x21b828(0x1f7)],_0x3ec49d[_0x21b828(0x1fc)],_0x3ec49d['slug']+_0x21b828(0x1de));if(fs['existsSync'](_0x454446))try{const _0x35899d=JSON[_0x21b828(0x1c5)](fs[_0x21b828(0x1c4)](_0x454446,_0x21b828(0x1bf)));this[_0x21b828(0x1fe)][_0x21b828(0x1bc)](_0x30411e,_0x35899d);}catch(_0x3bf363){this[_0x21b828(0x1fe)]['set'](_0x30411e,[]);}else this[_0x21b828(0x1fe)][_0x21b828(0x1bc)](_0x30411e,[]);}const _0x449a54=this[_0x21b828(0x1fe)][_0x21b828(0x1db)](_0x30411e);!_0x449a54[_0x21b828(0x1f0)](_0x4e8ffe=>_0x4e8ffe[_0x21b828(0x1f4)]===_0x4ae214[_0x21b828(0x1f4)])&&_0x449a54['push'](_0x4ae214);}async[a0_0x5cba06(0x1ea)](){const _0x5f52f4=a0_0x5cba06;console['log']('Flushing\x20buckets...');const _0x594f51=[],_0x38b4b8={};for(const [_0x3c4207,_0x39cfd2]of this[_0x5f52f4(0x1fe)][_0x5f52f4(0x1f2)]()){const [_0x43e7b7,_0x33884a]=_0x3c4207['split']('/');_0x39cfd2['sort']((_0x5b3d07,_0x2fd3db)=>new Date(_0x2fd3db[_0x5f52f4(0x1d0)])[_0x5f52f4(0x1b9)]()-new Date(_0x5b3d07[_0x5f52f4(0x1d0)])['getTime']());if(_0x39cfd2[_0x5f52f4(0x1d7)]<0x3)continue;const _0x47f080=new Date(_0x39cfd2[0x0][_0x5f52f4(0x1d0)]),_0x150a45=(Date[_0x5f52f4(0x1ee)]()-_0x47f080[_0x5f52f4(0x1b9)]())/(0x3e8*0x3c*0x3c*0x18);if(_0x150a45>0x3c)continue;const _0x44e35a=path[_0x5f52f4(0x1da)](this[_0x5f52f4(0x1f7)],_0x43e7b7);if(!fs[_0x5f52f4(0x1bd)](_0x44e35a))fs[_0x5f52f4(0x1cd)](_0x44e35a,{'recursive':!![]});const _0x4b8e13=_0x39cfd2[_0x5f52f4(0x1cf)](0x0,0x64);fs['writeFileSync'](path[_0x5f52f4(0x1da)](_0x44e35a,_0x33884a+_0x5f52f4(0x1de)),JSON['stringify'](_0x4b8e13,null,0x2));const _0x2c74d3={'params':{'category':_0x43e7b7,'slug':_0x33884a},'lastUpdated':new Date()[_0x5f52f4(0x1f6)](),'count':_0x39cfd2['length']};if(!_0x38b4b8[_0x43e7b7])_0x38b4b8[_0x43e7b7]=[];_0x38b4b8[_0x43e7b7]['push'](_0x2c74d3),_0x594f51[_0x5f52f4(0x1e4)]({'category':_0x43e7b7,'slug':_0x33884a});}for(const _0xe522da in _0x38b4b8){fs[_0x5f52f4(0x1f1)](path[_0x5f52f4(0x1da)](this[_0x5f52f4(0x1c7)],_0xe522da+'.json'),JSON['stringify'](_0x38b4b8[_0xe522da],null,0x2)),this[_0x5f52f4(0x1f9)](_0xe522da,_0x38b4b8[_0xe522da]);}this[_0x5f52f4(0x1d8)](Object[_0x5f52f4(0x1dd)](_0x38b4b8));const _0x174444=Object[_0x5f52f4(0x1ed)](_0x38b4b8)[_0x5f52f4(0x1d3)]();fs[_0x5f52f4(0x1f1)](path[_0x5f52f4(0x1da)](this['outputDir'],'manifest.json'),JSON[_0x5f52f4(0x1ba)](_0x174444,null,0x2));}[a0_0x5cba06(0x1f9)](_0x434014,_0x2e00ad){const _0x593186=a0_0x5cba06,_0x7f9cf7='<?xml\x20version=\x221.0\x22\x20encoding=\x22UTF-8\x22?>\x0a<urlset\x20xmlns=\x22http://www.sitemaps.org/schemas/sitemap/0.9\x22>\x0a'+_0x2e00ad['map'](_0x58f075=>_0x593186(0x1f8)+this['baseUrl']+'/'+_0x58f075[_0x593186(0x1cc)][_0x593186(0x1fc)]+'/'+_0x58f075[_0x593186(0x1cc)][_0x593186(0x1d6)]+'</loc>\x0a\x20\x20\x20\x20<lastmod>'+_0x58f075[_0x593186(0x1c1)][_0x593186(0x1d9)]('T')[0x0]+_0x593186(0x1e7))[_0x593186(0x1da)]('\x0a')+_0x593186(0x1e6);fs[_0x593186(0x1f1)](path[_0x593186(0x1da)](this[_0x593186(0x1ff)],_0x434014+_0x593186(0x1e3)),_0x7f9cf7);}[a0_0x5cba06(0x1d8)](_0x1c81c1){const _0x54820c=a0_0x5cba06,_0x1cb3ff=_0x54820c(0x1df)+_0x1c81c1[_0x54820c(0x1e0)](_0x109f44=>_0x54820c(0x1e1)+this[_0x54820c(0x1ce)]+_0x54820c(0x1c3)+_0x109f44+_0x54820c(0x1d1)+new Date()[_0x54820c(0x1f6)]()[_0x54820c(0x1d9)]('T')[0x0]+_0x54820c(0x1f5))[_0x54820c(0x1da)]('\x0a')+'\x0a</sitemapindex>';fs['writeFileSync'](path[_0x54820c(0x1da)](this[_0x54820c(0x1e5)],_0x54820c(0x1fa)),_0x1cb3ff);}}exports[a0_0x5cba06(0x1cb)]=BucketManager;
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BucketManager = void 0;
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+class BucketManager {
+    constructor(outputDir) {
+        this.buckets = new Map();
+        this.manifest = [];
+        // Domain for sitemap generation
+        this.baseUrl = 'https://headlined.app'; // Update this to real domain
+        this.outputDir = outputDir;
+        this.dataDir = path.join(outputDir, 'data');
+        this.manifestsDir = path.join(outputDir, 'manifests');
+        this.sitemapsDir = path.join(outputDir, 'sitemaps');
+    }
+    async init() {
+        // Create directories
+        if (!fs.existsSync(this.dataDir))
+            fs.mkdirSync(this.dataDir, { recursive: true });
+        if (!fs.existsSync(this.manifestsDir))
+            fs.mkdirSync(this.manifestsDir, { recursive: true });
+        if (!fs.existsSync(this.sitemapsDir))
+            fs.mkdirSync(this.sitemapsDir, { recursive: true });
+    }
+    // Add a post to local memory buckets
+    addPost(post, classification) {
+        const key = `${classification.category}/${classification.slug}`;
+        if (!this.buckets.has(key)) {
+            // Try to load existing bucket from disk to preserve history
+            const file = path.join(this.dataDir, classification.category, `${classification.slug}.json`);
+            if (fs.existsSync(file)) {
+                try {
+                    const data = JSON.parse(fs.readFileSync(file, 'utf-8'));
+                    this.buckets.set(key, data);
+                }
+                catch (e) {
+                    this.buckets.set(key, []);
+                }
+            }
+            else {
+                this.buckets.set(key, []);
+            }
+        }
+        const bucket = this.buckets.get(key);
+        // Deduplicate by link
+        if (!bucket.some(p => p.link === post.link)) {
+            bucket.push(post);
+        }
+    }
+    // Process all buckets: Sort, Prune, Link, Save
+    async flush() {
+        console.log("Flushing buckets...");
+        const validSlugs = [];
+        // Split manifest storage
+        const catManifests = {};
+        for (const [key, posts] of this.buckets.entries()) {
+            const [category, slug] = key.split('/');
+            // 1. Sort by date (newest first)
+            posts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            // 2. Prune
+            // Rule: Delete if < 3 posts
+            if (posts.length < 3) {
+                continue;
+            }
+            // Rule: Delete if lastUpdated > 60 days
+            const lastPostDate = new Date(posts[0].created_at);
+            const daysDiff = (Date.now() - lastPostDate.getTime()) / (1000 * 60 * 60 * 24);
+            if (daysDiff > 60) {
+                continue;
+            }
+            // 3. Graphing / Internal Linking (Mock for now, can be enhanced)
+            // Ideally we find related topics by looking at other buckets that share the same posts
+            // This is computationally expensive O(N^2), so simplified:
+            // Just take top 3 posts and see what other categories they belong to? 
+            // For now, we skip complex graph calc to ensure speed, or implemented later.
+            // 4. Save Data
+            const catDir = path.join(this.dataDir, category);
+            if (!fs.existsSync(catDir))
+                fs.mkdirSync(catDir, { recursive: true });
+            // Limit to top 100 for safety/file size (snapshot)
+            const snapshot = posts.slice(0, 100);
+            fs.writeFileSync(path.join(catDir, `${slug}.json`), JSON.stringify(snapshot, null, 2));
+            // 5. Add to Manifest
+            const item = {
+                params: { category, slug },
+                lastUpdated: new Date().toISOString(),
+                count: posts.length
+            };
+            if (!catManifests[category])
+                catManifests[category] = [];
+            catManifests[category].push(item);
+            validSlugs.push({ category, slug });
+        }
+        // Save Manifests
+        for (const cat in catManifests) {
+            fs.writeFileSync(path.join(this.manifestsDir, `${cat}.json`), JSON.stringify(catManifests[cat], null, 2));
+            // Generate Sitemap for Category
+            this.generateSitemap(cat, catManifests[cat]);
+        }
+        // Generate Sitemap Index
+        this.generateSitemapIndex(Object.keys(catManifests));
+        // Save Global Manifest (optional, but good for simple builds)
+        const globalManifest = Object.values(catManifests).flat();
+        fs.writeFileSync(path.join(this.outputDir, 'manifest.json'), JSON.stringify(globalManifest, null, 2));
+    }
+    generateSitemap(category, items) {
+        const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${items.map(item => `  <url>
+    <loc>${this.baseUrl}/${item.params.category}/${item.params.slug}</loc>
+    <lastmod>${item.lastUpdated.split('T')[0]}</lastmod>
+    <changefreq>daily</changefreq>
+  </url>`).join('\n')}
+</urlset>`;
+        fs.writeFileSync(path.join(this.sitemapsDir, `${category}.xml`), sitemapContent);
+    }
+    generateSitemapIndex(categories) {
+        const indexContent = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${categories.map(cat => `  <sitemap>
+    <loc>${this.baseUrl}/sitemaps/${cat}.xml</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+  </sitemap>`).join('\n')}
+</sitemapindex>`;
+        fs.writeFileSync(path.join(this.outputDir, 'sitemap-index.xml'), indexContent);
+    }
+}
+exports.BucketManager = BucketManager;

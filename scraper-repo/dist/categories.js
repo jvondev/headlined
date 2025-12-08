@@ -1,1 +1,304 @@
-'use strict';var a1_0x1442ac=a1_0x4194;(function(_0xe1bf33,_0x48b27c){var _0x1a367d=a1_0x4194,_0xa159bd=_0xe1bf33();while(!![]){try{var _0x510e1b=parseInt(_0x1a367d(0x18c))/0x1+-parseInt(_0x1a367d(0x166))/0x2+-parseInt(_0x1a367d(0x207))/0x3+parseInt(_0x1a367d(0x1ad))/0x4*(parseInt(_0x1a367d(0x1b8))/0x5)+-parseInt(_0x1a367d(0x1a6))/0x6*(-parseInt(_0x1a367d(0x204))/0x7)+-parseInt(_0x1a367d(0x1fc))/0x8+parseInt(_0x1a367d(0x1af))/0x9*(-parseInt(_0x1a367d(0x1e6))/0xa);if(_0x510e1b===_0x48b27c)break;else _0xa159bd['push'](_0xa159bd['shift']());}catch(_0x5f4bee){_0xa159bd['push'](_0xa159bd['shift']());}}}(a1_0x2018,0x7ce96));function a1_0x4194(_0x2d6ed8,_0x245237){var _0x201850=a1_0x2018();return a1_0x4194=function(_0x4194ae,_0x55e656){_0x4194ae=_0x4194ae-0x14f;var _0x14fa82=_0x201850[_0x4194ae];return _0x14fa82;},a1_0x4194(_0x2d6ed8,_0x245237);}function a1_0x2018(){var _0xb149ad=['London','2410172IFrvpS','location','1861443uOKNSi','DoJ','Biden','Economy','SEC','Ukraine','Retail','Crime','Apple','5aRIwac','Politics','Pixel','legal','Admissions','Toyota','Amazon','CIA','Regulation\x20&\x20Policy','Cyberattack','Product','Student\x20Debt','WWDC','Kyiv','Hurricane','Earthquake','Disney','Sunak','Indictment','Photography','Supply\x20Chain','Tsunami','Space','Texas','Eurovision','Washington','PlayStation','regulation','Judge','Vision\x20Pro','Student','Defense','Tornado','Sony\x20Pictures','Cowboys','Nvidia','Industry','Storm','Xbox','Chiefs','BBC','Russia','Inflation','Zelenskyy','Health','Pakistan','20LcOswY','Netanyahu','Galaxy','India','company','Pentagon','Immigration\x20Policy','Verdict','defineProperty','Crypto\x20Regulation','__esModule','GDPR','Windows','Lakers','Yankees','Modi','team','Media','industry','Super\x20Bowl','Tesla','Warner\x20Bros','4356024gmDdkQ','Travel','Immigration','Moscow','Macron','Quantum','Volkswagen','Automotive','217lEKfsQ','EPA','media','340821eWUJve','Meta','Election','Paramount','National\x20Security','College','Fox\x20News','Construction','World\x20Cup','AI\x20Regulation','Antitrust','California','education','Events','Zuckerberg','CNN','Education','Scholz','people','Team','Privacy\x20Law','Small\x20Business','Demographic','People','Beijing','Dodgers','117136crVWwA','conflict','Xi\x20Jinping','Tax\x20Law','State\x20Department','Remote\x20Work','Warriors','Putin','CATEGORIES','Navy','Real\x20Estate','Weather\x20&\x20Nature','Topics','topics','Fitness','Gen\x20Z','Biology','Coding','Trump','Gaming','science','Musk','NHL','Wildfire','Tokyo','Fusion','Military','Heatwave','Crypto','NFL','Florida','Millennial','Business','War','Tuition','Netflix','Company\x20&\x20Brand','Science','636396biYFJq','Astronomy','Medical\x20Research','iPhone','Army','Banking','World','Supreme\x20Court','Recession','Microsoft','New\x20York','Manufacturing','DHS','Fashion','Interest','WWE','CES','Energy','Lawsuit','Chemistry','Harvard','Investor','Entertainment','ChatGPT','keywords','Regulation','78006EnCORc','government','MLB','Olympics','FDA','Samsung'];a1_0x2018=function(){return _0xb149ad;};return a1_0x2018();}Object[a1_0x1442ac(0x1ee)](exports,a1_0x1442ac(0x1f0),{'value':!![]}),exports[a1_0x1442ac(0x16e)]=void 0x0,exports['CATEGORIES']=[{'id':a1_0x1442ac(0x1ae),'label':'Location','keywords':['San\x20Diego',a1_0x1442ac(0x184),a1_0x1442ac(0x1e5),a1_0x1442ac(0x196),a1_0x1442ac(0x1ac),'Paris',a1_0x1442ac(0x17e),a1_0x1442ac(0x157),a1_0x1442ac(0x1cf),a1_0x1442ac(0x1e9),'China',a1_0x1442ac(0x1e1),a1_0x1442ac(0x1b4),'Israel','Gaza',a1_0x1442ac(0x1d1),a1_0x1442ac(0x164),a1_0x1442ac(0x1ff),a1_0x1442ac(0x1c5),'Brussels','Ottawa']},{'id':a1_0x1442ac(0x15e),'label':a1_0x1442ac(0x163),'keywords':[a1_0x1442ac(0x178),a1_0x1442ac(0x1b1),a1_0x1442ac(0x17b),a1_0x1442ac(0x15a),a1_0x1442ac(0x16d),a1_0x1442ac(0x1e3),a1_0x1442ac(0x168),a1_0x1442ac(0x1f5),a1_0x1442ac(0x1e7),a1_0x1442ac(0x200),a1_0x1442ac(0x1c9),a1_0x1442ac(0x15d)]},{'id':a1_0x1442ac(0x206),'label':a1_0x1442ac(0x1f7),'keywords':[a1_0x1442ac(0x1e0),a1_0x1442ac(0x15b),a1_0x1442ac(0x152),a1_0x1442ac(0x19b),a1_0x1442ac(0x1c8),a1_0x1442ac(0x189),a1_0x1442ac(0x1fb),a1_0x1442ac(0x14f),a1_0x1442ac(0x1d9)]},{'id':a1_0x1442ac(0x1f6),'label':a1_0x1442ac(0x15f),'keywords':[a1_0x1442ac(0x183),'NBA',a1_0x1442ac(0x1a8),a1_0x1442ac(0x17c),'Premier\x20League',a1_0x1442ac(0x1f3),a1_0x1442ac(0x16c),a1_0x1442ac(0x1f4),a1_0x1442ac(0x165),a1_0x1442ac(0x1da),a1_0x1442ac(0x1df)]},{'id':a1_0x1442ac(0x173),'label':a1_0x1442ac(0x172),'keywords':['Tech',a1_0x1442ac(0x186),a1_0x1442ac(0x1b2),a1_0x1442ac(0x1b9),a1_0x1442ac(0x1e4),a1_0x1442ac(0x1a2),'Sports',a1_0x1442ac(0x18b),a1_0x1442ac(0x192)]},{'id':a1_0x1442ac(0x1f8),'label':a1_0x1442ac(0x1dc),'keywords':[a1_0x1442ac(0x170),a1_0x1442ac(0x19d),a1_0x1442ac(0x203),a1_0x1442ac(0x191),a1_0x1442ac(0x1b5),'Healthcare',a1_0x1442ac(0x153),a1_0x1442ac(0x197),'Technology']},{'id':'interest','label':a1_0x1442ac(0x19a),'keywords':['AI',a1_0x1442ac(0x182),a1_0x1442ac(0x179),a1_0x1442ac(0x174),a1_0x1442ac(0x1fd),'Cooking',a1_0x1442ac(0x199),a1_0x1442ac(0x1cb),'Writing',a1_0x1442ac(0x177)]},{'id':a1_0x1442ac(0x1ea),'label':a1_0x1442ac(0x18a),'keywords':[a1_0x1442ac(0x1b7),'Google',a1_0x1442ac(0x195),a1_0x1442ac(0x1be),a1_0x1442ac(0x208),a1_0x1442ac(0x1fa),a1_0x1442ac(0x1db),a1_0x1442ac(0x1ab),a1_0x1442ac(0x1bd),a1_0x1442ac(0x202)]},{'id':'event','label':a1_0x1442ac(0x159),'keywords':[a1_0x1442ac(0x209),a1_0x1442ac(0x1a9),a1_0x1442ac(0x154),a1_0x1442ac(0x1f9),a1_0x1442ac(0x1d0),'Oscars','Grammys',a1_0x1442ac(0x19c),a1_0x1442ac(0x1c4)]},{'id':'product','label':a1_0x1442ac(0x1c2),'keywords':[a1_0x1442ac(0x18f),'iPad','MacBook',a1_0x1442ac(0x1a3),a1_0x1442ac(0x1ba),a1_0x1442ac(0x1e8),a1_0x1442ac(0x1de),a1_0x1442ac(0x1d2),a1_0x1442ac(0x1f2),a1_0x1442ac(0x1d5)]},{'id':a1_0x1442ac(0x1bb),'label':'Legal\x20&\x20Crime','keywords':[a1_0x1442ac(0x193),'Federal\x20Court',a1_0x1442ac(0x19e),a1_0x1442ac(0x1b6),a1_0x1442ac(0x1a5),a1_0x1442ac(0x1b0),a1_0x1442ac(0x1d4),a1_0x1442ac(0x1ed),a1_0x1442ac(0x1ca)]},{'id':'demographic','label':a1_0x1442ac(0x162),'keywords':[a1_0x1442ac(0x1d6),'Veteran',a1_0x1442ac(0x161),a1_0x1442ac(0x1a1),'Founder',a1_0x1442ac(0x185),a1_0x1442ac(0x175),'Retiree']},{'id':a1_0x1442ac(0x1a7),'label':'Government','keywords':['FBI',a1_0x1442ac(0x1bf),a1_0x1442ac(0x1eb),a1_0x1442ac(0x1b3),'IRS',a1_0x1442ac(0x1aa),a1_0x1442ac(0x205),'NASA',a1_0x1442ac(0x198),a1_0x1442ac(0x16a)]},{'id':'weather','label':a1_0x1442ac(0x171),'keywords':[a1_0x1442ac(0x1c6),a1_0x1442ac(0x1c7),a1_0x1442ac(0x1d8),'Flood',a1_0x1442ac(0x17d),a1_0x1442ac(0x1cd),'Climate\x20Change',a1_0x1442ac(0x181),a1_0x1442ac(0x1dd)]},{'id':a1_0x1442ac(0x158),'label':a1_0x1442ac(0x15c),'keywords':[a1_0x1442ac(0x1a0),'Yale','University',a1_0x1442ac(0x151),'School\x20District',a1_0x1442ac(0x1bc),a1_0x1442ac(0x1c3),a1_0x1442ac(0x188)]},{'id':a1_0x1442ac(0x17a),'label':a1_0x1442ac(0x18b),'keywords':[a1_0x1442ac(0x1ce),'NASA','Physics',a1_0x1442ac(0x176),a1_0x1442ac(0x19f),a1_0x1442ac(0x18d),a1_0x1442ac(0x18e),a1_0x1442ac(0x201),a1_0x1442ac(0x17f)]},{'id':a1_0x1442ac(0x167),'label':'Conflict\x20&\x20Security','keywords':[a1_0x1442ac(0x187),a1_0x1442ac(0x180),'Terrorism',a1_0x1442ac(0x1c1),a1_0x1442ac(0x150),a1_0x1442ac(0x1d7),a1_0x1442ac(0x190),a1_0x1442ac(0x16f),'Air\x20Force']},{'id':a1_0x1442ac(0x1d3),'label':a1_0x1442ac(0x1c0),'keywords':[a1_0x1442ac(0x169),a1_0x1442ac(0x1ec),a1_0x1442ac(0x155),a1_0x1442ac(0x1ef),a1_0x1442ac(0x156),a1_0x1442ac(0x160),a1_0x1442ac(0x1f1)]},{'id':a1_0x1442ac(0x1a4),'label':'Keywords','keywords':[a1_0x1442ac(0x1fe),a1_0x1442ac(0x1e2),a1_0x1442ac(0x194),'Interest\x20Rates',a1_0x1442ac(0x1cc),a1_0x1442ac(0x16b),'Layoffs']}];
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CATEGORIES = void 0;
+exports.CATEGORIES = [
+    {
+        id: 'location',
+        label: 'Location',
+        items: [
+            { slug: 'san-diego', title: 'San Diego', aliases: ['San Diego', 'SD'] },
+            { slug: 'florida', title: 'Florida', aliases: ['Florida', 'FL'] },
+            { slug: 'new-york', title: 'New York', aliases: ['New York', 'NYC', 'NY', 'Manhattan'] },
+            { slug: 'london', title: 'London', aliases: ['London', 'UK Capital'] },
+            { slug: 'paris', title: 'Paris', aliases: ['Paris'] },
+            { slug: 'tokyo', title: 'Tokyo', aliases: ['Tokyo'] },
+            { slug: 'california', title: 'California', aliases: ['California', 'CA', 'Cali'] },
+            { slug: 'texas', title: 'Texas', aliases: ['Texas', 'TX'] },
+            { slug: 'india', title: 'India', aliases: ['India', 'Bharat'] },
+            { slug: 'china', title: 'China', aliases: ['China', 'PRC'] },
+            { slug: 'russia', title: 'Russia', aliases: ['Russia'] },
+            { slug: 'ukraine', title: 'Ukraine', aliases: ['Ukraine'] },
+            { slug: 'israel', title: 'Israel', aliases: ['Israel'] },
+            { slug: 'gaza', title: 'Gaza', aliases: ['Gaza', 'Gaza Strip'] },
+            { slug: 'washington', title: 'Washington', aliases: ['Washington', 'DC', 'Washington DC'] },
+            { slug: 'beijing', title: 'Beijing', aliases: ['Beijing'] },
+            { slug: 'moscow', title: 'Moscow', aliases: ['Moscow'] },
+            { slug: 'kyiv', title: 'Kyiv', aliases: ['Kyiv', 'Kiev'] },
+            { slug: 'brussels', title: 'Brussels', aliases: ['Brussels'] },
+            { slug: 'ottawa', title: 'Ottawa', aliases: ['Ottawa'] }
+        ]
+    },
+    {
+        id: 'people',
+        label: 'People',
+        items: [
+            { slug: 'trump', title: 'Donald Trump', aliases: ['Trump', 'Donald Trump', 'DJT'] },
+            { slug: 'biden', title: 'Joe Biden', aliases: ['Biden', 'Joe Biden', 'POTUS'] },
+            { slug: 'musk', title: 'Elon Musk', aliases: ['Musk', 'Elon Musk'] },
+            { slug: 'zuckerberg', title: 'Mark Zuckerberg', aliases: ['Zuckerberg', 'Mark Zuckerberg', 'Zuck'] },
+            { slug: 'putin', title: 'Vladimir Putin', aliases: ['Putin', 'Vladimir Putin'] },
+            { slug: 'zelenskyy', title: 'Volodymyr Zelenskyy', aliases: ['Zelenskyy', 'Zelensky'] },
+            { slug: 'xi-jinping', title: 'Xi Jinping', aliases: ['Xi Jinping', 'President Xi'] },
+            { slug: 'modi', title: 'Narendra Modi', aliases: ['Modi', 'Narendra Modi'] },
+            { slug: 'netanyahu', title: 'Benjamin Netanyahu', aliases: ['Netanyahu', 'Bibi'] },
+            { slug: 'macron', title: 'Emmanuel Macron', aliases: ['Macron', 'Emmanuel Macron'] },
+            { slug: 'sunak', title: 'Rishi Sunak', aliases: ['Sunak', 'Rishi Sunak'] },
+            { slug: 'scholz', title: 'Olaf Scholz', aliases: ['Scholz', 'Olaf Scholz'] }
+        ]
+    },
+    {
+        id: 'media',
+        label: 'Media',
+        items: [
+            { slug: 'bbc', title: 'BBC', aliases: ['BBC', 'British Broadcasting Corporation'] },
+            { slug: 'cnn', title: 'CNN', aliases: ['CNN'] },
+            { slug: 'fox-news', title: 'Fox News', aliases: ['Fox News'] },
+            { slug: 'wwe', title: 'WWE', aliases: ['WWE', 'World Wrestling Entertainment'] },
+            { slug: 'disney', title: 'Disney', aliases: ['Disney'] },
+            { slug: 'netflix', title: 'Netflix', aliases: ['Netflix'] },
+            { slug: 'warner-bros', title: 'Warner Bros', aliases: ['Warner Bros', 'WB'] },
+            { slug: 'paramount', title: 'Paramount', aliases: ['Paramount'] },
+            { slug: 'sony-pictures', title: 'Sony Pictures', aliases: ['Sony Pictures'] }
+        ]
+    },
+    {
+        id: 'team',
+        label: 'Team',
+        items: [
+            { slug: 'nfl', title: 'NFL', aliases: ['NFL', 'National Football League'] },
+            { slug: 'nba', title: 'NBA', aliases: ['NBA', 'National Basketball Association'] },
+            { slug: 'mlb', title: 'MLB', aliases: ['MLB', 'Major League Baseball'] },
+            { slug: 'nhl', title: 'NHL', aliases: ['NHL', 'National Hockey League'] },
+            { slug: 'premier-league', title: 'Premier League', aliases: ['Premier League', 'EPL'] },
+            { slug: 'lakers', title: 'Lakers', aliases: ['Lakers', 'LA Lakers'] },
+            { slug: 'warriors', title: 'Warriors', aliases: ['Warriors', 'Golden State Warriors'] },
+            { slug: 'yankees', title: 'Yankees', aliases: ['Yankees', 'NY Yankees'] },
+            { slug: 'dodgers', title: 'Dodgers', aliases: ['Dodgers', 'LA Dodgers'] },
+            { slug: 'cowboys', title: 'Cowboys', aliases: ['Cowboys', 'Dallas Cowboys'] },
+            { slug: 'chiefs', title: 'Chiefs', aliases: ['Chiefs', 'Kansas City Chiefs'] }
+        ]
+    },
+    {
+        id: 'topics',
+        label: 'Topics',
+        items: [
+            { slug: 'tech', title: 'Technology', aliases: ['Tech', 'Technology'] },
+            { slug: 'business', title: 'Business', aliases: ['Business', 'Corporate'] },
+            { slug: 'economy', title: 'Economy', aliases: ['Economy', 'Economics'] },
+            { slug: 'politics', title: 'Politics', aliases: ['Politics', 'Political'] },
+            { slug: 'health', title: 'Health', aliases: ['Health', 'Wellness'] },
+            { slug: 'entertainment', title: 'Entertainment', aliases: ['Entertainment', 'Showbiz'] },
+            { slug: 'sports', title: 'Sports', aliases: ['Sports'] },
+            { slug: 'science', title: 'Science', aliases: ['Science'] },
+            { slug: 'world', title: 'World News', aliases: ['World', 'International', 'Global'] }
+        ]
+    },
+    {
+        id: 'industry',
+        label: 'Industry',
+        items: [
+            { slug: 'real-estate', title: 'Real Estate', aliases: ['Real Estate', 'Housing Market'] },
+            { slug: 'energy', title: 'Energy', aliases: ['Energy', 'Oil', 'Gas', 'Renewables'] },
+            { slug: 'automotive', title: 'Automotive', aliases: ['Automotive', 'Auto Industry', 'Cars'] },
+            { slug: 'banking', title: 'Banking', aliases: ['Banking', 'Banks', 'Wall Street'] },
+            { slug: 'retail', title: 'Retail', aliases: ['Retail', 'Consumer Goods'] },
+            { slug: 'healthcare', title: 'Healthcare', aliases: ['Healthcare', 'Hospitals'] },
+            { slug: 'construction', title: 'Construction', aliases: ['Construction'] },
+            { slug: 'manufacturing', title: 'Manufacturing', aliases: ['Manufacturing', 'Factory'] },
+            { slug: 'technology', title: 'Technology Sector', aliases: ['Technology', 'Tech Sector', 'SaaS'] }
+        ]
+    },
+    {
+        id: 'interest',
+        label: 'Interest',
+        items: [
+            { slug: 'ai', title: 'Artificial Intelligence', aliases: ['AI', 'Artificial Intelligence', 'Machine Learning', 'LLM', 'Generative AI', 'ChatGPT', 'OpenAI', 'Anthropic'] },
+            { slug: 'crypto', title: 'Cryptocurrency', aliases: ['Crypto', 'Cryptocurrency', 'Bitcoin', 'Ethereum', 'Blockchain', 'Web3'] },
+            { slug: 'gaming', title: 'Gaming', aliases: ['Gaming', 'Video Games', 'Esports'] },
+            { slug: 'fitness', title: 'Fitness', aliases: ['Fitness', 'Workout', 'Gym'] },
+            { slug: 'travel', title: 'Travel', aliases: ['Travel', 'Tourism', 'Vacation'] },
+            { slug: 'cooking', title: 'Cooking', aliases: ['Cooking', 'Recipes', 'Food'] },
+            { slug: 'fashion', title: 'Fashion', aliases: ['Fashion', 'Style', 'Apparel'] },
+            { slug: 'photography', title: 'Photography', aliases: ['Photography', 'Cameras'] },
+            { slug: 'writing', title: 'Writing', aliases: ['Writing', 'Authors'] },
+            { slug: 'coding', title: 'Programming', aliases: ['Coding', 'Programming', 'Software Development', 'Web Development'] }
+        ]
+    },
+    {
+        id: 'company',
+        label: 'Company & Brand',
+        items: [
+            { slug: 'apple', title: 'Apple', aliases: ['Apple', 'AAPL', 'iPhone Maker'] },
+            { slug: 'google', title: 'Google', aliases: ['Google', 'Alphabet', 'GOOGL'] },
+            { slug: 'microsoft', title: 'Microsoft', aliases: ['Microsoft', 'MSFT', 'Windows Maker'] },
+            { slug: 'amazon', title: 'Amazon', aliases: ['Amazon', 'AMZN', 'AWS'] },
+            { slug: 'meta', title: 'Meta', aliases: ['Meta', 'Facebook', 'Instagram', 'META'] },
+            { slug: 'tesla', title: 'Tesla', aliases: ['Tesla', 'TSLA'] },
+            { slug: 'nvidia', title: 'Nvidia', aliases: ['Nvidia', 'NVDA', 'GPU Maker'] },
+            { slug: 'samsung', title: 'Samsung', aliases: ['Samsung'] },
+            { slug: 'toyota', title: 'Toyota', aliases: ['Toyota'] },
+            { slug: 'volkswagen', title: 'Volkswagen', aliases: ['Volkswagen', 'VW'] }
+        ]
+    },
+    {
+        id: 'event',
+        label: 'Events',
+        items: [
+            { slug: 'election', title: 'Election', aliases: ['Election', 'Vote', 'Polls'] },
+            { slug: 'olympics', title: 'Olympics', aliases: ['Olympics', 'Olympic Games'] },
+            { slug: 'world-cup', title: 'World Cup', aliases: ['World Cup', 'FIFA World Cup'] },
+            { slug: 'super-bowl', title: 'Super Bowl', aliases: ['Super Bowl'] },
+            { slug: 'eurovision', title: 'Eurovision', aliases: ['Eurovision'] },
+            { slug: 'oscars', title: 'Oscars', aliases: ['Oscars', 'Academy Awards'] },
+            { slug: 'grammys', title: 'Grammys', aliases: ['Grammys'] },
+            { slug: 'ces', title: 'CES', aliases: ['CES', 'Consumer Electronics Show'] },
+            { slug: 'wwdc', title: 'WWDC', aliases: ['WWDC', 'Apple Event'] }
+        ]
+    },
+    {
+        id: 'product',
+        label: 'Product',
+        items: [
+            { slug: 'iphone', title: 'iPhone', aliases: ['iPhone', 'iOS'] },
+            { slug: 'ipad', title: 'iPad', aliases: ['iPad'] },
+            { slug: 'macbook', title: 'MacBook', aliases: ['MacBook', 'MacBook Pro', 'MacBook Air'] },
+            { slug: 'chatgpt', title: 'ChatGPT', aliases: ['ChatGPT', 'GPT-4', 'GPT-5'] },
+            { slug: 'pixel', title: 'Pixel', aliases: ['Pixel', 'Google Pixel'] },
+            { slug: 'galaxy', title: 'Galaxy', aliases: ['Galaxy', 'Samsung Galaxy'] },
+            { slug: 'xbox', title: 'Xbox', aliases: ['Xbox', 'Series X'] },
+            { slug: 'playstation', title: 'PlayStation', aliases: ['PlayStation', 'PS5'] },
+            { slug: 'windows', title: 'Windows', aliases: ['Windows', 'Windows 11'] },
+            { slug: 'vision-pro', title: 'Vision Pro', aliases: ['Vision Pro', 'Apple Vision'] }
+        ]
+    },
+    {
+        id: 'legal',
+        label: 'Legal & Crime',
+        items: [
+            { slug: 'supreme-court', title: 'Supreme Court', aliases: ['Supreme Court', 'SCOTUS'] },
+            { slug: 'federal-court', title: 'Federal Court', aliases: ['Federal Court'] },
+            { slug: 'lawsuit', title: 'Lawsuit', aliases: ['Lawsuit', 'Sued', 'Litigation'] },
+            { slug: 'crime', title: 'Crime', aliases: ['Crime', 'Criminal'] },
+            { slug: 'regulation', title: 'Regulation', aliases: ['Regulation', 'Regulators'] },
+            { slug: 'doj', title: 'Department of Justice', aliases: ['DoJ', 'Department of Justice'] },
+            { slug: 'judge', title: 'Judge', aliases: ['Judge', 'Ruling'] },
+            { slug: 'verdict', title: 'Verdict', aliases: ['Verdict', 'Sentencing'] },
+            { slug: 'indictment', title: 'Indictment', aliases: ['Indictment'] }
+        ]
+    },
+    {
+        id: 'demographic',
+        label: 'Demographic',
+        items: [
+            { slug: 'student', title: 'Students', aliases: ['Student', 'Undergraduate', 'Graduate'] },
+            { slug: 'veteran', title: 'Veterans', aliases: ['Veteran', 'Vets'] },
+            { slug: 'small-business', title: 'Small Business', aliases: ['Small Business', 'SMB', 'Entrepreneur'] },
+            { slug: 'investor', title: 'Investors', aliases: ['Investor', 'Shareholder'] },
+            { slug: 'founder', title: 'Founders', aliases: ['Founder', 'Startup Founder'] },
+            { slug: 'millennial', title: 'Millennials', aliases: ['Millennial', 'Gen Y'] },
+            { slug: 'gen-z', title: 'Gen Z', aliases: ['Gen Z', 'Zoomer'] },
+            { slug: 'retiree', title: 'Retirees', aliases: ['Retiree', 'Pensioner'] }
+        ]
+    },
+    {
+        id: 'government',
+        label: 'Government',
+        items: [
+            { slug: 'fbi', title: 'FBI', aliases: ['FBI', 'Federal Bureau of Investigation'] },
+            { slug: 'cia', title: 'CIA', aliases: ['CIA'] },
+            { slug: 'pentagon', title: 'Pentagon', aliases: ['Pentagon', 'DoD'] },
+            { slug: 'sec', title: 'SEC', aliases: ['SEC', 'Securities and Exchange Commission'] },
+            { slug: 'irs', title: 'IRS', aliases: ['IRS'] },
+            { slug: 'fda', title: 'FDA', aliases: ['FDA'] },
+            { slug: 'epa', title: 'EPA', aliases: ['EPA'] },
+            { slug: 'nasa', title: 'NASA', aliases: ['NASA'] },
+            { slug: 'dhs', title: 'DHS', aliases: ['DHS', 'Homeland Security'] },
+            { slug: 'state-department', title: 'State Department', aliases: ['State Department'] }
+        ]
+    },
+    {
+        id: 'weather',
+        label: 'Weather & Nature',
+        items: [
+            { slug: 'hurricane', title: 'Hurricane', aliases: ['Hurricane', 'Typhoon', 'Cyclone'] },
+            { slug: 'earthquake', title: 'Earthquake', aliases: ['Earthquake', 'Quake'] },
+            { slug: 'tornado', title: 'Tornado', aliases: ['Tornado'] },
+            { slug: 'flood', title: 'Flooding', aliases: ['Flood', 'Flooding'] },
+            { slug: 'wildfire', title: 'Wildfire', aliases: ['Wildfire', 'Forest Fire'] },
+            { slug: 'tsunami', title: 'Tsunami', aliases: ['Tsunami'] },
+            { slug: 'climate-change', title: 'Climate Change', aliases: ['Climate Change', 'Global Warming'] },
+            { slug: 'heatwave', title: 'Heatwave', aliases: ['Heatwave'] },
+            { slug: 'storm', title: 'Storm', aliases: ['Storm', 'Blizzard'] }
+        ]
+    },
+    {
+        id: 'education',
+        label: 'Education',
+        items: [
+            { slug: 'harvard', title: 'Harvard', aliases: ['Harvard'] },
+            { slug: 'yale', title: 'Yale', aliases: ['Yale'] },
+            { slug: 'university', title: 'University', aliases: ['University', 'Campus'] },
+            { slug: 'college', title: 'College', aliases: ['College'] },
+            { slug: 'school-district', title: 'School Districts', aliases: ['School District'] },
+            { slug: 'admissions', title: 'Admissions', aliases: ['Admissions', 'College App'] },
+            { slug: 'student-debt', title: 'Student Debt', aliases: ['Student Debt', 'Student Loans'] },
+            { slug: 'tuition', title: 'Tuition', aliases: ['Tuition'] }
+        ]
+    },
+    {
+        id: 'science',
+        label: 'Science',
+        items: [
+            { slug: 'space', title: 'Space Exploration', aliases: ['Space', 'Outer Space'] },
+            { slug: 'nasa', title: 'NASA', aliases: ['NASA'] },
+            { slug: 'physics', title: 'Physics', aliases: ['Physics', 'Quantum Physics'] },
+            { slug: 'biology', title: 'Biology', aliases: ['Biology'] },
+            { slug: 'chemistry', title: 'Chemistry', aliases: ['Chemistry'] },
+            { slug: 'astronomy', title: 'Astronomy', aliases: ['Astronomy'] },
+            { slug: 'medical-research', title: 'Medical Research', aliases: ['Medical Research', 'Clinical Trial'] },
+            { slug: 'quantum', title: 'Quantum Computing', aliases: ['Quantum', 'Quantum Computer'] },
+            { slug: 'fusion', title: 'Nuclear Fusion', aliases: ['Fusion', 'Nuclear Energy'] }
+        ]
+    },
+    {
+        id: 'conflict',
+        label: 'Conflict & Security',
+        items: [
+            { slug: 'war', title: 'War', aliases: ['War', 'Conflict'] },
+            { slug: 'military', title: 'Military', aliases: ['Military', 'Armed Forces'] },
+            { slug: 'terrorism', title: 'Terrorism', aliases: ['Terrorism', 'Terrorist'] },
+            { slug: 'cyberattack', title: 'Cyberattack', aliases: ['Cyberattack', 'Hacking', 'Data Breach'] },
+            { slug: 'national-security', title: 'National Security', aliases: ['National Security'] },
+            { slug: 'defense', title: 'Defense', aliases: ['Defense', 'Defense Industry'] },
+            { slug: 'army', title: 'Army', aliases: ['Army'] },
+            { slug: 'navy', title: 'Navy', aliases: ['Navy'] },
+            { slug: 'air-force', title: 'Air Force', aliases: ['Air Force'] }
+        ]
+    },
+    {
+        id: 'regulation',
+        label: 'Regulation & Policy',
+        items: [
+            { slug: 'tax-law', title: 'Tax Law', aliases: ['Tax Law', 'Tax Legislation'] },
+            { slug: 'immigration-policy', title: 'Immigration Policy', aliases: ['Immigration Policy', 'Border Policy'] },
+            { slug: 'ai-regulation', title: 'AI Regulation', aliases: ['AI Regulation', 'AI Safety'] },
+            { slug: 'crypto-regulation', title: 'Crypto Regulation', aliases: ['Crypto Regulation'] },
+            { slug: 'antitrust', title: 'Antitrust', aliases: ['Antitrust'] },
+            { slug: 'privacy-law', title: 'Privacy Law', aliases: ['Privacy Law', 'Data Privacy'] },
+            { slug: 'gdpr', title: 'GDPR', aliases: ['GDPR'] }
+        ]
+    },
+    {
+        id: 'keywords',
+        label: 'Keywords',
+        items: [
+            { slug: 'immigration', title: 'Immigration', aliases: ['Immigration', 'Migrants'] },
+            { slug: 'inflation', title: 'Inflation', aliases: ['Inflation', 'CPI'] },
+            { slug: 'recession', title: 'Recession', aliases: ['Recession'] },
+            { slug: 'interest-rates', title: 'Interest Rates', aliases: ['Interest Rates', 'Fed Rates'] },
+            { slug: 'supply-chain', title: 'Supply Chain', aliases: ['Supply Chain', 'Logistics'] },
+            { slug: 'remote-work', title: 'Remote Work', aliases: ['Remote Work', 'Work from Home'] },
+            { slug: 'layoffs', title: 'Layoffs', aliases: ['Layoffs', 'Job Cuts'] }
+        ]
+    }
+];

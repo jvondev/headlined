@@ -4,9 +4,10 @@
     "description": "Daily data update job",
     "main": "dist/job.js",
     "scripts": {
-        "build": "tsc && javascript-obfuscator dist --output dist --target node",
+        "build": "tsc",
         "start": "node dist/job.js",
-        "test": "node dist/job.js --test"
+        "test": "node dist/job.js --test",
+        "merge": "node dist/merge-outputs.js"
     },
     "dependencies": {
         "node-html-parser": "^6.1.13",

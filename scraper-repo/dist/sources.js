@@ -1,1 +1,107 @@
-'use strict';var a4_0xe965d9=a4_0x22e9;(function(_0x5a1560,_0x4632aa){var _0x110b02=a4_0x22e9,_0x2faa7c=_0x5a1560();while(!![]){try{var _0x28ec2b=parseInt(_0x110b02(0x16e))/0x1+parseInt(_0x110b02(0x181))/0x2+parseInt(_0x110b02(0x171))/0x3*(parseInt(_0x110b02(0x17f))/0x4)+-parseInt(_0x110b02(0x193))/0x5+parseInt(_0x110b02(0x188))/0x6*(parseInt(_0x110b02(0x16b))/0x7)+-parseInt(_0x110b02(0x16c))/0x8*(parseInt(_0x110b02(0x18b))/0x9)+-parseInt(_0x110b02(0x176))/0xa*(parseInt(_0x110b02(0x18e))/0xb);if(_0x28ec2b===_0x4632aa)break;else _0x2faa7c['push'](_0x2faa7c['shift']());}catch(_0x2f2d61){_0x2faa7c['push'](_0x2faa7c['shift']());}}}(a4_0x21d4,0x5bf73));function a4_0x22e9(_0x2a1f17,_0x5bcf99){var _0x21d4c8=a4_0x21d4();return a4_0x22e9=function(_0x22e93b,_0x54aefd){_0x22e93b=_0x22e93b-0x169;var _0x17c1aa=_0x21d4c8[_0x22e93b];return _0x17c1aa;},a4_0x22e9(_0x2a1f17,_0x5bcf99);}function a4_0x21d4(){var _0x1ff2f4=['gaming','HNRSS\x20Jobs','117iktRpm','jobs','Hacker\x20News','385qJMNFh','Lifehacker','https://feeds2.feedburner.com/businessinsider','https://www.gamespot.com/feeds/mashup/','GameSpot','2430650TwbTDH','politic','https://feeds.bbci.co.uk/sport/rss.xml','8463OUfiNw','88728ImzsNY','https://hnrss.org/jobs.atom','664387RBhcmA','news','finance','73281qIWnbK','__esModule','https://feeds.content.dowjones.io/public/rss/mw_topstories','Investing.com\x20News','The\x20Guardian\x20Tech','264340TjLtDI','https://www.thenation.com/feed/?post_type=article','sourcesData','Yahoo\x20News','https://sports.yahoo.com/rss/','Fortune','Business\x20Insider','BBC\x20Sport','Slashdot','108DIJRIY','The\x20Nation','1182704QTWdkC','Harvard\x20Business\x20Review','https://hnrss.org/newest.atom','defineProperty','Yahoo\x20Sports','https://lifehacker.com/feed/rss','Bloomberg\x20Markets','84dccvCM'];a4_0x21d4=function(){return _0x1ff2f4;};return a4_0x21d4();}Object[a4_0xe965d9(0x184)](exports,a4_0xe965d9(0x172),{'value':!![]}),exports[a4_0xe965d9(0x178)]=void 0x0,exports[a4_0xe965d9(0x178)]=[{'name':a4_0xe965d9(0x179),'url':'https://news.yahoo.com/rss/','topic':a4_0xe965d9(0x16f),'max_items':0x1e},{'name':a4_0xe965d9(0x18d),'url':a4_0xe965d9(0x183),'topic':'tech','max_items':0x14},{'name':a4_0xe965d9(0x17e),'url':'https://rss.slashdot.org/Slashdot/slashdot','topic':'news','max_items':0xf},{'name':a4_0xe965d9(0x187),'url':'https://feeds.bloomberg.com/markets/news.rss','topic':a4_0xe965d9(0x170),'max_items':0x14},{'name':'MarketWatch\x20Top\x20Stories','url':a4_0xe965d9(0x173),'topic':a4_0xe965d9(0x170),'max_items':0xf},{'name':a4_0xe965d9(0x174),'url':'https://www.investing.com/rss/news.rss','topic':a4_0xe965d9(0x170),'max_items':0xa},{'name':a4_0xe965d9(0x18a),'url':a4_0xe965d9(0x16d),'topic':a4_0xe965d9(0x18c),'max_items':0xa},{'name':a4_0xe965d9(0x175),'url':'https://www.theguardian.com/uk/technology/rss','topic':'tech','max_items':0x3},{'name':'Washington\x20Post\x20World','url':'https://feeds.washingtonpost.com/rss/world','topic':a4_0xe965d9(0x16f),'max_items':0x7},{'name':a4_0xe965d9(0x185),'url':a4_0xe965d9(0x17a),'topic':'sports','max_items':0x32},{'name':a4_0xe965d9(0x17d),'url':a4_0xe965d9(0x16a),'topic':'sports','max_items':0x32},{'name':a4_0xe965d9(0x18f),'url':a4_0xe965d9(0x186),'topic':'tech','max_items':0x1e},{'name':a4_0xe965d9(0x182),'url':'http://feeds.harvardbusiness.org/harvardbusiness/','topic':'business','max_items':0x7},{'name':a4_0xe965d9(0x17c),'url':a4_0xe965d9(0x190),'topic':'finance','max_items':0x28},{'name':a4_0xe965d9(0x17b),'url':'http://fortune.com/feed/fortune-feeds/?id=3230629','topic':'business','max_items':0xa},{'name':a4_0xe965d9(0x180),'url':a4_0xe965d9(0x177),'topic':a4_0xe965d9(0x169),'max_items':0xa},{'name':a4_0xe965d9(0x192),'url':a4_0xe965d9(0x191),'topic':a4_0xe965d9(0x189),'max_items':0xf}];
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sourcesData = void 0;
+exports.sourcesData = [
+    {
+        "name": "Yahoo News",
+        "url": "https://news.yahoo.com/rss/",
+        "topic": "news",
+        "max_items": 30,
+    },
+    {
+        "name": "Hacker News",
+        "url": "https://hnrss.org/newest.atom",
+        "topic": "tech",
+        "max_items": 20,
+    },
+    {
+        "name": "Slashdot",
+        "url": "https://rss.slashdot.org/Slashdot/slashdot",
+        "topic": "news",
+        "max_items": 15,
+    },
+    {
+        "name": "Bloomberg Markets",
+        "url": "https://feeds.bloomberg.com/markets/news.rss",
+        "topic": "finance",
+        "max_items": 20,
+    },
+    {
+        "name": "MarketWatch Top Stories",
+        "url": "https://feeds.content.dowjones.io/public/rss/mw_topstories",
+        "topic": "finance",
+        "max_items": 15,
+    },
+    {
+        "name": "Investing.com News",
+        "url": "https://www.investing.com/rss/news.rss",
+        "topic": "finance",
+        "max_items": 10,
+    },
+    {
+        "name": "HNRSS Jobs",
+        "url": "https://hnrss.org/jobs.atom",
+        "topic": "jobs",
+        "max_items": 10,
+    },
+    {
+        "name": "The Guardian Tech",
+        "url": "https://www.theguardian.com/uk/technology/rss",
+        "topic": "tech",
+        "max_items": 3,
+    },
+    {
+        "name": "Washington Post World",
+        "url": "https://feeds.washingtonpost.com/rss/world",
+        "topic": "news",
+        "max_items": 7,
+    },
+    {
+        "name": "Yahoo Sports",
+        "url": "https://sports.yahoo.com/rss/",
+        "topic": "sports",
+        "max_items": 50,
+    },
+    {
+        "name": "BBC Sport",
+        "url": "https://feeds.bbci.co.uk/sport/rss.xml",
+        "topic": "sports",
+        "max_items": 50,
+    },
+    {
+        "name": "Lifehacker",
+        "url": "https://lifehacker.com/feed/rss",
+        "topic": "tech",
+        "max_items": 30,
+    },
+    {
+        "name": "Harvard Business Review",
+        "url": "http://feeds.harvardbusiness.org/harvardbusiness/",
+        "topic": "business",
+        "max_items": 7,
+    },
+    {
+        "name": "Business Insider",
+        "url": "https://feeds2.feedburner.com/businessinsider",
+        "topic": "finance",
+        "max_items": 40,
+    },
+    {
+        "name": "Fortune",
+        "url": "http://fortune.com/feed/fortune-feeds/?id=3230629",
+        "topic": "business",
+        "max_items": 10,
+    },
+    {
+        "name": "The Nation",
+        "url": "https://www.thenation.com/feed/?post_type=article",
+        "topic": "politic",
+        "max_items": 10,
+    },
+    {
+        "name": "GameSpot",
+        "url": "https://www.gamespot.com/feeds/mashup/",
+        "topic": "gaming",
+        "max_items": 15,
+    }
+];

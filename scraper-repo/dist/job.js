@@ -1,1 +1,552 @@
-'use strict';const a3_0x49be93=a3_0x1b49;(function(_0x34a29e,_0x502a2c){const _0x598951=a3_0x1b49,_0x1cc975=_0x34a29e();while(!![]){try{const _0x369451=-parseInt(_0x598951(0x120))/0x1+parseInt(_0x598951(0x11d))/0x2+parseInt(_0x598951(0xd7))/0x3+parseInt(_0x598951(0xe6))/0x4*(parseInt(_0x598951(0x105))/0x5)+parseInt(_0x598951(0x147))/0x6*(parseInt(_0x598951(0x138))/0x7)+parseInt(_0x598951(0x15b))/0x8+-parseInt(_0x598951(0xe1))/0x9*(parseInt(_0x598951(0x112))/0xa);if(_0x369451===_0x502a2c)break;else _0x1cc975['push'](_0x1cc975['shift']());}catch(_0x55fdb3){_0x1cc975['push'](_0x1cc975['shift']());}}}(a3_0xae6d,0x9b7af));var __createBinding=this&&this[a3_0x49be93(0xe4)]||(Object[a3_0x49be93(0x11b)]?function(_0x5abff3,_0x4ad189,_0x5ee673,_0x3dcac6){const _0x25d72a=a3_0x49be93;if(_0x3dcac6===undefined)_0x3dcac6=_0x5ee673;var _0x28c49f=Object[_0x25d72a(0xf9)](_0x4ad189,_0x5ee673);(!_0x28c49f||(_0x25d72a(0x107)in _0x28c49f?!_0x4ad189['__esModule']:_0x28c49f[_0x25d72a(0x132)]||_0x28c49f[_0x25d72a(0xf8)]))&&(_0x28c49f={'enumerable':!![],'get':function(){return _0x4ad189[_0x5ee673];}}),Object[_0x25d72a(0xe2)](_0x5abff3,_0x3dcac6,_0x28c49f);}:function(_0x59643c,_0x7c4c5e,_0x5b485a,_0x411cf8){if(_0x411cf8===undefined)_0x411cf8=_0x5b485a;_0x59643c[_0x411cf8]=_0x7c4c5e[_0x5b485a];}),__setModuleDefault=this&&this['__setModuleDefault']||(Object[a3_0x49be93(0x11b)]?function(_0xec6045,_0x17a894){Object['defineProperty'](_0xec6045,'default',{'enumerable':!![],'value':_0x17a894});}:function(_0x507272,_0x138616){const _0x4b9d2a=a3_0x49be93;_0x507272[_0x4b9d2a(0x148)]=_0x138616;}),__importStar=this&&this[a3_0x49be93(0xf2)]||(function(){var _0x999671=function(_0x50a879){return _0x999671=Object['getOwnPropertyNames']||function(_0x724c53){const _0x4b2201=a3_0x1b49;var _0x5a3b7c=[];for(var _0x11e0ce in _0x724c53)if(Object[_0x4b2201(0x144)]['hasOwnProperty'][_0x4b2201(0x129)](_0x724c53,_0x11e0ce))_0x5a3b7c[_0x5a3b7c[_0x4b2201(0xd2)]]=_0x11e0ce;return _0x5a3b7c;},_0x999671(_0x50a879);};return function(_0x366f40){const _0x17dac9=a3_0x1b49;if(_0x366f40&&_0x366f40[_0x17dac9(0xf5)])return _0x366f40;var _0x407a21={};if(_0x366f40!=null){for(var _0x19db1a=_0x999671(_0x366f40),_0x4ef22d=0x0;_0x4ef22d<_0x19db1a[_0x17dac9(0xd2)];_0x4ef22d++)if(_0x19db1a[_0x4ef22d]!==_0x17dac9(0x148))__createBinding(_0x407a21,_0x366f40,_0x19db1a[_0x4ef22d]);}return __setModuleDefault(_0x407a21,_0x366f40),_0x407a21;};}()),__importDefault=this&&this[a3_0x49be93(0xe3)]||function(_0x5a80f1){return _0x5a80f1&&_0x5a80f1['__esModule']?_0x5a80f1:{'default':_0x5a80f1};};Object[a3_0x49be93(0xe2)](exports,'__esModule',{'value':!![]});const fs=__importStar(require('fs')),path=__importStar(require(a3_0x49be93(0xef))),rss_parser_1=__importDefault(require(a3_0x49be93(0xf0))),node_html_parser_1=require('node-html-parser'),sources_1=require(a3_0x49be93(0x14a)),parser=new rss_parser_1[(a3_0x49be93(0x148))](),OUTPUT_DIR=path[a3_0x49be93(0x122)](__dirname,a3_0x49be93(0x10d));!fs[a3_0x49be93(0x12c)](OUTPUT_DIR)&&fs[a3_0x49be93(0x10a)](OUTPUT_DIR,{'recursive':!![]});const INDEX_FILE=path[a3_0x49be93(0x122)](OUTPUT_DIR,a3_0x49be93(0x145)),bannedKeywords=[a3_0x49be93(0x108),a3_0x49be93(0x14f),a3_0x49be93(0x143),'gambling','Form\x2013F',a3_0x49be93(0x10f),'Form\x20144',a3_0x49be93(0x13a),a3_0x49be93(0x127),a3_0x49be93(0x11a),'best'],bannedThumbnails=[a3_0x49be93(0xd3)],phrasesToRemoveFromDescription=[a3_0x49be93(0xf3),a3_0x49be93(0x103)],phrasesToRemoveFromTitle=['Tell\x20HN:',a3_0x49be93(0xe0)];function cleanCdata(_0x16b5e7){const _0x5f4023=a3_0x49be93;return _0x16b5e7[_0x5f4023(0xfc)](/<!\[CDATA\[|\]\]>/g,'')['trim']();}function stripHtml(_0x297e9f){const _0x943b69=a3_0x49be93;return(0x0,node_html_parser_1[_0x943b69(0x124)])(_0x297e9f)['textContent']||'';}function a3_0xae6d(){const _0x206c3d=['width','Yahoo\x20News','items','meta[name=\x22description\x22]','classify','yro','topic','4630968pNPTXm','media:thumbnail','length','https://s.yimg.com/cv/apiv2/social/images/yahoo_default_logo-1200x1200.png','science','catch','utf-8','92121wPseQE','lastIndexOf','content-length','finance.yahoo.com','argv','\x20daily\x20files\x20for\x20classification...','getAttribute','stringify','contentSnippet','Show\x20HN:','18153090gIVpMv','defineProperty','__importDefault','__createBinding','content','2648nJfYXr','thumbnail_url','meta[name=\x22twitter:image\x22]','status','media:content','name','trim','error','log','path','rss-parser','books','__importStar','(Source:\x20Bloomberg)','--test','__esModule','health.yahoo.com','finance','configurable','getOwnPropertyDescriptor','Error\x20reading\x20daily\x20file,\x20starting\x20fresh.','\x20posts\x20into\x20topics.','replace','slice','enclosure','news','querySelector','health','p\x20a','Read\x20more\x20of\x20this\x20story\x20at\x20Slashdot.','gaming','4395iMQChG','.json','get','Only\x20Fans','developers','mkdirSync','Error\x20processing\x20file\x20','some','../output','hardware','Form\x2013G','Processing\x20','title','10AbhsQM','url','link','Article\x20URL:','text','autos.yahoo.com','tech','match','discount','create','...','2217436WNhEUX','./classifier','meta[name=\x22twitter:description\x22]','911979DefbjS','has','join','timeout','parse','test','toISOString','black\x20friday','filter','call','hnrss.org','content:encoded','existsSync','toLowerCase','auto','Classifier','toFixed','startsWith','writable','writeFileSync','Error\x20processing\x20item\x20from\x20source\x20','max_items','split','push','8859494uZBQiw','sourcesData','deals','now','s.\x20Classified\x20','description','forEach','add','substring','includes','headers','sex','prototype','index.json','pubDate','6TKmeds','default','⚠️\x20RUNNING\x20IN\x20TEST\x20MODE:\x20Limiting\x20to\x201\x20source\x20and\x2010\x20items.','./sources','tech.yahoo.com','readFileSync','\x20items.','from','porn','Starting\x20Aggregation\x20&\x20Classification...','./bucket-manager','endsWith','init'];a3_0xae6d=function(){return _0x206c3d;};return a3_0xae6d();}function removePhrases(_0x1eaecf,_0x55065e){const _0x58c49e=a3_0x49be93;if(!_0x1eaecf)return null;let _0x4c9d29=_0x1eaecf;for(const _0x9c390 of _0x55065e){_0x4c9d29=_0x4c9d29[_0x58c49e(0xfc)](_0x9c390,'')[_0x58c49e(0xec)]();}return _0x4c9d29;}function truncateDescription(_0x37867e){const _0x3e2312=a3_0x49be93;if(!_0x37867e)return null;const _0x49f594=_0x37867e[_0x3e2312(0x136)](/\n\s*\n/);let _0x3fb40=_0x49f594[0x0]||'';const _0x19000a=_0x3fb40['match'](/[^.!?]+[.!?]+|[^.!?]+$/g)||[];_0x19000a[_0x3e2312(0xd2)]>0x5?_0x3fb40=_0x19000a[_0x3e2312(0xfd)](0x0,0x5)[_0x3e2312(0x122)]('')[_0x3e2312(0xec)]():_0x3fb40=_0x19000a[_0x3e2312(0x122)]('')[_0x3e2312(0xec)]();if(_0x3fb40['length']<_0x37867e[_0x3e2312(0xd2)]&&!/[.!?]$/[_0x3e2312(0x125)](_0x3fb40)){const _0x2ce85b=_0x3fb40[_0x3e2312(0xd8)]('\x20');_0x2ce85b>-0x1?_0x3fb40=_0x3fb40[_0x3e2312(0x140)](0x0,_0x2ce85b)+_0x3e2312(0x11c):_0x3fb40=_0x3fb40+'...';}return _0x3fb40['length']>0x0?_0x3fb40:null;}async function isImageLargeEnough(_0x3127b4){const _0x13f09c=a3_0x49be93;try{const _0x4a60fb=await fetch(_0x3127b4,{'method':'HEAD','signal':AbortSignal['timeout'](0x7d0)});if(!_0x4a60fb['ok']){if(_0x4a60fb[_0x13f09c(0xe9)]===0x194)return![];return!![];}const _0x194965=_0x4a60fb[_0x13f09c(0x142)][_0x13f09c(0x107)](_0x13f09c(0xd9));if(_0x194965){const _0x8c63bd=parseInt(_0x194965,0xa);if(_0x8c63bd<0x3a98)return![];}return!![];}catch(_0xfc0560){return!![];}}async function fetchArticleMetadata(_0x399b86){const _0x4d259f=a3_0x49be93;try{const _0x323d61=await fetch(_0x399b86,{'signal':AbortSignal[_0x4d259f(0x123)](0x3a98)});if(!_0x323d61['ok'])throw new Error('HTTP\x20error!\x20status:\x20'+_0x323d61[_0x4d259f(0xe9)]);const _0x217a83=await _0x323d61[_0x4d259f(0x116)](),_0x4c2e12=(0x0,node_html_parser_1[_0x4d259f(0x124)])(_0x217a83);let _0x44f6f6=null;const _0x39f511=['meta[property=\x22og:description\x22]',_0x4d259f(0x11f),_0x4d259f(0x157)];for(const _0x12adc3 of _0x39f511){const _0x4fd164=_0x4c2e12['querySelector'](_0x12adc3);if(_0x4fd164&&_0x4fd164[_0x4d259f(0xdd)]('content')){_0x44f6f6=stripHtml(_0x4fd164[_0x4d259f(0xdd)]('content'))||null,_0x44f6f6=removePhrases(_0x44f6f6,phrasesToRemoveFromDescription),_0x44f6f6=truncateDescription(_0x44f6f6);break;}}let _0x1ffa65=null;const _0x5c49e9=['meta[property=\x22og:image\x22]',_0x4d259f(0xe8)];for(const _0x1e0fe2 of _0x5c49e9){const _0x387e1d=_0x4c2e12[_0x4d259f(0x100)](_0x1e0fe2);if(_0x387e1d&&_0x387e1d[_0x4d259f(0xdd)](_0x4d259f(0xe5))){_0x1ffa65=_0x387e1d[_0x4d259f(0xdd)](_0x4d259f(0xe5));break;}}return{'description':_0x44f6f6,'thumbnail_url':_0x1ffa65};}catch(_0x155174){return{'description':null,'thumbnail_url':null};}}function a3_0x1b49(_0x3ac390,_0xcee4e0){const _0xae6d1c=a3_0xae6d();return a3_0x1b49=function(_0x1b4963,_0x1f7719){_0x1b4963=_0x1b4963-0xd2;let _0x410cee=_0xae6d1c[_0x1b4963];return _0x410cee;},a3_0x1b49(_0x3ac390,_0xcee4e0);}async function processItem(_0x4adeb3,_0x3c535e){const _0x218b27=a3_0x49be93;let _0x1e5beb=_0x4adeb3[_0x218b27(0x111)]?stripHtml(cleanCdata(_0x4adeb3[_0x218b27(0x111)])):null;_0x1e5beb=removePhrases(_0x1e5beb,phrasesToRemoveFromTitle);let _0x30c12a=_0x4adeb3['link'],_0x328f9b=null;if(_0x3c535e[_0x218b27(0x113)][_0x218b27(0x141)](_0x218b27(0x12a))){if(_0x4adeb3[_0x218b27(0xe5)]){const _0x1512c3=(0x0,node_html_parser_1[_0x218b27(0x124)])(_0x4adeb3[_0x218b27(0xe5)]),_0x3addf6=_0x1512c3['querySelector'](_0x218b27(0x102));_0x3addf6&&_0x3addf6['text'][_0x218b27(0x131)](_0x218b27(0x115))&&(_0x30c12a=_0x3addf6[_0x218b27(0xdd)]('href'));}_0x328f9b=null;}else _0x4adeb3[_0x218b27(0xdf)]&&(_0x328f9b=stripHtml(cleanCdata(_0x4adeb3[_0x218b27(0xdf)]))||null,_0x328f9b=removePhrases(_0x328f9b,phrasesToRemoveFromDescription),_0x328f9b=truncateDescription(_0x328f9b));!_0x328f9b&&_0x4adeb3[_0x218b27(0x12b)]&&(_0x328f9b=stripHtml(cleanCdata(_0x4adeb3[_0x218b27(0x12b)]))||null,_0x328f9b=removePhrases(_0x328f9b,phrasesToRemoveFromDescription),_0x328f9b=truncateDescription(_0x328f9b));_0x3c535e[_0x218b27(0x113)]==='https://rss.slashdot.org/Slashdot/slashdot'&&_0x4adeb3[_0x218b27(0x13d)]&&(_0x328f9b=stripHtml(cleanCdata(_0x4adeb3[_0x218b27(0x13d)]))||null,_0x328f9b=removePhrases(_0x328f9b,phrasesToRemoveFromDescription),_0x328f9b=truncateDescription(_0x328f9b));if(!_0x1e5beb||!_0x30c12a)return null;const _0x996f62=(_0x1e5beb+'\x20'+(_0x4adeb3[_0x218b27(0xdf)]?stripHtml(_0x4adeb3[_0x218b27(0xdf)]):'')+'\x20'+(_0x4adeb3[_0x218b27(0x13d)]?stripHtml(_0x4adeb3[_0x218b27(0x13d)]):''))[_0x218b27(0x12d)]();if(bannedKeywords[_0x218b27(0x10c)](_0x3930c3=>_0x996f62[_0x218b27(0x141)](_0x3930c3[_0x218b27(0x12d)]())))return null;const _0x4cab1e=_0x4adeb3[_0x218b27(0x146)]?new Date(_0x4adeb3[_0x218b27(0x146)])['toISOString']():new Date()[_0x218b27(0x126)]();let _0x4cee79=_0x4adeb3[_0x218b27(0xfe)]?_0x4adeb3[_0x218b27(0xfe)][_0x218b27(0x113)]:null;if(_0x4adeb3[_0x218b27(0xea)]){if(Array['isArray'](_0x4adeb3['media:content'])){const _0x50500c=_0x4adeb3[_0x218b27(0xea)]['sort']((_0x2f3d7c,_0x254ac2)=>{const _0x33a474=_0x218b27,_0x10bb75=_0x2f3d7c['$']&&_0x2f3d7c['$'][_0x33a474(0x154)]?parseInt(_0x2f3d7c['$'][_0x33a474(0x154)],0xa):0x0,_0x1d0e83=_0x254ac2['$']&&_0x254ac2['$'][_0x33a474(0x154)]?parseInt(_0x254ac2['$']['width'],0xa):0x0;return _0x1d0e83-_0x10bb75;}),_0x221edb=_0x50500c[0x0];if(_0x221edb){const _0x580bff=_0x221edb['$']&&_0x221edb['$'][_0x218b27(0x154)]?parseInt(_0x221edb['$'][_0x218b27(0x154)],0xa):0x0;if(_0x580bff===0x0||_0x580bff>=0x12c){if(_0x221edb['$']&&_0x221edb['$']['url'])_0x4cee79=_0x221edb['$']['url'];else{if(_0x221edb[_0x218b27(0x113)])_0x4cee79=_0x221edb[_0x218b27(0x113)];}}}}else{const _0x26d5d1=_0x4adeb3['media:content'],_0x488273=_0x26d5d1['$']&&_0x26d5d1['$'][_0x218b27(0x154)]?parseInt(_0x26d5d1['$']['width'],0xa):_0x26d5d1[_0x218b27(0x154)]?parseInt(_0x26d5d1[_0x218b27(0x154)],0xa):0x0;if(_0x488273===0x0||_0x488273>=0x12c){if(_0x26d5d1['$']&&_0x26d5d1['$'][_0x218b27(0x113)])_0x4cee79=_0x26d5d1['$'][_0x218b27(0x113)];else{if(_0x26d5d1['url'])_0x4cee79=_0x26d5d1[_0x218b27(0x113)];}}}}if(!_0x4cee79&&_0x4adeb3[_0x218b27(0x15c)]){if(_0x4adeb3['media:thumbnail']['$']&&_0x4adeb3['media:thumbnail']['$'][_0x218b27(0x113)])_0x4cee79=_0x4adeb3[_0x218b27(0x15c)]['$'][_0x218b27(0x113)];else _0x4adeb3['media:thumbnail'][_0x218b27(0x113)]&&(_0x4cee79=_0x4adeb3[_0x218b27(0x15c)][_0x218b27(0x113)]);}_0x4cee79&&bannedThumbnails[_0x218b27(0x141)](_0x4cee79)&&(_0x4cee79=null);if(!_0x328f9b||!_0x4cee79||_0x3c535e[_0x218b27(0x113)][_0x218b27(0x141)]('hnrss.org')||_0x3c535e[_0x218b27(0x113)]==='https://rss.slashdot.org/Slashdot/slashdot'||_0x3c535e[_0x218b27(0x113)]==='https://www.investing.com/rss/news.rss'){const _0x538574=await fetchArticleMetadata(_0x30c12a);!_0x328f9b&&(_0x328f9b=_0x538574[_0x218b27(0x13d)]),!_0x4cee79&&(_0x4cee79=_0x538574[_0x218b27(0xe7)]);}_0x4cee79&&bannedThumbnails[_0x218b27(0x141)](_0x4cee79)&&(_0x4cee79=null);if(_0x4cee79){const _0x31857c=await isImageLargeEnough(_0x4cee79);!_0x31857c&&(_0x4cee79=null);}if(!_0x4cee79)return null;const _0x346b0f=_0x1e5beb['toLowerCase']()[_0x218b27(0xfc)](/[^a-z0-9\s]/g,'')['trim']()['replace'](/\s+/g,'-');let _0x5213c5=_0x346b0f[_0x218b27(0x140)](0x0,0x3c);_0x5213c5[_0x218b27(0x152)]('-')&&(_0x5213c5=_0x5213c5[_0x218b27(0xfd)](0x0,-0x1));!_0x5213c5&&(_0x5213c5='post-'+Date[_0x218b27(0x13b)]());let _0xf13b3b=_0x3c535e[_0x218b27(0x15a)]||_0x218b27(0xff);if(_0x3c535e[_0x218b27(0xeb)]===_0x218b27(0x155)&&_0x30c12a){if(_0x30c12a['includes'](_0x218b27(0xda)))_0xf13b3b=_0x218b27(0xf7);else{if(_0x30c12a[_0x218b27(0x141)](_0x218b27(0x117)))_0xf13b3b=_0x218b27(0x12e);else{if(_0x30c12a[_0x218b27(0x141)](_0x218b27(0x14b)))_0xf13b3b='tech';else _0x30c12a[_0x218b27(0x141)](_0x218b27(0xf6))&&(_0xf13b3b=_0x218b27(0x101));}}}else{if(_0x3c535e[_0x218b27(0x113)]==='https://rss.slashdot.org/Slashdot/slashdot'&&_0x30c12a){const _0x180530=_0x30c12a[_0x218b27(0x119)](/https:\/\/([a-z]+)\.slashdot\.org/);if(_0x180530&&_0x180530[0x1]){const _0x123fd6=_0x180530[0x1];switch(_0x123fd6){case'it':case _0x218b27(0x118):case _0x218b27(0x10e):case _0x218b27(0x109):_0xf13b3b='tech';break;case _0x218b27(0xd4):_0xf13b3b='science';break;case'games':_0xf13b3b=_0x218b27(0x104);break;case _0x218b27(0xff):case _0x218b27(0x159):case _0x218b27(0xf1):default:_0xf13b3b=_0x218b27(0xff);break;}}else _0xf13b3b=_0x218b27(0xff);}}return{'slug':_0x5213c5,'title':_0x1e5beb,'description':_0x328f9b,'link':_0x30c12a,'thumbnail_url':_0x4cee79,'created_at':new Date()[_0x218b27(0x126)](),'topic':_0xf13b3b};}const classifier_1=require(a3_0x49be93(0x11e)),bucket_manager_1=require(a3_0x49be93(0x151));async function run(){const _0x448cf1=a3_0x49be93;console[_0x448cf1(0xee)]('Starting\x20job...');const _0x2579e1=Date['now'](),_0xb121c7=new Date()[_0x448cf1(0x126)]()[_0x448cf1(0x136)]('T')[0x0],_0x5cd17e=path[_0x448cf1(0x122)](OUTPUT_DIR,_0xb121c7+_0x448cf1(0x106));let _0x38b1bc=[];if(fs[_0x448cf1(0x12c)](INDEX_FILE))try{_0x38b1bc=JSON[_0x448cf1(0x124)](fs['readFileSync'](INDEX_FILE,_0x448cf1(0xd6)));}catch(_0x8f823c){console[_0x448cf1(0xed)]('Error\x20reading\x20index\x20file,\x20starting\x20fresh.');}const _0x3ca327=new Set(_0x38b1bc);let _0x251729=[];if(fs[_0x448cf1(0x12c)](_0x5cd17e))try{_0x251729=JSON[_0x448cf1(0x124)](fs[_0x448cf1(0x14c)](_0x5cd17e,_0x448cf1(0xd6)));}catch(_0x12c12e){console[_0x448cf1(0xed)](_0x448cf1(0xfa));}let _0x5f326e=sources_1[_0x448cf1(0x139)];process[_0x448cf1(0xdb)]['includes'](_0x448cf1(0xf4))&&(console['log'](_0x448cf1(0x149)),_0x5f326e=[sources_1[_0x448cf1(0x139)][0x1]],_0x5f326e=sources_1[_0x448cf1(0x139)][_0x448cf1(0xfd)](0x0,0x1),_0x5f326e[_0x448cf1(0x13e)](_0x2aef76=>_0x2aef76['max_items']=0xa));let _0x2312b7=0x0;for(const _0x33acaf of _0x5f326e){console[_0x448cf1(0xee)]('Processing\x20source:\x20'+_0x33acaf['name']);try{const _0x4167d7=await parser['parseURL'](_0x33acaf[_0x448cf1(0x113)]),_0x35ed94=_0x4167d7[_0x448cf1(0x156)][_0x448cf1(0xfd)](0x0,_0x33acaf[_0x448cf1(0x135)]||_0x4167d7[_0x448cf1(0x156)][_0x448cf1(0xd2)]);for(const _0x1b3280 of _0x35ed94){try{const _0x3524bb=await processItem(_0x1b3280,_0x33acaf);_0x3524bb&&_0x3524bb[_0x448cf1(0x114)]&&(!_0x3ca327[_0x448cf1(0x121)](_0x3524bb['link'])&&(_0x251729[_0x448cf1(0x137)](_0x3524bb),_0x3ca327[_0x448cf1(0x13f)](_0x3524bb[_0x448cf1(0x114)]),_0x2312b7++));}catch(_0x14dc06){console[_0x448cf1(0xed)](_0x448cf1(0x134)+_0x33acaf['name'],_0x14dc06);}}}catch(_0x169c78){console['error']('Error\x20fetching\x20source\x20'+_0x33acaf[_0x448cf1(0xeb)],_0x169c78);}}fs[_0x448cf1(0x133)](_0x5cd17e,JSON[_0x448cf1(0xde)](_0x251729,null,0x2),'utf-8'),fs[_0x448cf1(0x133)](INDEX_FILE,JSON['stringify'](Array[_0x448cf1(0x14e)](_0x3ca327),null,0x2),_0x448cf1(0xd6)),console[_0x448cf1(0xee)]('Scrape\x20finished.\x20Added\x20'+_0x2312b7+_0x448cf1(0x14d)),console[_0x448cf1(0xee)](_0x448cf1(0x150));const _0x43c652=new classifier_1[(_0x448cf1(0x12f))](),_0x40d1a9=new bucket_manager_1['BucketManager'](OUTPUT_DIR);await _0x40d1a9[_0x448cf1(0x153)]();const _0x5ab800=fs['readdirSync'](OUTPUT_DIR)[_0x448cf1(0x128)](_0x389f27=>_0x389f27[_0x448cf1(0x119)](/^\d{4}-\d{2}-\d{2}\.json$/));console[_0x448cf1(0xee)](_0x448cf1(0x110)+_0x5ab800['length']+_0x448cf1(0xdc));let _0x4cca81=0x0;for(const _0x5a6ace of _0x5ab800){try{const _0xc42fc8=fs[_0x448cf1(0x14c)](path[_0x448cf1(0x122)](OUTPUT_DIR,_0x5a6ace),_0x448cf1(0xd6)),_0x135b7f=JSON[_0x448cf1(0x124)](_0xc42fc8);for(const _0x4c34cb of _0x135b7f){const _0xdaa785=_0x43c652[_0x448cf1(0x158)](_0x4c34cb[_0x448cf1(0x111)],_0x4c34cb['description']);if(_0xdaa785[_0x448cf1(0xd2)]>0x0){for(const _0x15bac8 of _0xdaa785){_0x40d1a9['addPost'](_0x4c34cb,_0x15bac8);}_0x4cca81++;}}}catch(_0x48f200){console[_0x448cf1(0xed)](_0x448cf1(0x10b)+_0x5a6ace+':',_0x48f200);}}await _0x40d1a9['flush']();const _0xf2aa1c=Date['now']();console[_0x448cf1(0xee)]('Job\x20Complete\x20in\x20'+((_0xf2aa1c-_0x2579e1)/0x3e8)[_0x448cf1(0x130)](0x2)+_0x448cf1(0x13c)+_0x4cca81+_0x448cf1(0xfb));}run()[a3_0x49be93(0xd5)](console[a3_0x49be93(0xed)]);
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const rss_parser_1 = __importDefault(require("rss-parser"));
+const node_html_parser_1 = require("node-html-parser");
+const sources_1 = require("./sources");
+const article_extractor_1 = require("./article-extractor");
+const classifier_1 = require("./classifier");
+const bucket_manager_1 = require("./bucket-manager");
+// ============================================================================
+// DAILY JOB - RSS Scraper with Full Text Extraction and Batching Support
+// ============================================================================
+const parser = new rss_parser_1.default();
+// Directories
+const OUTPUT_DIR = path.join(__dirname, '../output');
+if (!fs.existsSync(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+}
+const INDEX_FILE = path.join(OUTPUT_DIR, 'index.json');
+const ERROR_LOG_FILE = path.join(OUTPUT_DIR, 'error-log.json');
+// --- Configuration ---
+// Banned keywords for filtering posts
+const bannedKeywords = ['Only Fans', 'porn', 'sex', 'gambling', 'Form 13F', 'Form 13G', 'Form 144', 'deals', 'black friday', 'discount', 'best'];
+// Banned thumbnail URLs
+const bannedThumbnails = [
+    'https://s.yimg.com/cv/apiv2/social/images/yahoo_default_logo-1200x1200.png'
+];
+// Phrases to remove
+const phrasesToRemoveFromDescription = [
+    '(Source: Bloomberg)',
+    'Read more of this story at Slashdot.'
+];
+const phrasesToRemoveFromTitle = [
+    'Tell HN:',
+    'Show HN:'
+];
+// Concurrency limit for parallel fetches
+const MAX_CONCURRENT_FETCHES = 5;
+// --- CLI Arguments ---
+function parseArgs() {
+    const args = process.argv.slice(2);
+    let batch = null;
+    let totalBatches = null;
+    let test = false;
+    for (const arg of args) {
+        if (arg.startsWith('--batch=')) {
+            batch = parseInt(arg.split('=')[1], 10);
+        }
+        else if (arg.startsWith('--total-batches=')) {
+            totalBatches = parseInt(arg.split('=')[1], 10);
+        }
+        else if (arg === '--test') {
+            test = true;
+        }
+    }
+    return { batch, totalBatches, test };
+}
+// --- Helper Functions ---
+function cleanCdata(text) {
+    return text.replace(/<!\[CDATA\[|\]\]>/g, '').trim();
+}
+function stripHtml(html) {
+    return (0, node_html_parser_1.parse)(html).textContent || '';
+}
+function removePhrases(text, phrases) {
+    if (!text)
+        return null;
+    let cleanedText = text;
+    for (const phrase of phrases) {
+        cleanedText = cleanedText.replace(phrase, '').trim();
+    }
+    return cleanedText;
+}
+function truncateDescription(description) {
+    if (!description)
+        return null;
+    const paragraphs = description.split(/\n\s*\n/);
+    let effectiveDescription = paragraphs[0] || '';
+    const sentences = effectiveDescription.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+    if (sentences.length > 5) {
+        effectiveDescription = sentences.slice(0, 5).join('').trim();
+    }
+    else {
+        effectiveDescription = sentences.join('').trim();
+    }
+    if (effectiveDescription.length < description.length && !/[.!?]$/.test(effectiveDescription)) {
+        const lastSpaceIndex = effectiveDescription.lastIndexOf(' ');
+        if (lastSpaceIndex > -1) {
+            effectiveDescription = effectiveDescription.substring(0, lastSpaceIndex) + '...';
+        }
+        else {
+            effectiveDescription = effectiveDescription + '...';
+        }
+    }
+    return effectiveDescription.length > 0 ? effectiveDescription : null;
+}
+async function isImageLargeEnough(url) {
+    try {
+        const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(2000) });
+        if (!response.ok) {
+            if (response.status === 404)
+                return false;
+            return true;
+        }
+        const contentLength = response.headers.get('content-length');
+        if (contentLength) {
+            const size = parseInt(contentLength, 10);
+            if (size < 15000)
+                return false;
+        }
+        return true;
+    }
+    catch {
+        return true;
+    }
+}
+async function fetchArticleMetadata(url) {
+    try {
+        const response = await fetch(url, {
+            signal: AbortSignal.timeout(15000),
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)',
+                'Accept': 'text/html,application/xhtml+xml',
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const text = await response.text();
+        const html = (0, node_html_parser_1.parse)(text);
+        let description = null;
+        const descriptionSelectors = ['meta[property="og:description"]', 'meta[name="twitter:description"]', 'meta[name="description"]'];
+        for (const selector of descriptionSelectors) {
+            const node = html.querySelector(selector);
+            if (node && node.getAttribute('content')) {
+                description = stripHtml(node.getAttribute('content')) || null;
+                description = removePhrases(description, phrasesToRemoveFromDescription);
+                description = truncateDescription(description);
+                break;
+            }
+        }
+        let thumbnail_url = null;
+        const thumbnailSelectors = ['meta[property="og:image"]', 'meta[name="twitter:image"]'];
+        for (const selector of thumbnailSelectors) {
+            const node = html.querySelector(selector);
+            if (node && node.getAttribute('content')) {
+                thumbnail_url = node.getAttribute('content');
+                break;
+            }
+        }
+        return { description, thumbnail_url, html: text };
+    }
+    catch {
+        return { description: null, thumbnail_url: null, html: null };
+    }
+}
+let errorLog = [];
+function logError(source, url, error) {
+    errorLog.push({
+        source,
+        url,
+        error,
+        timestamp: new Date().toISOString()
+    });
+}
+function saveErrorLog() {
+    if (errorLog.length === 0)
+        return;
+    let existingErrors = [];
+    if (fs.existsSync(ERROR_LOG_FILE)) {
+        try {
+            existingErrors = JSON.parse(fs.readFileSync(ERROR_LOG_FILE, 'utf-8'));
+        }
+        catch { }
+    }
+    // Keep only last 100 errors
+    const combined = [...existingErrors, ...errorLog].slice(-100);
+    fs.writeFileSync(ERROR_LOG_FILE, JSON.stringify(combined, null, 2), 'utf-8');
+}
+// --- Main Processing ---
+async function processItem(item, source) {
+    let title = item.title ? stripHtml(cleanCdata(item.title)) : null;
+    title = removePhrases(title, phrasesToRemoveFromTitle);
+    let link = item.link;
+    let description = null;
+    if (source.url.includes('hnrss.org')) {
+        if (item.content) {
+            const contentHtml = (0, node_html_parser_1.parse)(item.content);
+            const articleLinkNode = contentHtml.querySelector('p a');
+            if (articleLinkNode && articleLinkNode.text.startsWith('Article URL:')) {
+                link = articleLinkNode.getAttribute('href');
+            }
+        }
+        description = null;
+    }
+    else if (item.contentSnippet) {
+        description = stripHtml(cleanCdata(item.contentSnippet)) || null;
+        description = removePhrases(description, phrasesToRemoveFromDescription);
+        description = truncateDescription(description);
+    }
+    if (!description && item['content:encoded']) {
+        description = stripHtml(cleanCdata(item['content:encoded'])) || null;
+        description = removePhrases(description, phrasesToRemoveFromDescription);
+        description = truncateDescription(description);
+    }
+    if (source.url === 'https://rss.slashdot.org/Slashdot/slashdot' && item.description) {
+        description = stripHtml(cleanCdata(item.description)) || null;
+        description = removePhrases(description, phrasesToRemoveFromDescription);
+        description = truncateDescription(description);
+    }
+    if (!title || !link) {
+        return null;
+    }
+    const textToFilter = `${title} ${item.contentSnippet ? stripHtml(item.contentSnippet) : ''} ${item.description ? stripHtml(item.description) : ''}`.toLowerCase();
+    if (bannedKeywords.some(keyword => textToFilter.includes(keyword.toLowerCase()))) {
+        return null;
+    }
+    let thumbnail_url = item.enclosure ? item.enclosure.url : null;
+    if (item['media:content']) {
+        if (Array.isArray(item['media:content'])) {
+            const sorted = item['media:content'].sort((a, b) => {
+                const wA = a['$'] && a['$'].width ? parseInt(a['$'].width, 10) : 0;
+                const wB = b['$'] && b['$'].width ? parseInt(b['$'].width, 10) : 0;
+                return wB - wA;
+            });
+            const best = sorted[0];
+            if (best) {
+                const width = best['$'] && best['$'].width ? parseInt(best['$'].width, 10) : 0;
+                if (width === 0 || width >= 300) {
+                    if (best['$'] && best['$'].url)
+                        thumbnail_url = best['$'].url;
+                    else if (best.url)
+                        thumbnail_url = best.url;
+                }
+            }
+        }
+        else {
+            const m = item['media:content'];
+            const width = m['$'] && m['$'].width ? parseInt(m['$'].width, 10) : (m.width ? parseInt(m.width, 10) : 0);
+            if (width === 0 || width >= 300) {
+                if (m['$'] && m['$'].url)
+                    thumbnail_url = m['$'].url;
+                else if (m.url)
+                    thumbnail_url = m.url;
+            }
+        }
+    }
+    if (!thumbnail_url && item['media:thumbnail']) {
+        if (item['media:thumbnail']['$'] && item['media:thumbnail']['$'].url) {
+            thumbnail_url = item['media:thumbnail']['$'].url;
+        }
+        else if (item['media:thumbnail'].url) {
+            thumbnail_url = item['media:thumbnail'].url;
+        }
+    }
+    if (thumbnail_url && bannedThumbnails.includes(thumbnail_url)) {
+        thumbnail_url = null;
+    }
+    // Fetch article for metadata and full text
+    let articleHtml = null;
+    let extracted = { fullText: null, readingTime: 0, keywords: [], qualityScore: 0 };
+    const needsMetadataFetch = (!description || !thumbnail_url) ||
+        source.url.includes('hnrss.org') ||
+        source.url === 'https://rss.slashdot.org/Slashdot/slashdot' ||
+        source.url === 'https://www.investing.com/rss/news.rss';
+    try {
+        const metadata = await fetchArticleMetadata(link);
+        articleHtml = metadata.html;
+        if (!description) {
+            description = metadata.description;
+        }
+        if (!thumbnail_url) {
+            thumbnail_url = metadata.thumbnail_url;
+        }
+    }
+    catch (e) {
+        logError(source.name, link, e.message || 'Fetch failed');
+    }
+    // Extract full text from fetched HTML
+    if (articleHtml) {
+        extracted = (0, article_extractor_1.extractArticle)(articleHtml, link);
+    }
+    if (thumbnail_url && bannedThumbnails.includes(thumbnail_url)) {
+        thumbnail_url = null;
+    }
+    if (thumbnail_url) {
+        const isLargeEnough = await isImageLargeEnough(thumbnail_url);
+        if (!isLargeEnough) {
+            thumbnail_url = null;
+        }
+    }
+    if (!thumbnail_url) {
+        return null;
+    }
+    const baseSlug = title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, '')
+        .trim()
+        .replace(/\s+/g, '-');
+    let slug = baseSlug.substring(0, 60);
+    if (slug.endsWith('-')) {
+        slug = slug.slice(0, -1);
+    }
+    if (!slug) {
+        slug = `post-${Date.now()}`;
+    }
+    let topic = source.topic || 'news';
+    if (source.name === "Yahoo News" && link) {
+        if (link.includes("finance.yahoo.com"))
+            topic = "finance";
+        else if (link.includes("autos.yahoo.com"))
+            topic = "auto";
+        else if (link.includes("tech.yahoo.com"))
+            topic = "tech";
+        else if (link.includes("health.yahoo.com"))
+            topic = "health";
+    }
+    else if (source.url === 'https://rss.slashdot.org/Slashdot/slashdot' && link) {
+        const matches = link.match(/https:\/\/([a-z]+)\.slashdot\.org/);
+        if (matches && matches[1]) {
+            const subdomain = matches[1];
+            switch (subdomain) {
+                case 'it':
+                case 'tech':
+                case 'hardware':
+                case 'developers':
+                    topic = 'tech';
+                    break;
+                case 'science':
+                    topic = 'science';
+                    break;
+                case 'games':
+                    topic = 'gaming';
+                    break;
+                default:
+                    topic = 'news';
+                    break;
+            }
+        }
+    }
+    return {
+        slug,
+        title,
+        description,
+        fullText: extracted.fullText,
+        readingTime: extracted.readingTime,
+        keywords: extracted.keywords,
+        qualityScore: extracted.qualityScore,
+        link,
+        thumbnail_url,
+        created_at: new Date().toISOString(),
+        topic,
+    };
+}
+// --- Parallel Processing with Concurrency Limit ---
+async function processInParallel(items, processor, concurrency) {
+    const results = [];
+    const executing = [];
+    for (const item of items) {
+        const promise = processor(item).then(result => {
+            results.push(result);
+        }).catch(() => {
+            results.push(null);
+        });
+        executing.push(promise);
+        if (executing.length >= concurrency) {
+            await Promise.race(executing);
+            // Remove completed promises
+            const completed = executing.filter(p => {
+                let resolved = false;
+                p.then(() => { resolved = true; }).catch(() => { resolved = true; });
+                return !resolved;
+            });
+            executing.length = 0;
+            executing.push(...completed);
+        }
+    }
+    await Promise.all(executing);
+    return results;
+}
+// Simpler batch parallel processing
+async function processBatch(items, processor, batchSize = MAX_CONCURRENT_FETCHES) {
+    const results = [];
+    for (let i = 0; i < items.length; i += batchSize) {
+        const batch = items.slice(i, i + batchSize);
+        const batchResults = await Promise.allSettled(batch.map(item => processor(item)));
+        for (const result of batchResults) {
+            if (result.status === 'fulfilled') {
+                results.push(result.value);
+            }
+            else {
+                results.push(null);
+            }
+        }
+    }
+    return results;
+}
+// --- Main Logic ---
+async function run() {
+    const { batch, totalBatches, test } = parseArgs();
+    console.log("Starting job...");
+    if (batch !== null && totalBatches !== null) {
+        console.log(`Running batch ${batch + 1} of ${totalBatches}`);
+    }
+    const start = Date.now();
+    const today = new Date().toISOString().split('T')[0];
+    const dailyFile = path.join(OUTPUT_DIR, `${today}.json`);
+    // Load existing index (smart caching - skip already scraped)
+    let index = [];
+    if (fs.existsSync(INDEX_FILE)) {
+        try {
+            index = JSON.parse(fs.readFileSync(INDEX_FILE, 'utf-8'));
+        }
+        catch {
+            console.error("Error reading index file, starting fresh.");
+        }
+    }
+    const indexSet = new Set(index);
+    // Fingerprint set for deduplication
+    const fingerprints = new Set();
+    // Load existing daily data
+    let dailyData = [];
+    if (fs.existsSync(dailyFile)) {
+        try {
+            dailyData = JSON.parse(fs.readFileSync(dailyFile, 'utf-8'));
+            // Build fingerprints from existing data
+            for (const post of dailyData) {
+                if (post.fullText) {
+                    fingerprints.add(post.fullText.substring(0, 100));
+                }
+            }
+        }
+        catch {
+            console.error("Error reading daily file, starting fresh.");
+        }
+    }
+    // Determine active sources based on batch/test mode
+    let activeSources = [...sources_1.sourcesData];
+    if (test) {
+        console.log("⚠️ RUNNING IN TEST MODE: Limiting to 1 source and 10 items.");
+        activeSources = sources_1.sourcesData.slice(0, 1);
+        activeSources.forEach(s => s.max_items = 10);
+    }
+    else if (batch !== null && totalBatches !== null) {
+        // Split sources into batches
+        const sourcesPerBatch = Math.ceil(sources_1.sourcesData.length / totalBatches);
+        const startIdx = batch * sourcesPerBatch;
+        const endIdx = Math.min(startIdx + sourcesPerBatch, sources_1.sourcesData.length);
+        activeSources = sources_1.sourcesData.slice(startIdx, endIdx);
+        console.log(`Processing sources ${startIdx + 1} to ${endIdx} of ${sources_1.sourcesData.length}`);
+    }
+    let newItemsCount = 0;
+    for (const source of activeSources) {
+        console.log(`Processing source: ${source.name}`);
+        try {
+            const feed = await parser.parseURL(source.url);
+            const items_to_process = feed.items.slice(0, source.max_items || feed.items.length);
+            // Filter out already indexed items BEFORE expensive fetches (smart caching)
+            const newItems = items_to_process.filter(item => {
+                const link = item.link;
+                return link && !indexSet.has(link);
+            });
+            console.log(`  ${newItems.length} new items (${items_to_process.length - newItems.length} cached)`);
+            // Process in parallel batches
+            const results = await processBatch(newItems, (item) => processItem(item, source), MAX_CONCURRENT_FETCHES);
+            for (const processed of results) {
+                if (processed && processed.link) {
+                    // Deduplication by content fingerprint
+                    if (processed.fullText) {
+                        const fingerprint = processed.fullText.substring(0, 100);
+                        if (fingerprints.has(fingerprint)) {
+                            console.log(`  Skipped duplicate: ${processed.title.substring(0, 40)}...`);
+                            continue;
+                        }
+                        fingerprints.add(fingerprint);
+                    }
+                    dailyData.push(processed);
+                    indexSet.add(processed.link);
+                    newItemsCount++;
+                }
+            }
+        }
+        catch (e) {
+            console.error(`Error fetching source ${source.name}:`, e.message);
+            logError(source.name, source.url, e.message || 'Feed fetch failed');
+        }
+    }
+    // Save daily data
+    fs.writeFileSync(dailyFile, JSON.stringify(dailyData, null, 2), 'utf-8');
+    fs.writeFileSync(INDEX_FILE, JSON.stringify(Array.from(indexSet), null, 2), 'utf-8');
+    saveErrorLog();
+    console.log(`Scrape finished. Added ${newItemsCount} items.`);
+    // Classification (incremental - only process new posts)
+    console.log("Starting Aggregation & Classification...");
+    const classifier = new classifier_1.Classifier();
+    const bucketManager = new bucket_manager_1.BucketManager(OUTPUT_DIR);
+    await bucketManager.init();
+    // Only process today's file for incremental classification
+    // Full retroactive classification can be done separately if needed
+    let totalClassified = 0;
+    for (const post of dailyData) {
+        // Skip if already classified (check if it exists in any bucket)
+        const classifications = classifier.classify(post.title, post.description);
+        if (classifications.length > 0) {
+            for (const cls of classifications) {
+                bucketManager.addPost(post, cls);
+            }
+            totalClassified++;
+        }
+    }
+    await bucketManager.flush();
+    const end = Date.now();
+    console.log(`Job Complete in ${((end - start) / 1000).toFixed(2)}s. Classified ${totalClassified} posts.`);
+}
+run().catch(console.error);

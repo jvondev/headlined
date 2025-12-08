@@ -1,1 +1,53 @@
-'use strict';const a2_0x394464=a2_0xca13;(function(_0x3a1981,_0x3fc1e3){const _0x30c7c2=a2_0xca13,_0x15784b=_0x3a1981();while(!![]){try{const _0x17c470=parseInt(_0x30c7c2(0x140))/0x1+-parseInt(_0x30c7c2(0x137))/0x2+parseInt(_0x30c7c2(0x147))/0x3*(parseInt(_0x30c7c2(0x141))/0x4)+parseInt(_0x30c7c2(0x12f))/0x5+-parseInt(_0x30c7c2(0x130))/0x6*(-parseInt(_0x30c7c2(0x133))/0x7)+parseInt(_0x30c7c2(0x134))/0x8+parseInt(_0x30c7c2(0x13b))/0x9*(-parseInt(_0x30c7c2(0x138))/0xa);if(_0x17c470===_0x3fc1e3)break;else _0x15784b['push'](_0x15784b['shift']());}catch(_0x3078f7){_0x15784b['push'](_0x15784b['shift']());}}}(a2_0x1c82,0xce98a));Object[a2_0x394464(0x144)](exports,a2_0x394464(0x146),{'value':!![]}),exports[a2_0x394464(0x139)]=void 0x0;function a2_0x1c82(){const _0x5f4fc6=['1555910PgbvaG','86476ehvvwU','push','classify','defineProperty','replace','__esModule','3iPNiCL','toLowerCase','5025180RtRBMS','4877892cKEYbq','\x5c$&','has','7xifiBc','1703400fqPUVg','add','./categories','3247010EiAHdm','370VSVdPN','Classifier','trim','276993XqHIYE','keywords','toString','slugify','test'];a2_0x1c82=function(){return _0x5f4fc6;};return a2_0x1c82();}const categories_1=require(a2_0x394464(0x136));class Classifier{constructor(){this['categories']=categories_1['CATEGORIES'];}[a2_0x394464(0x143)](_0x5dd714,_0xff88d5){const _0x50c99e=a2_0x394464,_0x11e25d=(_0x5dd714+'\x20'+(_0xff88d5||''))[_0x50c99e(0x12e)](),_0x11318c=[],_0x92e8dd=new Set();for(const _0x4ab01d of this['categories']){for(const _0x586040 of _0x4ab01d[_0x50c99e(0x13c)]){const _0x834738=_0x586040[_0x50c99e(0x12e)](),_0x2a08f6=_0x834738[_0x50c99e(0x145)](/[-\/\\^$*+?.()|[\]{}]/g,_0x50c99e(0x131)),_0x4c35f8=new RegExp('\x5cb'+_0x2a08f6+'\x5cb','i');if(_0x4c35f8[_0x50c99e(0x13f)](_0x11e25d)){const _0x560529=this['slugify'](_0x586040),_0x4113cd=_0x4ab01d['id']+':'+_0x560529;!_0x92e8dd[_0x50c99e(0x132)](_0x4113cd)&&(_0x92e8dd[_0x50c99e(0x135)](_0x4113cd),_0x11318c[_0x50c99e(0x142)]({'category':_0x4ab01d['id'],'slug':_0x560529,'score':0x1}));}}if(_0x4ab01d['patterns'])for(const _0x2d43db of _0x4ab01d['patterns']){if(_0x2d43db[_0x50c99e(0x13f)](_0x11e25d)){}}}return _0x11318c;}[a2_0x394464(0x13e)](_0x1df253){const _0x1e81c3=a2_0x394464;return _0x1df253[_0x1e81c3(0x13d)]()[_0x1e81c3(0x12e)]()[_0x1e81c3(0x13a)]()[_0x1e81c3(0x145)](/\s+/g,'-')[_0x1e81c3(0x145)](/[^\w\-]+/g,'')[_0x1e81c3(0x145)](/\-\-+/g,'-');}}function a2_0xca13(_0x48cb6b,_0x512930){const _0x1c821c=a2_0x1c82();return a2_0xca13=function(_0xca1318,_0x40ca29){_0xca1318=_0xca1318-0x12e;let _0x6abc16=_0x1c821c[_0xca1318];return _0x6abc16;},a2_0xca13(_0x48cb6b,_0x512930);}exports[a2_0x394464(0x139)]=Classifier;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Classifier = void 0;
+const categories_1 = require("./categories");
+class Classifier {
+    constructor() {
+        this.categories = categories_1.CATEGORIES;
+    }
+    classify(title, description) {
+        const text = `${title} ${description || ''}`.toLowerCase();
+        const results = [];
+        const uniqueMatches = new Set();
+        // 1. Direct Keyword Matching with Aliases
+        for (const cat of this.categories) {
+            // New structure: iterate items
+            if (!cat.items)
+                continue;
+            for (const item of cat.items) {
+                for (const alias of item.aliases) {
+                    const lowerAlias = alias.toLowerCase();
+                    // Escape special regex characters
+                    const escapedAlias = lowerAlias.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                    // Word boundary check
+                    const regex = new RegExp(`\\b${escapedAlias}\\b`, 'i');
+                    if (regex.test(text)) {
+                        const key = `${cat.id}:${item.slug}`;
+                        if (!uniqueMatches.has(key)) {
+                            uniqueMatches.add(key);
+                            results.push({
+                                category: cat.id,
+                                slug: item.slug, // Use standard slug from config, not input text
+                                score: 1 // Basic score
+                            });
+                        }
+                        // If we matched an alias for this item, no need to check other aliases for the SAME item
+                        break;
+                    }
+                }
+            }
+            // 2. Pattern Matching (if any)
+            if (cat.patterns) {
+                for (const pattern of cat.patterns) {
+                    if (pattern.test(text)) {
+                        // Pattern matching logic would go here
+                        // For now we rely on explicit item aliases
+                    }
+                }
+            }
+        }
+        return results;
+    }
+}
+exports.Classifier = Classifier;
