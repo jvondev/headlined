@@ -112,7 +112,7 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
             <div className="flex-1 flex overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x">
 
                 {/* SLIDE 1: INTRO */}
-                <div className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 relative">
+                <header className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 relative">
                     <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
                         <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground mb-6">
                             <ol className="flex items-center gap-2">
@@ -131,7 +131,7 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tighter mb-6 capitalize leading-tight">
                             {title}
                         </h1>
-                        <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mb-8">
+                        <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mb-8 intro-text">
                             {intro}
                         </p>
 
@@ -181,10 +181,10 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                             <ChevronDown className="w-6 h-6 text-foreground/50" />
                         </div>
                     </div>
-                </div>
+                </header>
 
                 {/* SLIDE 2: DASHBOARD */}
-                <div className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 bg-secondary/5">
+                <section aria-label="Topic Statistics" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 bg-secondary/5">
                     <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
                         <div className="flex items-center gap-3 mb-8 text-primary">
                             <BarChart3 className="w-8 h-8" />
@@ -244,11 +244,11 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
 
                         {/* FAQ Section REMOVED from here */}
                     </div>
-                </div>
+                </section>
 
                 {/* SLIDE 3: FAQ */}
                 {faqs && faqs.length > 0 && (
-                    <div className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 overflow-y-auto">
+                    <section aria-label="Common Questions" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12 overflow-y-auto">
                         <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
                             <div className="flex items-center gap-3 mb-8 text-primary">
                                 <HelpCircle className="w-8 h-8" />
@@ -258,11 +258,11 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                                 <FaqAccordion faqs={faqs} />
                             </div>
                         </div>
-                    </div>
+                    </section>
                 )}
 
                 {/* SLIDE 4: NETWORK / LINKS */}
-                <div className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12">
+                <nav aria-label="Explore Network" className="min-w-full w-full h-full snap-center flex flex-col p-6 md:p-12">
                     <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
                         <div className="flex items-center gap-3 mb-8 text-primary">
                             <Globe className="w-8 h-8" />
@@ -305,7 +305,7 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                             </div>
                         </div>
                     </div>
-                </div>
+                </nav>
 
             </div>
         </motion.div>

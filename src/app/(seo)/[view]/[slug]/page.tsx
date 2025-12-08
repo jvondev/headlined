@@ -2,9 +2,14 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import * as fs from 'fs';
 import * as path from 'path';
-import { SeoFeed } from '@/components/seo/SeoFeed';
+import dynamic from 'next/dynamic';
 import { SeoCover } from '@/components/seo/seo-cover';
 import { SEO_CONFIG, getSeoMetadata, CategoryId } from '@/lib/seo-config';
+
+const SeoFeed = dynamic(() => import('@/components/seo/SeoFeed').then(mod => mod.SeoFeed), {
+    ssr: false,
+    loading: () => <div className="w-full h-full bg-background animate-pulse" />
+});
 
 // Define Parameter Type
 type Props = {
@@ -85,6 +90,7 @@ export default async function SeoTopicPage({ params }: Props) {
 
     // Stacked Schema Logic
     const schemas = [
+        // CollectionPage
         {
             "@context": "https://schema.org",
             "@type": "CollectionPage",
@@ -106,14 +112,14 @@ export default async function SeoTopicPage({ params }: Props) {
         {
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            "mainEntity": seo.faqs.map(faq => ({
+            "mainEntity": seo.faqs?.map(faq => ({
                 "@type": "Question",
                 "name": faq.q,
                 "acceptedAnswer": {
                     "@type": "Answer",
                     "text": faq.a
                 }
-            }))
+            })) || []
         },
         // Breadcrumb Schema
         {
@@ -139,6 +145,40 @@ export default async function SeoTopicPage({ params }: Props) {
                     "item": `https://headlined.app/${category}/${slug}`
                 }
             ]
+        },
+        // Organization Schema (E-E-A-T)
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Headlined",
+            "url": "https://headlined.app",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://headlined.app/icon.png",
+                "width": 512,
+                "height": 512
+            },
+            "sameAs": [
+                "https://twitter.com/headlinedapp",
+                "https://github.com/headlined"
+            ]
+        },
+        // WebPage Schema (Speakable & Accessibility)
+        {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": seo.h1,
+            "description": seo.intro,
+            "speakable": {
+                "@type": "SpeakableSpecification",
+                "cssSelector": ["h1", "p.intro-text"]
+            },
+            "inLanguage": "en-US",
+            "isPartOf": {
+                "@type": "WebSite",
+                "name": "Headlined",
+                "url": "https://headlined.app"
+            }
         }
     ];
 
