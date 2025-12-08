@@ -34,6 +34,11 @@ export interface Post {
   topic: string | null;
   summaries: Summary[];
   date?: string; // YYYY-MM-DD
+  // New fields from enhanced scraper
+  fullText?: string | null;      // Full article content
+  keywords?: string[];           // Top 10 keywords for highlighting
+  readingTime?: number;          // Minutes to read
+  qualityScore?: number;         // 0.0-1.0 extraction quality
 }
 
 export interface SearchableItem {

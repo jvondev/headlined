@@ -20,6 +20,7 @@ import {
 import { addToReadHistory } from "@/lib/indexeddb";
 import html2canvas from "html2canvas";
 import { PostExportTemplate } from "./post-export-template";
+import { ExpandedReader } from "./expanded-reader";
 
 interface PostViewProps {
     post: Post;
@@ -517,39 +518,23 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                     </div>
 
                                     {/* Content Body - Dark Mode */}
-                                    <div className="relative z-10 bg-zinc-950 px-6 md:px-10 py-10 pb-32 -mt-6 rounded-t-[30px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border-t border-white/5">
+                                    <div className="relative z-10 bg-zinc-950 -mt-6 rounded-t-[30px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border-t border-white/5 overflow-hidden">
                                         {/* Drag Handle Indicator */}
-                                        <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-8" />
+                                        <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mt-4 mb-2" />
 
-                                        <div className="max-w-3xl mx-auto space-y-8">
-                                            {/* Summary Header */}
-                                            <div className="flex items-center gap-3 pb-4 border-b border-white/10">
-                                                <div className="p-2 rounded-full bg-white/5 border border-white/5">
-                                                    <Sparkles className="w-4 h-4 text-white" />
-                                                </div>
-                                                <span className="text-sm font-bold text-zinc-200 uppercase tracking-widest">Executive Summary</span>
-                                                <div className="flex-1" />
-                                                <span className="text-xs font-medium text-zinc-500">{readingTime}</span>
-                                            </div>
-
-
-                                            {/* Typewriter Summary */}
-                                            <div className="min-h-[50px]">
-                                                <TypewriterText text={summaryText} shouldSkip={skipTypewriter} />
-                                            </div>
-
-                                            {/* Programmatic Ad Container */}
-                                            {!isPremium && mounted && (
-                                                <div className="w-full min-h-[250px] bg-zinc-900/30 rounded-2xl flex items-center justify-center overflow-hidden border border-white/5">
-                                                    {/* @ts-ignore */}
-                                                    <div
-                                                        ta-ad-container=""
-                                                        id={`ad-container-${uniqueId}`}
-                                                        className="w-full h-full"
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
+                                        {/* Expanded Reader Component */}
+                                        <ExpandedReader
+                                            fullText={post.fullText ?? null}
+                                            description={post.description}
+                                            keywords={post.keywords || []}
+                                            slug={post.slug}
+                                            readingTime={post.readingTime || parseInt(readingTime) || 3}
+                                            isPremium={isPremium}
+                                            onHighlightSave={(quote) => {
+                                                // Save quote to IndexedDB or show toast
+                                                console.log('Quote saved:', quote);
+                                            }}
+                                        />
                                     </div>
                                 </div>
 
