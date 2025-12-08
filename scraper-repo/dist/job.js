@@ -73,6 +73,32 @@ const phrasesToRemoveFromTitle = [
 ];
 // Concurrency limit for parallel fetches
 const MAX_CONCURRENT_FETCHES = 5;
+// Safety limit to prevent processing too many items from a single source
+const MAX_ITEMS_PER_SOURCE = 100;
+// --- Date Filtering ---
+/**
+ * Check if an RSS item was published today or yesterday.
+ * This ensures we get fresh content and re-check yesterday for any missed items.
+ */
+function isRecentItem(item) {
+    // If no pubDate, include it to be safe
+    if (!item.pubDate && !item.isoDate)
+        return true;
+    try {
+        const itemDate = new Date(item.pubDate || item.isoDate);
+        // Get today and yesterday at midnight (local time)
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        // Item is recent if published today or yesterday
+        return itemDate >= yesterday;
+    }
+    catch {
+        // If date parsing fails, include the item to be safe
+        return true;
+    }
+}
 // --- CLI Arguments ---
 function parseArgs() {
     const args = process.argv.slice(2);
@@ -473,10 +499,12 @@ async function run() {
     }
     // Determine active sources based on batch/test mode
     let activeSources = [...sources_1.sourcesData];
+    // Test mode flag for limiting items
+    let testModeLimit = null;
     if (test) {
         console.log("⚠️ RUNNING IN TEST MODE: Limiting to 1 source and 10 items.");
         activeSources = sources_1.sourcesData.slice(0, 1);
-        activeSources.forEach(s => s.max_items = 10);
+        testModeLimit = 10;
     }
     else if (batch !== null && totalBatches !== null) {
         // Split sources into batches
@@ -491,13 +519,21 @@ async function run() {
         console.log(`Processing source: ${source.name}`);
         try {
             const feed = await parser.parseURL(source.url);
-            const items_to_process = feed.items.slice(0, source.max_items || feed.items.length);
+            // Dynamic date filtering: get only today and yesterday's items
+            // Then apply safety limit to prevent processing too many
+            const limit = testModeLimit || MAX_ITEMS_PER_SOURCE;
+            const recentItems = feed.items
+                .filter(isRecentItem)
+                .slice(0, limit);
+            const skippedOldItems = feed.items.length - recentItems.length -
+                (feed.items.length > limit ? feed.items.length - limit : 0);
             // Filter out already indexed items BEFORE expensive fetches (smart caching)
-            const newItems = items_to_process.filter(item => {
+            const newItems = recentItems.filter(item => {
                 const link = item.link;
                 return link && !indexSet.has(link);
             });
-            console.log(`  ${newItems.length} new items (${items_to_process.length - newItems.length} cached)`);
+            const cachedCount = recentItems.length - newItems.length;
+            console.log(`  ${newItems.length} new | ${cachedCount} cached | ${skippedOldItems} old (filtered)`);
             // Process in parallel batches
             const results = await processBatch(newItems, (item) => processItem(item, source), MAX_CONCURRENT_FETCHES);
             for (const processed of results) {

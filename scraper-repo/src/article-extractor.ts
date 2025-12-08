@@ -365,7 +365,7 @@ function calculateReadingTime(text: string | null): number {
 /**
  * Extract top keywords by frequency
  */
-function extractKeywords(text: string | null, topN: number = 5): string[] {
+function extractKeywords(text: string | null, topN: number = 10): string[] {
     if (!text) return [];
 
     // Tokenize and clean
