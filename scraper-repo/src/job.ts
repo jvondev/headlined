@@ -24,8 +24,102 @@ const ERROR_LOG_FILE = path.join(OUTPUT_DIR, 'error-log.json');
 
 // --- Configuration ---
 
-// Banned keywords for filtering posts
-const bannedKeywords = ['Only Fans', 'porn', 'sex', 'gambling', 'Form 13F', 'Form 13G', 'Form 144', 'deals', 'black friday', 'discount', 'best'];
+// Banned keywords for filtering posts (exact match, case-insensitive)
+const bannedKeywords = [
+    // Adult/Inappropriate content
+    'Only Fans', 'onlyfans', 'porn', 'pornography', 'xxx', 'sex tape', 'nsfw',
+    'gambling', 'casino', 'slot machine', 'sports betting',
+
+    // Financial filings (noise for general news)
+    'Form 13F', 'Form 13G', 'Form 144', 'SEC filing',
+
+    // Shopping events & promotions
+    'black friday', 'cyber monday', 'prime day', 'prime week', 'amazon prime day',
+    'singles day', 'boxing day', 'memorial day sale', 'labor day sale',
+    'holiday sale', 'holiday deals', 'christmas sale', 'christmas deals',
+    'end of year sale', 'year end sale', 'clearance sale', 'flash sale',
+    'doorbuster', 'door buster', 'limited time offer', 'limited time deal',
+
+    // Deal/Discount terminology
+    'best deals', 'top deals', 'deals today', 'daily deals', 'hot deals',
+    'deal of the day', 'deal alert', 'price drop', 'price cut',
+    'discount code', 'coupon code', 'promo code', 'voucher code',
+    'save money', 'save big', 'huge savings', 'massive discount',
+    'lowest price', 'best price', 'price match', 'unbeatable price',
+    'budget pick', 'budget friendly', 'affordable pick',
+
+    // Product recommendation listicles (affiliate content)
+    'best of 2024', 'best of 2025', 'top picks', 'our picks',
+    'editors choice', 'staff picks', 'we tested', 'we reviewed',
+    'buying guide', 'gift guide', 'holiday gift', 'gift ideas',
+
+    // Shopping action words
+    'buy now', 'shop now', 'order now', 'get it now', 'grab it now',
+    'add to cart', 'checkout', 'free shipping', 'fast shipping',
+    'in stock', 'back in stock', 'selling fast', 'selling out',
+    'hurry', 'act fast', 'dont miss', 'last chance', 'final hours',
+
+    // Affiliate/Sponsored markers
+    'affiliate link', 'sponsored post', 'paid partnership',
+    'we earn commission', 'we may earn', 'as an amazon associate',
+];
+
+// Regex patterns for promotional content detection (more flexible matching)
+const bannedPatterns: RegExp[] = [
+    // Percentage discounts: "50% off", "up to 70% off", "save 30%"
+    /\b\d{1,2}%\s*(off|discount|savings?)\b/i,
+    /\bsave\s+\d{1,2}%/i,
+    /\bup\s+to\s+\d{1,2}%\s*off\b/i,
+
+    // Dollar amounts: "save $100", "$50 off", "under $20"
+    /\bsave\s+\$\d+/i,
+    /\$\d+\s*off\b/i,
+    /\bunder\s+\$\d+/i,
+    /\bjust\s+\$\d+/i,
+    /\bonly\s+\$\d+/i,
+    /\bfrom\s+\$\d+/i,
+    /\bstarting\s+at\s+\$\d+/i,
+
+    // Price comparisons: "was $100, now $50"
+    /\bwas\s+\$\d+[,\s]+now\s+\$\d+/i,
+    /\bregularly?\s+\$\d+/i,
+    /\bnormally\s+\$\d+/i,
+
+    // "X best" listicle patterns
+    /\b\d+\s+best\s+(deals?|products?|items?|gifts?|picks?|things?|ways?)\b/i,
+    /\bbest\s+\d+\b/i,
+
+    // Time-limited offers
+    /\b(today|tonight|this\s+week)\s+only\b/i,
+    /\bends?\s+(soon|today|tonight|tomorrow)\b/i,
+    /\b(hours?|days?|minutes?)\s+left\b/i,
+    /\b(limited\s+)?stock\s+(remaining|left|available)\b/i,
+
+    // Generic promotional language
+    /\b(grab|snag|score|get)\s+(this|these|the)\s+deal/i,
+    /\bdeal\s+of\s+the\s+(day|week|month|year)\b/i,
+    /\b(massive|huge|incredible|amazing|insane)\s+(deal|discount|savings?|sale)\b/i,
+    /\b(don't|do\s+not)\s+miss\s+(this|these|out)\b/i,
+];
+
+/**
+ * Check if content matches promotional/deal patterns
+ */
+function isPromotionalContent(text: string): boolean {
+    const lowerText = text.toLowerCase();
+
+    // Check exact keyword matches
+    if (bannedKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()))) {
+        return true;
+    }
+
+    // Check regex patterns
+    if (bannedPatterns.some(pattern => pattern.test(text))) {
+        return true;
+    }
+
+    return false;
+}
 
 // Banned thumbnail URLs
 const bannedThumbnails = [
@@ -330,8 +424,9 @@ async function processItem(item: any, source: any): Promise<Post | null> {
         return null;
     }
 
-    const textToFilter = `${title} ${item.contentSnippet ? stripHtml(item.contentSnippet) : ''} ${item.description ? stripHtml(item.description) : ''}`.toLowerCase();
-    if (bannedKeywords.some(keyword => textToFilter.includes(keyword.toLowerCase()))) {
+    // Check for promotional/deal content using enhanced filter
+    const textToFilter = `${title} ${item.contentSnippet ? stripHtml(item.contentSnippet) : ''} ${item.description ? stripHtml(item.description) : ''}`;
+    if (isPromotionalContent(textToFilter)) {
         return null;
     }
 
