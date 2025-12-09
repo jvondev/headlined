@@ -1,9 +1,16 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { Classifier } from './classifier';
+import { BucketManager } from './bucket-manager';
 
 // ============================================================================
-// MERGE OUTPUTS - Combines batch artifacts into final daily file
+// MERGE OUTPUTS - Combines batch artifacts and runs classification ONCE
 // Used by GitHub Actions after parallel batch jobs complete
+// 
+// Architecture:
+// - Batches only SCRAPE (fast, parallel)
+// - This merge step combines + classifies ONCE (single source of truth)
+// - Uses same Classifier & BucketManager as local runs
 // ============================================================================
 
 const ARTIFACTS_DIR = process.env.ARTIFACTS_DIR || path.join(__dirname, '../artifacts');
@@ -25,8 +32,10 @@ interface Post {
 }
 
 async function mergeOutputs() {
+    const start = Date.now();
     console.log('Starting merge of batch outputs...');
 
+    // Create output directory
     if (!fs.existsSync(OUTPUT_DIR)) {
         fs.mkdirSync(OUTPUT_DIR, { recursive: true });
     }
@@ -51,16 +60,16 @@ async function mergeOutputs() {
 
     let mergedPosts: Post[] = [];
 
-    // Load existing daily data if any
+    // Load existing daily data if any (from previous runs today)
     if (fs.existsSync(dailyFile)) {
         try {
             mergedPosts = JSON.parse(fs.readFileSync(dailyFile, 'utf-8'));
-            // Build fingerprints from existing posts
             for (const post of mergedPosts) {
                 if (post.fullText) {
                     fingerprints.add(post.fullText.substring(0, 100));
                 }
             }
+            console.log(`Loaded ${mergedPosts.length} existing posts from today.`);
         } catch {
             console.log('Could not read daily file, starting fresh.');
         }
@@ -78,8 +87,12 @@ async function mergeOutputs() {
 
     console.log(`Found ${batchDirs.length} batch artifacts.`);
 
+    // ========================================
+    // STEP 1: Merge all batch JSON files
+    // ========================================
+    let newPostsCount = 0;
+
     for (const batchDir of batchDirs) {
-        // Look for daily JSON files in each batch output
         const files = fs.readdirSync(batchDir)
             .filter(f => f.match(/^\d{4}-\d{2}-\d{2}\.json$/));
 
@@ -101,43 +114,66 @@ async function mergeOutputs() {
 
                     mergedPosts.push(post);
                     indexSet.add(post.link);
+                    newPostsCount++;
                 }
             } catch (e) {
                 console.error(`Error reading ${file}:`, e);
             }
         }
 
-        // Also copy error logs if present
+        // Merge error logs
         const errorLog = path.join(batchDir, 'error-log.json');
         if (fs.existsSync(errorLog)) {
             const mainErrorLog = path.join(OUTPUT_DIR, 'error-log.json');
             let errors: any[] = [];
-
             if (fs.existsSync(mainErrorLog)) {
-                try {
-                    errors = JSON.parse(fs.readFileSync(mainErrorLog, 'utf-8'));
-                } catch { }
+                try { errors = JSON.parse(fs.readFileSync(mainErrorLog, 'utf-8')); } catch { }
             }
-
             try {
                 const batchErrors = JSON.parse(fs.readFileSync(errorLog, 'utf-8'));
                 errors.push(...batchErrors);
             } catch { }
-
             fs.writeFileSync(mainErrorLog, JSON.stringify(errors, null, 2), 'utf-8');
         }
     }
 
-    // Sort by created_at (newest first)
-    mergedPosts.sort((a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
+    console.log(`Merged ${newPostsCount} new posts. Total: ${mergedPosts.length}`);
 
-    // Write merged output
+    // Sort by created_at (newest first)
+    mergedPosts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+    // Write merged daily file
     fs.writeFileSync(dailyFile, JSON.stringify(mergedPosts, null, 2), 'utf-8');
     fs.writeFileSync(INDEX_FILE, JSON.stringify(Array.from(indexSet), null, 2), 'utf-8');
 
-    console.log(`Merge complete. Total posts: ${mergedPosts.length}`);
+    // ========================================
+    // STEP 2: Run Classification ONCE
+    // Uses the SAME Classifier & BucketManager as local runs
+    // ========================================
+    console.log('Starting Classification & Aggregation...');
+
+    const classifier = new Classifier();
+    const bucketManager = new BucketManager(OUTPUT_DIR);
+    await bucketManager.init();
+
+    let totalClassified = 0;
+
+    for (const post of mergedPosts) {
+        const classifications = classifier.classify(post.title, post.description);
+        if (classifications.length > 0) {
+            for (const cls of classifications) {
+                bucketManager.addPost(post as any, cls);
+            }
+            totalClassified++;
+        }
+    }
+
+    // This generates: data/, manifests/, sitemaps/, manifest.json, sitemap-index.xml
+    await bucketManager.flush();
+
+    const end = Date.now();
+    console.log(`Merge complete in ${((end - start) / 1000).toFixed(2)}s.`);
+    console.log(`Total posts: ${mergedPosts.length} | Classified: ${totalClassified}`);
 }
 
 mergeOutputs().catch(console.error);

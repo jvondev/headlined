@@ -652,32 +652,36 @@ async function run() {
 
     console.log(`Scrape finished. Added ${newItemsCount} items.`);
 
-    // Classification (incremental - only process new posts)
-    console.log("Starting Aggregation & Classification...");
+    // Classification: Only run in LOCAL mode (not batch mode)
+    // In GitHub Actions, classification runs ONCE in merge-outputs.ts
+    // This ensures single source of truth and faster parallel execution
+    if (batch === null) {
+        console.log("Starting Aggregation & Classification...");
 
-    const classifier = new Classifier();
-    const bucketManager = new BucketManager(OUTPUT_DIR);
-    await bucketManager.init();
+        const classifier = new Classifier();
+        const bucketManager = new BucketManager(OUTPUT_DIR);
+        await bucketManager.init();
 
-    // Only process today's file for incremental classification
-    // Full retroactive classification can be done separately if needed
-    let totalClassified = 0;
+        let totalClassified = 0;
 
-    for (const post of dailyData) {
-        // Skip if already classified (check if it exists in any bucket)
-        const classifications = classifier.classify(post.title, post.description);
-        if (classifications.length > 0) {
-            for (const cls of classifications) {
-                bucketManager.addPost(post, cls);
+        for (const post of dailyData) {
+            const classifications = classifier.classify(post.title, post.description);
+            if (classifications.length > 0) {
+                for (const cls of classifications) {
+                    bucketManager.addPost(post, cls);
+                }
+                totalClassified++;
             }
-            totalClassified++;
         }
+
+        await bucketManager.flush();
+
+        const end = Date.now();
+        console.log(`Job Complete in ${((end - start) / 1000).toFixed(2)}s. Classified ${totalClassified} posts.`);
+    } else {
+        const end = Date.now();
+        console.log(`Batch ${batch} complete in ${((end - start) / 1000).toFixed(2)}s. Classification will run in merge step.`);
     }
-
-    await bucketManager.flush();
-
-    const end = Date.now();
-    console.log(`Job Complete in ${((end - start) / 1000).toFixed(2)}s. Classified ${totalClassified} posts.`);
 }
 
 run().catch(console.error);
