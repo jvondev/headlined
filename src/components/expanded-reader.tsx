@@ -55,6 +55,7 @@ interface ExpandedReaderProps {
     // Export props
     onDownload?: (platform: 'tiktok' | 'instagram') => void;
     isExporting?: boolean;
+    date?: string;
 }
 
 interface Section {
@@ -279,147 +280,7 @@ const ReadingProgressBar = ({ progress }: { progress: number }) => (
     </div>
 );
 
-// Floating Action Bar Component
-const FloatingActionBar = ({
-    hasMoreContent,
-    isGenerating,
-    remainingSections,
-    onContinue,
-    onReadFull,
-    onCopyLink,
-    isDarkMode,
-    linkCopied,
-    onDownload,
-    isExporting
-}: {
-    hasMoreContent: boolean;
-    isGenerating: boolean;
-    remainingSections: number;
-    onContinue: () => void;
-    onReadFull: () => void;
-    onCopyLink: () => void;
-    isDarkMode: boolean;
-    linkCopied: boolean;
-    onDownload?: (platform: 'tiktok' | 'instagram') => void;
-    isExporting?: boolean;
-}) => (
-    <motion.div
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        // FIXED: Centering with fixed positioning logic
-        className={cn(
-            "fixed bottom-6 left-1/2 -translate-x-1/2 z-50",
-            "flex items-center justify-center max-w-[90vw] overflow-x-auto no-scrollbar",
-            // FIXED: Mobile overflow handling
-            "p-1.5 rounded-2xl gap-2",
-            "backdrop-blur-xl border shadow-2xl",
-            isDarkMode
-                ? "bg-zinc-900/90 border-white/10"
-                : "bg-white/90 border-zinc-200"
-        )}
-    >
-        {/* Continue Reading - Full button when has content */}
-        {hasMoreContent && (
-            <Button
-                onClick={onContinue}
-                disabled={isGenerating}
-                className={cn(
-                    "h-10 px-4 md:px-5 rounded-xl font-medium transition-all whitespace-nowrap",
-                    "bg-white text-zinc-900 hover:bg-zinc-100",
-                    isGenerating && "opacity-50 cursor-not-allowed"
-                )}
-            >
-                <ChevronDown className={cn(
-                    "w-4 h-4 mr-2",
-                    isGenerating && "animate-bounce"
-                )} />
-                {isGenerating ? "Loading" : "Continue"}
-                {!isGenerating && remainingSections > 0 && (
-                    <span className="ml-2 text-xs opacity-60 hidden sm:inline">
-                        ({remainingSections})
-                    </span>
-                )}
-            </Button>
-        )}
 
-        {/* Export Dropdown - Restored */}
-        {onDownload && (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-10 w-10 rounded-xl hover:bg-white/10"
-                        disabled={isExporting}
-                    >
-                        {isExporting ? (
-                            <Loader2 className="w-5 h-5 animate-spin text-zinc-400" />
-                        ) : (
-                            <Download className="w-5 h-5" />
-                        )}
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                    align="center"
-                    side="top"
-                    sideOffset={12}
-                    className="min-w-[160px] p-1.5 bg-[#121212]/95 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-xl z-[120]"
-                >
-                    <DropdownMenuLabel className="px-2 py-1.5 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
-                        Share As Image
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-white/[0.08] mx-1 my-1" />
-                    <DropdownMenuItem
-                        onClick={() => onDownload('tiktok')}
-                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-zinc-300 focus:text-white focus:bg-white/[0.08] cursor-pointer"
-                    >
-                        <div className="p-1 rounded bg-zinc-800">
-                            <Music2 className="w-3.5 h-3.5" />
-                        </div>
-                        <span className="text-xs font-medium">TikTok Story</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => onDownload('instagram')}
-                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-zinc-300 focus:text-white focus:bg-white/[0.08] cursor-pointer"
-                    >
-                        <div className="p-1 rounded bg-zinc-800">
-                            <Instagram className="w-3.5 h-3.5" />
-                        </div>
-                        <span className="text-xs font-medium">Instagram</span>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        )}
-
-        {/* Read Full Story - Icon only */}
-        {!hasMoreContent && (
-            <Button
-                onClick={onReadFull}
-                className={cn(
-                    "h-10 px-5 rounded-xl font-medium transition-all whitespace-nowrap",
-                    "bg-white text-zinc-900 hover:bg-zinc-100"
-                )}
-            >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Read Full
-            </Button>
-        )}
-
-        {/* Copy Link */}
-        <Button
-            onClick={onCopyLink}
-            variant="ghost"
-            className="h-10 w-10 p-0 rounded-xl"
-            title="Copy Link"
-        >
-            {linkCopied ? (
-                <Check className="w-4 h-4 text-emerald-400" />
-            ) : (
-                <Link2 className="w-4 h-4" />
-            )}
-        </Button>
-    </motion.div>
-);
 
 export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     fullText,
@@ -433,9 +294,52 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     onContinueRequest,
     articleUrl,
     onDownload,
-    isExporting
+    isExporting,
+    date
 }) => {
     const contentToDisplay = fullText || description || "";
+
+    // URL rewriting disabled - modal stays on current page
+
+    // Scroll Progress Logic (Interactive)
+    const [readingProgress, setReadingProgress] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            let scrollTop = 0;
+            let scrollHeight = 0;
+            let clientHeight = 0;
+
+            const container = document.getElementById('post-view-scroll-container');
+            if (container) {
+                scrollTop = container.scrollTop;
+                scrollHeight = container.scrollHeight;
+                clientHeight = container.clientHeight;
+            } else {
+                scrollTop = window.scrollY;
+                scrollHeight = document.documentElement.scrollHeight;
+                clientHeight = window.innerHeight;
+            }
+
+            if (scrollHeight > clientHeight) {
+                const p = (scrollTop / (scrollHeight - clientHeight)) * 100;
+                setReadingProgress(Math.min(100, Math.max(0, p)));
+            }
+        };
+
+        const container = document.getElementById('post-view-scroll-container');
+        if (container) {
+            container.addEventListener('scroll', handleScroll);
+        }
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            if (container) {
+                container.removeEventListener('scroll', handleScroll);
+            }
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
     // Section state
     const [sections, setSections] = useState<Section[]>([]);
@@ -465,12 +369,15 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
         setCurrentSectionIndex(0);
     }, [contentToDisplay]);
 
-    // Calculate progress
-    const progress = useMemo(() => {
+    // Calculate loaded percentage (Max available)
+    const loadedPercentage = useMemo(() => {
         if (sections.length === 0) return 0;
         const generatedCount = sections.filter(s => s.isGenerated).length;
         return Math.round((generatedCount / sections.length) * 100);
     }, [sections]);
+
+    // Calculate effective progress bar value (0 to loadedPercentage)
+    const globalProgress = (readingProgress / 100) * loadedPercentage;
 
     // Remaining time estimation
     const remainingTime = useMemo(() => {
@@ -479,22 +386,6 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
         const remainingRatio = 1 - (generatedCount / sections.length);
         return Math.max(1, Math.ceil(readingTime * remainingRatio));
     }, [sections, readingTime]);
-
-    // URL Management - Update URL to /read/[slug] when open
-    const [originalUrl, setOriginalUrl] = useState<string>("");
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const current = window.location.href;
-            setOriginalUrl(current);
-            const newUrl = `${window.location.origin}/read/${slug}`;
-            window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
-
-            return () => {
-                window.history.replaceState({ ...window.history.state, as: current, url: current }, '', current);
-            };
-        }
-    }, [slug]);
 
     // Progressive Auto-Scroll (Parallel with generation)
     useEffect(() => {
@@ -647,7 +538,8 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
             onTouchEnd={handleTextSelection}
         >
             {/* ... (Progress Bar, Header, Content Area) ... */}
-            <ReadingProgressBar progress={progress} />
+            {/* ... (Progress Bar, Header, Content Area) ... */}
+            <ReadingProgressBar progress={globalProgress} />
 
             {/* Sticky Reader Controls Header */}
             <div className={cn(
@@ -664,7 +556,7 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                             isDarkMode ? "bg-white/5" : "bg-zinc-100"
                         )}>
                             <Sparkles className="w-3 h-3 text-zinc-400" />
-                            <span>{progress}% read</span>
+                            <span>{loadedPercentage}% loaded</span>
                         </div>
                         {hasMoreContent && (
                             <div className={cn(
