@@ -545,7 +545,7 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
 
             {/* Sticky Reader Controls Header */}
             <div className={cn(
-                "sticky top-0 z-40 border-b backdrop-blur-xl",
+                "sticky top-0 z-40 border-b backdrop-blur-xl transition-all duration-300",
                 isDarkMode
                     ? "bg-zinc-950/90 border-white/5"
                     : "bg-white/90 border-zinc-200"
@@ -554,7 +554,7 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                     {/* Reading Stats */}
                     <div className="flex items-center gap-3 text-xs">
                         <div className={cn(
-                            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full",
+                            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-colors",
                             isDarkMode ? "bg-white/5" : "bg-zinc-100"
                         )}>
                             <Sparkles className="w-3 h-3 text-zinc-400" />
@@ -562,7 +562,7 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                         </div>
                         {hasMoreContent && (
                             <div className={cn(
-                                "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full",
+                                "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full hidden sm:flex transition-colors",
                                 isDarkMode ? "bg-white/5" : "bg-zinc-100"
                             )}>
                                 <Clock className="w-3 h-3" />
@@ -573,67 +573,190 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
 
                     {/* Controls */}
                     <div className="flex items-center gap-1">
-                        {/* Font Size */}
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 rounded-full"
-                            onClick={decreaseFontSize}
-                        >
-                            <Minus className="w-3.5 h-3.5" />
-                        </Button>
-                        <span className="text-xs w-8 text-center font-mono">{fontSize}</span>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 rounded-full"
-                            onClick={increaseFontSize}
-                        >
-                            <Plus className="w-3.5 h-3.5" />
-                        </Button>
+                        {/* Desktop: Expanded Controls */}
+                        <div className="hidden md:flex items-center gap-1">
+                            {/* Font Size */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 rounded-full"
+                                onClick={decreaseFontSize}
+                            >
+                                <Minus className="w-3.5 h-3.5" />
+                            </Button>
+                            <span className="text-xs w-8 text-center font-mono">{fontSize}</span>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 rounded-full"
+                                onClick={increaseFontSize}
+                            >
+                                <Plus className="w-3.5 h-3.5" />
+                            </Button>
 
-                        <div className="w-px h-4 bg-white/10 mx-1" />
+                            <div className="w-px h-4 bg-white/10 mx-1" />
 
-                        {/* Highlight Toggle */}
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className={cn(
-                                "h-8 w-8 rounded-full",
-                                highlightsEnabled && "bg-blue-500/20 text-blue-400"
-                            )}
-                            onClick={() => setHighlightsEnabled(!highlightsEnabled)}
-                            title={highlightsEnabled ? "Hide highlights" : "Show highlights"}
-                        >
-                            <Highlighter className="w-4 h-4" />
-                        </Button>
+                            {/* Highlight Toggle */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className={cn(
+                                    "h-8 w-8 rounded-full",
+                                    highlightsEnabled && "bg-blue-500/20 text-blue-400"
+                                )}
+                                onClick={() => setHighlightsEnabled(!highlightsEnabled)}
+                                title={highlightsEnabled ? "Hide highlights" : "Show highlights"}
+                            >
+                                <Highlighter className="w-4 h-4" />
+                            </Button>
 
-                        {/* TTS */}
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className={cn(
-                                "h-8 w-8 rounded-full",
-                                isSpeaking && "bg-emerald-500/20 text-emerald-400"
-                            )}
-                            onClick={toggleSpeech}
-                        >
-                            {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                        </Button>
+                            {/* TTS */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className={cn(
+                                    "h-8 w-8 rounded-full",
+                                    isSpeaking && "bg-emerald-500/20 text-emerald-400"
+                                )}
+                                onClick={toggleSpeech}
+                            >
+                                {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                            </Button>
 
-                        {/* Dark Mode Toggle */}
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 rounded-full"
-                            onClick={() => {
-                                const newMode = !isDarkMode;
-                                setIsDarkMode(newMode);
-                                onThemeChange?.(newMode);
-                            }}
-                        >
-                            {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                        </Button>
+                            {/* Dark Mode Toggle */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 rounded-full"
+                                onClick={() => {
+                                    const newMode = !isDarkMode;
+                                    setIsDarkMode(newMode);
+                                    onThemeChange?.(newMode);
+                                }}
+                            >
+                                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                            </Button>
+                        </div>
+
+                        {/* Mobile: Grouped Settings Menu */}
+                        <div className="md:hidden">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className={cn(
+                                            "h-9 w-9 p-0 rounded-full font-serif italic text-lg font-medium shadow-sm border",
+                                            isDarkMode
+                                                ? "bg-white/10 border-white/10 text-zinc-100 hover:bg-white/20"
+                                                : "bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200"
+                                        )}
+                                    >
+                                        Aa
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    align="end"
+                                    sideOffset={8}
+                                    className={cn(
+                                        "min-w-[220px] p-4 backdrop-blur-xl border rounded-2xl shadow-xl z-[150]",
+                                        isDarkMode
+                                            ? "bg-[#121212]/95 border-white/[0.08]"
+                                            : "bg-white/95 border-zinc-200"
+                                    )}
+                                >
+                                    <div className="space-y-4">
+                                        {/* Font Size Control */}
+                                        <div className="flex items-center justify-between">
+                                            <span className={cn("text-xs font-medium uppercase tracking-wider", isDarkMode ? "text-zinc-400" : "text-zinc-500")}>
+                                                Font Size
+                                            </span>
+                                            <div className={cn(
+                                                "flex items-center gap-2 rounded-full p-0.5 border",
+                                                isDarkMode ? "bg-white/5 border-white/10" : "bg-zinc-100 border-zinc-200"
+                                            )}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className={cn("h-7 w-7 rounded-full", isDarkMode ? "text-zinc-300 hover:text-white hover:bg-white/10" : "text-zinc-600 hover:text-zinc-900 hover:bg-white")}
+                                                    onClick={decreaseFontSize}
+                                                >
+                                                    <Minus className="w-4 h-4" />
+                                                </Button>
+                                                <span className={cn("text-sm w-8 text-center font-bold font-mono", isDarkMode ? "text-white" : "text-zinc-900")}>
+                                                    {fontSize}
+                                                </span>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className={cn("h-7 w-7 rounded-full", isDarkMode ? "text-zinc-300 hover:text-white hover:bg-white/10" : "text-zinc-600 hover:text-zinc-900 hover:bg-white")}
+                                                    onClick={increaseFontSize}
+                                                >
+                                                    <Plus className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                        <DropdownMenuSeparator className={cn("my-2", isDarkMode ? "bg-white/10" : "bg-zinc-200")} />
+
+                                        {/* Toggles */}
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {/* Highlight */}
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className={cn(
+                                                    "h-auto py-2 flex flex-col gap-2 rounded-xl border transition-all duration-300",
+                                                    highlightsEnabled
+                                                        ? (isDarkMode ? "bg-blue-500/20 border-blue-500/30 text-blue-400" : "bg-blue-50 border-blue-200 text-blue-600")
+                                                        : (isDarkMode ? "bg-zinc-800/50 border-white/5 text-zinc-400 hover:bg-zinc-800" : "bg-zinc-100 border-zinc-200 text-zinc-500")
+                                                )}
+                                                onClick={() => setHighlightsEnabled(!highlightsEnabled)}
+                                            >
+                                                <Highlighter className="w-4 h-4" />
+                                                <span className="text-[10px] font-medium">Highlight</span>
+                                            </Button>
+
+                                            {/* Audio */}
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className={cn(
+                                                    "h-auto py-2 flex flex-col gap-2 rounded-xl border transition-all duration-300",
+                                                    isSpeaking
+                                                        ? (isDarkMode ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400" : "bg-emerald-50 border-emerald-200 text-emerald-600")
+                                                        : (isDarkMode ? "bg-zinc-800/50 border-white/5 text-zinc-400 hover:bg-zinc-800" : "bg-zinc-100 border-zinc-200 text-zinc-500")
+                                                )}
+                                                onClick={toggleSpeech}
+                                            >
+                                                {isSpeaking ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                                                <span className="text-[10px] font-medium">Read</span>
+                                            </Button>
+
+                                            {/* Theme */}
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className={cn(
+                                                    "h-auto py-2 flex flex-col gap-2 rounded-xl border transition-all duration-300",
+                                                    isDarkMode
+                                                        ? "bg-white/10 border-white/10 text-zinc-100"
+                                                        : "bg-amber-100 border-amber-200 text-amber-700"
+                                                )}
+                                                onClick={() => {
+                                                    const newMode = !isDarkMode;
+                                                    setIsDarkMode(newMode);
+                                                    onThemeChange?.(newMode);
+                                                }}
+                                            >
+                                                {isDarkMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+                                                <span className="text-[10px] font-medium">{isDarkMode ? 'Dark' : 'Light'}</span>
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     </div>
                 </div>
             </div>
