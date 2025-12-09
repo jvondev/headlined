@@ -104,6 +104,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     const [isGeneratingContent, setIsGeneratingContent] = useState(false);
     const [remainingSections, setRemainingSections] = useState(0);
     const [readerDarkMode, setReaderDarkMode] = useState(true);
+    // Track sticky header state for mobile close button "morph"
+    const [isMobileHeaderSticky, setIsMobileHeaderSticky] = useState(false);
 
     // Gestures
     const y = useMotionValue(0);
@@ -466,8 +468,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                             </div>
 
                             <motion.div
-                                className="relative w-full h-full flex flex-col will-change-transform touch-pan-y overflow-y-auto"
-                                id="post-view-scroll-container"
+                                className="relative w-full h-full flex flex-col will-change-transform touch-pan-y overflow-hidden"
                                 style={{ x, y, opacity: opacityScale, scale: scaleAnim }}
                                 onTouchStart={handleTouchStart}
                                 onTouchMove={handleTouchMove}
@@ -480,10 +481,16 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                         e.stopPropagation();
                                         setIsExpanded(false);
                                     }}
-                                    className="absolute top-6 right-6 z-[60] p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all active:scale-95 shadow-lg"
+                                    className={cn(
+                                        "absolute top-6 right-6 z-[60] p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all active:scale-95 shadow-lg",
+                                        isMobileHeaderSticky && "md:opacity-100 md:pointer-events-auto pointer-events-none"
+                                    )}
                                     initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 0.2 }}
+                                    animate={{
+                                        opacity: isMobileHeaderSticky ? 0 : 1,
+                                        scale: 1
+                                    }}
+                                    transition={{ duration: 0.2 }}
                                 >
                                     <X className="w-5 h-5" />
                                 </motion.button>
@@ -491,7 +498,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                 {/* Single Scrollable Container */}
                                 <div
                                     ref={scrollContainerRef}
-                                    className="flex-1 overflow-y-auto no-scrollbar overscroll-contain"
+                                    id="post-view-scroll-container"
+                                    className="flex-1 overflow-y-auto no-scrollbar overscroll-contain pb-32"
                                 >
                                     {/* Hero Section - Scrolls with content */}
                                     <div className="relative w-full h-[45vh] md:h-[55vh] overflow-hidden">
@@ -558,6 +566,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                             onDownload={handleDownload}
                                             isExporting={isExporting}
                                             onThemeChange={(isDark) => setReaderDarkMode(isDark)}
+                                            onClose={() => setIsExpanded(false)}
+                                            onStickyChange={setIsMobileHeaderSticky}
                                         />
                                     </div>
                                 </div>

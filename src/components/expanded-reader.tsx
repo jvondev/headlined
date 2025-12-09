@@ -23,7 +23,8 @@ import {
     Download,
     Loader2,
     Music2,
-    Instagram
+    Instagram,
+    X,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import {
@@ -57,7 +58,11 @@ interface ExpandedReaderProps {
     isExporting?: boolean;
     date?: string;
     // Theme sync callback
+    // Theme sync callback
     onThemeChange?: (isDark: boolean) => void;
+    // Close & Sticky Sync
+    onClose?: () => void;
+    onStickyChange?: (isSticky: boolean) => void;
 }
 
 interface Section {
@@ -286,7 +291,9 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     onDownload,
     isExporting,
     date,
-    onThemeChange
+    onThemeChange,
+    onClose,
+    onStickyChange
 }) => {
     const contentToDisplay = fullText || description || "";
 
@@ -294,6 +301,7 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
 
     // Scroll Progress Logic (Interactive)
     const [readingProgress, setReadingProgress] = useState(0);
+    const [isHeaderSticky, setIsHeaderSticky] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -316,13 +324,20 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                 const p = (scrollTop / (scrollHeight - clientHeight)) * 100;
                 setReadingProgress(Math.min(100, Math.max(0, p)));
             }
+
+            // Sticky Header Detection for Mobile "Morph" Close Button
+            // Only apply on mobile (< 768px / md breakpoint)
+            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+            const isSticky = isMobile && scrollTop > 100;
+            onStickyChange?.(isSticky);
+            setIsHeaderSticky(isSticky);
         };
 
         const container = document.getElementById('post-view-scroll-container');
         if (container) {
             container.addEventListener('scroll', handleScroll);
         }
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
 
         return () => {
             if (container) {
@@ -363,6 +378,7 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
 
     // Refs
     const containerRef = useRef<HTMLDivElement>(null);
+    const stickyHeaderRef = useRef<HTMLDivElement>(null);
     const contentEndRef = useRef<HTMLDivElement>(null);
     const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
 
@@ -544,12 +560,14 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
         >
 
             {/* Sticky Reader Controls Header */}
-            <div className={cn(
-                "sticky top-0 z-40 border-b backdrop-blur-xl transition-all duration-300",
-                isDarkMode
-                    ? "bg-zinc-950/90 border-white/5"
-                    : "bg-white/90 border-zinc-200"
-            )}>
+            <div
+                ref={stickyHeaderRef}
+                className={cn(
+                    "sticky top-0 z-40 border-b backdrop-blur-xl transition-all duration-300",
+                    isDarkMode
+                        ? "bg-zinc-950/90 border-white/5"
+                        : "bg-white/90 border-zinc-200"
+                )}>
                 <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
                     {/* Reading Stats */}
                     <div className="flex items-center gap-3 text-xs">
@@ -638,8 +656,8 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                             </Button>
                         </div>
 
-                        {/* Mobile: Grouped Settings Menu */}
-                        <div className="md:hidden">
+                        {/* Mobile: Grouped Settings Menu + Close Morph */}
+                        <div className="md:hidden flex items-center">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button
@@ -756,6 +774,24 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                                     </div>
                                 </DropdownMenuContent>
                             </DropdownMenu>
+
+                            {/* Local Close Button (Right of Aa, appears when sticky) */}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={onClose}
+                                className={cn(
+                                    "rounded-full shadow-sm border transition-all duration-300",
+                                    isDarkMode
+                                        ? "bg-white/10 border-white/10 text-zinc-100 hover:bg-white/20 hover:text-white"
+                                        : "bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200 hover:text-black",
+                                    isHeaderSticky
+                                        ? "w-9 h-9 p-0 opacity-100 scale-100 ml-2"
+                                        : "w-0 h-0 p-0 opacity-0 scale-0 ml-0 overflow-hidden border-none"
+                                )}
+                            >
+                                <X className="w-5 h-5" />
+                            </Button>
                         </div>
                     </div>
                 </div>
