@@ -5,7 +5,7 @@ import { Post } from '@/types';
 import { PostCarousel } from '@/components/post-carousel';
 import { OnboardingProvider } from '@/context/onboarding-provider';
 import { SEO_DATA_URL } from '@/lib/seo-config';
-
+import { checkLicenseStatus } from "@/lib/license-manager";
 // Define the shape of data from our scraper
 interface ScraperPost {
     slug: string;
@@ -15,6 +15,8 @@ interface ScraperPost {
     thumbnail_url: string;
     created_at: string;
     topic: string;
+    full_text?: string;
+    min?: number;
 }
 
 interface SeoFeedProps {
@@ -25,6 +27,11 @@ interface SeoFeedProps {
 
 export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
     const [posts, setPosts] = useState<ScraperPost[]>(initialPosts);
+    const [isPremium, setIsPremium] = useState(false);
+
+    useEffect(() => {
+        checkLicenseStatus().then(setIsPremium);
+    }, []);
 
     useEffect(() => {
         // Hydrate/Refresh from CDN to get the absolute latest if build is stale
@@ -45,6 +52,20 @@ export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
         fetchFreshData();
     }, [category, slug]);
 
+    // Ad Injection Logic
+    const createNativeAdPost = (): Post => {
+        return {
+            slug: `ad-native-${Math.random().toString(36).substr(2, 9)}`,
+            title: 'Sponsored Content',
+            description: 'Sponsored',
+            link: '#',
+            thumbnail_url: null,
+            topic: 'Sponsored',
+            summaries: [],
+            date: new Date().toISOString().split('T')[0]
+        };
+    };
+
     // Map to 'Post' type
     const mappedPosts: Post[] = posts.map(p => ({
         slug: p.slug || 'unknown',
@@ -54,17 +75,37 @@ export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
         thumbnail_url: p.thumbnail_url,
         topic: p.topic || category,
         summaries: [], // SEO posts don't have generated summaries yet
-        date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+        date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        fullText: p.full_text || null,
+        readingTime: p.min
     }));
+
+    // Inject Ads
+    const postsWithAds = (() => {
+        if (isPremium) return mappedPosts;
+
+        const withAds: Post[] = [];
+        let nextAdDistance = Math.floor(Math.random() * 5) + 4;
+
+        for (const post of mappedPosts) {
+            withAds.push(post);
+            nextAdDistance -= 1;
+
+            if (nextAdDistance <= 0) {
+                withAds.push(createNativeAdPost());
+                nextAdDistance = Math.floor(Math.random() * 5) + 4;
+            }
+        }
+        return withAds;
+    })();
 
     return (
         <div className="h-full w-full">
             <OnboardingProvider>
                 <PostCarousel
-                    posts={mappedPosts}
+                    posts={postsWithAds}
                     topicName={category}
-                    // Ensure checking for premium status isn't checking 'undefined'
-                    isPremium={false} // Start as false, let it hydrate
+                    isPremium={isPremium}
                 />
             </OnboardingProvider>
         </div>
