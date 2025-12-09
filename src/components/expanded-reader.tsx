@@ -56,6 +56,8 @@ interface ExpandedReaderProps {
     onDownload?: (platform: 'tiktok' | 'instagram') => void;
     isExporting?: boolean;
     date?: string;
+    // Theme sync callback
+    onThemeChange?: (isDark: boolean) => void;
 }
 
 interface Section {
@@ -268,17 +270,7 @@ const AdSlot = ({ index }: { index: number }) => (
     </div>
 );
 
-// Reading Progress Bar - Solid monochrome
-const ReadingProgressBar = ({ progress }: { progress: number }) => (
-    <div className="fixed top-0 left-0 right-0 h-0.5 bg-zinc-800/50 z-50">
-        <motion.div
-            className="h-full bg-zinc-400"
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.3 }}
-        />
-    </div>
-);
+// Reading Progress Bar component removed - progress shown inline
 
 
 
@@ -295,7 +287,8 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     articleUrl,
     onDownload,
     isExporting,
-    date
+    date,
+    onThemeChange
 }) => {
     const contentToDisplay = fullText || description || "";
 
@@ -369,15 +362,13 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
         setCurrentSectionIndex(0);
     }, [contentToDisplay]);
 
-    // Calculate loaded percentage (Max available)
-    const loadedPercentage = useMemo(() => {
+    // Calculate read progress percentage
+    const readProgress = useMemo(() => {
         if (sections.length === 0) return 0;
         const generatedCount = sections.filter(s => s.isGenerated).length;
         return Math.round((generatedCount / sections.length) * 100);
     }, [sections]);
 
-    // Calculate effective progress bar value (0 to loadedPercentage)
-    const globalProgress = (readingProgress / 100) * loadedPercentage;
 
     // Remaining time estimation
     const remainingTime = useMemo(() => {
@@ -537,9 +528,6 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
             onMouseUp={handleTextSelection}
             onTouchEnd={handleTextSelection}
         >
-            {/* ... (Progress Bar, Header, Content Area) ... */}
-            {/* ... (Progress Bar, Header, Content Area) ... */}
-            <ReadingProgressBar progress={globalProgress} />
 
             {/* Sticky Reader Controls Header */}
             <div className={cn(
@@ -556,7 +544,7 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                             isDarkMode ? "bg-white/5" : "bg-zinc-100"
                         )}>
                             <Sparkles className="w-3 h-3 text-zinc-400" />
-                            <span>{loadedPercentage}% loaded</span>
+                            <span>{readProgress}% read</span>
                         </div>
                         {hasMoreContent && (
                             <div className={cn(
@@ -624,7 +612,11 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 rounded-full"
-                            onClick={() => setIsDarkMode(!isDarkMode)}
+                            onClick={() => {
+                                const newMode = !isDarkMode;
+                                setIsDarkMode(newMode);
+                                onThemeChange?.(newMode);
+                            }}
                         >
                             {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                         </Button>

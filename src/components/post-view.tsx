@@ -103,6 +103,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     const [hasMoreContent, setHasMoreContent] = useState(false);
     const [isGeneratingContent, setIsGeneratingContent] = useState(false);
     const [remainingSections, setRemainingSections] = useState(0);
+    const [readerDarkMode, setReaderDarkMode] = useState(true);
 
     // Gestures
     const y = useMotionValue(0);
@@ -550,6 +551,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                             onContinueRequest={() => { }}
                                             onDownload={handleDownload}
                                             isExporting={isExporting}
+                                            onThemeChange={(isDark) => setReaderDarkMode(isDark)}
                                         />
                                     </div>
                                 </div>
@@ -566,6 +568,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                     onDownload={handleDownload}
                                     isExporting={isExporting}
                                     visible={!isGeneratingContent}
+                                    isDarkMode={readerDarkMode}
                                 />
                             </motion.div>
                         </motion.div>
