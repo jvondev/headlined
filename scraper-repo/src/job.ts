@@ -495,6 +495,13 @@ async function processItem(item: any, source: any): Promise<Post | null> {
     // Extract full text from fetched HTML
     if (articleHtml) {
         extracted = extractArticle(articleHtml, link);
+
+        // Double-check extracted full text for promotional content
+        // This catches things like the "Bonnie Blue" article where title/desc might pass but content is inappropriate
+        if (extracted.fullText && isPromotionalContent(extracted.fullText)) {
+            console.log(`[Filter] Blocked by content check: ${title}`);
+            return null;
+        }
     }
 
     if (thumbnail_url && bannedThumbnails.includes(thumbnail_url)) {
