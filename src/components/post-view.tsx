@@ -7,7 +7,7 @@ import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { ExternalLink, X, Sparkles, Clock, ChevronRight, Lock, Bookmark, Heart, Download, Loader2, Instagram, Music2 } from "lucide-react";
+import { ExternalLink, X, Sparkles, Clock, ChevronRight, Lock, Bookmark, Heart, Download, Loader2, Instagram, Music2, Link2 } from "lucide-react";
 import { Button } from "./ui/button";
 import {
     DropdownMenu,
@@ -97,6 +97,11 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     const [base64Thumbnail, setBase64Thumbnail] = useState<string | null>(null);
     const exportRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    // ExpandedReader continue state
+    const [hasMoreContent, setHasMoreContent] = useState(false);
+    const [isGeneratingContent, setIsGeneratingContent] = useState(false);
+    const [remainingSections, setRemainingSections] = useState(0);
 
     // Gestures
     const y = useMotionValue(0);
@@ -518,9 +523,9 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                     </div>
 
                                     {/* Content Body - Dark Mode */}
-                                    <div className="relative z-10 bg-zinc-950 -mt-6 rounded-t-[30px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border-t border-white/5 overflow-hidden">
+                                    <div className="relative z-10 bg-zinc-950 -mt-6 rounded-t-[30px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border-t border-white/5">
                                         {/* Drag Handle Indicator */}
-                                        <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mt-4 mb-2" />
+                                        <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mt-4 mb-2 sticky top-0 z-50" />
 
                                         {/* Expanded Reader Component */}
                                         <ExpandedReader
@@ -530,34 +535,77 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                             slug={post.slug}
                                             readingTime={post.readingTime || parseInt(readingTime) || 3}
                                             isPremium={isPremium}
+                                            articleUrl={post.link}
                                             onHighlightSave={(quote) => {
-                                                // Save quote to IndexedDB or show toast
                                                 console.log('Quote saved:', quote);
                                             }}
+                                            onContinueStateChange={(hasMore, isGen, remaining) => {
+                                                setHasMoreContent(hasMore);
+                                                setIsGeneratingContent(isGen);
+                                                setRemainingSections(remaining);
+                                            }}
+                                            onContinueRequest={() => { }}
+                                            onDownload={handleDownload}
+                                            isExporting={isExporting}
                                         />
                                     </div>
                                 </div>
 
                                 {/* Floating Action Dock */}
                                 <motion.div
-                                    className="fixed bottom-8 left-0 right-0 flex justify-center z-50 pointer-events-none"
+                                    className="fixed bottom-8 left-0 right-0 flex justify-center z-[110] pointer-events-none"
                                     initial={{ y: 100, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.3, type: "spring", stiffness: 200, damping: 20 }}
                                 >
                                     <div className="flex items-center gap-2 p-2 rounded-full bg-zinc-900/80 backdrop-blur-xl border border-white/10 shadow-2xl pointer-events-auto">
-                                        <Button
-                                            className="h-12 px-8 rounded-full font-bold text-base tracking-wide shadow-lg bg-white text-black hover:bg-zinc-200"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                window.open(post.link, "_blank");
-                                            }}
-                                        >
-                                            Read Full Story <ExternalLink className="w-4 h-4 ml-2" />
-                                        </Button>
+                                        {/* Primary Action Button (Continue Reading OR Read Full Story) */}
+                                        {hasMoreContent ? (
+                                            <Button
+                                                className="h-12 px-8 rounded-full font-bold text-base tracking-wide shadow-lg bg-white text-black hover:bg-zinc-200"
+                                                disabled={isGeneratingContent}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    (window as any).__expandedReaderContinue?.();
+                                                }}
+                                            >
+                                                {isGeneratingContent ? (
+                                                    <>Loading...</>
+                                                ) : (
+                                                    <>Continue Reading ({remainingSections})</>
+                                                )}
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                className="h-12 px-8 rounded-full font-bold text-base tracking-wide shadow-lg bg-white text-black hover:bg-zinc-200"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    window.open(post.link, "_blank");
+                                                }}
+                                            >
+                                                Read Full Story <ExternalLink className="w-4 h-4 ml-2" />
+                                            </Button>
+                                        )}
 
+                                        {/* Divider */}
                                         <div className="w-px h-6 bg-white/10 mx-1" />
 
+                                        {/* Secondary Read Full (when Continue is Primary) */}
+                                        {hasMoreContent && (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-12 w-12 rounded-full hover:bg-white/10 transition-all text-white"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    window.open(post.link, "_blank");
+                                                }}
+                                            >
+                                                <ExternalLink className="w-5 h-5" />
+                                            </Button>
+                                        )}
+
+                                        {/* Bookmark Button */}
                                         {onSave && (
                                             <Button
                                                 variant="ghost"
@@ -575,57 +623,74 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                             </Button>
                                         )}
 
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-12 w-12 rounded-full hover:bg-white/10 transition-all text-white"
-                                                    disabled={isExporting}
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    {isExporting ? (
-                                                        <Loader2 className="w-5 h-5 animate-spin" />
-                                                    ) : (
-                                                        <Download className="w-5 h-5" />
-                                                    )}
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent
-                                                align="end"
-                                                sideOffset={12}
-                                                className="min-w-[200px] p-1.5 bg-[#121212]/95 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-[0_20px_40px_-12px_rgba(0,0,0,0.8)] z-[120] animate-in fade-in-0 zoom-in-95 duration-200"
+                                        {/* Link & Download Group */}
+                                        <div className="flex items-center">
+                                            {/* Copy Link */}
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-12 w-12 rounded-full hover:bg-white/10 transition-all text-white"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigator.clipboard.writeText(window.location.href);
+                                                }}
                                             >
-                                                <DropdownMenuLabel className="px-2 py-1.5 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
-                                                    Share Target
-                                                </DropdownMenuLabel>
-                                                <DropdownMenuSeparator className="bg-white/[0.08] mx-1 my-1" />
-                                                <DropdownMenuItem
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDownload('tiktok');
-                                                    }}
-                                                    className="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium text-zinc-300 focus:text-white focus:bg-white/[0.08] cursor-pointer outline-none transition-all duration-200"
+                                                <Link2 className="w-5 h-5" />
+                                            </Button>
+
+                                            {/* Download Dropdown */}
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-12 w-12 rounded-full hover:bg-white/10 transition-all text-white"
+                                                        disabled={isExporting}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        {isExporting ? (
+                                                            <Loader2 className="w-5 h-5 animate-spin" />
+                                                        ) : (
+                                                            <Download className="w-5 h-5" />
+                                                        )}
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent
+                                                    align="end"
+                                                    sideOffset={12}
+                                                    className="min-w-[200px] p-1.5 bg-[#121212]/95 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-[0_20px_40px_-12px_rgba(0,0,0,0.8)] z-[120] animate-in fade-in-0 zoom-in-95 duration-200"
                                                 >
-                                                    <div className="p-1.5 rounded-md bg-zinc-800 group-focus:bg-zinc-700 transition-colors">
-                                                        <Music2 className="w-3.5 h-3.5 text-zinc-400 group-focus:text-white" />
-                                                    </div>
-                                                    <span>TikTok</span>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDownload('instagram');
-                                                    }}
-                                                    className="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium text-zinc-300 focus:text-white focus:bg-white/[0.08] cursor-pointer outline-none transition-all duration-200"
-                                                >
-                                                    <div className="p-1.5 rounded-md bg-zinc-800 group-focus:bg-zinc-700 transition-colors">
-                                                        <Instagram className="w-3.5 h-3.5 text-zinc-400 group-focus:text-white" />
-                                                    </div>
-                                                    <span>Instagram</span>
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                                    <DropdownMenuLabel className="px-2 py-1.5 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+                                                        Share Target
+                                                    </DropdownMenuLabel>
+                                                    <DropdownMenuSeparator className="bg-white/[0.08] mx-1 my-1" />
+                                                    <DropdownMenuItem
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDownload('tiktok');
+                                                        }}
+                                                        className="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium text-zinc-300 focus:text-white focus:bg-white/[0.08] cursor-pointer outline-none transition-all duration-200"
+                                                    >
+                                                        <div className="p-1.5 rounded-md bg-zinc-800 group-focus:bg-zinc-700 transition-colors">
+                                                            <Music2 className="w-3.5 h-3.5 text-zinc-400 group-focus:text-white" />
+                                                        </div>
+                                                        <span>TikTok</span>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDownload('instagram');
+                                                        }}
+                                                        className="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium text-zinc-300 focus:text-white focus:bg-white/[0.08] cursor-pointer outline-none transition-all duration-200"
+                                                    >
+                                                        <div className="p-1.5 rounded-md bg-zinc-800 group-focus:bg-zinc-700 transition-colors">
+                                                            <Instagram className="w-3.5 h-3.5 text-zinc-400 group-focus:text-white" />
+                                                        </div>
+                                                        <span>Instagram</span>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
                                     </div>
                                 </motion.div>
                             </motion.div>

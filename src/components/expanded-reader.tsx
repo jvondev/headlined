@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
@@ -14,13 +15,29 @@ import {
     BookmarkPlus,
     Share2,
     Clock,
-    Sparkles
+    Sparkles,
+    ExternalLink,
+    Link2,
+    Check,
+    Highlighter,
+    Download,
+    Loader2,
+    Music2,
+    Instagram
 } from "lucide-react";
 import { Button } from "./ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 // ============================================================================
 // EXPANDED READER - Progressive full-text reading experience
-// Features: Section generation, keyword highlighting, TTS, progress bar
+// Features: Floating action bar with exports, unified scroll, smart anchoring
 // ============================================================================
 
 interface ExpandedReaderProps {
@@ -31,6 +48,13 @@ interface ExpandedReaderProps {
     readingTime?: number;
     isPremium?: boolean;
     onHighlightSave?: (quote: string) => void;
+    // Callbacks for PostView to manage floating bar
+    onContinueStateChange?: (hasMore: boolean, isGenerating: boolean, remaining: number) => void;
+    onContinueRequest?: () => void;
+    articleUrl?: string;
+    // Export props
+    onDownload?: (platform: 'tiktok' | 'instagram') => void;
+    isExporting?: boolean;
 }
 
 interface Section {
@@ -39,12 +63,46 @@ interface Section {
     isGenerated: boolean;
 }
 
-// Smart paragraph chunking - splits text into readable sections
-function chunkTextIntoSections(text: string, targetWordsPerSection: number = 120): Section[] {
+// Rotating pastel highlight colors (subtle, not distracting)
+const HIGHLIGHT_COLORS = [
+    "bg-blue-500/10 text-blue-300/90 border-blue-400/20",
+    "bg-emerald-500/10 text-emerald-300/90 border-emerald-400/20",
+    "bg-purple-500/10 text-purple-300/90 border-purple-400/20",
+    "bg-rose-500/10 text-rose-300/90 border-rose-400/20",
+];
+
+// Highlight stopwords (common words to skip)
+const HIGHLIGHT_STOPWORDS = new Set([
+    'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with',
+    'by', 'from', 'as', 'is', 'was', 'are', 'were', 'been', 'be', 'have', 'has', 'had',
+    'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must',
+    'it', 'its', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'we', 'they',
+    'your', 'my', 'his', 'her', 'our', 'their', 'what', 'which', 'who', 'whom', 'when',
+    'where', 'why', 'how', 'all', 'each', 'every', 'both', 'few', 'more', 'most', 'other',
+    'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very',
+    'can', 'just', 'also', 'now', 'here', 'there', 'then', 'new', 'said', 'says', 'like',
+    'one', 'two', 'first', 'many', 'year', 'years', 'time', 'way', 'day', 'use', 'make',
+    'get', 'go', 'see', 'come', 'take', 'know', 'think', 'want', 'need', 'look', 'work',
+]);
+
+// Smart paragraph chunking - splits text into readable sections with deduplication
+// REFINED: Chunk size reduced to 80 words for better readability
+function chunkTextIntoSections(text: string, targetWordsPerSection: number = 80): Section[] {
     if (!text) return [];
 
-    // Split by paragraphs first
-    const paragraphs = text.split(/\n\n+/).filter(p => p.trim().length > 0);
+    // Split by paragraphs and deduplicate
+    const allParagraphs = text.split(/\n\n+/).filter(p => p.trim().length > 0);
+    const seenParagraphs = new Set<string>();
+    const paragraphs: string[] = [];
+
+    for (const p of allParagraphs) {
+        const normalized = p.trim().toLowerCase().substring(0, 100); // Compare first 100 chars
+        if (!seenParagraphs.has(normalized)) {
+            seenParagraphs.add(normalized);
+            paragraphs.push(p);
+        }
+    }
+
     const sections: Section[] = [];
     let currentSection = "";
     let currentWordCount = 0;
@@ -53,12 +111,12 @@ function chunkTextIntoSections(text: string, targetWordsPerSection: number = 120
     for (const paragraph of paragraphs) {
         const paragraphWords = paragraph.split(/\s+/).length;
 
-        // If adding this paragraph exceeds target and we have content, finalize section
-        if (currentWordCount > 0 && currentWordCount + paragraphWords > targetWordsPerSection * 1.5) {
+        // Tighter chunking logic
+        if (currentWordCount > 0 && currentWordCount + paragraphWords > targetWordsPerSection * 1.3) {
             sections.push({
                 id: `section-${sectionIndex}`,
                 content: currentSection.trim(),
-                isGenerated: sectionIndex === 0, // First section always generated
+                isGenerated: sectionIndex === 0,
             });
             sectionIndex++;
             currentSection = paragraph;
@@ -67,7 +125,6 @@ function chunkTextIntoSections(text: string, targetWordsPerSection: number = 120
             currentSection += (currentSection ? "\n\n" : "") + paragraph;
             currentWordCount += paragraphWords;
 
-            // If we've accumulated enough, create a section
             if (currentWordCount >= targetWordsPerSection) {
                 sections.push({
                     id: `section-${sectionIndex}`,
@@ -81,7 +138,6 @@ function chunkTextIntoSections(text: string, targetWordsPerSection: number = 120
         }
     }
 
-    // Add remaining content as final section
     if (currentSection.trim()) {
         sections.push({
             id: `section-${sectionIndex}`,
@@ -93,25 +149,44 @@ function chunkTextIntoSections(text: string, targetWordsPerSection: number = 120
     return sections;
 }
 
-// Highlight keywords in text
-function highlightKeywords(text: string, keywords: string[]): React.ReactNode[] {
-    if (!keywords || keywords.length === 0) return [text];
+// Filter keywords to remove stopwords and short words
+function filterKeywords(keywords: string[]): string[] {
+    return keywords.filter(k =>
+        k.length >= 4 && !HIGHLIGHT_STOPWORDS.has(k.toLowerCase())
+    );
+}
 
-    // Create regex pattern for all keywords (case insensitive, word boundaries)
+// Create consistent color mapping: same keyword = same color
+function createKeywordColorMap(keywords: string[]): Map<string, string> {
+    const colorMap = new Map<string, string>();
+    keywords.forEach((keyword, index) => {
+        colorMap.set(keyword.toLowerCase(), HIGHLIGHT_COLORS[index % HIGHLIGHT_COLORS.length]);
+    });
+    return colorMap;
+}
+
+// Highlight keywords with consistent colors per keyword
+function highlightKeywords(text: string, keywords: string[]): React.ReactNode[] {
+    const filteredKeywords = filterKeywords(keywords);
+    if (!filteredKeywords || filteredKeywords.length === 0) return [text];
+
+    const colorMap = createKeywordColorMap(filteredKeywords);
+
     const pattern = new RegExp(
-        `\\b(${keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`,
+        `\\b(${filteredKeywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`,
         'gi'
     );
 
     const parts = text.split(pattern);
 
     return parts.map((part, index) => {
-        const isKeyword = keywords.some(k => k.toLowerCase() === part.toLowerCase());
-        if (isKeyword) {
+        const lowerPart = part.toLowerCase();
+        const color = colorMap.get(lowerPart);
+        if (color) {
             return (
                 <mark
                     key={index}
-                    className="bg-amber-500/20 text-amber-200 px-0.5 rounded-sm border-b border-amber-500/30"
+                    className={cn("px-1 py-0.5 rounded border-b", color)}
                 >
                     {part}
                 </mark>
@@ -126,12 +201,14 @@ const TypewriterSection = ({
     text,
     keywords,
     onComplete,
-    speed = 15
+    speed = 12,
+    fontSize
 }: {
     text: string;
     keywords: string[];
     onComplete?: () => void;
     speed?: number;
+    fontSize: number;
 }) => {
     const [displayedText, setDisplayedText] = useState("");
     const [isComplete, setIsComplete] = useState(false);
@@ -146,8 +223,7 @@ const TypewriterSection = ({
     useEffect(() => {
         if (displayedText.length < text.length) {
             const timer = setTimeout(() => {
-                // Type multiple characters at once for speed
-                const charsToAdd = Math.min(3, text.length - displayedText.length);
+                const charsToAdd = Math.min(4, text.length - displayedText.length);
                 setDisplayedText(text.substring(0, displayedText.length + charsToAdd));
             }, speed);
             return () => clearTimeout(timer);
@@ -163,10 +239,13 @@ const TypewriterSection = ({
     }, [displayedText, keywords]);
 
     return (
-        <p className="text-lg md:text-xl leading-relaxed whitespace-pre-wrap">
+        <p
+            className="leading-relaxed whitespace-pre-wrap"
+            style={{ fontSize: `${fontSize}px`, lineHeight: '1.8' }}
+        >
             {highlightedContent}
             {!isComplete && (
-                <span className="inline-block w-[2px] h-5 ml-1 bg-white animate-pulse align-middle" />
+                <span className="inline-block w-[2px] h-5 ml-1 bg-zinc-400 animate-pulse align-middle" />
             )}
         </p>
     );
@@ -175,9 +254,9 @@ const TypewriterSection = ({
 // Ad Slot Component
 const AdSlot = ({ index }: { index: number }) => (
     <div className="w-full my-6 py-4">
-        <div className="w-full min-h-[120px] bg-zinc-900/50 rounded-xl flex items-center justify-center overflow-hidden border border-white/5">
-            {/* @ts-ignore */}
+        <div className="w-full min-h-[100px] bg-zinc-900/30 rounded-xl flex items-center justify-center overflow-hidden border border-white/5">
             <div
+                // @ts-ignore
                 ta-ad-container=""
                 id={`reader-ad-${index}`}
                 className="w-full h-full flex items-center justify-center"
@@ -188,16 +267,158 @@ const AdSlot = ({ index }: { index: number }) => (
     </div>
 );
 
-// Reading Progress Bar
+// Reading Progress Bar - Solid monochrome
 const ReadingProgressBar = ({ progress }: { progress: number }) => (
-    <div className="fixed top-0 left-0 right-0 h-1 bg-zinc-800 z-50">
+    <div className="fixed top-0 left-0 right-0 h-0.5 bg-zinc-800/50 z-50">
         <motion.div
-            className="h-full bg-gradient-to-r from-amber-500 to-orange-500"
+            className="h-full bg-zinc-400"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.3 }}
         />
     </div>
+);
+
+// Floating Action Bar Component
+const FloatingActionBar = ({
+    hasMoreContent,
+    isGenerating,
+    remainingSections,
+    onContinue,
+    onReadFull,
+    onCopyLink,
+    isDarkMode,
+    linkCopied,
+    onDownload,
+    isExporting
+}: {
+    hasMoreContent: boolean;
+    isGenerating: boolean;
+    remainingSections: number;
+    onContinue: () => void;
+    onReadFull: () => void;
+    onCopyLink: () => void;
+    isDarkMode: boolean;
+    linkCopied: boolean;
+    onDownload?: (platform: 'tiktok' | 'instagram') => void;
+    isExporting?: boolean;
+}) => (
+    <motion.div
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        // FIXED: Centering with fixed positioning logic
+        className={cn(
+            "fixed bottom-6 left-1/2 -translate-x-1/2 z-50",
+            "flex items-center justify-center max-w-[90vw] overflow-x-auto no-scrollbar",
+            // FIXED: Mobile overflow handling
+            "p-1.5 rounded-2xl gap-2",
+            "backdrop-blur-xl border shadow-2xl",
+            isDarkMode
+                ? "bg-zinc-900/90 border-white/10"
+                : "bg-white/90 border-zinc-200"
+        )}
+    >
+        {/* Continue Reading - Full button when has content */}
+        {hasMoreContent && (
+            <Button
+                onClick={onContinue}
+                disabled={isGenerating}
+                className={cn(
+                    "h-10 px-4 md:px-5 rounded-xl font-medium transition-all whitespace-nowrap",
+                    "bg-white text-zinc-900 hover:bg-zinc-100",
+                    isGenerating && "opacity-50 cursor-not-allowed"
+                )}
+            >
+                <ChevronDown className={cn(
+                    "w-4 h-4 mr-2",
+                    isGenerating && "animate-bounce"
+                )} />
+                {isGenerating ? "Loading" : "Continue"}
+                {!isGenerating && remainingSections > 0 && (
+                    <span className="ml-2 text-xs opacity-60 hidden sm:inline">
+                        ({remainingSections})
+                    </span>
+                )}
+            </Button>
+        )}
+
+        {/* Export Dropdown - Restored */}
+        {onDownload && (
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 rounded-xl hover:bg-white/10"
+                        disabled={isExporting}
+                    >
+                        {isExporting ? (
+                            <Loader2 className="w-5 h-5 animate-spin text-zinc-400" />
+                        ) : (
+                            <Download className="w-5 h-5" />
+                        )}
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                    align="center"
+                    side="top"
+                    sideOffset={12}
+                    className="min-w-[160px] p-1.5 bg-[#121212]/95 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-xl z-[120]"
+                >
+                    <DropdownMenuLabel className="px-2 py-1.5 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+                        Share As Image
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-white/[0.08] mx-1 my-1" />
+                    <DropdownMenuItem
+                        onClick={() => onDownload('tiktok')}
+                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-zinc-300 focus:text-white focus:bg-white/[0.08] cursor-pointer"
+                    >
+                        <div className="p-1 rounded bg-zinc-800">
+                            <Music2 className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs font-medium">TikTok Story</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => onDownload('instagram')}
+                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-zinc-300 focus:text-white focus:bg-white/[0.08] cursor-pointer"
+                    >
+                        <div className="p-1 rounded bg-zinc-800">
+                            <Instagram className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs font-medium">Instagram</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        )}
+
+        {/* Read Full Story - Icon only */}
+        {!hasMoreContent && (
+            <Button
+                onClick={onReadFull}
+                className={cn(
+                    "h-10 px-5 rounded-xl font-medium transition-all whitespace-nowrap",
+                    "bg-white text-zinc-900 hover:bg-zinc-100"
+                )}
+            >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Read Full
+            </Button>
+        )}
+
+        {/* Copy Link */}
+        <Button
+            onClick={onCopyLink}
+            variant="ghost"
+            className="h-10 w-10 p-0 rounded-xl"
+            title="Copy Link"
+        >
+            {linkCopied ? (
+                <Check className="w-4 h-4 text-emerald-400" />
+            ) : (
+                <Link2 className="w-4 h-4" />
+            )}
+        </Button>
+    </motion.div>
 );
 
 export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
@@ -208,8 +429,12 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     readingTime = 1,
     isPremium = false,
     onHighlightSave,
+    onContinueStateChange,
+    onContinueRequest,
+    articleUrl,
+    onDownload,
+    isExporting
 }) => {
-    // Use fullText if available, otherwise fall back to description
     const contentToDisplay = fullText || description || "";
 
     // Section state
@@ -222,24 +447,22 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     const [fontSize, setFontSize] = useState(18);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
+    const [linkCopied, setLinkCopied] = useState(false);
+    const [highlightsEnabled, setHighlightsEnabled] = useState(true);
 
     // Refs
     const containerRef = useRef<HTMLDivElement>(null);
-    const lastSectionRef = useRef<HTMLDivElement>(null);
+    const contentEndRef = useRef<HTMLDivElement>(null);
     const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+    // Track if user was at bottom before new content
+    const wasAtBottomRef = useRef(false);
 
     // Initialize sections
     useEffect(() => {
         const chunked = chunkTextIntoSections(contentToDisplay);
         setSections(chunked);
         setCurrentSectionIndex(0);
-
-        // Update URL with section anchor (SPA style)
-        if (chunked.length > 0 && typeof window !== 'undefined') {
-            const url = new URL(window.location.href);
-            url.hash = `section-0`;
-            window.history.replaceState({}, '', url.toString());
-        }
     }, [contentToDisplay]);
 
     // Calculate progress
@@ -257,9 +480,60 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
         return Math.max(1, Math.ceil(readingTime * remainingRatio));
     }, [sections, readingTime]);
 
+    // URL Management - Update URL to /read/[slug] when open
+    const [originalUrl, setOriginalUrl] = useState<string>("");
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const current = window.location.href;
+            setOriginalUrl(current);
+            const newUrl = `${window.location.origin}/read/${slug}`;
+            window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
+
+            return () => {
+                window.history.replaceState({ ...window.history.state, as: current, url: current }, '', current);
+            };
+        }
+    }, [slug]);
+
+    // Progressive Auto-Scroll (Parallel with generation)
+    useEffect(() => {
+        if (!isGenerating) return;
+
+        let animationFrameId: number;
+
+        const smoothScrollToBottom = () => {
+            if (wasAtBottomRef.current && contentEndRef.current) {
+                // Scroll to keep bottom in view, but gently
+                contentEndRef.current.scrollIntoView({
+                    behavior: 'auto', // Auto is better for continuous updates than smooth
+                    block: 'end'
+                });
+            }
+            animationFrameId = requestAnimationFrame(smoothScrollToBottom);
+        };
+
+        // Start scrolling loop
+        animationFrameId = requestAnimationFrame(smoothScrollToBottom);
+
+        return () => {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        };
+    }, [isGenerating]);
+
+    // Handle section complete
+    const handleSectionComplete = useCallback(() => {
+        setIsGenerating(false);
+    }, []);
+
     // Handle continue reading
     const handleContinueReading = useCallback(() => {
         if (isGenerating) return;
+
+        // Smart Scroll Logic: Check if user is near bottom BEFORE generating
+        const scrollThreshold = 100; // px
+        const isNearBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - scrollThreshold);
+        wasAtBottomRef.current = isNearBottom;
 
         const nextIndex = sections.findIndex(s => !s.isGenerated);
         if (nextIndex === -1) return;
@@ -267,27 +541,25 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
         setIsGenerating(true);
         setCurrentSectionIndex(nextIndex);
 
-        // Update URL
-        if (typeof window !== 'undefined') {
-            const url = new URL(window.location.href);
-            url.hash = `section-${nextIndex}`;
-            window.history.pushState({}, '', url.toString());
-        }
-
-        // Mark section as generated
         setSections(prev => prev.map((s, i) =>
             i === nextIndex ? { ...s, isGenerated: true } : s
         ));
     }, [sections, isGenerating]);
 
-    // Handle section complete
-    const handleSectionComplete = useCallback(() => {
-        setIsGenerating(false);
-
-        // Scroll to keep content in view - push up effect
-        if (lastSectionRef.current) {
-            lastSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    // Handle read full story
+    const handleReadFull = useCallback(() => {
+        if (articleUrl) {
+            window.open(articleUrl, '_blank');
         }
+    }, [articleUrl]);
+
+    // Handle copy link - Uses updated window.location.href
+    const handleCopyLink = useCallback(() => {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            setLinkCopied(true);
+            setTimeout(() => setLinkCopied(false), 2000);
+        });
     }, []);
 
     // Text-to-Speech
@@ -347,20 +619,37 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     const remainingSections = sections.filter(s => !s.isGenerated).length;
     const hasMoreContent = remainingSections > 0;
 
+    // Notify PostView of continue state changes
+    useEffect(() => {
+        onContinueStateChange?.(hasMoreContent, isGenerating, remainingSections);
+    }, [hasMoreContent, isGenerating, remainingSections, onContinueStateChange]);
+
+    // Expose continue handler to PostView
+    useEffect(() => {
+        if (onContinueRequest) {
+            // Store the ref for PostView to call
+            (window as any).__expandedReaderContinue = handleContinueReading;
+        }
+        return () => {
+            delete (window as any).__expandedReaderContinue;
+        };
+    }, [handleContinueReading, onContinueRequest]);
+
     return (
         <div
             ref={containerRef}
+            // ... (keep attributes)
             className={cn(
-                "relative w-full transition-colors duration-300",
-                isDarkMode ? "bg-zinc-950 text-zinc-200" : "bg-zinc-100 text-zinc-900"
+                "relative w-full min-h-screen transition-colors duration-300",
+                isDarkMode ? "bg-zinc-950 text-zinc-200" : "bg-zinc-50 text-zinc-900"
             )}
             onMouseUp={handleTextSelection}
             onTouchEnd={handleTextSelection}
         >
-            {/* Progress Bar */}
+            {/* ... (Progress Bar, Header, Content Area) ... */}
             <ReadingProgressBar progress={progress} />
 
-            {/* Reader Controls */}
+            {/* Sticky Reader Controls Header */}
             <div className={cn(
                 "sticky top-0 z-40 border-b backdrop-blur-xl",
                 isDarkMode
@@ -371,15 +660,15 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                     {/* Reading Stats */}
                     <div className="flex items-center gap-3 text-xs">
                         <div className={cn(
-                            "flex items-center gap-1.5 px-2 py-1 rounded-full",
+                            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full",
                             isDarkMode ? "bg-white/5" : "bg-zinc-100"
                         )}>
-                            <Sparkles className="w-3 h-3 text-amber-500" />
+                            <Sparkles className="w-3 h-3 text-zinc-400" />
                             <span>{progress}% read</span>
                         </div>
                         {hasMoreContent && (
                             <div className={cn(
-                                "flex items-center gap-1.5 px-2 py-1 rounded-full",
+                                "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full",
                                 isDarkMode ? "bg-white/5" : "bg-zinc-100"
                             )}>
                                 <Clock className="w-3 h-3" />
@@ -399,7 +688,7 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                         >
                             <Minus className="w-3.5 h-3.5" />
                         </Button>
-                        <span className="text-xs w-8 text-center">{fontSize}</span>
+                        <span className="text-xs w-8 text-center font-mono">{fontSize}</span>
                         <Button
                             variant="ghost"
                             size="icon"
@@ -411,11 +700,28 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
 
                         <div className="w-px h-4 bg-white/10 mx-1" />
 
+                        {/* Highlight Toggle */}
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className={cn(
+                                "h-8 w-8 rounded-full",
+                                highlightsEnabled && "bg-blue-500/20 text-blue-400"
+                            )}
+                            onClick={() => setHighlightsEnabled(!highlightsEnabled)}
+                            title={highlightsEnabled ? "Hide highlights" : "Show highlights"}
+                        >
+                            <Highlighter className="w-4 h-4" />
+                        </Button>
+
                         {/* TTS */}
                         <Button
                             variant="ghost"
                             size="icon"
-                            className={cn("h-8 w-8 rounded-full", isSpeaking && "bg-amber-500/20 text-amber-400")}
+                            className={cn(
+                                "h-8 w-8 rounded-full",
+                                isSpeaking && "bg-emerald-500/20 text-emerald-400"
+                            )}
                             onClick={toggleSpeech}
                         >
                             {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -434,11 +740,8 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                 </div>
             </div>
 
-            {/* Content Area */}
-            <div
-                className="max-w-3xl mx-auto px-6 py-8 space-y-6"
-                style={{ fontSize: `${fontSize}px` }}
-            >
+            {/* Content Area - with bottom padding for floating bar */}
+            <div className="max-w-3xl mx-auto px-6 py-8 pb-32 space-y-6">
                 {/* Generated Sections */}
                 <AnimatePresence mode="popLayout">
                     {sections.map((section, index) => {
@@ -451,26 +754,32 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                             <motion.div
                                 key={section.id}
                                 id={section.id}
-                                ref={index === currentSectionIndex ? lastSectionRef : null}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5 }}
+                                transition={{ duration: 0.4, ease: "easeOut" }}
                                 className="space-y-4"
                             >
                                 {/* Section Content */}
                                 <div className={cn(
-                                    "font-serif leading-relaxed",
+                                    "font-serif",
                                     isDarkMode ? "text-zinc-300" : "text-zinc-700"
                                 )}>
                                     {isCurrentlyGenerating ? (
                                         <TypewriterSection
                                             text={section.content}
-                                            keywords={keywords}
+                                            keywords={highlightsEnabled ? keywords : []}
                                             onComplete={handleSectionComplete}
+                                            fontSize={fontSize}
                                         />
                                     ) : (
-                                        <p className="text-lg md:text-xl leading-relaxed whitespace-pre-wrap">
-                                            {highlightKeywords(section.content, keywords)}
+                                        <p
+                                            className="leading-relaxed whitespace-pre-wrap"
+                                            style={{ fontSize: `${fontSize}px`, lineHeight: '1.8' }}
+                                        >
+                                            {highlightsEnabled
+                                                ? highlightKeywords(section.content, keywords)
+                                                : section.content
+                                            }
                                         </p>
                                     )}
                                 </div>
@@ -480,9 +789,9 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
 
                                 {/* Section Divider */}
                                 {index < sections.filter(s => s.isGenerated).length - 1 && (
-                                    <div className="flex items-center justify-center py-4">
+                                    <div className="flex items-center justify-center py-6">
                                         <div className={cn(
-                                            "w-16 h-px",
+                                            "w-12 h-px",
                                             isDarkMode ? "bg-white/10" : "bg-zinc-300"
                                         )} />
                                     </div>
@@ -492,61 +801,36 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                     })}
                 </AnimatePresence>
 
-                {/* Continue Reading Button */}
-                {hasMoreContent && !isGenerating && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col items-center gap-3 py-8"
-                    >
-                        <Button
-                            onClick={handleContinueReading}
-                            className={cn(
-                                "group px-8 py-6 rounded-2xl font-semibold text-base transition-all",
-                                isDarkMode
-                                    ? "bg-white/5 hover:bg-white/10 border border-white/10 text-white"
-                                    : "bg-zinc-900 hover:bg-zinc-800 text-white"
-                            )}
-                        >
-                            <ChevronDown className="w-5 h-5 mr-2 group-hover:animate-bounce" />
-                            Continue Reading
-                            <span className="ml-2 text-xs opacity-60">
-                                ({remainingSections} section{remainingSections > 1 ? 's' : ''} left)
-                            </span>
-                        </Button>
+                {/* Scroll anchor for auto-scroll */}
+                <div ref={contentEndRef} />
 
-                        <span className={cn(
-                            "text-xs",
-                            isDarkMode ? "text-zinc-500" : "text-zinc-400"
-                        )}>
-                            ~{remainingTime} min remaining
-                        </span>
-                    </motion.div>
-                )}
-
-                {/* Reading Complete */}
+                {/* Reading Complete Message */}
                 {!hasMoreContent && sections.length > 0 && (
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className={cn(
-                            "text-center py-12 px-6 rounded-2xl",
-                            isDarkMode ? "bg-white/5 border border-white/10" : "bg-zinc-50 border border-zinc-200"
+                            "text-center py-10 px-6 rounded-2xl",
+                            isDarkMode
+                                ? "bg-white/5 border border-white/10"
+                                : "bg-zinc-100 border border-zinc-200"
                         )}
                     >
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                            <Sparkles className="w-8 h-8 text-white" />
+                        <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-zinc-700 flex items-center justify-center">
+                            <Sparkles className="w-7 h-7 text-zinc-300" />
                         </div>
-                        <h3 className="text-xl font-bold mb-2">Reading Complete!</h3>
+                        <h3 className="text-lg font-semibold mb-2">Reading Complete</h3>
                         <p className={cn(
-                            "text-sm mb-4",
-                            isDarkMode ? "text-zinc-400" : "text-zinc-600"
+                            "text-sm",
+                            isDarkMode ? "text-zinc-500" : "text-zinc-500"
                         )}>
-                            You've finished this article. Great job!
+                            You've finished this article
                         </p>
                     </motion.div>
                 )}
             </div>
+
+            {/* Floating bar moved to PostView */}
 
             {/* Quote Save Popover */}
             <AnimatePresence>
