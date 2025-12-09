@@ -15,8 +15,12 @@ interface ScraperPost {
     thumbnail_url: string;
     created_at: string;
     topic: string;
+    // Support multiple casing variants from different scrapers
     full_text?: string;
+    fullText?: string;
+    content?: string;
     min?: number;
+    readingTime?: number;
 }
 
 interface SeoFeedProps {
@@ -76,8 +80,8 @@ export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
         topic: p.topic || category,
         summaries: [], // SEO posts don't have generated summaries yet
         date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-        fullText: p.full_text || null,
-        readingTime: p.min
+        fullText: p.fullText || p.full_text || p.content || null,
+        readingTime: p.readingTime || p.min
     }));
 
     // Inject Ads
