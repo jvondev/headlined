@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import Parser from 'rss-parser';
 import { parse } from 'node-html-parser';
-import { sourcesData } from './sources';
+import { sourcesData, resolveTopicFromUrl } from './sources';
 import { extractArticle, fetchAndExtract, ExtractedArticle } from './article-extractor';
 import { Classifier } from './classifier';
 import { BucketManager } from './bucket-manager';
@@ -32,11 +32,41 @@ const bannedThumbnails = [
     'https://s.yimg.com/cv/apiv2/social/images/yahoo_default_logo-1200x1200.png'
 ];
 
-// Phrases to remove
+// Phrases to remove from description
 const phrasesToRemoveFromDescription = [
     '(Source: Bloomberg)',
     'Read more of this story at Slashdot.'
 ];
+
+// Byline patterns to remove from description (regex)
+const descriptionBylinePatterns = [
+    // "By Author Name CITY, Date (Source) -"
+    /^By\s+[A-Z][a-z]+\s+[A-Z][a-z]+(\s+and\s+[A-Z][a-z]+\s+[A-Z][a-z]+)?\s+[A-Z]{2,}.*?\(Reuters\)\s*-?\s*/i,
+    /^By\s+[A-Z][a-z]+\s+[A-Z][a-z]+(\s+and\s+[A-Z][a-z]+\s+[A-Z][a-z]+)?\s+[A-Z]{2,}.*?\(AP\)\s*-?\s*/i,
+    /^By\s+[A-Z][a-z]+\s+[A-Z][a-z]+(\s+and\s+[A-Z][a-z]+\s+[A-Z][a-z]+)?\s+[A-Z]{2,}.*?\(AFP\)\s*-?\s*/i,
+    /^By\s+[A-Z][a-z]+\s+[A-Z][a-z]+\s*/i,
+
+    // "CITY, Month Day (Source) -" or "CITY (Source) -"
+    /^[A-Z]{2,}[A-Z\s,]+\(Reuters\)\s*-?\s*/i,
+    /^[A-Z]{2,}[A-Z\s,]+\(AP\)\s*-?\s*/i,
+    /^[A-Z]{2,}[A-Z\s,]+\(AFP\)\s*-?\s*/i,
+    /^[A-Z]{3,},?\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\s+\([^)]+\)\s*-?\s*/i,
+
+    // "Dec 8 (Reuters) -"
+    /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\s+\([^)]+\)\s*-?\s*/i,
+];
+
+/**
+ * Clean bylines from description text
+ */
+function cleanDescriptionBylines(text: string | null): string | null {
+    if (!text) return null;
+    let cleaned = text;
+    for (const pattern of descriptionBylinePatterns) {
+        cleaned = cleaned.replace(pattern, '');
+    }
+    return cleaned.trim();
+}
 
 const phrasesToRemoveFromTitle = [
     'Tell HN:',
@@ -186,6 +216,7 @@ async function fetchArticleMetadata(url: string): Promise<{
             if (node && node.getAttribute('content')) {
                 description = stripHtml(node.getAttribute('content')!) || null;
                 description = removePhrases(description, phrasesToRemoveFromDescription);
+                description = cleanDescriptionBylines(description);
                 description = truncateDescription(description);
                 break;
             }
@@ -277,18 +308,21 @@ async function processItem(item: any, source: any): Promise<Post | null> {
     } else if (item.contentSnippet) {
         description = stripHtml(cleanCdata(item.contentSnippet)) || null;
         description = removePhrases(description, phrasesToRemoveFromDescription);
+        description = cleanDescriptionBylines(description);
         description = truncateDescription(description);
     }
 
     if (!description && item['content:encoded']) {
         description = stripHtml(cleanCdata(item['content:encoded'])) || null;
         description = removePhrases(description, phrasesToRemoveFromDescription);
+        description = cleanDescriptionBylines(description);
         description = truncateDescription(description);
     }
 
     if (source.url === 'https://rss.slashdot.org/Slashdot/slashdot' && item.description) {
         description = stripHtml(cleanCdata(item.description)) || null;
         description = removePhrases(description, phrasesToRemoveFromDescription);
+        description = cleanDescriptionBylines(description);
         description = truncateDescription(description);
     }
 
@@ -397,35 +431,8 @@ async function processItem(item: any, source: any): Promise<Post | null> {
         slug = `post-${Date.now()}`;
     }
 
-    let topic = source.topic || 'news';
-    if (source.name === "Yahoo News" && link) {
-        if (link.includes("finance.yahoo.com")) topic = "finance";
-        else if (link.includes("autos.yahoo.com")) topic = "auto";
-        else if (link.includes("tech.yahoo.com")) topic = "tech";
-        else if (link.includes("health.yahoo.com")) topic = "health";
-    } else if (source.url === 'https://rss.slashdot.org/Slashdot/slashdot' && link) {
-        const matches = link.match(/https:\/\/([a-z]+)\.slashdot\.org/);
-        if (matches && matches[1]) {
-            const subdomain = matches[1];
-            switch (subdomain) {
-                case 'it':
-                case 'tech':
-                case 'hardware':
-                case 'developers':
-                    topic = 'tech';
-                    break;
-                case 'science':
-                    topic = 'science';
-                    break;
-                case 'games':
-                    topic = 'gaming';
-                    break;
-                default:
-                    topic = 'news';
-                    break;
-            }
-        }
-    }
+    // Use centralized topic resolver
+    const topic = resolveTopicFromUrl(link, source.name, source.topic || 'news');
 
     return {
         slug,

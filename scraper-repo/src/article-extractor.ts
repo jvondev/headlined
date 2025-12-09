@@ -12,34 +12,125 @@ export interface ExtractedArticle {
     qualityScore: number;
 }
 
-// Noise selectors to remove before extraction
+// Noise selectors to remove BEFORE text extraction (most accurate method)
+// These remove entire HTML elements, not just text patterns
 const NOISE_SELECTORS = [
-    'script', 'style', 'noscript', 'iframe', 'svg', 'canvas',
-    'nav', 'header', 'footer', 'aside', 'form',
-    '.ad', '.ads', '.advertisement', '.promo', '.promotion',
+    // Technical elements
+    'script', 'style', 'noscript', 'iframe', 'svg', 'canvas', 'template',
+
+    // Structural noise
+    'nav', 'header', 'footer', 'aside', 'form', 'menu',
+
+    // Ads & promotions
+    '.ad', '.ads', '.advertisement', '.promo', '.promotion', '.sponsored',
     '.cta', '.call-to-action', '.subscribe', '.newsletter',
-    '.social-share', '.share-buttons', '.comments', '.comment-section',
-    '.related-posts', '.related-articles', '.sidebar', '.widget',
     '[class*="ad-"]', '[class*="advertisement"]', '[class*="sponsor"]',
     '[id*="ad-"]', '[id*="advertisement"]', '[id*="sponsor"]',
     '[class*="newsletter"]', '[class*="subscribe"]', '[class*="popup"]',
     '[class*="modal"]', '[class*="cookie"]', '[class*="gdpr"]',
+    '[class*="promo"]', '[class*="banner"]',
+
+    // Social sharing
+    '.social-share', '.share-buttons', '.share-bar', '.social-links',
+    '[class*="social"]', '[class*="share"]',
+
+    // Comments
+    '.comments', '.comment-section', '.comment-form', '[id*="comment"]',
+
+    // Related content (very important!)
+    '.related-posts', '.related-articles', '.related', '.more-stories',
+    '.recommended', '.also-read', '.read-more', '.trending',
+    '[class*="related"]', '[class*="recommended"]', '[class*="trending"]',
+    '[class*="more-from"]', '[class*="also-"]',
+
+    // Sidebar & widgets
+    '.sidebar', '.widget', '.widgets', '.side-bar',
+    '[class*="sidebar"]', '[class*="widget"]',
+
+    // Navigation & menus
     '[role="banner"]', '[role="navigation"]', '[role="complementary"]',
-    '[aria-hidden="true"]'
+    '[aria-hidden="true"]', '.menu', '.nav',
+
+    // Image captions & credits (key for cleaning BBC-style junk)
+    'figcaption', '.image-caption', '.caption', '.credit', '.credits',
+    '[class*="caption"]', '[class*="credit"]', '[class*="source"]',
+    '.image-source', '.photo-credit', '.media-caption',
+    '.ssrcss-1q0x1qg-Placeholder', // BBC specific
+
+    // Voting & engagement widgets
+    '.voting', '.vote', '.poll', '.rating', '.reactions',
+    '[class*="vote"]', '[class*="poll"]', '[class*="rating"]',
+
+    // Author bio boxes
+    '.author-bio', '.author-box', '.byline-block', '.contributor',
+    '[class*="author-bio"]', '[class*="author-box"]',
+
+    // Timestamps & metadata blocks
+    '.timestamp', '.dateline', '.date-block', '.time-block',
+    '.published', '.updated', '.posted',
+    '[class*="timestamp"]', '[class*="dateline"]',
+
+    // Newsletter signup
+    '[class*="newsletter"]', '[class*="signup"]', '[class*="email-capture"]',
+
+    // Video players
+    '.video-player', '.video-embed', '.media-player',
+    '[class*="video-"]', '[class*="player"]',
+
+    // Tags & categories
+    '.tags', '.tag-list', '.categories', '.topic-tags',
+    '[class*="tags"]', '[class*="topic"]',
+
+    // Footer content
+    '.more-on', '.more-stories', '.read-next', '.up-next',
+    '[class*="footer"]', '[class*="bottom"]',
+
+    // BBC specific
+    '.ssrcss-68pt20-Text', // "Image source"
+    '.ssrcss-1q0x1qg-Placeholder',
+    '[data-component="image-block"]',
+    '[data-component="tag-link"]',
+    '[data-component="related-topics"]',
+    '.qa-status-timestamp', // Published timestamp
+    '.qa-programme-info',
+
+    // Yahoo specific  
+    '.caas-readmore', '.caas-share-buttons', '.caas-header',
+    '.yf-1qfk12p', // Yahoo finance ticker
+
+    // Guardian specific
+    '.submeta', '.content__labels', '.content__standfirst',
+
+    // Reuters specific
+    '[class*="ArticleTags"]', '[class*="ArticleHeader"]',
 ];
 
-// Content container selectors (priority order)
+// Content container selectors (priority order - most specific first)
 const CONTENT_SELECTORS = [
+    // Semantic article bodies
+    '[itemprop="articleBody"]',
+    '[property="articleBody"]',
+
+    // BBC specific
+    '.ssrcss-11r1m41-RichTextComponentWrapper',
+    '[data-component="text-block"]',
+    '.article__body',
+
+    // Generic article patterns
     'article[class*="content"]',
     'article[class*="article"]',
     'article[class*="post"]',
+    'article[class*="story"]',
     'article',
     '[role="main"] article',
     '[role="main"]',
     'main article',
     'main',
+
+    // Common class patterns
     '.article-body',
     '.article-content',
+    '.article__body-content',
     '.post-content',
     '.entry-content',
     '.story-body',
@@ -48,9 +139,11 @@ const CONTENT_SELECTORS = [
     '.body-content',
     '[class*="articleBody"]',
     '[class*="article-body"]',
-    '[itemprop="articleBody"]',
-    '.caas-body', // Yahoo
-    '.article__body-content', // BBC
+    '[class*="story-body"]',
+
+    // Yahoo specific
+    '.caas-body',
+    '.caas-content-body',
 ];
 
 // CTA and promotional patterns to remove
@@ -73,19 +166,75 @@ const CTA_PATTERNS = [
 
 // Metadata patterns to remove
 const METADATA_PATTERNS = [
+    // Author/byline patterns
     /^(by|written\s+by|author:)\s+.+$/gim,
+    /^story\s*by\s*.+$/gim,
+    /^\s*[A-Z][a-z]+\s+[A-Z][a-z]+,\s*[A-Z].+?(?:Wire|News|Report|Staff).*$/gm,
+
+    // Date/time patterns inline
+    /\s+(Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*,?\s+(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},?\s*\d{4}\s+at\s+\d{1,2}:\d{2}\s*(AM|PM)?\s*(UTC|GMT|EST|PST|[A-Z]{2,4}\+\d+)?[\s·]*\d*\s*(min)?\s*(read)?/gi,
     /^(published|updated|posted)(\s+on)?:?\s*\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}.*$/gim,
     /^\s*\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\s*$/gm,
     /^\s*\d+\s*(min|minute|hour)s?\s*(read|ago)\s*$/gim,
+
+    // Publisher/source prefixes  
+    /^(Powered\s*by|Story\s*by|Reported\s*by).+?$/gim,
+    /^[\u2615\u{1F950}\u{1F4F0}].*?$/gmu, // Coffee/croissant/newspaper emoji prefixes
+
+    // Photo/image credits
     /^\s*(©|copyright|\(c\)).*$/gim,
     /^\s*all\s+rights\s+reserved.*$/gim,
-    /^\s*photo\s*(by|credit|courtesy).*$/gim,
-    /^\s*image\s*(by|credit|courtesy).*$/gim,
+    /^\s*(photo|image|credit|courtesy)\s*(by|credit|courtesy|:)?.*$/gim,
     /^\s*getty\s+images?.*$/gim,
     /^\s*reuters.*$/gim,
     /^\s*associated\s+press.*$/gim,
     /^\s*afp.*$/gim,
+    /FILE PHOTO:.*?(?=\n|$)/gi,
+    /\([A-Z]+\s+Photo[^\)]*\)/gi,
+
+    // Common junk
+    /^Advertisement\s*/gim,
+    /^\s*ADVERTISEMENT\s*/gim,
+    /^\s*Share\s+this\s+(article|story)?\s*/gim,
+
+    // Footer junk patterns
+    /About Our Ads$/gim,
+    /About our ads$/gim,
+    /Terms and Privacy Policy.*$/gim,
+    /Privacy Dashboard.*$/gim,
+    /More Info$/gim,
+    /Story Continues$/gim,
+
+    // Related content blocks
+    /Related:.*$/gim,
+    /More in [A-Z][a-z]+.*$/gim,
+    /You Might Also Like.*$/gim,
+    /You May Also Like.*$/gim,
+
+    // TheStreet/Yahoo attribution
+    /This story was originally published by \w+.*?clicking here\./gi,
+    /Add \w+ as a Preferred Source by clicking here\./gi,
+    /Terms and Privacy Policy Privacy Dashboard More Info$/gi,
+
+    // Reporting bylines at end
+    /\(Reporting by [^)]+\)/gi,
+    /\(Editing by [^)]+\)/gi,
+    /___[A-Z][a-z]+ [A-Z][a-z]+ contributed.*$/gim,
+
+    // View comments / social
+    /View comments$/gim,
+    /Read the original article.*$/gim,
+    /For the latest news.*$/gim,
+    /Copyright \d{4}.*$/gim,
+
+    // CNN/news site CTAs
+    /For more CNN news.*$/gim,
+    /\\nOriginal article$/gi,
+
+    // Truncation markers
+    /<truncated \d+ bytes>$/gi,
 ];
+
 
 // Stopwords for keyword extraction
 const STOPWORDS = new Set([
@@ -201,6 +350,7 @@ function removeNoiseElements(root: HTMLElement): void {
 
 /**
  * Find the best content container using heuristic scoring
+ * Prefers paragraph-only extraction for cleaner output
  */
 function findBestContentContainer(root: HTMLElement): string | null {
     // Try priority selectors first
@@ -208,6 +358,17 @@ function findBestContentContainer(root: HTMLElement): string | null {
         try {
             const el = root.querySelector(selector);
             if (el) {
+                // Prefer extracting only paragraphs from the container (cleaner)
+                const paragraphs = el.querySelectorAll('p');
+                const pTexts = paragraphs
+                    .map(p => p.textContent.trim())
+                    .filter(t => t.length > 30 && !isMetadataLine(t));
+
+                if (pTexts.length >= 3 && pTexts.join(' ').length > 300) {
+                    return pTexts.join('\n\n');
+                }
+
+                // Fallback to full textContent if not enough paragraphs
                 const text = el.textContent.trim();
                 if (text.length > 300) {
                     return text;
@@ -221,29 +382,65 @@ function findBestContentContainer(root: HTMLElement): string | null {
     // Fallback: Score all candidate containers
     const candidates = root.querySelectorAll('div, section, article, main');
     let bestScore = 0;
-    let bestContent: string | null = null;
+    let bestElement: HTMLElement | null = null;
 
     for (const candidate of candidates) {
         const score = scoreContainer(candidate);
         if (score > bestScore) {
             bestScore = score;
-            bestContent = candidate.textContent.trim();
+            bestElement = candidate;
         }
     }
 
-    // Final fallback: All paragraphs
-    if (!bestContent || bestContent.length < 200) {
-        const paragraphs = root.querySelectorAll('p');
+    if (bestElement) {
+        // Extract paragraphs from best container
+        const paragraphs = bestElement.querySelectorAll('p');
         const pTexts = paragraphs
             .map(p => p.textContent.trim())
-            .filter(t => t.length > 40);
+            .filter(t => t.length > 30 && !isMetadataLine(t));
 
-        if (pTexts.length > 0) {
-            bestContent = pTexts.join('\n\n');
+        if (pTexts.length >= 3) {
+            return pTexts.join('\n\n');
         }
+        return bestElement.textContent.trim();
     }
 
-    return bestContent;
+    // Final fallback: All paragraphs from document
+    const paragraphs = root.querySelectorAll('p');
+    const pTexts = paragraphs
+        .map(p => p.textContent.trim())
+        .filter(t => t.length > 40 && !isMetadataLine(t));
+
+    if (pTexts.length > 0) {
+        return pTexts.join('\n\n');
+    }
+
+    return null;
+}
+
+/**
+ * Check if a line looks like metadata rather than content
+ */
+function isMetadataLine(text: string): boolean {
+    const metadataPatterns = [
+        /^Image\s+(source|credit|caption)/i,
+        /^Getty\s+Images/i,
+        /^Published\s*\d/i,
+        /^Updated\s*\d/i,
+        /^\d+\s*(min|hour)s?\s*(read|ago)/i,
+        /^Share\s+this/i,
+        /^Related:/i,
+        /^More\s+in\s+/i,
+        /^Voting/i,
+        /^Comments$/i,
+        /^Advertisement$/i,
+        /^Sponsored$/i,
+        /^Photo:/i,
+        /^Credit:/i,
+        /^Source:/i,
+    ];
+
+    return metadataPatterns.some(pattern => pattern.test(text.trim()));
 }
 
 /**
