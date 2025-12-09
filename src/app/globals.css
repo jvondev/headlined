@@ -84,7 +84,7 @@
   }
 
   body {
-    @apply text-foreground;
+    @apply bg-background text-foreground;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     /* Prevents double-tap zoom on mobile */
