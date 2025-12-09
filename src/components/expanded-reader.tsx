@@ -640,8 +640,8 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                 </div>
             </div>
 
-            {/* Content Area - with bottom padding for floating bar */}
-            <div className="max-w-3xl mx-auto px-6 py-8 pb-32 space-y-6">
+            {/* Content Area - with generous bottom padding for floating bar */}
+            <div className="max-w-3xl mx-auto px-6 py-8 pb-40 space-y-6">
                 {/* Generated Sections */}
                 <AnimatePresence mode="popLayout">
                     {sections.map((section, index) => {
@@ -700,6 +700,9 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                         );
                     })}
                 </AnimatePresence>
+
+                {/* Spacer to prevent content from scrolling behind floating dock */}
+                <div className="h-24" aria-hidden="true" />
 
                 {/* Scroll anchor for auto-scroll */}
                 <div ref={contentEndRef} />
