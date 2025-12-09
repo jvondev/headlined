@@ -200,7 +200,8 @@ export default async function SeoTopicPage({ params }: Props) {
         summaries: [],
         date: p.created_at || new Date().toISOString(),
         fullText: p.fullText || p.full_text || p.content || null,
-        readingTime: p.readingTime || p.min
+        readingTime: p.readingTime || p.min,
+        keywords: p.keywords || []
     }));
 
     return (

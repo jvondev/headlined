@@ -21,6 +21,7 @@ interface ScraperPost {
     content?: string;
     min?: number;
     readingTime?: number;
+    keywords?: string[];
 }
 
 interface SeoFeedProps {
@@ -81,7 +82,8 @@ export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
         summaries: [], // SEO posts don't have generated summaries yet
         date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
         fullText: p.fullText || p.full_text || p.content || null,
-        readingTime: p.readingTime || p.min
+        readingTime: p.readingTime || p.min,
+        keywords: p.keywords || []
     }));
 
     // Inject Ads
