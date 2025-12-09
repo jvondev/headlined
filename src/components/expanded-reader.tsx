@@ -339,13 +339,29 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
     const [isGenerating, setIsGenerating] = useState(false);
 
-    // Reader settings
-    const [isDarkMode, setIsDarkMode] = useState(true);
+    // Reader settings - with localStorage persistence for theme
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('reader-theme');
+            return saved !== null ? saved === 'dark' : true;
+        }
+        return true;
+    });
     const [fontSize, setFontSize] = useState(18);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
     const [linkCopied, setLinkCopied] = useState(false);
     const [highlightsEnabled, setHighlightsEnabled] = useState(true);
+
+    // Persist theme preference and sync to parent
+    useEffect(() => {
+        localStorage.setItem('reader-theme', isDarkMode ? 'dark' : 'light');
+    }, [isDarkMode]);
+
+    // Sync initial theme to parent on mount
+    useEffect(() => {
+        onThemeChange?.(isDarkMode);
+    }, []); // Only run on mount
 
     // Refs
     const containerRef = useRef<HTMLDivElement>(null);

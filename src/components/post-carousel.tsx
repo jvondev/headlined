@@ -589,7 +589,7 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                     </Card>
                   </div>
                 ) : post.slug.startsWith('ad-') ? (
-                  <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh] pointer-events-none">
+                  <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
                     <motion.div
                       className="relative w-full h-full rounded-[28px] overflow-hidden group"
                       whileHover={{ scale: 0.985, y: -2 }}
@@ -599,7 +599,7 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                       <div className="absolute -inset-1 bg-gradient-to-br from-white/10 via-white/5 to-transparent rounded-[30px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl pointer-events-none" />
 
                       {/* Main Card Container */}
-                      <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-gradient-to-br from-zinc-900 to-black shadow-2xl border border-white/5 pointer-events-none">
+                      <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-gradient-to-br from-zinc-900 to-black shadow-2xl border border-white/5">
                         {/* Background Gradient */}
                         <div className="absolute inset-0 overflow-hidden pointer-events-none">
                           <div className="w-full h-full bg-gradient-to-br from-zinc-800 via-zinc-900 to-black" />
@@ -610,8 +610,8 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                         </div>
 
                         {/* Card Content */}
-                        <div className="absolute inset-0 flex flex-col justify-between p-7 md:p-10 pointer-events-none">
-                          <div className="space-y-5 pt-2">
+                        <div className="absolute inset-0 flex flex-col justify-between p-7 md:p-10">
+                          <div className="space-y-5 pt-2 pointer-events-none">
                             {/* Sponsored Label */}
                             <div className="flex items-center gap-3 flex-wrap">
                               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-xs font-semibold text-white tracking-wide uppercase shadow-lg">
@@ -619,11 +619,11 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                                 Sponsored
                               </span>
                             </div>
+                          </div>
 
-                            {/* Ad Container - Full height to fill card */}
-                            <div className="absolute inset-0 flex items-center justify-center p-7 md:p-10 pointer-events-none">
-                              <div {...{ 'ta-ad-container': '' }} className="w-full h-full flex items-center justify-center relative pointer-events-auto rounded-2xl" />
-                            </div>
+                          {/* Ad Container - Full height to fill card, MUST be clickable */}
+                          <div className="absolute inset-0 flex items-center justify-center p-7 md:p-10">
+                            <div {...{ 'ta-ad-container': '' }} className="w-full h-full flex items-center justify-center relative rounded-2xl" />
                           </div>
                         </div>
                       </div>

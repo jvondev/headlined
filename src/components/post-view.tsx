@@ -263,10 +263,16 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     const decodedTitle = useMemo(() => decodeHtmlEntities(post.title), [post.title]);
 
     const readingTime = useMemo(() => {
-        const words = summaryText.split(/\s+/).length;
+        // Use post's readingTime if available
+        if (post.readingTime && post.readingTime > 0) {
+            return `${post.readingTime} min read`;
+        }
+        // Calculate from fullText if available, otherwise description, then summary
+        const textContent = post.fullText || post.description || summaryText;
+        const words = textContent.split(/\s+/).length;
         const minutes = Math.max(1, Math.ceil(words / 200));
         return `${minutes} min read`;
-    }, [summaryText]);
+    }, [post.readingTime, post.fullText, post.description, summaryText]);
 
     // Enhanced Touch Handling for "Award Worthy" Feel
     const handleTouchStart = (e: React.TouchEvent) => {
