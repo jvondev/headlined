@@ -106,6 +106,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     const [readerDarkMode, setReaderDarkMode] = useState(true);
     // Track sticky header state for mobile close button "morph"
     const [isMobileHeaderSticky, setIsMobileHeaderSticky] = useState(false);
+    // Track the original URL before expansion for restoration
+    const originalUrlRef = useRef<string | null>(null);
 
     // Gestures
     const y = useMotionValue(0);
@@ -131,6 +133,13 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             y.set(0);
             x.set(0);
             setSkipTypewriter(false);
+
+            // Use hash fragment for URL - doesn't affect Next.js routing
+            // Format: /app/today#article/2025-12-10/slug
+            const postDate = post.date || new Date().toISOString().split('T')[0];
+            const articleHash = `#article/${postDate}/${post.slug}`;
+            originalUrlRef.current = window.location.pathname + window.location.search + window.location.hash;
+            window.history.pushState({ expanded: true, slug: post.slug }, '', window.location.pathname + window.location.search + articleHash);
         } else {
             document.body.style.overflow = '';
             document.body.style.touchAction = '';
@@ -139,7 +148,19 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             document.body.style.overflow = '';
             document.body.style.touchAction = '';
         };
-    }, [isExpanded, y, x]);
+    }, [isExpanded, y, x, post.date, post.slug]);
+
+    // Handle browser back button - close modal without page reload
+    useEffect(() => {
+        const handlePopState = (event: PopStateEvent) => {
+            if (isExpanded) {
+                setIsExpanded(false);
+            }
+        };
+
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, [isExpanded]);
 
     const isCTA = post.slug === 'premium-cta';
 
@@ -156,10 +177,19 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             onUnlockRequest?.();
             return;
         }
-        if (!isExpanded) {
-            addToReadHistory(post).catch(console.error);
+
+        // Add to read history and expand locally (no page navigation)
+        addToReadHistory(post).catch(console.error);
+        setIsExpanded(true);
+    };
+
+    // Handle closing the expanded card
+    const handleCloseExpanded = () => {
+        setIsExpanded(false);
+        // Go back in history to restore original URL
+        if (originalUrlRef.current) {
+            window.history.back();
         }
-        setIsExpanded(!isExpanded);
     };
 
     const handleDownload = async (platform: 'tiktok' | 'instagram') => {
@@ -479,7 +509,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                 <motion.button
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setIsExpanded(false);
+                                        handleCloseExpanded();
                                     }}
                                     className={cn(
                                         "absolute top-6 right-6 z-[60] p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all active:scale-95 shadow-lg",
@@ -566,7 +596,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                                             onDownload={handleDownload}
                                             isExporting={isExporting}
                                             onThemeChange={(isDark) => setReaderDarkMode(isDark)}
-                                            onClose={() => setIsExpanded(false)}
+                                            onClose={handleCloseExpanded}
                                             onStickyChange={setIsMobileHeaderSticky}
                                         />
                                     </div>

@@ -91,6 +91,48 @@ export default function sitemap(): MetadataRoute.Sitemap {
         index === self.findIndex((r) => r.url === route.url)
     );
 
-    return [...staticRoutes, ...uniqueRoutes];
+    // Article permalink routes from all category data
+    const articleRoutes: MetadataRoute.Sitemap = [];
+    try {
+        const categories = fs.readdirSync(CACHE_DIR, { withFileTypes: true })
+            .filter(d => d.isDirectory())
+            .map(d => d.name);
+
+        for (const category of categories) {
+            const categoryDir = path.join(CACHE_DIR, category);
+            const files = fs.readdirSync(categoryDir).filter(f => f.endsWith('.json'));
+
+            for (const file of files) {
+                try {
+                    const data = JSON.parse(fs.readFileSync(path.join(categoryDir, file), 'utf-8'));
+                    for (const post of data) {
+                        const postDate = post.created_at
+                            ? new Date(post.created_at).toISOString().split('T')[0]
+                            : new Date().toISOString().split('T')[0];
+                        const slug = post.slug || '';
+                        if (!slug) continue;
+
+                        articleRoutes.push({
+                            url: `${baseUrl}/article/${postDate}/${slug}`,
+                            lastModified: post.created_at || now,
+                            changeFrequency: 'daily',
+                            priority: 0.7,
+                        });
+                    }
+                } catch (e) {
+                    // Skip invalid files
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Error reading static cache for article sitemap:', e);
+    }
+
+    // Deduplicate article routes
+    const uniqueArticleRoutes = articleRoutes.filter((route, index, self) =>
+        index === self.findIndex((r) => r.url === route.url)
+    );
+
+    return [...staticRoutes, ...uniqueRoutes, ...uniqueArticleRoutes];
 }
 
