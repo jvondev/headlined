@@ -54,7 +54,7 @@ export function PremiumGuard({ children, fallback, disabled }: PremiumGuardProps
                 )}
                 <PremiumModal isOpen={showModal} onClose={() => {
                     // Redirect to home if they try to close without upgrading
-                    router.push('/app/today');
+                    router.push('/today');
                 }} />
             </>
         );

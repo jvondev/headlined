@@ -1,54 +1,23 @@
-import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 type Props = {
     params: Promise<{ view: string }>
 };
 
+const validViews = ['today', 'yesterday', 'archive', 'this-week', 'this-month', 'saved', 'search'];
+
 export function generateStaticParams() {
-    return [
-        { view: 'today' },
-        { view: 'yesterday' },
-        { view: 'archive' },
-        { view: 'this-week' },
-        { view: 'this-month' },
-        { view: 'saved' },
-        { view: 'search' },
-    ];
+    return validViews.map(view => ({ view }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+// Redirect old /app/[view] routes to new root-level routes
+export default async function LegacyAppViewPage({ params }: Props) {
     const { view } = await params;
 
-    const titles: Record<string, string> = {
-        'today': 'Today\'s Headlines | Headlined',
-        'yesterday': 'Yesterday\'s News | Headlined',
-        'this-week': 'This Week\'s Top Stories | Headlined',
-        'this-month': 'This Month\'s Top Stories | Headlined',
-        'archive': 'News Archive | Headlined',
-        'saved': 'Your Saved Articles | Headlined',
-        'search': 'Search News | Headlined',
-    };
+    if (validViews.includes(view)) {
+        redirect(`/${view}`);
+    }
 
-    const title = titles[view] || 'Headlined App';
-    const description = view === 'saved'
-        ? 'Access your saved articles and bookmarks on Headlined.'
-        : view === 'search'
-            ? 'Search through curated news topics and articles on Headlined.'
-            : 'Your daily curated news feed. No noise, just the stories that matter.';
-
-    return {
-        title,
-        description,
-        robots: {
-            index: view === 'today', // Only index the main today view
-            follow: true,
-        },
-        alternates: {
-            canonical: `https://headlined.app/app/${view}`
-        }
-    };
-}
-
-export default function AppViewPage() {
-    return null;
+    notFound();
 }

@@ -659,7 +659,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
 
                   {/* Saved Widget */}
                   < motion.div className="col-span-1 relative group" >
-                    <Link href="/app/saved" className="absolute inset-0 z-10" />
+                    <Link href="/saved" className="absolute inset-0 z-10" />
                     <Card className="h-40 w-full bg-gradient-to-br from-blue-500/5 to-card/50 backdrop-blur-xl border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] flex flex-col p-5">
                       <div className="flex items-center justify-between mb-auto">
                         <div className="p-2 bg-blue-500/10 rounded-lg text-blue-600 dark:text-blue-400">

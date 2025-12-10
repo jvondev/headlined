@@ -51,7 +51,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     useEffect(() => {
         const filterItems = async () => {
             const baseItems: CarouselItem[] = [
-                { name: "Saved", type: "none" as const, href: "/app/saved", icon: "Bookmark", isIconOnly: true },
+                { name: "Saved", type: "none" as const, href: "/saved", icon: "Bookmark", isIconOnly: true },
                 { name: "Dashboard", type: "none" as const, href: "/", icon: "LayoutDashboard", isIconOnly: true },
             ];
 
@@ -89,7 +89,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                     }
                 }
 
-                setFilteredItems([...baseItems, ...validItems, { name: "Explore", type: "none" as const, href: "/explore", icon: "Compass", isIconOnly: true }, { name: "Search", type: "none" as const, href: "/app/search", icon: "Search", isIconOnly: true }]);
+                setFilteredItems([...baseItems, ...validItems, { name: "Explore", type: "none" as const, href: "/explore", icon: "Compass", isIconOnly: true }, { name: "Search", type: "none" as const, href: "/search", icon: "Search", isIconOnly: true }]);
             } else {
                 setFilteredItems(baseItems);
             }

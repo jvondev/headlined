@@ -46,7 +46,7 @@ export function SearchView() {
         if (filters.type !== 'all' && filters.value) {
             params.set(filters.type, filters.value);
         }
-        router.push(`/app/search?${params.toString()}`);
+        router.push(`/search?${params.toString()}`);
     };
 
     return (

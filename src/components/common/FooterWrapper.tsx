@@ -7,7 +7,7 @@ import { SEO_CONFIG } from '@/lib/seo-config';
 
 export function FooterWrapper() {
   const pathname = usePathname();
-  const hiddenRoutes = ['/app/today', '/app/yesterday', '/app/this-week', '/app/this-month', '/app/archive', '/app/search', '/app/saved'];
+  const hiddenRoutes = ['/today', '/yesterday', '/this-week', '/this-month', '/archive', '/search', '/saved'];
 
   const isSeoPage = Object.keys(SEO_CONFIG).some(cat => pathname.startsWith(`/${cat}/`));
 

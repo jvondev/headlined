@@ -48,7 +48,7 @@ export function Search({ className }: { className?: string }) {
 
   const goToSearchPage = () => {
     if (query.trim()) {
-      runCommand(() => router.push(`/app/search?q=${encodeURIComponent(query.trim())}`));
+      runCommand(() => router.push(`/search?q=${encodeURIComponent(query.trim())}`));
     }
   }
 

@@ -2,7 +2,7 @@
   "name": "Headlined",
   "short_name": "Headlined",
   "description": "Your personalized Daily updates",
-  "start_url": "/app/today",
+  "start_url": "/today",
   "display": "standalone",
   "background_color": "#f0f0f0",
   "theme_color": "#f0f0f0",

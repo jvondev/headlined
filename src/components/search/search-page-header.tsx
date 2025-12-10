@@ -18,7 +18,7 @@ export const SearchPageHeader: FC<SearchPageHeaderProps> = ({ initialQuery }) =>
   const handleSearch = (e?: React.FormEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();
     if (query.trim()) {
-      router.push(`/app/search?q=${encodeURIComponent(query.trim())}`);
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
 

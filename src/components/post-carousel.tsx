@@ -516,7 +516,7 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                 className="w-full h-12 text-base font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
               />
               <Button
-                onClick={() => router.push('/app/today')}
+                onClick={() => router.push('/today')}
                 variant="ghost"
                 className="w-full hover:bg-muted/50 transition-colors"
               >
@@ -581,7 +581,7 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                         <Button
                           variant="ghost"
                           className="w-full mt-4 text-muted-foreground hover:text-foreground"
-                          onClick={() => router.push('/app/today')}
+                          onClick={() => router.push('/today')}
                         >
                           Back to Today
                         </Button>

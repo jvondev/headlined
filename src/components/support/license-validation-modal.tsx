@@ -102,7 +102,7 @@ export function LicenseValidationModal({ trigger }: LicenseValidationModalProps)
 
                     <div className="flex justify-end">
                         {status === "success" ? (
-                            <Button className="w-full" onClick={() => router.push('/app/today')}>
+                            <Button className="w-full" onClick={() => router.push('/today')}>
                                 Continue to Headlined
                             </Button>
                         ) : (

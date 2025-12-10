@@ -87,7 +87,7 @@ export function RelatedArticles({ posts, onPostClick, currentDate, className }: 
 
             {/* View All Link */}
             <motion.a
-                href="/app/today"
+                href="/today"
                 className="flex items-center justify-center gap-2 mt-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 text-sm font-medium hover:bg-white/10 hover:text-white transition-all"
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}

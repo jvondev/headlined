@@ -208,7 +208,7 @@ export default function LandingPage() {
               What happened in tech today? Any design trends? Market moving? Stop wondering. Start knowing.
             </motion.p>
             <motion.div variants={fadeIn} className="flex justify-center gap-4">
-              <Link href="/app/today" passHref>
+              <Link href="/today" passHref>
                 <Button size="lg" className="text-lg h-12 px-8 rounded-lg">
                   Pick Your Topics—Start Reading
                 </Button>
@@ -330,7 +330,7 @@ export default function LandingPage() {
               Every topic you care about. Every post from today. One morning scroll. That's it.
             </motion.p>
             <motion.div variants={fadeIn}>
-              <Link href="/app/today" passHref>
+              <Link href="/today" passHref>
                 <Button size="lg" className="text-xl h-14 px-10 rounded-lg">
                   Get Started Free
                 </Button>

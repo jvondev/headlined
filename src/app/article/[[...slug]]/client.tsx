@@ -68,7 +68,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, initialP
             if (!articleInfo.isArticle || !articleInfo.date || !articleInfo.slug) {
                 // If we are at /article root or invalid path, handle gracefully
                 if (pathname === '/article' || pathname === '/article/') {
-                    router.replace('/app/today');
+                    router.replace('/today');
                 } else {
                     setLoadingState('error');
                 }
@@ -115,7 +115,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, initialP
         if (window.history.length > 2) {
             router.back();
         } else {
-            router.push('/app/today');
+            router.push('/today');
         }
     };
 
@@ -201,7 +201,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, initialP
                     <div className="p-4 rounded-full bg-red-500/10"><AlertCircle className="w-8 h-8 text-red-400" /></div>
                     <h1 className="text-xl font-bold text-white">Article Not Found</h1>
                     <p className="text-white/60 text-sm max-w-sm">This article may have been removed or the link is invalid.</p>
-                    <Link href="/app/today" className="mt-4 inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg font-medium">
+                    <Link href="/today" className="mt-4 inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg font-medium">
                         <Home className="w-4 h-4" /> Go to Headlines
                     </Link>
                 </motion.div>
@@ -341,7 +341,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, initialP
                                 </nav>
 
                                 <Link
-                                    href="/app/today"
+                                    href="/today"
                                     className="flex items-center justify-center gap-2 mt-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 text-sm font-medium hover:bg-white/10 hover:text-white transition-all"
                                 >
                                     View All Headlines

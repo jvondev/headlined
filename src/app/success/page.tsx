@@ -142,7 +142,7 @@ function SuccessContent() {
                             <Button
                                 size="lg"
                                 className="w-full h-14 text-lg rounded-full shadow-lg hover:shadow-xl transition-all group"
-                                onClick={() => router.push("/app/today")}
+                                onClick={() => router.push("/today")}
                             >
                                 Start Reading
                                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />

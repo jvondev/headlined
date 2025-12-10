@@ -59,8 +59,8 @@ async function main() {
 
     // Add static pages
     urls.push(`https://${HOST}/`);
-    urls.push(`https://${HOST}/app/today`);
-    urls.push(`https://${HOST}/app/this-week`);
+    urls.push(`https://${HOST}/today`);
+    urls.push(`https://${HOST}/this-week`);
 
     // Add PSEO pages from manifest
     if (fs.existsSync(MANIFEST_PATH)) {
