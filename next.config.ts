@@ -1,5 +1,5 @@
 
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 import withPWA from 'next-pwa';
 
 const withPWAConfig = withPWA({
@@ -8,7 +8,7 @@ const withPWAConfig = withPWA({
 });
 
 const nextConfig: NextConfig = {
-  output: 'export',
+  output: process.env.NODE_ENV === 'development' && process.env.NO_EXPORT ? undefined : 'export',
   ...withPWAConfig,
   /* config options here */
   typescript: {

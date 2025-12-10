@@ -1,0 +1,2 @@
+# Handle SPA routing for article pages
+/article/* /article 200
