@@ -1,5 +1,6 @@
-// /app is the default dashboard entry point
-// It defaults to showing today's dashboard content
+import { redirect } from 'next/navigation';
+
+// /app route redirects to /app/today for the feed experience
 export default function AppPage() {
-    return null;
+    redirect('/app/today');
 }
