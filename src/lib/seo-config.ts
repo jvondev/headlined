@@ -48,9 +48,9 @@ export const SEO_CONFIG: Record<CategoryId, SeoTemplateFull> = {
             "{Title} News Feed"
         ],
         introVariations: [
-            "Explore the latest happenings in {Title}. This feed tracks real-time updates from verified local and international sources.",
-            "Your central hub for {Title} news. We monitor thousands of sources to bring you the stories that matter most in the region.",
-            "Stay ahead with our {Title} news tracker. From breaking alerts to in-depth analysis, get the full picture of what's unfolding."
+            "What's happening in {Title} right now. Local stories, breaking updates, and community developments—curated from verified sources.",
+            "{Title} news at a glance. The stories shaping the region today, updated as they unfold.",
+            "Your {Title} briefing. Key developments, local updates, and what you need to know—no fluff."
         ],
         faqTemplates: [
             { q: "What is happening in {Title} right now?", a: "Our {Title} feed is updated continuously with the latest breaking news, local events, and community developments from verified sources." },
@@ -78,9 +78,9 @@ export const SEO_CONFIG: Record<CategoryId, SeoTemplateFull> = {
             "{Title} Watch"
         ],
         introVariations: [
-            "Follow the latest developments regarding {Title}. Our tracker aggregates news, statements, and analysis to provide a complete picture.",
-            "Latest headlines and analysis focusing on {Title}. Keep up with recent activities and public statements.",
-            "Comprehensive news coverage of {Title}, bringing together reports from diverse perspectives."
+            "What {Title} is doing today. Statements, decisions, and coverage from multiple sources.",
+            "{Title} in the news. Recent moves, quotes, and analysis—all in one place.",
+            "Tracking {Title}. The latest updates, public appearances, and what they mean."
         ],
         faqTemplates: [
             { q: "What is the latest news about {Title}?", a: "Check our live feed for the most recent updates, statements, and developments concerning {Title}." },
@@ -158,8 +158,9 @@ export const SEO_CONFIG: Record<CategoryId, SeoTemplateFull> = {
             "Latest in {Title}"
         ],
         introVariations: [
-            "Latest trends and analysis in {Title}. Explore the stories that are defining this topic right now.",
-            "A curated feed of the most important {Title} news. Diverse perspectives on the issues that matter."
+            "{Title} news, explained. What's trending, what's shifting, and why it matters.",
+            "Your {Title} briefing. Key stories and fresh takes on what's happening now.",
+            "The {Title} landscape today. Curated updates from sources worth reading."
         ],
         faqTemplates: [
             { q: "What are the current trends in {Title}?", a: "Our {Title} section tracks emerging patterns, major announcements, and expert analysis to keep you ahead of the curve." }
@@ -184,8 +185,9 @@ export const SEO_CONFIG: Record<CategoryId, SeoTemplateFull> = {
             "{Title} Sector News"
         ],
         introVariations: [
-            "Market analysis and corporate news for the {Title} sector. Keep a pulse on the industry.",
-            "Strategic insights into the {Title} industry. Monitoring key developments and market shifts."
+            "{Title} industry pulse. Market moves, company news, and what's changing.",
+            "Inside {Title}. Business developments, deals, and the forces reshaping the sector.",
+            "{Title} sector watch. The updates that matter for professionals and investors."
         ],
         faqTemplates: [
             { q: "Is the {Title} industry growing?", a: "Follow our market analysis and economic reports to track growth trends and investment opportunities in the {Title} sector." }
@@ -210,8 +212,9 @@ export const SEO_CONFIG: Record<CategoryId, SeoTemplateFull> = {
             "Life & {Title}"
         ],
         introVariations: [
-            "Updates and trends for {Title} enthusiasts. Dive deeper into your passion with our curated feed.",
-            "Explore the vibrant world of {Title}. Connect with the latest ideas and community highlights."
+            "{Title} today. New ideas, community updates, and what enthusiasts are talking about.",
+            "Your {Title} feed. Curated stories for people who care about this space.",
+            "Exploring {Title}. Fresh content, trends, and discoveries worth your time."
         ],
         faqTemplates: [
             { q: "How do I get started with {Title}?", a: "Our {Title} feed offers a mix of beginner guides, expert tips, and the latest news to help you navigate the field." }
@@ -236,8 +239,9 @@ export const SEO_CONFIG: Record<CategoryId, SeoTemplateFull> = {
             "{Title} Stock & News"
         ],
         introVariations: [
-            "Latest announcements and market moves from {Title}. Keeping investors and fans informed.",
-            "Corporate news and product updates from {Title}. Track the company's trajectory here."
+            "What's happening at {Title}. Product news, market moves, and corporate updates.",
+            "{Title} company watch. Launches, earnings, and the decisions driving change.",
+            "Inside {Title}. The business news you'd actually want to read."
         ],
         faqTemplates: [
             { q: "How is {Title} performing in the market?", a: "We track {Title}'s stock performance, earnings reports, and market share to provide a clear picture of their standing." }
@@ -470,8 +474,9 @@ export const SEO_CONFIG: Record<CategoryId, SeoTemplateFull> = {
             "Security: {Title}"
         ],
         introVariations: [
-            "Security updates and conflict reporting for {Title}. Objective analysis of volatile situations.",
-            "Tracking developments in the {Title} conflict. Daily reports and tactical analysis."
+            "The situation is evolving. {Title} updates from verified sources—facts, context, and developments as they happen.",
+            "{Title} conflict briefing. Ground reports, diplomatic moves, and what's changing today.",
+            "Monitoring {Title}. Security developments, humanitarian updates, and verified reporting."
         ],
         faqTemplates: [
             { q: "What is the current status of the {Title} conflict?", a: "Our situation report provides daily updates on front lines, diplomatic efforts, and security assessments." }

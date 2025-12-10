@@ -41,7 +41,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 { name: "Dashboard", type: "none" as const, href: "/", icon: "LayoutDashboard", isIconOnly: true },
             ];
 
-            if (pathname === "/today" || pathname === "/yesterday" || pathname === "/this-week" || pathname === "/this-month" || pathname === "/archive") {
+            if (pathname === "/app/today" || pathname === "/app/yesterday" || pathname === "/app/this-week" || pathname === "/app/this-month" || pathname === "/app/archive") {
                 const subscribedTopicItems = subscribedTopics.map(topic => ({
                     ...topic,
                     type: "topic" as const,
@@ -85,7 +85,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     const allFilterItems = filteredItems;
 
     const getInitialIndex = useCallback(() => {
-        if (pathname === "/today" || pathname === "/" || pathname === "/yesterday" || pathname === "/this-week" || pathname === "/this-month" || pathname === "/archive") {
+        if (pathname === "/app/today" || pathname === "/" || pathname === "/app/yesterday" || pathname === "/app/this-week" || pathname === "/app/this-month" || pathname === "/app/archive") {
             const dashboardIndex = allFilterItems.findIndex(item => item.name === "Dashboard");
             if (dashboardIndex !== -1) return dashboardIndex;
         }

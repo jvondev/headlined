@@ -8,6 +8,6 @@ export function generateStaticParams() {
     ];
 }
 
-export default function DashboardPage() {
+export default function AppViewPage() {
     return null;
 }

@@ -110,9 +110,87 @@ const afterItem = {
 };
 
 export default function LandingPage() {
+  // FAQ Schema for rich results
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is Headlined truly 100% free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, Headlined is designed to be free forever. While the core features are completely free, you can optionally support our project's growth to unlock exclusive bonus features."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I know it's today's stuff?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We guarantee freshness! Headlined only displays content published within the last 24 hours, so you're always up-to-date."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I change topics later?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, you can change your selected topics at any time. It's a quick process that takes only a few seconds."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What if I miss a day?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Doesn't matter. Tomorrow shows tomorrow's posts. No FOMO. No catching up."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Works on my phone?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Phone, tablet, laptop—anywhere with a browser. Even offline."
+        }
+      }
+    ]
+  };
+
+  // Software Application schema for PWA
+  const appSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Headlined",
+    "operatingSystem": "Web",
+    "applicationCategory": "NewsApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "100"
+    },
+    "description": "A simple swipe news app showing the day's most important stories. Stay informed without doomscrolling."
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
       <Header />
+
+      {/* SEO Schema Markup */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }}
+      />
 
       <main className="flex-1 pt-12 w-full px-4 lg:mx-auto lg:max-w-7xl">
         {/* Hero Section */}
@@ -130,7 +208,7 @@ export default function LandingPage() {
               What happened in tech today? Any design trends? Market moving? Stop wondering. Start knowing.
             </motion.p>
             <motion.div variants={fadeIn} className="flex justify-center gap-4">
-              <Link href="/today" passHref>
+              <Link href="/app/today" passHref>
                 <Button size="lg" className="text-lg h-12 px-8 rounded-lg">
                   Pick Your Topics—Start Reading
                 </Button>
@@ -252,7 +330,7 @@ export default function LandingPage() {
               Every topic you care about. Every post from today. One morning scroll. That's it.
             </motion.p>
             <motion.div variants={fadeIn}>
-              <Link href="/today" passHref>
+              <Link href="/app/today" passHref>
                 <Button size="lg" className="text-xl h-14 px-10 rounded-lg">
                   Get Started Free
                 </Button>

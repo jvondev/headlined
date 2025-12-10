@@ -36,7 +36,7 @@ export function ArchivePageWrapper({ fetchPosts }: ArchivePageWrapperProps) {
         <OnboardingProvider>
             <PremiumGuard>
                 <div className="fixed top-4 left-4 z-50">
-                    <Button variant="ghost" size="icon" onClick={() => router.push("/today")}>
+                    <Button variant="ghost" size="icon" onClick={() => router.push("/app/today")}>
                         <ArrowLeft className="w-6 h-6" />
                     </Button>
                 </div>

@@ -62,21 +62,21 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
     else if (hour < 12) timeGreeting = "Good Morning";
     else if (hour < 18) timeGreeting = "Good Afternoon";
 
-    if (pathname === "/yesterday" && date) {
+    if (pathname === "/app/yesterday" && date) {
       const d = new Date(date);
       return {
         mainText: timeGreeting,
         subText: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
       };
     }
-    if (pathname === "/archive" && date) {
+    if (pathname === "/app/archive" && date) {
       const d = new Date(date);
       return {
         mainText: timeGreeting,
         subText: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
       };
     }
-    if (pathname === "/this-week" && dateRange) {
+    if (pathname === "/app/this-week" && dateRange) {
       const [sY, sM, sD] = dateRange.start.split('-').map(Number);
       const [eY, eM, eD] = dateRange.end.split('-').map(Number);
       const start = new Date(sY, sM - 1, sD);
@@ -89,7 +89,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
         subText: `${startStr} - ${endStr}`
       };
     }
-    if (pathname === "/this-month" && dateRange) {
+    if (pathname === "/app/this-month" && dateRange) {
       const [sY, sM, sD] = dateRange.start.split('-').map(Number);
       const [eY, eM, eD] = dateRange.end.split('-').map(Number);
       const start = new Date(sY, sM - 1, sD);

@@ -23,6 +23,48 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+
+        {/* Site-wide Structured Data for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Headlined",
+              "url": "https://headlined.app",
+              "description": "A simple swipe news app showing the day's most important stories. Stay informed without doomscrolling.",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "https://headlined.app/search?q={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              }
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "NewsMediaOrganization",
+              "name": "Headlined",
+              "url": "https://headlined.app",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://headlined.app/headlined-icon-512.png",
+                "width": 512,
+                "height": 512
+              },
+              "sameAs": [],
+              "masthead": "https://headlined.app/about",
+              "ethicsPolicy": "https://headlined.app/about"
+            })
+          }}
+        />
       </head>
       <body className="font-body antialiased no-scrollbar h-full" suppressHydrationWarning={true}>
         <ClientLayout>{children}</ClientLayout>

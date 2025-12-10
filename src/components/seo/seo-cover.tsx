@@ -173,6 +173,18 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                                     onComplete={() => { }}
                                 />
                             </div>
+
+                            {/* At a Glance - AI-optimized summary for citation */}
+                            {posts.length > 0 && (
+                                <div className="mt-6 p-4 bg-foreground/5 rounded-xl border border-foreground/10 opacity-0 animate-[fadeIn_0.5s_ease-out_1.8s_forwards]">
+                                    <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">At a Glance</h2>
+                                    <p className="text-sm text-foreground/80 leading-relaxed">
+                                        {totalArticles} stories about {displayTitle} today.
+                                        {posts[0]?.title && ` Top story: "${posts[0].title.substring(0, 80)}${posts[0].title.length > 80 ? '...' : ''}"`}
+                                        {topTopics.length > 0 && `. Key themes: ${topTopics.slice(0, 3).join(', ')}.`}
+                                    </p>
+                                </div>
+                            )}
                         </div>
 
                         {/* Premium Badges - fade in after intro */}

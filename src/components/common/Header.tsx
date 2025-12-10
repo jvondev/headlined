@@ -47,7 +47,7 @@ export function Header() {
             <HeadlinedLogo />
             <NavItems items={navItems} />
             <div className="flex items-center gap-4">
-              <NavbarButton as={Link} href="/today" variant="primary" className="rounded-lg">
+              <NavbarButton as={Link} href="/app/today" variant="primary" className="rounded-lg">
                 Start Reading <span className="text-xs">(no login)</span>
               </NavbarButton>
             </div>
@@ -81,7 +81,7 @@ export function Header() {
               <div className="flex w-full flex-col gap-4">
                 <NavbarButton
                   as={Link}
-                  href="/today"
+                  href="/app/today"
                   onClick={() => setIsMobileMenuOpen(false)}
                   variant="primary"
                   className="w-full rounded-lg"

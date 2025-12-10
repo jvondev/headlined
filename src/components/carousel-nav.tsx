@@ -48,7 +48,7 @@ export function CarouselNav({
     return (
         <div className="flex items-center w-full pl-4">
             <Button variant="outline" className="mr-4 flex-shrink-0 font-bold text-md tracking-tight px-4 rounded-lg pointer-events-auto" asChild>
-                <Link href={isPremium ? "/today" : "/support"}>
+                <Link href={isPremium ? "/app/today" : "/support"}>
                     Headlined
                     {isPremium && <sup className="-ml-2 text-md">+</sup>}
                 </Link>

@@ -44,20 +44,20 @@ function ArchiveNavigationContent() {
 
         // Define all possible navigation options with relative labels
         const options = {
-            today: { label: "Today", path: "/today", icon: Sparkles },
-            yesterday: { label: "Yesterday", path: "/yesterday", icon: History },
-            twoDaysAgo: { label: "2 Days Ago", path: `/archive?date=${getPastDate(2)}`, icon: Clock },
-            threeDaysAgo: { label: "3 Days Ago", path: `/archive?date=${getPastDate(3)}`, icon: Clock },
-            thisWeek: { label: "This Week", path: "/this-week", icon: CalendarDays },
-            thisMonth: { label: "This Month", path: "/this-month", icon: Calendar },
+            today: { label: "Today", path: "/app/today", icon: Sparkles },
+            yesterday: { label: "Yesterday", path: "/app/yesterday", icon: History },
+            twoDaysAgo: { label: "2 Days Ago", path: `/app/archive?date=${getPastDate(2)}`, icon: Clock },
+            threeDaysAgo: { label: "3 Days Ago", path: `/app/archive?date=${getPastDate(3)}`, icon: Clock },
+            thisWeek: { label: "This Week", path: "/app/this-week", icon: CalendarDays },
+            thisMonth: { label: "This Month", path: "/app/this-month", icon: Calendar },
         };
 
         let current = options.today;
 
         // Determine current view and set label
-        if (pathname === "/yesterday") {
+        if (pathname === "/app/yesterday") {
             current = options.yesterday;
-        } else if (pathname === "/archive") {
+        } else if (pathname === "/app/archive") {
             const dateParam = searchParams.get("date");
             if (dateParam) {
                 // Check if dateParam matches 2 or 3 days ago for relative labeling
@@ -69,12 +69,12 @@ function ArchiveNavigationContent() {
                 } else if (dateParam === threeDaysAgoDate) {
                     current = options.threeDaysAgo;
                 } else {
-                    current = { label: formatDate(dateParam), path: `/archive?date=${dateParam}`, icon: Clock };
+                    current = { label: formatDate(dateParam), path: `/app/archive?date=${dateParam}`, icon: Clock };
                 }
             }
-        } else if (pathname === "/this-week") {
+        } else if (pathname === "/app/this-week") {
             current = options.thisWeek;
-        } else if (pathname === "/this-month") {
+        } else if (pathname === "/app/this-month") {
             current = options.thisMonth;
         }
 
