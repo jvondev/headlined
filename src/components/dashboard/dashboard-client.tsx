@@ -26,7 +26,8 @@ const SynchronizedCarousel = dynamic(
 function DashboardContent() {
     const params = useParams();
     const searchParams = useSearchParams();
-    const view = params.view as string; // 'today', 'yesterday', 'archive', 'this-week', 'this-month'
+    // Default to 'today' if no view param (for /app route)
+    const view = (params.view as string) || 'today';
 
     const { hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus();
     const { loading: feedsLoading } = useSubscribedFeeds();
