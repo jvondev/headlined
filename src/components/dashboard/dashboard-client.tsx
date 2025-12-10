@@ -46,29 +46,19 @@ function DashboardContent() {
     const { hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus();
     const { loading: feedsLoading } = useSubscribedFeeds();
 
-    const [availableTopics, setAvailableTopics] = useState<Topic[]>(() => {
-        if (typeof window !== 'undefined') {
-            const cached = sessionStorage.getItem('dashboard_topics');
-            if (cached) return JSON.parse(cached);
-        }
-        return [];
-    });
-    const [availableInterests, setAvailableInterests] = useState<Interest[]>(() => {
-        if (typeof window !== 'undefined') {
-            const cached = sessionStorage.getItem('dashboard_interests');
-            if (cached) return JSON.parse(cached);
-        }
-        return [];
-    });
-    const [loadingFeeds, setLoadingFeeds] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const cachedT = sessionStorage.getItem('dashboard_topics');
-            const cachedI = sessionStorage.getItem('dashboard_interests');
-            if (cachedT && cachedI) return false;
-        }
-        // Default to true if no cache or on server
-        return true;
-    });
+    const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
+    const [availableInterests, setAvailableInterests] = useState<Interest[]>([]);
+    const [loadingFeeds, setLoadingFeeds] = useState(true);
+
+    // Initialize from cache on mount
+    useEffect(() => {
+        const cachedTopics = sessionStorage.getItem('dashboard_topics');
+        const cachedInterests = sessionStorage.getItem('dashboard_interests');
+
+        if (cachedTopics) setAvailableTopics(JSON.parse(cachedTopics));
+        if (cachedInterests) setAvailableInterests(JSON.parse(cachedInterests));
+        if (cachedTopics && cachedInterests) setLoadingFeeds(false);
+    }, []);
     const [showOnboarding, setShowOnboarding] = useState(false);
 
     // Logic for 'today' view filtering
