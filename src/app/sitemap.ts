@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://headlined.app';
     const now = new Date().toISOString();
 
-    // Static routes
+    // Static routes - prioritized and cleaned up
     const staticRoutes: MetadataRoute.Sitemap = [
         {
             url: baseUrl,
@@ -19,34 +19,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 1.0,
         },
         {
-            url: `${baseUrl}/app/today`,
+            url: `${baseUrl}/news`,
             lastModified: now,
-            changeFrequency: 'hourly',
+            changeFrequency: 'daily',
             priority: 0.9,
         },
         {
-            url: `${baseUrl}/app/yesterday`,
+            url: `${baseUrl}/app/today`,
             lastModified: now,
-            changeFrequency: 'daily',
-            priority: 0.7,
-        },
-        {
-            url: `${baseUrl}/app/this-week`,
-            lastModified: now,
-            changeFrequency: 'daily',
-            priority: 0.7,
+            changeFrequency: 'hourly',
+            priority: 0.8,
         },
         {
             url: `${baseUrl}/about`,
             lastModified: now,
             changeFrequency: 'monthly',
             priority: 0.5,
-        },
-        {
-            url: `${baseUrl}/contact`,
-            lastModified: now,
-            changeFrequency: 'monthly',
-            priority: 0.4,
         },
         {
             url: `${baseUrl}/support`,

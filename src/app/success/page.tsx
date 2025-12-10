@@ -7,6 +7,10 @@ import { CheckCircle, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
+// Note: Since this is a 'use client' component, metadata must be set differently
+// Using generateMetadata in a separate file or layout would be needed for true noindex
+// For now we'll rely on robots.txt to block this route
+
 function SuccessContent() {
     const searchParams = useSearchParams();
     const router = useRouter();

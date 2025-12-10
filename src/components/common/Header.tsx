@@ -31,8 +31,8 @@ export function Header() {
       link: "/about",
     },
     {
-      name: "Contact",
-      link: "/contact",
+      name: "News",
+      link: "/news",
     },
   ];
 

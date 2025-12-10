@@ -1,6 +1,16 @@
 
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { Header } from '@/components/common/Header';
+
+// Title: 50 chars | Description: 157 chars
+export const metadata: Metadata = {
+  title: 'Privacy Policy | Headlined News Reader',
+  description: 'Read Headlined\'s privacy policy. We collect minimal data, require no account, and respect your privacy. Learn how we protect your information.',
+  alternates: {
+    canonical: 'https://headlined.app/privacy-policy'
+  }
+};
 
 export default function PrivacyPolicyPage() {
   return (
@@ -9,7 +19,7 @@ export default function PrivacyPolicyPage() {
       <main className="flex-grow container mx-auto px-4 sm:px-6 py-12">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-6">Privacy Policy</h1>
-          <p className="text-sm text-muted-foreground mb-8">Last Updated: {new Date().toLocaleDateString()}</p>
+          <p className="text-sm text-muted-foreground mb-8">Last Updated: December 10, 2024</p>
 
           <div className="space-y-6 text-lg text-muted-foreground">
             <p>

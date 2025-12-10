@@ -3,5 +3,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /success
 
 Sitemap: https://headlined.app/sitemap.xml

@@ -1,6 +1,16 @@
 
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { Header } from '@/components/common/Header';
+
+// Title: 50 chars | Description: 154 chars
+export const metadata: Metadata = {
+  title: 'Terms of Service | Headlined News Reader',
+  description: 'Terms of service for Headlined, a free news aggregation service. Learn about acceptable use, content policies, and your rights as a user.',
+  alternates: {
+    canonical: 'https://headlined.app/terms-of-service'
+  }
+};
 
 export default function TermsOfServicePage() {
   return (
@@ -9,7 +19,7 @@ export default function TermsOfServicePage() {
       <main className="flex-grow container mx-auto px-4 sm:px-6 py-12">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-6">Terms of Service</h1>
-          <p className="text-sm text-muted-foreground mb-8">Last Updated: {new Date().toLocaleString()}</p>
+          <p className="text-sm text-muted-foreground mb-8">Last Updated: December 10, 2024</p>
 
           <div className="space-y-6 text-lg text-muted-foreground">
             <p>

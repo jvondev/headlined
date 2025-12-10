@@ -1,6 +1,17 @@
 
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { Header } from '@/components/common/Header';
+
+// Title: 55 chars | Description: 155 chars
+export const metadata: Metadata = {
+  title: 'About Headlined | Our Mission & Story',
+  description: 'Headlined is a free news reader for digital minimalists. No login required, no tracking—just curated daily news in a TikTok-style scrolling experience.',
+  alternates: {
+    canonical: 'https://headlined.app/about'
+  }
+};
+
 
 export default function AboutPage() {
   return (
@@ -12,7 +23,7 @@ export default function AboutPage() {
           <p className="text-lg text-muted-foreground mb-8">
             Headlined is a modern content reader designed for a fast, intuitive, and enjoyable reading experience, inspired by the seamless vertical scrolling of platforms like TikTok. Our mission is to help you stay updated with your favorite topics and news sources without the clutter and noise of traditional content platforms.
           </p>
-          
+
           <h2 className="text-3xl font-semibold mb-4">Our Vision</h2>
           <p className="text-lg text-muted-foreground mb-8">
             In a world of information overload, we believe that staying informed should be simple and engaging. We created Headlined to be a free, no-login-required platform where you can instantly dive into content that matters to you. Whether you're catching up on tech news, design trends, or market analysis, Headlined provides a clean, focused, and personalized feed.
