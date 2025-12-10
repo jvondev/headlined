@@ -525,10 +525,17 @@ async function processItem(item: any, source: any): Promise<Post | null> {
         .trim()
         .replace(/\s+/g, '-');
 
-    let slug = baseSlug.substring(0, 60);
-    if (slug.endsWith('-')) {
-        slug = slug.slice(0, -1);
+    let slug = baseSlug.substring(0, 120);
+    // Smart truncation: never cut words halfway. Valid slugs usually have hyphens.
+    if (baseSlug.length > 120) {
+        const lastHyphen = slug.lastIndexOf('-');
+        // If we found a hyphen and it's not at the very start, cut there
+        if (lastHyphen > 0) {
+            slug = slug.substring(0, lastHyphen);
+        }
     }
+    // Remove potential trailing hyphens
+    slug = slug.replace(/-+$/, '');
     if (!slug) {
         slug = `post-${Date.now()}`;
     }
