@@ -10,6 +10,9 @@ import { SEO_DATA_URL } from '../lib/seo-config';
 const CACHE_DIR = path.join(process.cwd(), 'src', 'data', 'static-cache');
 const MANIFEST_CACHE_FILE = path.join(CACHE_DIR, 'manifest.json');
 
+// Max articles per topic for crawler preview (keeps data fresh and build size small)
+const MAX_ARTICLES_PER_TOPIC = 10;
+
 async function fetchJson(url: string) {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.statusText}`);
@@ -54,7 +57,17 @@ async function run() {
             const targetFile = path.join(targetDir, `${slug}.json`);
 
             try {
-                const data = await fetchJson(`${SEO_DATA_URL}/data/${category}/${slug}.json`);
+                let data = await fetchJson(`${SEO_DATA_URL}/data/${category}/${slug}.json`);
+
+                // Sort by created_at (newest first) and limit to MAX_ARTICLES_PER_TOPIC
+                if (Array.isArray(data)) {
+                    data = data.sort((a: any, b: any) => {
+                        const dateA = new Date(a.created_at || 0).getTime();
+                        const dateB = new Date(b.created_at || 0).getTime();
+                        return dateB - dateA; // Newest first
+                    }).slice(0, MAX_ARTICLES_PER_TOPIC);
+                }
+
                 fs.writeFileSync(targetFile, JSON.stringify(data, null, 2));
                 downloaded++;
             } catch (e) {

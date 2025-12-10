@@ -1,5 +1,68 @@
 [
   {
+    "slug": "john-romeros-canceled-shooter-is-back-on-again-sort-of",
+    "title": "John Romero's Canceled Shooter Is Back On Again, Sort Of",
+    "description": "Earlier this year, John Romero--the creator of Doom and Quake--announced that his next first-person shooter had been canceled. Although Romero and his company, Romero Games, didn't confirm that the project was a victim of Microsoft's layoffs and cutbacks, one of Romero Games' laid-off employees did. However, it appears the still-unnamed shooter isn't completely dead, according to Romero himself.\nDuring his appearance at Salón del Videojuego de Madrid (via Eurogamer), Romero confirmed that the project is back on, and that it's been given a fresh redesign.\n\"We're not starting at ground zero,\" said Romero.",
+    "fullText": null,
+    "readingTime": 0,
+    "keywords": [],
+    "qualityScore": 0,
+    "link": "https://www.gamespot.com/articles/john-romeros-canceled-shooter-is-back-on-again-sort-of/1100-6536832/?ftag=CAD-01-10abi2f",
+    "thumbnail_url": "https://www.gamespot.com/a/uploads/screen_kubrick/1837/18375603/4620324-doom.jpg",
+    "created_at": "2025-12-10T18:55:44.452Z",
+    "topic": "gaming"
+  },
+  {
+    "slug": "microsofts-latest-patch-tuesday-update-fixes-these-three-zerodays",
+    "title": "Microsoft's Latest 'Patch Tuesday' Update Fixes These Three Zero-Days",
+    "description": "The patch addresses 56 vulnerabilities in total.",
+    "fullText": "Microsoft's Patch Tuesday update for December is here, and Windows users should ensure their machines are updated as soon as possible to fix three zero-day vulnerabilities. These are security flaws that are actively exploited or publicly disclosed before the developer releases an official patch.\n\nAs reported by Bleeping Computer, this month's update addresses 56 bugs in total: 28 elevation-of-privilege vulnerabilities, 19 remote-code-execution vulnerabilities, four information-disclosure vulnerabilities, three denial-of-service vulnerabilities, and two spoofing vulnerabilities. Three of the remote code execution flaws are labeled \"critical.\" Note that these figures do not include updates released for Microsoft Edge and Mariner.\n\nPatch Tuesday is typically released on the second Tuesday of every month around 10am PT, so you can anticipate security updates at that time.\n\nOne of the zero-days patched in December has been actively exploited in the wild, though Microsoft has not shared any details as to how. CVE-2025-62221 is an elevation-of-privilege vulnerability in the Windows Cloud Files Mini Filter Driver, and when exploited, give attackers SYSTEM privileges. The mini filter allows cloud applications, such as OneDrive, access to file system functions.\n\nThe other two bugs fixed have been publicly disclosed:\n\nCVE-2025-64671 - GitHub Copilot for Jetbrains Remote Code Execution Vulnerability: This flaw, which can be exploited through a Cross Prompt Injection in untrusted files or MCP servers, allows attackers to execute commands locally. According to Krebs on Security, this could trick the LLM into adding malicious instructions in the user's auto-approve settings.\n\nCVE-2025-54100 - PowerShell Remote Code Execution Vulnerability: This bug could cause scripts embedded in a webpage to be executed when retrieved using Invoke-WebRequest.\n\nCVE-2025-62221 has been attributed to Microsoft Threat Intelligence Center (MSTIC) & Microsoft Security Response Center (MSRC). CVE-2025-64671 was disclosed by Ari Marzuk, while CVE-2025-54100 has been credited to multiple security researchers.",
+    "readingTime": 2,
+    "keywords": [
+      "remote code",
+      "code execution",
+      "execution vulnerability",
+      "mini filter",
+      "publicly disclosed",
+      "actively exploited",
+      "vulnerabilities",
+      "security",
+      "december",
+      "windows"
+    ],
+    "qualityScore": 0.9,
+    "link": "https://lifehacker.com/tech/microsoft-patch-tuesday-update-december-2025?utm_medium=RSS",
+    "thumbnail_url": "https://lifehacker.com/imagery/articles/01KC352X3QRTYWNS7CP2G3NBYA/hero-image.fill.size_1200x675.jpg",
+    "created_at": "2025-12-10T18:55:42.983Z",
+    "topic": "tech"
+  },
+  {
+    "slug": "the-game-awards-creator-hears-your-feedback-do-we-always-get",
+    "title": "The Game Awards Creator Hears Your Feedback --\"Do We Always Get It Right? No\"",
+    "description": "The Game Awards host and organizer Geoff Keighley has opened up on the challenges of running a show that aims to celebrate games and the people who make them while also acknowledging the challenging times people in the industry today are facing. So far in 2025, numerous developers lost their jobs, Microsoft canceled games, and the industry further consolidated with EA announcing plans to sell itself to Saudi Arabia.\nSpeaking to The Game Business, Keighley said the introduction of the Game Changer award in 2024 was an initial attempt to address this. Amir Satvat was given the prize for his work to support people who were laid off in the gaming industry.\nKeighley hasn't said if this award is coming back in 2025, but it would be a glaring omission if it did not.",
+    "fullText": null,
+    "readingTime": 0,
+    "keywords": [],
+    "qualityScore": 0,
+    "link": "https://www.gamespot.com/articles/the-game-awards-creator-hears-your-feedback-do-we-always-get-it-right-no/1100-6536808/?ftag=CAD-01-10abi2f",
+    "thumbnail_url": "https://www.gamespot.com/a/uploads/screen_kubrick/1179/11799911/4619947-screenshot2025-12-09at3.44.25%E2%80%AFpm.png",
+    "created_at": "2025-12-10T03:48:31.517Z",
+    "topic": "gaming"
+  },
+  {
+    "slug": "ms-flight-sims-stranger-things-collab-has-landed",
+    "title": "MS Flight Sim's Stranger Things Collab Has Landed",
+    "description": "While Stranger Things is wrapping up after an almost decade run on Netflix, that hasn't stopped the Upside Down from seeping into places most wouldn't expect. Microsoft Flight Simulator 24's collab with Stranger Things has arrived today on Steam, cloud, Xbox, and, despite initial pushback, PS5. The crossover is more than skins; it even features Murray Bauman (Brett Gelman) from the original cast as you help the citizens of Hawkins escape the encroaching darkness.\n\"Enter the world of Netflix’s Stranger Things to help Hawkins, a town under lockdown, heavy patrols, and supernatural threats,\" it reads on the official PlayStation Blog. \"And, if you’re ready to visit Hawkins, Indiana, even after the credits roll on the crew’s last strange adventure, you will be able to explore a highly detailed map and recreation of the town with more than 40 iconic locations made famous by the show.",
+    "fullText": null,
+    "readingTime": 0,
+    "keywords": [],
+    "qualityScore": 0,
+    "link": "https://www.gamespot.com/articles/ms-flight-sims-stranger-things-collab-has-landed/1100-6536792/?ftag=CAD-01-10abi2f",
+    "thumbnail_url": "https://www.gamespot.com/a/uploads/screen_kubrick/1597/15976769/4619719-54964396098_b9dd6289c4_h.jpg",
+    "created_at": "2025-12-09T18:53:30.661Z",
+    "topic": "gaming"
+  },
+  {
     "slug": "microsoft-sends-harsh-message-to-millions-of-microsoft-365-c",
     "title": "Microsoft sends harsh message to millions of Microsoft 365 customers",
     "description": "Microsoft's stock experienced volatility after some AI sellers made a headline-grabbing claim that the company failed to meet its aggressive goals and, as a result, reset growth targets. Microsoft says the story went too far. It has thus far maintained its double-digit gains this year, but any ...",

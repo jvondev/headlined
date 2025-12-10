@@ -1,317 +1,161 @@
 [
   {
-    "slug": "an-explosion-of-soloagers-are-struggling-with-rising-costs-a",
-    "title": "An 'explosion' of solo-agers are struggling with rising costs and little support: 'I'm flying without a net'",
-    "description": "Older Americans who live alone tend to struggle more financially and with their emotional and physical health.",
-    "link": "https://www.businessinsider.com/an-explosion-of-solo-agers-are-struggling-with-rising-costs-2025-12",
-    "thumbnail_url": "https://i.insider.com/6933249b71107c9f34577059?width=1200&format=jpeg",
-    "created_at": "2025-12-07T15:25:49.238Z",
-    "topic": "finance"
-  },
-  {
-    "slug": "how-a-heart-health-dietitian-and-mom-of-4-boys-stays-fit",
-    "title": "How a heart health dietitian — and mom of 4 boys — stays fit",
-    "description": "Michelle Routhenstein, a preventive cardiology dietitian, keeps workout equipment in her office and meal-preps most of her meals.",
-    "link": "https://www.businessinsider.com/how-heart-health-dietitian-mom-of-4-stays-fit-2025-12",
-    "thumbnail_url": "https://i.insider.com/692f0c4d71107c9f34572b73?width=1200&format=jpeg",
-    "created_at": "2025-12-07T15:25:47.955Z",
-    "topic": "finance"
-  },
-  {
-    "slug": "scientists-discover-first-gene-proven-to-directly-cause-ment",
-    "title": "Scientists discover first gene proven to directly cause mental illness",
-    "description": "Scientists have discovered that a single gene, GRIN2A, can directly cause mental illness—something previously thought to stem only from many genes acting together. People with certain variants of this gene often develop psychiatric symptoms much earlier than expected, sometimes in childhood instead of adulthood. Even more surprising, some individuals show only mental health symptoms, without the seizures or learning problems usually linked to GRIN2A.",
-    "link": "https://www.sciencedaily.com/releases/2025/12/251202052230.htm",
-    "thumbnail_url": "https://www.sciencedaily.com/images/1920/genetic-brain-disorders.webp",
-    "created_at": "2025-12-07T15:22:46.306Z",
+    "slug": "already-had-a-profound-effect-parents-react-to-australias-social-media-ban",
+    "title": "‘Already had a profound effect’: parents react to Australia’s social media ban",
+    "description": "We asked you to share your views on your children’s use of social media and how the ban is affecting your family. Here is what you told us\nFor some parents, social media sucks up their children’s time and steals them away from family life, instilling mental health issues along the way. For others, it provides their children with an essential line to friends, family, connection and support.\nWhen Australia’s social media ban came into effect on Wednesday, millions of under-16s lost access to their accounts and were prevented from creating new ones.\n Continue reading...",
+    "fullText": "For some parents, social media sucks up their children’s time and steals them away from family life, instilling mental health issues along the way. For others, it provides their children with an essential line to friends, family, connection and support.\n\nWhen Australia’s social media ban came into effect on Wednesday, millions of under-16s lost access to their accounts and were prevented from creating new ones.\n\nGuardian Australia has spent the past year reporting on the ban, how it will be implemented and potential unintended consequences. But we wanted to know how it is affecting parents, children and families now it has come into effect. Is it a force for good or a terrible policy mistake?\n\nSo we asked Guardian readers to tell us, and more than 100 of you replied. Here, 20 people share how the ban has affected them, their children and their families.",
+    "readingTime": 1,
+    "keywords": [
+      "social media",
+      "children",
+      "parents",
+      "family",
+      "effect",
+      "families",
+      "guardian"
+    ],
+    "qualityScore": 0.55,
+    "link": "https://www.theguardian.com/australia-news/ng-interactive/2025/dec/10/parents-react-to-australias-under-16s-social-media-ban-interactive",
+    "thumbnail_url": "https://i.guim.co.uk/img/media/af3ca56e6eda188b3baf0ed33cae5067dd6b7824/0_0_5000_4000/master/5000.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&precrop=40:21,offset-x50,offset-y0&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdGctZGVmYXVsdC5wbmc&enable=upscale&s=45a579fe2c424dd849f1374c2a72ae30",
+    "created_at": "2025-12-10T18:55:43.394Z",
     "topic": "tech"
   },
   {
-    "slug": "ai-deepfakes-of-real-doctors-spreading-health-misinformation",
-    "title": "AI deepfakes of real doctors spreading health misinformation on social media",
-    "description": "Hundreds of videos on TikTok and elsewhere impersonate experts to sell supplements with unproven effects \nTikTok and other social media platforms are hosting AI-generated deepfake videos of doctors whose words have been manipulated to help sell supplements and spread health misinformation.\nThe factchecking organisation Full Fact has uncovered hundreds of such videos featuring impersonated versions of doctors and influencers directing viewers to Wellness Nest, a US-based supplements firm.\n Continue reading...",
-    "link": "https://www.theguardian.com/society/2025/dec/05/ai-deepfakes-of-real-doctors-spreading-health-misinformation-on-social-media",
-    "thumbnail_url": "https://i.guim.co.uk/img/media/53cc24d57b561a7e7ce23d333cb5e045b3fa3970/3391_0_4059_3247/master/4059.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&precrop=40:21,offset-x50,offset-y0&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdGctZGVmYXVsdC5wbmc&enable=upscale&s=88f69c6c03c9f7cbb051b81d2cae5e42",
-    "created_at": "2025-12-07T03:48:47.227Z",
-    "topic": "tech"
+    "slug": "dying-charles-all-but-confirmed-to-reunite-with-harrys-kids",
+    "title": "Dying Charles All But Confirmed to Reunite With Harry’s Kids Amid Reports He’s Preparing This Christmas to Be ‘His Last’—His ‘Health Isn’t the Best’",
+    "description": "King Charles is a step closer to saying goodbye to Prince Harry and Meghan Markle’s kids before it’s too late. The Sun reported on December 7 that Harry had a major win in his ongoing case to restore his security in the United Kingdom after he lost the taxpayer-funded benefit after he and his wife, …",
+    "fullText": "King Charles is a step closer to saying goodbye to Prince Harry and Meghan Markle’s kids before it’s too late.\n\nThe Sun reported on December 7 that Harry had a major win in his ongoing case to restore his security in the United Kingdom after he lost the taxpayer-funded benefit after he and his wife, Meghan Markle, stepped down as senior members of the British royal family and moved to the United States in 2020. According to The Sun, a review of Harry’s security by the official body that assesses how royals and VIPs are guarded is now underway by the U.K. government.\n\nHarry's Ex's Friend Called Their Breakup the 'Best Thing That Ever Happened to Her' Right Before Reports the Prince Saw Her as the '1 Person Who Really Understood' Him\n\nThe Sun also reported that evidence has already been collected by Harry’s team, the police, and the government, and any decision around Harry’s security will be known in January 2026. “The UK Government’s protective security system is rigorous and proportionate. It is our long-standing policy not to provide detailed information on those arrangements, as doing so could compromise their integrity and affect individuals’ security,” a U.K. government spokesperson said in a statement at the time.\n\nThe update means Harry, who has said that he doesn’t feel safe bringing Meghan and his two children, Archie and Lilibet, back to the U.K. unless they had security, is one step closer to reuniting his father, King Charles, with his grandchildren. According to BBC, Charles hasn’t seen Lilibet and Archie in person since the Sussexes’ visit to the U.K. in 2022 for the Platinum Jubilee.\n\nThe update also comes after Charles and Harry reunited for the first time in years during a meeting in September, which was seen as a “massive step” forward in their estrangement, according to People. The update also comes as a source told Us Weekly in December that Charles is viewing his 2025 Christmas celebration as his “last” holiday after he was diagnosed with cancer in 2024.\n\n“Charles prioritizes duty, but he’s also a family man who knows his time is precious,” the insider said. “He wants a special last Christmas in case it’s his last.”\n\nFor Charles’ “last Christmas,” the insider reported that the king planned on taking his St. Mary Magdalene Church on Christmas morning and recording his Christmas speech, which airs later that afternoon to million of listeners. “Nothing would stop Charles from doing that,” the insider said. “He will do everything expected of him and more.” Another source added, “His health isn’t the best. They’re taking it day by day.”\n\n25 Celebrity Couples Who Stayed Together After Cheating Scandals\n\nEvery Celebrity Who Has Hosted the Golden Globes Through the Years\n\n29 Short Celebrity Marriages That Were Over Before They Started",
+    "readingTime": 3,
+    "keywords": [
+      "harry’s security",
+      "step closer",
+      "king charles",
+      "the sun",
+      "christmas",
+      "insider",
+      "celebrity",
+      "prince",
+      "it’s",
+      "december"
+    ],
+    "qualityScore": 1,
+    "link": "https://www.yahoo.com/entertainment/celebrity/articles/dying-charles-confirmed-reunite-harry-194737073.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/hnGb2nqPAQVLPRBxxWAyWg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD05MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/sheknows_79/ee62e7a540baa8281df40e89f7d5a5c4",
+    "created_at": "2025-12-10T03:48:28.616Z",
+    "topic": "entertainment"
   },
   {
-    "slug": "this-khosla-venturesbacked-startup-is-using-ai-to-personaliz",
-    "title": "This Khosla Ventures–backed startup is using AI to personalize cancer care",
-    "description": "Radical Health just emerged from stealth, having raised $5 million in pre-seed funding led by Khosla Ventures.",
-    "link": "https://fortune.com/2025/12/04/khosla-ventures-backed-radical-health-stealth-seed-ai-personalize-cancer-care/",
-    "thumbnail_url": "https://fortune.com/img-assets/wp-content/uploads/2025/12/image-9-e1764811284270.jpg?resize=1200,600",
-    "created_at": "2025-12-05T03:45:53.079Z",
-    "topic": "business"
-  },
-  {
-    "slug": "how-us-employers-can-meet-the-healthcare-needs-of-younger-wo",
-    "title": "How U.S. Employers Can Meet the Healthcare Needs of Younger Workers",
-    "description": "Employers and health systems can do a better job of serving the specific healthcare needs of Millennials and Gen Zers by embracing the following seven approaches: 1) Enlist AI in the design of benefits and the delivery of care; 2) Harness virtual technologies to boost employees’ engagement in choosing and making the most of their healthcare benefits; 3) Shift to prepayment reimbursement models, which emphasize maintaining patients’ health rather than generating revenue when patients become ill; 4) Train physicians to connect with younger patients both technologically and culturally; 5) Combat the physician shortage by supporting educational programs and advocating for legislation to increase residency slots; 6) Treat mental health as an essential part of overall health; and 7) Adopting ways to make care for younger workers more affordable.",
-    "link": "https://hbr.org/2025/12/how-u-s-employers-can-meet-the-healthcare-needs-of-younger-workers",
-    "thumbnail_url": "/resources/images/article_assets/2025/12/Dec25_03_187311174_88305781_unsplash.jpg",
-    "created_at": "2025-12-05T03:45:47.177Z",
-    "topic": "business"
-  },
-  {
-    "slug": "the-president-complained-about-the-focus-on-his-health-then",
-    "title": "The president complained about the focus on his health, then promptly drifted off.",
-    "description": "President Donald Trump struggled to make it through a lengthy Cabinet meeting without a bit of shut-eye on the job. The 79-year-old told reporters he was “sharper than I was 25 years ago” before being pictured nodding off several times as his loyal Cabinet members regularly praised him during the lengthy meeting. It comes after Trump being busted for micro-sleeps last month at a press conference on weight-loss drugs. His nemesis, California Gov. Gavin Newsom, posted a video of a sleepy Trump with the caption, “DOZY DON IS BACK!",
-    "link": "https://www.yahoo.com/news/videos/president-trying-keep-hands-hidden-053734888.html",
-    "thumbnail_url": "https://media.zenfs.com/en/video.dailybeast.com/6bd01628cb04b706461ece3f2b1ad4bd",
-    "created_at": "2025-12-05T03:42:15.381Z",
-    "topic": "news"
-  },
-  {
-    "slug": "affordable-care-act-premiums-are-set-to-spike-a-new-poll-sho",
-    "title": "Affordable Care Act premiums are set to spike. A new poll shows enrollees are already struggling",
-    "description": "Fifty-two-year-old Dinam Bigny sank into debt and had to get a roommate this year, in part because of health insurance premiums that cost him nearly $900 per month.  Bigny is among the many Americans dependent on Affordable Care Act marketplace health insurance plans who are already struggling with the high cost of health care, according to a new survey from the health care research nonprofit KFF.  Most of the more than 1,300 enrollees surveyed in early November say they anticipate that their health costs will be impacted next year if Congress doesn’t extend expiring COVID-era tax credits that help more than 90% of enrollees pay for health insurance premiums, per KFF.",
-    "link": "https://www.yahoo.com/news/articles/affordable-care-act-premiums-set-100120234.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/LZFKvtkSwjl4do8FXRZgEQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/7dddad374b0c234083c71efd7b88d677",
-    "created_at": "2025-12-05T03:42:06.209Z",
-    "topic": "news"
-  },
-  {
-    "slug": "exclusive-angle-health-raises-134-million-series-b-to-grow-i",
-    "title": "Exclusive: Angle Health raises $134 million Series B to grow its AI-driven healthcare benefits offerings",
-    "description": "Angle Health has raised a $134 million Series B, led by Portage, Fortune has exclusively learned.",
-    "link": "https://fortune.com/2025/12/03/exclusive-angle-health-raises-134-million-series-b-to-grow-its-ai-driven-healthcare-benefits-offerings/",
-    "thumbnail_url": "https://fortune.com/img-assets/wp-content/uploads/2025/12/ANGLE-HEALTH-2-e1764735370484.jpg?resize=1200,600",
-    "created_at": "2025-12-04T03:46:40.233Z",
-    "topic": "business"
-  },
-  {
-    "slug": "the-strong-case-for-breaking-your-fitness-streaks",
-    "title": "The (Strong) Case for Breaking Your Fitness Streaks",
-    "description": "When it comes to your health, maybe endless growth isn't possible.",
-    "link": "https://lifehacker.com/health/the-strong-case-for-breaking-your-fitness-streaks?utm_medium=RSS",
-    "thumbnail_url": "https://lifehacker.com/imagery/articles/01KBJR5T6X30NGE44VZYZ5XVXC/hero-image.fill.size_1200x675.jpg",
-    "created_at": "2025-12-04T03:46:32.038Z",
-    "topic": "tech"
-  },
-  {
-    "slug": "eubank-reveals-health-issues-but-hopes-to-return",
-    "title": "Eubank reveals 'health issues' but hopes to return",
-    "description": "Chris Eubank Jr says he will not box again until he is \"100%\" fit after revealing he has been dealing with \"health issues\".",
-    "link": "https://www.bbc.com/sport/boxing/articles/cqjg4plzndpo?at_medium=RSS&at_campaign=rss",
-    "thumbnail_url": "https://ichef.bbci.co.uk/ace/branded_sport/1200/cpsprodpb/106f/live/94def460-cf9d-11f0-99b0-f70a29876ac6.jpg",
-    "created_at": "2025-12-03T03:45:15.735Z",
-    "topic": "sports"
-  },
-  {
-    "slug": "oregons-hospital-price-cap-cut-costs-without-comprising-care",
-    "title": "Oregon's hospital price cap cut costs without comprising care",
-    "description": "A Brown University School of Public Health analysis shows Oregon’s cap on hospital payments for the state employee health plan led to major savings without reducing services, staffing or patient satisfaction.",
-    "link": "https://sph.brown.edu/news/2025-12-02/hospital-price-caps",
-    "thumbnail_url": "https://sph.brown.edu/sites/default/files/styles/wide_xlrg/public/2025-12/AdobeStock_435011836_Editorial_Use_Only.jpg?h=d8c2d46c&itok=KZX0bcyd",
-    "created_at": "2025-12-03T03:42:28.511Z",
-    "topic": "tech"
-  },
-  {
-    "slug": "scientists-found-the-exact-age-when-exercise-matters-most-fo",
-    "title": "Scientists Found the Exact Age When Exercise Matters Most for Brain Health",
-    "description": "Exercise is one of the best ways to keep your brain healthy. But when does working out start to guard your cognitive abilities against dementia?",
-    "link": "https://health.yahoo.com/wellness/fitness/exercise/articles/scientists-found-exact-age-exercise-184200973.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/bhv2KoC087cK6395UboKGw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://media.zenfs.com/en/hearst_mens_health_171/6c19228bbb114b7e3496718c269ae100",
-    "created_at": "2025-12-03T03:42:15.968Z",
+    "slug": "how-the-fitness-tech-boom-is-making-health-inequality-worse",
+    "title": "How the Fitness Tech Boom Is Making Health Inequality Worse",
+    "description": "We live in a time of unprecedented insight into our bodies—if you can afford it.",
+    "fullText": "The latest Apple Watch costs $429. A basic Peloton Bike is $1,395, plus a $49.99 monthly subscription. Throw in a WHOOP membership at $149 annually, maybe an Oura Ring for another $349, and suddenly you're looking at thousands of dollars to participate in what's become the standard way many Americans approach their health. For some, that price tag is steep. For others, it's a non-starter.\n\nI'm no stranger to the appeal of the latest, greatest wearables and smart health devices. But as all this wellness technology become the norm, what does this mean for people who don't strap a smartwatch onto their wrists? If comprehensive health data—and the insights it provides—becomes a luxury good, the existing digital health divide will only get worse.\n\nThe issue starts well before anyone considers buying a fitness tracker. Digital equity in healthcare is already a fundamental access issue. \"In many ways, access to healthcare means access to technology,\" says Amy Gonzales, an associate professor in UC Santa Barbara's Department of Communication. \"Especially since [the COVID-19 pandemic], the healthcare industry relies heavily on technology for their services. Text reminders about your appointment, scanning a QR code to check in, needing an e-health account to see your test results, or some providers only being available via telehealth, and so on.\"\n\nThe basic infrastructure of modern healthcare—patient portals, appointment scheduling apps, prescription management systems—demands a level of digital literacy and access that not everyone can meet. Seniors may struggle with smartphone interfaces. Low-income families might rely on limited mobile data or shared devices. People with certain disabilities may find standard health apps difficult or impossible to navigate. And the problem compounds: Gonzales notes the populations most likely to face barriers with technology are often the same groups who may need that healthcare the most.\n\nAgainst this backdrop of baseline digital inequity, fitness trackers and wearables have gotten more and more popular. These aren't essential medical devices in the traditional sense—nobody's life support depends on their Fitbit—but they've become cultural markers of health optimization. More concerning, they're increasingly becoming tools that provide genuinely useful health information that simply isn't available to people without the resources to buy in. Heart rate, blood oxygen saturation, sleep stages, stress levels, and more: We're living in a time of unprecedented insight into what our bodies are doing, if you can afford it.\n\nIN some circles, these devices have become simply how health-conscious people approach their wellbeing. Studies have shown that wearables can help detect abnormal heart rhythms, encourage increased physical activity, and provide early warning signs of illness. Some insurance companies offer discounts for users who share their fitness tracking data. Employers incorporate wearables into wellness programs.\n\nWhile this is promising for those who can afford it, others get left behind. \"The digital divide is even more problematic with 'bonus devices,' or health 'accoutrements,' like smart wearables,\" says Gonzales. If at-risk health populations are already at-risk for digital access, it tracks that this access gap is only getting wider.\n\nThe creation of a two-tiered information system is perhaps the most insidious aspect of fitness tech inequality. A person with an Apple Watch receives detailed daily reports about their cardiovascular health, activity levels, and sleep quality. They get alerts when their heart rate becomes irregular, or they can share comprehensive data with their physician that provides context for symptoms and conditions. Someone without these devices? They're left with subjective assessments and whatever gets captured during periodic doctor visits.\n\n\"If you don't have the same resources to track your blood pressure, blood pressure, or physical activity,\" says Gonzales, \"you are certainly being left behind on useful healthcare.\" Consider two people with similar cardiovascular risk factors. The one with a wearable device might receive an alert and seek immediate treatment, potentially preventing a stroke. The other person might not notice symptoms until a serious cardiac event occurs. Both deserved that potentially life-saving alert, but only one could afford the device that provided it.\n\nAs more people in higher-income brackets adopt these technologies and share data with healthcare providers, medical understanding itself may become skewed toward populations who can afford comprehensive self-monitoring. If research studies increasingly incorporate wearable data, but if that data predominantly comes from affluent, educated users, the resulting insights may not apply equally across all demographics.\n\nAccess isn't the only lens through which to view this fitness tech. \"There's this implicit assumption that wearables are inherently good,\" says Gonzales. \"What about privacy risks?\" After all, if you think you own all your health data, think again.\n\nThink of the history of the healthcare industry's relationship with marginalized communities. The Tuskegee syphilis study, forced sterilizations, and ongoing disparities in pain management and maternal mortality have created a pretty understandable skepticism toward giving up data, to say the least. \"Given the history of experimentation and exploitation of certain low-income populations, there's a natural distrust in these sub-groups,\" Gonzales says. \"Maybe these demographics intentionally avoid third parties collecting their data.\"\n\nSo, the same communities that might benefit most from health monitoring technology may also have the most legitimate reasons to be wary of it. As I've previously covered, data privacy protections remain inconsistent, and the long-term implications of sharing detailed biometric data with corporations are still unclear. For populations that have historically been surveilled, exploited, or discriminated against, choosing not to participate in constant data collection might be a rational decision, rather than simply a matter of access. There's something to be said for health approaches that don't involve third-party corporations accumulating detailed records of your body's functions.\n\nNaturally, budget options for fitness tech do exist, and these options can help some people access these technologies. But even \"affordable\" options still cost money that many families simply don't have for what remains, technically speaking, optional equipment. When you're choosing between a $50 fitness tracker and groceries, the choice isn't really a choice at all.\n\nAll of this is to say that the fitness tech inequality problem can't be solved by individual purchasing decisions or corporate discount programs. It's embedded in broader questions about healthcare access, digital equity, and what we consider essential versus optional in maintaining health. Glucose monitors, fertility trackers, or blood pressure cuffs could more easily qualify as medical equipment, where an Oura ring is still a luxury good. Addressing the gap requires reimagining what counts as necessary healthcare technology. Otherwise, we could be approaching a future where your ability to detect health problems early, track chronic conditions, and optimize your fitness depends on whether you can afford a monthly subscription.\n\nHealthcare has become digitized, creating new opportunities for monitoring and intervention, but also new mechanisms for inequality. As fitness technology continues advancing, offering more sophisticated monitoring and more actionable insights, that fundamental inequality will only get worse. Because at the intersection of healthcare and technology, \"the people who struggle with one are often the same people who need the other,\" Gonzales says.\n\nThe Apple Watch on your wrist may feel like a personal choice, a small investment in your personal wellness. But scale that up across millions of people and billions of data points, and individual choices become structural inequalities. Technology that was supposed to democratize health information may instead be creating new hierarchies of who gets to know what about their own bodies. And those who need that knowledge most may be the least likely to access it.",
+    "readingTime": 7,
+    "keywords": [
+      "monthly subscription",
+      "heart rate",
+      "physical activity",
+      "blood pressure",
+      "digital equity",
+      "tech inequality",
+      "fitness tracker",
+      "apple watch",
+      "health",
+      "healthcare"
+    ],
+    "qualityScore": 1,
+    "link": "https://lifehacker.com/health/fitness-digital-health-divide?utm_medium=RSS",
+    "thumbnail_url": "https://lifehacker.com/imagery/articles/01KBN5X868BJ5NW5H28RPJM8HG/hero-image.fill.size_1200x675.jpg",
+    "created_at": "2025-12-09T18:53:33.966Z",
     "topic": "health"
   },
   {
-    "slug": "the-samsung-galaxy-ring-is-38-off-for-cyber-monday",
-    "title": "The Samsung Galaxy Ring Is 38% Off for Cyber Monday",
-    "description": "Unlike the competition, you won't need a subscription to track your health data.",
-    "link": "https://lifehacker.com/health/samsung-galaxy-ring-sale-cyber-monday-2025?utm_medium=RSS",
-    "thumbnail_url": "https://lifehacker.com/imagery/articles/01KBDKF3WG4F7BZF4W2NPJV3BY/hero-image.fill.size_1200x675.png",
-    "created_at": "2025-12-02T03:45:56.649Z",
+    "slug": "i-feel-its-a-friend-quarter-of-teenagers-turn-to-ai-chatbots",
+    "title": "‘I feel it’s a friend’: quarter of teenagers turn to AI chatbots for mental health support",
+    "description": "Experts warn of dangers as England and Wales study shows 13- to 17-year-olds consulting AI amid long waiting lists for services\nIt was after one friend was shot and another stabbed, both fatally, that Shan asked ChatGPT for help. She had tried conventional mental health services but “chat”, as she came to know her AI “friend”, felt safer, less intimidating and, crucially, more available when it came to handling the trauma from the deaths of her young friends.\nAs she started consulting the AI model, the Tottenham teenager joined about 40% of 13- to 17-year-olds in England and Wales affected by youth violence who are turning to AI chatbots for mental health support, according to research among more than 11,000 young people.\n Continue reading...",
+    "fullText": "Experts warn of dangers as England and Wales study shows 13- to 17-year-olds consulting AI amid long waiting lists for services\n\nIt was after one friend was shot and another stabbed, both fatally, that Shan asked ChatGPT for help. She had tried conventional mental health services but “chat”, as she came to know her AI “friend”, felt safer, less intimidating and, crucially, more available when it came to handling the trauma from the deaths of her young friends.\n\nAs she started consulting the AI model, the Tottenham teenager joined about 40% of 13- to 17-year-olds in England and Wales affected by youth violence who are turning to AI chatbots for mental health support, according to research among more than 11,000 young people.\n\nIt found that both victims and perpetrators of violence were markedly more likely to be using AI for such support than other teenagers. The findings, from the Youth Endowment Fund, have sparked warnings from youth leaders that children at risk “need a human not a bot”.\n\nThe results suggest chatbots are fulfilling demand unmet by conventional mental health services, which have long waiting lists and which some young users find lacking in empathy. The supposed privacy of the chatbot is another key factor in driving use by victims or perpetrators of crimes.\n\nAfter her friends were killed Shan, 18, not her real name, started using Snapchat’s AI before switching to ChatGPT, which she can talk to at any time of day or night with two clicks on her smartphone.\n\n“I feel like it definitely is a friend,” she said, adding that it was less intimidating, more private and less judgmental than her experience with conventional NHS and charity mental health support.\n\n“The more you talk to it like a friend it will be talking to you like a friend back. If I say to chat ‘Hey bestie, I need some advice’. Chat will talk back to me like it’s my best friend, she’ll say, ‘Hey bestie, I got you girl’.”\n\nOne in four of 13- to 17-year-olds have used an AI chatbot for mental health support in the past year, with black children twice as likely as white children to have done so, the study found. Teenagers were more likely to go online for support, including using AI, if they were on a waiting list for treatment or diagnosis or had been denied, than if they were already receiving in-person support.\n\nCrucially, Shan said, the AI was “accessible 24/7” and would not tell teachers or parents about what she had disclosed. She felt this was a considerable advantage over telling a school therapist, after her own experience of what she thought were confidences being shared with teachers and her mother.\n\nBoys who were involved in gang activities felt safer asking chatbots for advice about other safer ways to make money than a teacher or parent who might leak the information to police or other gang members, putting them in danger, she said.\n\nAnother young person, who has been using AI for mental health support but asked not to be named, told the Guardian: “The current system is so broken for offering help for young people. Chatbots provide immediate answers. If you’re going to be on the waiting list for one to two years to get anything, or you can have an immediate answer within a few minutes … that’s where the desire to use AI comes from.”\n\nJon Yates, the chief executive of the Youth Endowment Fund, which commissioned the research, said: “Too many young people are struggling with their mental health and can’t get the support they need. It’s no surprise that some are turning to technology for help. We have to do better for our children, especially those most at risk. They need a human not a bot.”\n\nThere have been growing concerns about the dangers of chatbots when children engage with them at length. OpenAI, the US company behind ChatGPT, is facing several lawsuits including from families of young people who have killed themselves after long engagements.\n\nIn the case of the Californian 16-year-old Adam Raine, who took his life in April, OpenAI has denied it was caused by the chatbot. It has said it has been improving its technology “to recognise and respond to signs of mental or emotional distress, de-escalate conversations, and guide people toward real-world support.”. The startup said in September it could start contacting authorities in cases where users start talking seriously about suicide.\n\nHanna Jones, a youth violence and mental health researcher in London, said: “To have this tool that could tell you technically anything – it’s almost like a fairytale. You’ve got this magic book that can solve all your problems. That sounds incredible.”\n\nBut she is worried about the lack of regulation.\n\n“People are using ChatGPT for mental health support, when it’s not designed for that,” she said. “What we need now is to increase regulations that are evidence-backed but also youth-led. This is not going to be solved by adults making decisions for young people. Young people need to be in the driving seat to make decisions around ChatGPT and mental health support that uses AI, because it’s so different to our world. We didn’t grow up with this. We can’t even imagine what it is to be a young person today.”",
+    "readingTime": 5,
+    "keywords": [
+      "endowment fund",
+      "hey bestie",
+      "youth endowment",
+      "less intimidating",
+      "youth violence",
+      "mental health",
+      "health services",
+      "conventional mental",
+      "england and wales",
+      "friend"
+    ],
+    "qualityScore": 1,
+    "link": "https://www.theguardian.com/technology/2025/dec/09/teenagers-ai-chatbots-mental-health-support",
+    "thumbnail_url": "https://i.guim.co.uk/img/media/9c56f5fc8042537534d9603f19981242fa85bff4/0_0_4800_3840/master/4800.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&precrop=40:21,offset-x50,offset-y0&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdGctZGVmYXVsdC5wbmc&enable=upscale&s=a898840ac81c0db6a3d82e6c95d87646",
+    "created_at": "2025-12-09T13:48:22.920Z",
     "topic": "tech"
   },
   {
-    "slug": "chatgpt5-offers-dangerous-advice-to-mentally-ill-people-psyc",
-    "title": "ChatGPT-5 offers dangerous advice to mentally ill people, psychologists warn",
-    "description": "Research finds OpenAI’s free chatbot fails to identify risky behaviour or challenge delusional beliefs\nChatGPT-5 is offering dangerous and unhelpful advice to people experiencing mental health crises, some of the UK’s leading psychologists have warned.\nResearch conducted by King’s College London (KCL) and the Association of Clinical Psychologists UK (ACP) in partnership with the Guardian suggested that the AI chatbotfailed to identify risky behaviour when communicating with mentally ill people.\n Continue reading...",
-    "link": "https://www.theguardian.com/technology/2025/nov/30/chatgpt-dangerous-advice-mentally-ill-psychologists-openai",
-    "thumbnail_url": "https://i.guim.co.uk/img/media/e224143d1157965611675daf4b49e29484578c45/500_0_2500_2000/master/2500.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&precrop=40:21,offset-x50,offset-y0&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdGctZGVmYXVsdC5wbmc&enable=upscale&s=98826f0de3dfd5e39523c764e8d0be68",
-    "created_at": "2025-12-02T03:43:14.596Z",
-    "topic": "tech"
+    "slug": "public-health-needs-a-new-motto-no-apologies-no-surrender",
+    "title": "Public Health Needs a New Motto: No Apologies, No Surrender",
+    "description": "Gregg...",
+    "fullText": "It’s time we stopped flinching at the assaults of the far right—and started fighting back.\n\nOver the past year, I’ve noticed a pattern among some of my colleagues in public health, biomedical research, and the university settings in which I work.\n\nIt’s a strange, reflexive tic: Faced with bad-faith criticism from malign actors, we shrink back, saying, “Oh, it’s not you. It’s me,” and walk onto their terrain with accommodation in our hearts.\n\nSome may think that, faced with the full fury of the far right, some kind of retreat is the only option. But walking further and further into the mouth of the Leviathan only serves to make you dinner for a very large fish.\n\nIn public health, the reigning trope is that over the past five years, we have lost the trust of ordinary Americans, largely coinciding with the response to the Covid pandemic. It’s an uncritical analysis that we eat up like candy—I have been in so many discussions and heard so many talks about how we need to “regain” or “rebuild” trust—and I think we have to stop and reflect for just a moment.\n\nDavid Wallace-Wells wrote a piece in The New York Times that may indicate that our own conventional wisdom about these matters may be wrong:\n\nThe poll, published in The Argument with the headline “The Covid Political Backlash Disappeared,” showed that respondents largely supported mitigation policies, at least in retrospect. Despite conventional wisdom about public health resentment and liberal overreach, mitigation policies do not appear to have disproportionately cost the Democrats, who were graded more positively than Republicans in their handling of the pandemic and rated more highly on matters of personal health; despite criticism about school closures so pervasive that national Democrats now reflexively apologize for them those closures are still seen by most as having been largely necessary at the time; and although the pandemic experience has damaged confidence in vaccines when it comes to routine shots, the country remains pretty anti-anti-vaccine, with 77 percent of respondents telling The Argument’s pollsters they’d advise friends to follow the standard vaccination schedule and only 15 percent saying they’d advise against it.\n\nWhat Wallace-Wells doesn’t mention here is that much of the conventional wisdom about “public health resentment and liberal overreach” was also the product of a manufactured smear campaign by the right. I’ve written about this before, and Walker Bragman and Alex Kotch have chronicled the far right’s hijacking of the war on Covid since the beginning. Yet too many of my colleagues are like small mammals hypnotized by snakes—mesmerized into submission, in this case, by far-right rhetoric. Yes, we can all agree that public health needs criticism, an analysis of the response to the pandemic included, but we can do better without going belly-up. We’ve got to stop apologizing for the work we do, and take a far less naïve view of the criticisms of public health and separate what is real and substantial from what is ginned-up agit-prop.\n\nWhile some university presidents (at Michigan, Penn and elsewhere) have rolled back DEI programs, Democratic politicians like Gavin Newsom and Pete Buttigieg have decided that trans Americans are politically expendable, and some liberal pundits like Ezra Klein are pushing for (more) Democratic pro-life candidates, in public health and biomedicine, these are issues on which we have to move from “no apologies” to “no surrender.”\n\nRace, gender, and sexuality may be a third rail of American politics for some, but for those of us in public health and biomedicine, these issues are central to our work, and improving the health and well-being of Americans depends on facing them head-on. Jay Bhattacharya, the director of the National Institutes of Health, has made it a mission to destroy research on health disparities in America, even as he speaks out of both sides of his mouth by praising work “that advances the health and well-being of minority populations.” Thousands of grants for work looking at the interaction of race and health outcomes across the country have been terminated. RFK Jr. has slashed the budget and staffing at offices that address minority health in the US at the National Institutes of Health, the Food and Drug Administration, the Centers for Disease Control and Prevention, the Centers for Medicare & Medicaid Services, the Health Resources and Services Administration, and at the Substance Abuse and Mental Health Services Administration. Yet, as Mary Bassett, the former health commissioner of New York City and now a professor at the Harvard School of Public Health, has said: “There hasn’t been a single year since Colonial America that the population of Black America hasn’t died younger and died sicker than white America.” Research on and programmatic work to rid us of these gross inequities in health outcomes has to remain a priority for us in public health and biomedical research; otherwise, we are practicing a form of apartheid-style science, where only white lives matter.\n\nAnd this leads us to DEI programs that are meant to ensure that we address the barriers to opportunities in our field. This is an indispensable goal for at least two reasons. The first one is simply pragmatic—we do not know where new insights will come from, so we need to actively recruit talent from every quarter. Pretending that everyone starts their journeys from the same place in our society is farcical. Access to opportunity in the US is tied to race and ethnicity, income, and family background, and it is not a level playing field. As Stephen Jay Gould said in The Panda’s Thumb: “I am, somehow, less interested in the weight and convolutions of Einstein’s brain than in the near certainty that people of equal talent have lived and died in cotton fields and sweatshops.” In a world that has just experienced the worst epidemic in a century, and with the effects of climate change only getting worse, we need everyone off the bench and in the fight. And having a more diverse workforce in public health and biomedicine is important for another reason: There are key discoveries in health disparities that have come from Black and brown researchers, including uncovering the problems with race-adjusted scoring for kidney function, the danger for black mothers of maternal risk algorithms, and the complex issues associated with cardiovascular disease risk assessment among black patients and at the population level, the role of race in disparities in hypertension, diabetes, and all-cause mortality. In infectious diseases, my own field, it was W.E.B. Du Bois himself over a century ago who examined disparities in TB, syphilis, and pneumonia among Black Americans and ascribed these differences to social and economic conditions, discrimination, and racism.\n\nOn sexuality and gender? I work in HIV—the termination of grants and programs on LGBTQ health, particularly trans health, endangers lives full-stop. President Trump, in his 2019 State of the Union address, announced his landmark initiative to End the HIV Epidemic (EHE), and later that month the CDC announced that HIV prevention efforts had stalled out—EHE couldn’t have come at a better time. Almost seven years later, Trump has pulled the plug on LGBTQ health. Trans Americans have some of the highest rates of HIV in this country. Comprehensive care, including gender-affirming hormone therapy, is vital in stemming infections among this vulnerable group. Furthermore, gender-affirming care is “an integral determinant of trans people’s well-being.” Throwing trans people under the bus is bad medicine and bad public health and we should speak up on behalf of our trans sisters and brothers and call out attacks on this community when we see it. Trump and his cronies aren’t interested in the health and well-being of trans Americans; they see another set of people to demonize and target. Remaining silent is being complicit in this scapegoating, increasing health risks for close to 3 million of our fellow citizens. Finally, in the wake of Dobbs, millions of women are now at increased risk of suffering and death as abortion becomes illegal in state after state across the country. It’s a well-known epidemiological fact that legally induced abortion is far safer for pregnant people than childbirth. It isn’t even close: “the pregnancy-associated mortality rate among women who delivered live neonates was 8.8 deaths per 100,000 live births. The mortality rate related to induced abortion was 0.6 deaths per 100,000 abortions.” No matter what you personally think about abortion, interfering with the medical care of pregnant people is a bad public health move. Given that close to a quarter of all women in the US access abortion care in their lifetime, state restrictions on this vital part of medical care risk lives.\n\nAll of these are issues we must hold the line on, not cave over. The instinct to meet people halfway, to compromise, is not a terrible one. But when compromise is the goal in and of itself, it turns out you stand for little or nothing. In the case of the struggles for the future of public health and medicine in this country, this desire to placate the far right has too many people simply shifting their own views to the right. That is, the compromise isn’t really a compromise at all when it’s a one-way affair; it’s a capitulation. So many millions of lives are at stake right now, thanks to policies coming out of this administration. Giving in is giving these people up. And these people are those we have pledged to serve—whether we’re healthcare workers or on the frontlines of public health. We can try to justify this kind of accommodation in any way we want, but in the end, it’s hard to see it as anything but a Judas kiss.",
+    "readingTime": 9,
+    "keywords": [
+      "dei programs",
+      "services administration",
+      "among black",
+      "they’d advise",
+      "deaths per",
+      "conventional wisdom",
+      "mitigation policies",
+      "liberal overreach",
+      "mortality rate",
+      "biomedical research"
+    ],
+    "qualityScore": 1,
+    "link": "https://www.thenation.com/article/society/public-health-no-apologies/",
+    "thumbnail_url": "https://www.thenation.com/wp-content/uploads/2025/12/GettyImages-2249332063.jpg",
+    "created_at": "2025-12-09T13:48:20.550Z",
+    "topic": "politic"
   },
   {
-    "slug": "wash-your-clothes-after-flying-try-a-longevity-diet-and-take",
-    "title": "Wash your clothes after flying, try a longevity diet and take up this 'grandma' hobby (and snack) — and 6 more health tips to help you have a great week",
-    "description": "Want a better week? Start with these hacks for more restful sleep and nutritious eats.",
-    "link": "https://health.yahoo.com/article/wash-your-clothes-after-flying-try-a-longevity-diet-and-take-up-this-grandma-hobby-and-snack--and-6-more-health-tips-to-help-you-have-a-great-week-100036077.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/8c9VXZfWlnESbkqXa5.rJw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://s.yimg.com/os/creatr-uploaded-images/2025-11/ff9cd410-cafd-11f0-bfbb-cf895f0f6940",
-    "created_at": "2025-12-02T03:42:50.462Z",
-    "topic": "health"
+    "slug": "rfk-jr-is-a-public-health-disaster",
+    "title": "RFK Jr. Is a Public Health Disaster",
+    "description": "Katrina vanden...",
+    "fullText": "It's time we stopped flinching at the assaults of the far right—and started fighting back.\n\nAs the Ivies push graduates into careers in consulting, finance, and tech, organizers with the Class Action movement are questioning their schools’ corporate partnerships.\n\nStudentNation\n\n /\n\n Aina Marzia\n\nThe original doll was not made by Mattel but by a business that perfected its practice making plaster casts of Hitler.\n\nWith the world’s soccer fans watching, Gianni Infantino, the great toady to the globe’s oligarchs, handed a made-up award to the increasingly violent US president.\n\nToday’s journalism crisis wasn’t inevitable, but it’s time to free journalism from the straitjacket of turning a democratic obligation into a profit-maximizing business model.\n\nBilal Baydoun, Shahrzad Shams, and Victor Pickard\n\nWhile the University of California has often followed Trump's demands, union organizers have made protecting immigrants a top priority during contract negotiations.\n\nStudentNation\n\n /\n\n Emma Murphree and Emily Putnam",
+    "readingTime": 1,
+    "keywords": [
+      "organizers",
+      "business",
+      "journalism",
+      "studentnation"
+    ],
+    "qualityScore": 0.75,
+    "link": "https://www.thenation.com/article/society/rfk-trump-maha-vaccines-public-health/",
+    "thumbnail_url": "https://www.thenation.com/wp-content/uploads/2025/12/RFKJR.jpg",
+    "created_at": "2025-12-09T13:48:20.548Z",
+    "topic": "politic"
   },
   {
-    "slug": "fortnite-chapter-7-season-1-exotic-and-mythic-weapons-and-it",
-    "title": "Fortnite Chapter 7 Season 1: Exotic and Mythic Weapons And Items Guide",
-    "description": "Fortnite Chapter 7 has totally revamped the Battle Royale loot pool in the new season, and the new arsenal is mostly made up of weapons we've never had before. Likewise, Epic has added a few new types of items that have no real precedent in Fortnite, and some of them are exceptionally powerful.\nBut for this story, the biggest new addition is the boss kits, which drop when you defeat an NPC boss. These kits are locked in your inventory until you win the round or die, make you look like the boss the kit came from, and give you increased health and stamina, and an ability unique to that boss that you have to activate manually by using the item. Oh, and it shows everyone on the map exactly where you are.",
-    "link": "https://www.gamespot.com/articles/fortnite-chapter-7-season-1-exotic-and-mythic-weapons-and-items-guide/1100-6536586/?ftag=CAD-01-10abi2f",
-    "thumbnail_url": "https://www.gamespot.com/a/uploads/screen_kubrick/1757/17577455/4613884-fortnitechpater7stuff%2813%29.jpg",
-    "created_at": "2025-12-01T04:19:52.259Z",
-    "topic": "gaming"
-  },
-  {
-    "slug": "trump-commutes-7year-prison-sentence-for-private-equity-exec",
-    "title": "Trump commutes 7-year prison sentence for private equity exec convicted in scheme to defraud more than 10,000 investors",
-    "description": "Gentile had been the CEO and co-founder of GPB Capital, which had raised $1.6 billion in capital to acquire companies in the auto, retail, health care and housing sectors.",
-    "link": "https://fortune.com/2025/11/30/trump-prison-sentence-commutation-private-equity-david-dentile-ponzi-scheme-fraud-conviction/",
-    "thumbnail_url": "https://fortune.com/img-assets/wp-content/uploads/2025/11/AP25332819384891-e1764543351277.jpg?resize=1200,600",
-    "created_at": "2025-12-01T04:19:49.495Z",
-    "topic": "business"
-  },
-  {
-    "slug": "alzheimers-risk-declines-sharply-with-one-daily-lifestyle-ch",
-    "title": "Alzheimer's risk declines sharply with one daily lifestyle change, researchers say",
-    "description": "New study reveals physical activity in midlife and later life can reduce dementia risk by up to 45%, offering significant hope for brain health protection.",
-    "link": "https://health.yahoo.com/conditions/neurological/alzheimers-disease/articles/alzheimers-risk-declines-sharply-one-120035884.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/FE5yIvHPWRA45V6_Yi.OlA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://media.zenfs.com/en/fox_news_text_979/4cdc40f673d5373d77503002d72ab415",
-    "created_at": "2025-11-30T03:49:37.326Z",
-    "topic": "health"
-  },
-  {
-    "slug": "there-is-an-epidemic-medical-professionals-are-revealing-the",
-    "title": "\"There Is An Epidemic\": Medical Professionals Are Revealing The \"Bad\" Everyday Habits That Are Slowly Ruining Your Health Over Time",
-    "description": "\"Wear a hat whenever you're outdoors that ALSO covers your ears. I'm a derm resident, and treating skin cancers/precancers on the ears is not pleasant.\"",
-    "link": "https://health.yahoo.com/wellness/articles/increases-risk-16-bad-health-143102653.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/6dkDjhOPFN9lzC6b91l.7g--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD03OTc-/https://media.zenfs.com/en/buzzfeed_articles_778/6ddde6703e47cb9309d4092b3fb06f65",
-    "created_at": "2025-11-29T03:35:19.565Z",
-    "topic": "health"
-  },
-  {
-    "slug": "european-parliament-calls-for-social-media-ban-on-under16s",
-    "title": "European parliament calls for social media ban on under-16s",
-    "description": "MEPs pass resolution to help parents tackle growing dangers of addictive internet platforms \nChildren under 16 should be banned from using social media unless their parents decide otherwise, the European parliament says.\nMEPs passed a resolution on age restrictions on Wednesday by a large majority. Although not legally binding, it raises pressure for European legislation amid growing alarm about the mental health risks to children of unfettered internet access.\n Continue reading...",
-    "link": "https://www.theguardian.com/technology/2025/nov/26/social-media-ban-under-16s-european-parliament-resolution",
-    "thumbnail_url": "https://i.guim.co.uk/img/media/ba239efac7c69b4474e41cfc682c812835ce42dc/320_0_3246_2596/master/3246.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&precrop=40:21,offset-x50,offset-y0&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdGctZGVmYXVsdC5wbmc&enable=upscale&s=b307e7e5024108ff098edf5fe6bccaba",
-    "created_at": "2025-11-27T03:35:01.155Z",
-    "topic": "tech"
-  },
-  {
-    "slug": "new-zealand-launches-major-inquiry-into-case-of-father-who-h",
-    "title": "New Zealand launches major inquiry into case of father who hid his children in a forest for years",
-    "description": "The disappearance of a New Zealand father with his children in a forest for several years before he was discovered and shot dead by the police has prompted the government to launch a major inquiry into how officials handled the case.  The public inquiry — which is a formal, independent investigation of matters of significant importance in New Zealand — will examine \"whether government agencies took all practicable steps to protect the safety and welfare” of Tom Phillips' children, Attorney General Judith Collins said Thursday.  The announcement follows outrage in New Zealand about how a father involved in court proceedings was allowed to evade the authorities for years, while forcing his children to live in rugged conditions in remote countryside without access to health care or education.",
-    "link": "https://www.yahoo.com/news/articles/zealand-launches-major-inquiry-case-020503094.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/KLelgfB44FSzWafPszj.SA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDE7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/d7d02b9a903b29932432c4819702b598",
-    "created_at": "2025-11-27T03:34:09.901Z",
-    "topic": "news"
-  },
-  {
-    "slug": "constance-review-burnout-never-looked-this-good",
-    "title": "Constance Review - Burnout Never Looked This Good",
-    "description": "In Constance, you play as the titular heroine. Or at least a mental stand-in for her as she explores the furthest corners of her impressive mind palace--a surprisingly beautiful backdrop for a 2D action-adventure game that delves into the trauma of burnout. Armed with nothing more than a paintbrush, Constance bashes and dashes through the physical manifestation of her decaying mental health and clashes against her inner demons. It's a narrative with memorable moments but not an abundantly clear throughline, and an adventure that makes a few missteps throughout. Still, when Constance slows down long enough to allow you to appreciate its splendor and think through its platforming puzzles, it's often a marvel to behold.",
-    "link": "https://www.gamespot.com/reviews/constance-review-burnout-never-looked-this-good/1900-6418445/?ftag=CAD-01-10abi2f",
-    "thumbnail_url": "https://www.gamespot.com/a/uploads/screen_kubrick/1587/15875866/4612252-con.jpg",
-    "created_at": "2025-11-26T03:42:30.966Z",
-    "topic": "gaming"
-  },
-  {
-    "slug": "deloitte-allegedly-cited-aigenerated-research-in-a-milliondo",
-    "title": "Deloitte allegedly cited AI-generated research in a million-dollar report for a Canadian provincial government",
-    "description": "In a health care report aimed to address a shortage of nurses and doctors, Deloitte cited several fake studies with real researchers’ names attached.",
-    "link": "https://fortune.com/2025/11/25/deloitte-caught-fabricated-ai-generated-research-million-dollar-report-canada-government/",
-    "thumbnail_url": "https://fortune.com/img-assets/wp-content/uploads/2025/11/GettyImages-2219338782-e1764016531575.jpg?resize=1200,600",
-    "created_at": "2025-11-26T03:42:27.938Z",
-    "topic": "business"
-  },
-  {
-    "slug": "a-55yearold-health-founder-shared-55-reasons-he-feels-his-fi",
-    "title": "A 55-year-old health founder shared 55 reasons he feels his fittest, sharpest, and happiest. 5 tips could add 10 years to your life.",
-    "description": "Kevin Dahlstrom's tips for healthy aging include walking daily. He told Business Insider health has been a priority since he got sick in his 20s.",
-    "link": "https://www.businessinsider.com/55-health-founder-fittest-5-aging-tips-longevity-2025-11",
-    "thumbnail_url": "https://i.insider.com/6925f50c89026fbb4d0e6335?width=1152&format=jpeg",
-    "created_at": "2025-11-26T03:42:27.057Z",
-    "topic": "finance"
-  },
-  {
-    "slug": "trumps-gambit-to-save-republicans-from-a-giant-health-insura",
-    "title": "Trump’s gambit to save Republicans from a giant health insurance spike comes with a $50 billion price tag, CRFB estimates",
-    "description": "The $38 trillion national debt, which always seems to be growing, could expand even further if Trump extends ACA subsidies, as reports indicate.",
-    "link": "https://fortune.com/2025/11/24/trump-aca-subsidies-extension-how-much-50-billion-cost-national-debt-38-trillion/",
-    "thumbnail_url": "https://fortune.com/img-assets/wp-content/uploads/2025/11/GettyImages-2247045310_d653a2-e1764011653778.jpg?resize=1200,600",
-    "created_at": "2025-11-25T03:43:15.818Z",
-    "topic": "business"
-  },
-  {
-    "slug": "trumps-aca-reforms-could-be-worse-than-losing-subsidies-anal",
-    "title": "Trump's ACA reforms could be worse than losing subsidies: Analyst",
-    "description": "President Trump is reportedly considering extending the Affordable Care Act (ACA) subsidies, conditional on significant reforms. Raymond James managing director and Washington health policy research analyst, Chris Meekins, joins Market Domination Overtime to discuss the reported changes and what they could mean for the healthcare industry. To watch more expert insights and analysis on the latest market action, check out more Market Domination Overtime.",
-    "link": "https://finance.yahoo.com/video/trumps-aca-reforms-could-worse-221356517.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/6FLqjqYA80t0.vooDE743A--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://s.yimg.com/os/creatr-uploaded-images/2025-11/e804d3c0-c981-11f0-a1bd-e9114fffac3a",
-    "created_at": "2025-11-25T03:39:43.366Z",
-    "topic": "finance"
-  },
-  {
-    "slug": "health-insurers-rise-on-report-trump-considering-aca-subsidy",
-    "title": "Health insurers rise on report Trump considering ACA subsidy extension",
-    "description": "health insurers jumped on Monday following a media report the White House was preparing to unveil ​a policy framework that would extend Affordable Care Act premium subsidies - ‌also known as Obamacare - for two years and add new eligibility limits. Shares of Centene jumped about ‌7% and Molina Healthcare gained around 4%, while Elevance Health climbed more than 2% in early trading.",
-    "link": "https://finance.yahoo.com/news/health-insurers-rise-report-trump-145024067.html",
-    "thumbnail_url": "https://media.zenfs.com/en/reuters.com/f7a66bc99a5f2268d796b4a515c6f0b3",
-    "created_at": "2025-11-25T03:39:36.753Z",
-    "topic": "finance"
-  },
-  {
-    "slug": "bessent-says-healthcare-announcement-coming-this-week",
-    "title": "Bessent says health-care announcement coming this week",
-    "description": "Trump said last week he hopes to secure a plan by Jan. 30 to address an impending surge in health insurance premiums caused by subsidies that expire at end-2025.",
-    "link": "https://fortune.com/2025/11/23/bessent-health-care-announcement-obamacare-price-hikes-affordable-care-act-subsidies/",
-    "thumbnail_url": "https://fortune.com/img-assets/wp-content/uploads/2025/11/GettyImages-2244689671-e1763940999178.jpg?resize=1200,600",
-    "created_at": "2025-11-24T03:51:10.563Z",
-    "topic": "business"
-  },
-  {
-    "slug": "were-financially-independent-millennials-here-are-5-tips-for",
-    "title": "We're financially independent millennials. Here are 5 tips for Gen Zers who want to do the same.",
-    "description": "Alan and Katie Donegan say Gen Zers interested in the FIRE movement should prioritize their health early and commit to lifelong learning.",
-    "link": "https://www.businessinsider.com/gen-z-pursuing-financial-independence-fire-advice-compounding-banking-health-2025-11",
-    "thumbnail_url": "https://i.insider.com/691b2597abd5e944effad775?width=1200&format=jpeg",
-    "created_at": "2025-11-24T03:51:09.340Z",
-    "topic": "finance"
-  },
-  {
-    "slug": "grip-strength-is-linked-to-longevity-here-are-2-easy-exercis",
-    "title": "Grip strength is linked to longevity. Here are 2 easy exercises to boost yours.",
-    "description": "Grip strength is linked to slower aging and better heart health. Here are some easy weight-training exercises to boost it.",
-    "link": "https://www.businessinsider.com/grip-strength-boosts-longevity-exercises-to-try-2025-11",
-    "thumbnail_url": "https://i.insider.com/691f4907abd5e944effb2476?width=1200&format=jpeg",
-    "created_at": "2025-11-23T03:52:34.490Z",
-    "topic": "finance"
-  },
-  {
-    "slug": "rfk-jr-says-he-personally-directed-cdcs-new-guidance-on-vacc",
-    "title": "RFK Jr. says he personally directed CDC's new guidance on vaccines and autism",
-    "description": "Health Secretary Robert F. Kennedy Jr. personally directed the U.S. Centers for Disease Control and Prevention to update its website to contradict its longtime guidance that vaccines don't cause autism, he told The New York Times in an interview published Friday.",
-    "link": "https://www.yahoo.com/news/articles/rfk-jr-says-personally-directed-204925338.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/fraKYgvp3AgtbYUAtYTkvg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/d12c486ca77f3fe0fd176ad5ae5b577b",
-    "created_at": "2025-11-23T03:49:17.511Z",
-    "topic": "news"
-  },
-  {
-    "slug": "rep-marjorie-taylor-greene-of-georgia-former-trump-loyalist",
-    "title": "Rep. Marjorie Taylor Greene of Georgia, former Trump loyalist, says she is resigning from Congress",
-    "description": "Rep. Marjorie Taylor Greene of Georgia, a loyal supporter-turned-critic of President Donald Trump who faced his political retribution if she sought reelection, said Friday she is resigning from Congress in January.  Greene, in a more than 10-minute video posted online, explained her decision and said she didn’t want her congressional district “to have to endure a hurtful and hateful primary against me by the president we all fought for,” she said.  Greene’s resignation followed a public fallout with Trump in recent months, as the congresswoman criticized him for his stance on files related to Jeffrey Epstein, along with foreign policy and health care.",
-    "link": "https://www.yahoo.com/news/articles/rep-marjorie-taylor-greene-georgia-012330266.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/66QLEF20kb38UdAJMOii.Q--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/23c974c7e7bb45b904e2c18775df4f74",
-    "created_at": "2025-11-22T03:17:47.442Z",
-    "topic": "news"
-  },
-  {
-    "slug": "this-is-the-worst-type-of-meat-for-heart-health-according-to",
-    "title": "This Is the Worst Type of Meat for Heart Health, According to a Cardiologist",
-    "description": "Honestly? You've probably eaten it this week.",
-    "link": "https://health.yahoo.com/conditions/cardiovascular-health/articles/worst-type-meat-heart-health-212500143.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/Pea0TGa8JoU4igcMFFftaQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://media.zenfs.com/en/parade_250/ddb317a02b3a6970f572b6652a715f57",
-    "created_at": "2025-11-21T16:47:19.334Z",
-    "topic": "health"
-  },
-  {
-    "slug": "us-rep-sheila-cherfilusmccormick-of-florida-indicted-on-char",
-    "title": "US Rep. Sheila Cherfilus-McCormick of Florida indicted on charges of stealing $5M in disaster funds",
-    "description": "U.S. Rep. Sheila Cherfilus-McCormick of Florida has been indicted on charges accusing her of stealing $5 million in federal disaster funds and using some of the money to aid her 2021 campaign, the Justice Department said Wednesday.  The Democrat is accused of stealing Federal Emergency Management Agency overpayments that her family health care company had received through a federally funded COVID-19 vaccination staffing contract, federal prosecutors said.",
-    "link": "https://www.yahoo.com/news/articles/us-rep-sheila-cherfilus-mccormick-001200029.html",
-    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/P3DVhwBXP2hXsaERkFmGLw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/99f6bc6a8c2196c9deddebfb140824d3",
-    "created_at": "2025-11-21T16:47:03.658Z",
+    "slug": "cdc-warns-americans-traveling-to-4-countries-over-outbreak-o",
+    "title": "CDC warns Americans traveling to 4 countries over outbreak of untreatable mosquito disease",
+    "description": "Global chikungunya outbreak prompts health warnings as cases surge across tropical regions. WHO reports 155 deaths from mosquito-transmitted virus.",
+    "fullText": "U.S. health officials have issued travel advisories for Americans planning trips to certain tropical countries amid outbreaks of an untreatable mosquito-borne disease.\n\nThe Centers for Disease Control and Prevention (CDC) announced Friday that it has issued Level 2 travel advisories for Cuba, Bangladesh, Sri Lanka and Guangdong Province in southern China, advising Americans to \"practice enhanced precautions\" when visiting these areas.\n\nHealth officials say there are currently no treatments for chikungunya, but the disease is vaccine-preventable, and vaccination is recommended for travelers to affected areas.\n\nThe most common symptoms of the virus include fever and joint pain, though patients may also experience headache, muscle pain, joint swelling or a rash, according to health officials. Symptoms typically appear three to seven days after being bitten by an infected mosquito, and most people recover within a week.\n\nCdc Reports 19Th Cruise Ship Norovirus Outbreak This Year, Affecting Passengers And Crew\n\nIn severe cases, some may experience severe joint pain lasting months or even years while others \"may require hospitalization because of the risk of organ damage and death,\" according to the World Health Organization (WHO).\n\nAccording to an Oct. 3 notice from WHO, there have been 445,000 suspected and confirmed cases of chikungunya and 155 deaths worldwide between January and September 2025.\n\nIn Bangladesh, WHO reported 700 suspected chikungunya cases in the capital, Dhaka, between January and September 2025, citing the Institute of Epidemiology, Disease Control and Research.\n\nCdc Warns Of 'Enhanced' Virus Risk For Travelers Amid Outbreak Spread By Mosquitoes\n\nAs of late September, a total of 16,000 locally transmitted chikungunya cases have been confirmed in Guangdong Province, China, marking the largest documented outbreak of the disease in the country to date.\n\nBetween January and late September, 34 confirmed cases of chikungunya were reported in Cuba, and public health interventions have been implemented to contain the outbreak.\n\nIn Sri Lanka, a total of 150 confirmed chikungunya cases were reported between Jan. 1 and the second week of March 2025, WHO said, adding that cases reportedly peaked in June.\n\nThe CDC warned that Americans traveling to Brazil, Colombia, India, Mexico, Nigeria, Pakistan, the Philippines and Thailand may also face an increased risk of chikungunya infection, even if no outbreak is currently reported.\n\nThe U.S. has not seen any locally acquired chikungunya cases in its states or territories since 2019.\n\nOriginal article",
+    "readingTime": 2,
+    "keywords": [
+      "chikungunya",
+      "cases",
+      "health",
+      "disease",
+      "outbreak",
+      "confirmed",
+      "between",
+      "september",
+      "reported",
+      "officials"
+    ],
+    "qualityScore": 0.9,
+    "link": "https://www.yahoo.com/news/articles/cdc-warns-americans-traveling-4-230408713.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/r3aY8DqRinIxHHtnNXpevw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/fox_news_text_979/6455d1aab7de9e78bb5535c532475d36",
+    "created_at": "2025-12-09T08:42:51.632Z",
     "topic": "news"
   }
 ]
