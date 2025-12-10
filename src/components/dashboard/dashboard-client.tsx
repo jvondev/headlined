@@ -29,16 +29,32 @@ function DashboardContent() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
 
-    const paramsView = params.view as string;
+    // Extract view from pathname for new explicit routes
+    // e.g., /today -> 'today', /yesterday -> 'yesterday'
+    const getViewFromPathname = (path: string | null): string => {
+        if (!path) return 'today';
+        // Remove leading slash and get first segment
+        const segments = path.split('/').filter(Boolean);
+        const firstSegment = segments[0];
+        const validViews = ['today', 'yesterday', 'archive', 'this-week', 'this-month', 'saved', 'search'];
+        if (firstSegment && validViews.includes(firstSegment)) {
+            return firstSegment;
+        }
+        // Fallback for old /app/[view] routes during migration
+        if (params.view && typeof params.view === 'string') {
+            return params.view;
+        }
+        return 'today';
+    };
 
     // Persist the last valid dashboard view to prevent resetting when opening an article modal (intercepted route)
-    // When the URL changes to /article/..., params.view becomes undefined.
-    const lastViewRef = useRef(paramsView || 'today');
+    // When the URL changes to /article/..., we keep the previous dashboard view
+    const lastViewRef = useRef<string>('today');
 
     // Update the ref only if we are still conceptually in the dashboard (not viewing an article)
-    // We assume if pathname contains '/article/', we are in an intercepted state overlaid on the dashboard.
+    const currentPathView = getViewFromPathname(pathname);
     if (!pathname?.includes('/article/')) {
-        lastViewRef.current = paramsView || 'today';
+        lastViewRef.current = currentPathView;
     }
 
     const view = lastViewRef.current;

@@ -119,6 +119,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
                 {item.name === "Saved" && <SavedContent />}
                 {item.name === "Dashboard" && (
                   <DashboardContent
+                    key={`dashboard-${view}-${date || ''}-${dateRange?.start || ''}-${dateRange?.end || ''}`}
                     setIsIntroMode={setIsDashboardIntro}
                     greetingMainText={greetingData.mainText}
                     greetingSubText={greetingData.subText}
@@ -131,6 +132,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
                 )}
                 {(item.type === "topic" || item.type === "interest") && (
                   <PostCarousel
+                    key={`${item.name}-${view}-${date || ''}-${dateRange?.start || ''}-${dateRange?.end || ''}`}
                     shouldFetchPaginatedPosts={selectedIndex === index}
                     topicName={item.type === "topic" ? item.name : undefined}
                     searchQuery={item.type === "interest" ? item.name : undefined}
