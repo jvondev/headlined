@@ -58,7 +58,7 @@ export default function TermsOfServicePage() {
 
             <h2 className="text-2xl font-semibold pt-4">7. Contact Us</h2>
             <p>
-              If you have any questions about these Terms, please <Link href="/contact" className="text-primary hover:underline">contact us</Link>.
+              If you have any questions about these Terms, please <a href="mailto:jvon.dev@gmail.com" className="text-primary hover:underline">contact us</a>.
             </p>
           </div>
         </div>

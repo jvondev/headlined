@@ -22,7 +22,7 @@ export const SearchContent: FC<SearchContentProps> = ({ isLoading }) => {
     if (filters.type !== 'all' && filters.value) {
       params.set(filters.type, filters.value);
     }
-    router.push(`/search?${params.toString()}`);
+    router.push(`/app/search?${params.toString()}`);
   };
 
   return (

@@ -45,17 +45,17 @@ export function Search({ className }: { className?: string }) {
     let url = `/post/${result.slug}`;
     runCommand(() => router.push(url));
   };
-  
+
   const goToSearchPage = () => {
     if (query.trim()) {
-      runCommand(() => router.push(`/search/${encodeURIComponent(query.trim())}`));
+      runCommand(() => router.push(`/app/search?q=${encodeURIComponent(query.trim())}`));
     }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-        e.preventDefault();
-        goToSearchPage();
+      e.preventDefault();
+      goToSearchPage();
     }
   };
 
@@ -69,8 +69,8 @@ export function Search({ className }: { className?: string }) {
     <>
       <Button
         onClick={() => setOpen(true)}
-        variant="ghost" 
-        size="icon" 
+        variant="ghost"
+        size="icon"
         className={cn("bg-background/50 backdrop-blur-sm rounded-full", className)}
       >
         <SearchIcon className="h-5 w-5" />
@@ -86,9 +86,9 @@ export function Search({ className }: { className?: string }) {
             disabled={!isReady}
             className="pr-20"
           />
-           <Button onClick={goToSearchPage} size="sm" className="absolute right-1.5 top-1/2 -translate-y-1/2">
-                Search
-           </Button>
+          <Button onClick={goToSearchPage} size="sm" className="absolute right-1.5 top-1/2 -translate-y-1/2">
+            Search
+          </Button>
         </div>
         <CommandList>
           {!isReady && query && <CommandLoading>Preparing search...</CommandLoading>}

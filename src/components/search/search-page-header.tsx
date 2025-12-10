@@ -18,7 +18,7 @@ export const SearchPageHeader: FC<SearchPageHeaderProps> = ({ initialQuery }) =>
   const handleSearch = (e?: React.FormEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();
     if (query.trim()) {
-      router.push(`/search/${encodeURIComponent(query.trim())}`);
+      router.push(`/app/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
 
@@ -29,14 +29,14 @@ export const SearchPageHeader: FC<SearchPageHeaderProps> = ({ initialQuery }) =>
           <div className="relative flex justify-between items-center">
             <form onSubmit={handleSearch} className="flex-1 relative max-w-xl mx-auto">
               <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search posts..."
-                  className="pl-10 pr-20"
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search posts..."
+                className="pl-10 pr-20"
               />
               <Button type="submit" size="sm" className="absolute right-1.5 top-1/2 -translate-y-1/2">
-                  Search
+                Search
               </Button>
             </form>
           </div>

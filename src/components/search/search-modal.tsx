@@ -19,7 +19,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
             params.set(filters.type, filters.value);
         }
         onClose();
-        router.push(`/search?${params.toString()}`);
+        router.push(`/app/search?${params.toString()}`);
     };
 
     return (

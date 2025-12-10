@@ -63,7 +63,7 @@ export default function PrivacyPolicyPage() {
 
             <h2 className="text-2xl font-semibold pt-4">6. Contact Us</h2>
             <p>
-              If you have any questions about this Privacy Policy, please <Link href="/contact" className="text-primary hover:underline">contact us</Link>.
+              If you have any questions about this Privacy Policy, please <a href="mailto:jvon.dev@gmail.com" className="text-primary hover:underline">contact us</a>.
             </p>
           </div>
         </div>

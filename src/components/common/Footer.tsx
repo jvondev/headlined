@@ -12,9 +12,9 @@ export function Footer() {
           <Link href="/about" className="text-sm text-muted-foreground hover:text-primary">
             About
           </Link>
-          <Link href="/contact" className="text-sm text-muted-foreground hover:text-primary">
+          <a href="mailto:jvon.dev@gmail.com" className="text-sm text-muted-foreground hover:text-primary">
             Contact
-          </Link>
+          </a>
           <Link href="/privacy-policy" className="text-sm text-muted-foreground hover:text-primary">
             Privacy Policy
           </Link>

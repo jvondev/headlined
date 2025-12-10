@@ -38,7 +38,7 @@ export default function RootLayout({
                 "@type": "SearchAction",
                 "target": {
                   "@type": "EntryPoint",
-                  "urlTemplate": "https://headlined.app/search?q={search_term_string}"
+                  "urlTemplate": "https://headlined.app/app/search?q={search_term_string}"
                 },
                 "query-input": "required name=search_term_string"
               }
