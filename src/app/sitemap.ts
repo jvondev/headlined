@@ -55,12 +55,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 0.4,
         },
         {
-            url: `${baseUrl}/interest`,
-            lastModified: now,
-            changeFrequency: 'weekly',
-            priority: 0.6,
-        },
-        {
             url: `${baseUrl}/privacy-policy`,
             lastModified: now,
             changeFrequency: 'monthly',
@@ -74,7 +68,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         },
     ];
 
-    // Dynamic PSEO routes from manifest
+    // Dynamic pSEO routes from manifest (now under /news)
     const pseoRoutes: MetadataRoute.Sitemap = [];
     const manifestPath = path.join(CACHE_DIR, 'manifest.json');
 
@@ -84,8 +78,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
             manifest.forEach((item: { params: { category: string; slug: string } }) => {
                 const { category, slug } = item.params;
+                // Add category hub page
                 pseoRoutes.push({
-                    url: `${baseUrl}/${category}/${slug}`,
+                    url: `${baseUrl}/news/${category}`,
+                    lastModified: now,
+                    changeFrequency: 'daily',
+                    priority: 0.8,
+                });
+                // Add topic page
+                pseoRoutes.push({
+                    url: `${baseUrl}/news/${category}/${slug}`,
                     lastModified: now,
                     changeFrequency: 'hourly',
                     priority: 0.9,
@@ -96,5 +98,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
         }
     }
 
-    return [...staticRoutes, ...pseoRoutes];
+    // Deduplicate category hub pages
+    const uniqueRoutes = pseoRoutes.filter((route, index, self) =>
+        index === self.findIndex((r) => r.url === route.url)
+    );
+
+    return [...staticRoutes, ...uniqueRoutes];
 }
+

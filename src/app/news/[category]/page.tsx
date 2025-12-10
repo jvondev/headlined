@@ -7,20 +7,20 @@ import { SEO_CATEGORIES, SeoKeywordDef } from '@/lib/seo-keywords';
 
 // Define Parameter Type
 type Props = {
-    params: Promise<{ view: string }>;
+    params: Promise<{ category: string }>;
 };
 
 // Generate static params for all categories
 export async function generateStaticParams() {
     return Object.keys(SEO_CONFIG).map(category => ({
-        view: category
+        category: category
     }));
 }
 
 // Generate metadata for each category page
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { view } = await params;
-    const category = view as CategoryId;
+    const { category: categoryParam } = await params;
+    const category = categoryParam as CategoryId;
 
     if (!SEO_CONFIG[category]) {
         return { title: 'Not Found' };
@@ -32,15 +32,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: `${categoryName} News & Updates | Headlined`,
         description: `Browse all ${categoryName.toLowerCase()} topics. Curated news feeds updated continuously from verified sources.`,
         alternates: {
-            canonical: `https://headlined.app/${category}`
+            canonical: `https://headlined.app/news/${category}`
         }
     };
 }
 
 // Category Hub Page
 export default async function CategoryHubPage({ params }: Props) {
-    const { view } = await params;
-    const category = view as CategoryId;
+    const { category: categoryParam } = await params;
+    const category = categoryParam as CategoryId;
 
     // Validate category exists
     if (!SEO_CONFIG[category]) {
@@ -65,8 +65,14 @@ export default async function CategoryHubPage({ params }: Props) {
             {
                 "@type": "ListItem",
                 "position": 2,
+                "name": "News",
+                "item": "https://headlined.app/news"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
                 "name": categoryName,
-                "item": `https://headlined.app/${category}`
+                "item": `https://headlined.app/news/${category}`
             }
         ]
     };
@@ -77,13 +83,13 @@ export default async function CategoryHubPage({ params }: Props) {
         "@type": "CollectionPage",
         "name": `${categoryName} News Hub`,
         "description": `All ${categoryName.toLowerCase()} topics available on Headlined`,
-        "url": `https://headlined.app/${category}`,
+        "url": `https://headlined.app/news/${category}`,
         "mainEntity": {
             "@type": "ItemList",
             "itemListElement": keywords.map((kw, index) => ({
                 "@type": "ListItem",
                 "position": index + 1,
-                "url": `https://headlined.app/${category}/${kw.slug}`,
+                "url": `https://headlined.app/news/${category}/${kw.slug}`,
                 "name": kw.title
             }))
         }
@@ -107,6 +113,8 @@ export default async function CategoryHubPage({ params }: Props) {
                 <nav aria-label="Breadcrumb" className="mb-6">
                     <ol className="flex items-center gap-2 text-sm text-muted-foreground">
                         <li><Link href="/" className="hover:text-foreground transition-colors">Home</Link></li>
+                        <span className="opacity-30">/</span>
+                        <li><Link href="/news" className="hover:text-foreground transition-colors">News</Link></li>
                         <span className="opacity-30">/</span>
                         <li className="text-foreground capitalize">{categoryName}</li>
                     </ol>
@@ -140,7 +148,7 @@ export default async function CategoryHubPage({ params }: Props) {
                         {keywords.map((keyword) => (
                             <Link
                                 key={keyword.slug}
-                                href={`/${category}/${keyword.slug}`}
+                                href={`/news/${category}/${keyword.slug}`}
                                 className="group relative overflow-hidden p-6 bg-card hover:bg-card/80 rounded-2xl border border-border hover:border-primary/30 transition-all duration-300 hover:shadow-lg"
                             >
                                 <div className="flex items-start justify-between gap-4">

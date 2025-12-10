@@ -8,30 +8,54 @@ import { SEO_CONFIG, getSeoMetadata, CategoryId } from '@/lib/seo-config';
 
 // Define Parameter Type
 type Props = {
-    params: Promise<{ view: string; slug: string }>
+    params: Promise<{ category: string; slug: string }>
 };
 
 const CACHE_DIR = path.join(process.cwd(), 'src', 'data', 'static-cache');
 
 // 1. Generate Static Params (The Build List)
+// Generate params from BOTH manifest (has data) AND seo-keywords.ts (all defined keywords)
 export async function generateStaticParams() {
+    const params: { category: string; slug: string }[] = [];
+    const seen = new Set<string>();
+
+    // First, add all routes from manifest (these have actual data)
     const manifestPath = path.join(CACHE_DIR, 'manifest.json');
-    if (!fs.existsSync(manifestPath)) {
-        console.warn("No SEO manifest found. Skipping static generation for SEO pages.");
-        return [];
+    if (fs.existsSync(manifestPath)) {
+        try {
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+            for (const item of manifest) {
+                const key = `${item.params.category}/${item.params.slug}`;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    params.push({
+                        category: item.params.category,
+                        slug: item.params.slug
+                    });
+                }
+            }
+        } catch (e) {
+            console.error("Error parsing manifest", e);
+        }
     }
 
-    try {
-        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
-        // Map 'category' from manifest to 'view' param
-        return manifest.map((item: any) => ({
-            view: item.params.category,
-            slug: item.params.slug
-        }));
-    } catch (e) {
-        console.error("Error parsing manifest", e);
-        return [];
+    // Second, add all routes from seo-keywords.ts (even if no data yet)
+    // This ensures all defined keywords have a page
+    const { SEO_CATEGORIES } = await import('@/lib/seo-keywords');
+    for (const [category, keywords] of Object.entries(SEO_CATEGORIES)) {
+        for (const keyword of keywords as any[]) {
+            const key = `${category}/${keyword.slug}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                params.push({
+                    category: category,
+                    slug: keyword.slug
+                });
+            }
+        }
     }
+
+    return params;
 }
 
 // 2. Fetch Data (Local Helper)
@@ -43,8 +67,8 @@ function getTopicData(category: string, slug: string) {
 
 // 3. Dynamic Metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { view, slug } = await params;
-    const category = view as CategoryId;
+    const { category: categoryParam, slug } = await params;
+    const category = categoryParam as CategoryId;
 
     // Get dynamic metadata from engine
     const seo = getSeoMetadata(category, slug);
@@ -56,10 +80,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             title: seo.title,
             description: seo.description,
             type: 'website',
-            // images: ... (could add default OG image logic)
         },
         alternates: {
-            canonical: `https://headlined.app/${category}/${slug}`
+            canonical: `https://headlined.app/news/${category}/${slug}`
         },
         keywords: seo.aliases
     };
@@ -67,8 +90,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // 4. Page Component
 export default async function SeoTopicPage({ params }: Props) {
-    const { view, slug } = await params;
-    const category = view as CategoryId;
+    const { category: categoryParam, slug } = await params;
+    const category = categoryParam as CategoryId;
 
     // Validate Category
     if (!SEO_CONFIG[category]) {
@@ -76,9 +99,6 @@ export default async function SeoTopicPage({ params }: Props) {
     }
 
     const data = getTopicData(category, slug);
-    if (!data) {
-        notFound();
-    }
 
     // Get all dynamic texts
     const seo = getSeoMetadata(category, slug);
@@ -92,10 +112,10 @@ export default async function SeoTopicPage({ params }: Props) {
             "name": seo.title,
             "headline": seo.h1,
             "description": seo.intro,
-            "url": `https://headlined.app/${category}/${slug}`,
+            "url": `https://headlined.app/news/${category}/${slug}`,
             "mainEntity": {
                 "@type": "ItemList",
-                "itemListElement": data.map((post: any, index: number) => ({
+                "itemListElement": (data || []).map((post: any, index: number) => ({
                     "@type": "ListItem",
                     "position": index + 1,
                     "url": post.link,
@@ -130,14 +150,20 @@ export default async function SeoTopicPage({ params }: Props) {
                 {
                     "@type": "ListItem",
                     "position": 2,
-                    "name": category.charAt(0).toUpperCase() + category.slice(1),
-                    "item": `https://headlined.app/${category}`
+                    "name": "News",
+                    "item": "https://headlined.app/news"
                 },
                 {
                     "@type": "ListItem",
                     "position": 3,
+                    "name": category.charAt(0).toUpperCase() + category.slice(1),
+                    "item": `https://headlined.app/news/${category}`
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 4,
                     "name": seo.richTitle,
-                    "item": `https://headlined.app/${category}/${slug}`
+                    "item": `https://headlined.app/news/${category}/${slug}`
                 }
             ]
         },
@@ -185,8 +211,64 @@ export default async function SeoTopicPage({ params }: Props) {
             "name": seo.richTitle,
             "description": seo.intro,
             "sameAs": `https://www.wikidata.org/wiki/${seo.wikidata}`,
-            "url": `https://headlined.app/${category}/${slug}`
+            "url": `https://headlined.app/news/${category}/${slug}`
         } as any);
+    }
+
+    // Handle case when no data exists yet
+    if (!data || data.length === 0) {
+        return (
+            <main className="min-h-screen bg-background flex flex-col">
+                {/* Inject Schemas (still useful for SEO even without content) */}
+                {schemas.map((schema, i) => (
+                    <script
+                        key={i}
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+                    />
+                ))}
+
+                {/* No Content Yet State */}
+                <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+                    <div className="max-w-md space-y-6">
+                        {/* Breadcrumb */}
+                        <nav aria-label="Breadcrumb" className="mb-8">
+                            <ol className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                                <li><a href="/" className="hover:text-foreground transition-colors">Home</a></li>
+                                <span className="opacity-30">/</span>
+                                <li><a href="/news" className="hover:text-foreground transition-colors">News</a></li>
+                                <span className="opacity-30">/</span>
+                                <li><a href={`/news/${category}`} className="hover:text-foreground transition-colors capitalize">{category}</a></li>
+                                <span className="opacity-30">/</span>
+                                <li className="text-foreground">{seo.richTitle}</li>
+                            </ol>
+                        </nav>
+
+                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">{seo.h1}</h1>
+                        <p className="text-lg text-muted-foreground">{seo.intro}</p>
+
+                        <div className="pt-8 space-y-4">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-600 rounded-full text-sm font-medium">
+                                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                                Content Coming Soon
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                                We're gathering the latest news for this topic. Check back soon for updates.
+                            </p>
+                        </div>
+
+                        <div className="pt-8">
+                            <a
+                                href={`/news/${category}`}
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
+                            >
+                                Browse {category.charAt(0).toUpperCase() + category.slice(1)} Topics
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        );
     }
 
     // Map Scraper Data to Post Type for SeoCover
