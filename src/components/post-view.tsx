@@ -7,6 +7,7 @@ import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { X, Sparkles, Clock, ChevronRight, Lock, Heart } from "lucide-react";
 import { Button } from "./ui/button";
 import { addToReadHistory } from "@/lib/indexeddb";
@@ -98,7 +99,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     }, [post.readingTime, post.fullText, post.description, summaryText]);
 
     // Enhanced Touch Handling for "Award Worthy" Feel
-
+    const postUrl = `/article/${post.date || new Date().toISOString().split('T')[0]}/${post.slug}`;
 
     return (
         <>
@@ -108,12 +109,21 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                     "relative w-full h-full cursor-pointer group",
                 )}
                 layoutId={`card-container-${uniqueId}`}
-                onClick={handleCardClick}
                 whileHover={{ scale: 0.985, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
                 style={{ WebkitTapHighlightColor: 'transparent' }}
             >
+                {/* SEO: Actual Link for Crawlers & Accessibility */}
+                <Link
+                    href={postUrl}
+                    className="absolute inset-0 z-50 focus:outline-none"
+                    onClick={handleCardClick}
+                    aria-label={`Read ${post.title}`}
+                >
+                    <span className="sr-only">Read {post.title}</span>
+                </Link>
+
                 {/* Outer Ring - Museum Glass Boundary */}
                 <div
                     className="absolute inset-0 rounded-[48px] z-20 pointer-events-none transition-all duration-500"
