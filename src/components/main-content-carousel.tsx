@@ -35,6 +35,7 @@ type MainContentCarouselProps = {
   initialViewState?: "intro" | "dashboard";
   isIntroPaused?: boolean;
   periodLabel?: string;
+  view?: string;
 };
 
 const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
@@ -51,9 +52,8 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
   initialViewState,
   isIntroPaused,
   periodLabel,
+  view = 'today'
 }) => {
-  const pathname = usePathname();
-
   const greetingData = useMemo(() => {
     const now = new Date();
     const hour = now.getHours();
@@ -62,21 +62,21 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
     else if (hour < 12) timeGreeting = "Good Morning";
     else if (hour < 18) timeGreeting = "Good Afternoon";
 
-    if (pathname === "/app/yesterday" && date) {
+    if (view === "yesterday" && date) {
       const d = new Date(date);
       return {
         mainText: timeGreeting,
         subText: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
       };
     }
-    if (pathname === "/app/archive" && date) {
+    if (view === "archive" && date) {
       const d = new Date(date);
       return {
         mainText: timeGreeting,
         subText: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
       };
     }
-    if (pathname === "/app/this-week" && dateRange) {
+    if (view === "this-week" && dateRange) {
       const [sY, sM, sD] = dateRange.start.split('-').map(Number);
       const [eY, eM, eD] = dateRange.end.split('-').map(Number);
       const start = new Date(sY, sM - 1, sD);
@@ -89,7 +89,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
         subText: `${startStr} - ${endStr}`
       };
     }
-    if (pathname === "/app/this-month" && dateRange) {
+    if (view === "this-month" && dateRange) {
       const [sY, sM, sD] = dateRange.start.split('-').map(Number);
       const [eY, eM, eD] = dateRange.end.split('-').map(Number);
       const start = new Date(sY, sM - 1, sD);
@@ -104,7 +104,7 @@ const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
     }
 
     return { mainText: undefined, subText: undefined };
-  }, [pathname, date, dateRange]);
+  }, [view, date, dateRange]);
 
   return (
     <div className={cn("flex-1 overflow-hidden", className)} ref={emblaRef}>

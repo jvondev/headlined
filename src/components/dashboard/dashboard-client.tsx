@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo, Suspense } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams, usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { PostPageLoadingSkeleton } from "@/components/post-page-loading-skeleton";
 import { topicsData } from "@/data/topics-data";
@@ -14,6 +14,7 @@ import { checkIfFeedHasPosts } from '@/lib/client-posts';
 import { Topic, Interest } from '@/types';
 import { getSubscribedTopics, getSubscribedInterests } from '@/lib/local-storage';
 import { PremiumGuard } from "@/components/premium-guard";
+import { useRef } from 'react';
 
 const SynchronizedCarousel = dynamic(
     () => import('@/components/synchronized-carousel').then(mod => mod.SynchronizedCarousel),
@@ -26,14 +27,48 @@ const SynchronizedCarousel = dynamic(
 function DashboardContent() {
     const params = useParams();
     const searchParams = useSearchParams();
-    // Default to 'today' if no view param (for /app route)
-    const view = (params.view as string) || 'today';
+    const pathname = usePathname();
+
+    const paramsView = params.view as string;
+
+    // Persist the last valid dashboard view to prevent resetting when opening an article modal (intercepted route)
+    // When the URL changes to /article/..., params.view becomes undefined.
+    const lastViewRef = useRef(paramsView || 'today');
+
+    // Update the ref only if we are still conceptually in the dashboard (not viewing an article)
+    // We assume if pathname contains '/article/', we are in an intercepted state overlaid on the dashboard.
+    if (!pathname?.includes('/article/')) {
+        lastViewRef.current = paramsView || 'today';
+    }
+
+    const view = lastViewRef.current;
 
     const { hasSeenOnboarding, markOnboardingComplete } = useOnboardingStatus();
     const { loading: feedsLoading } = useSubscribedFeeds();
-    const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
-    const [availableInterests, setAvailableInterests] = useState<Interest[]>([]);
-    const [loadingFeeds, setLoadingFeeds] = useState(true);
+
+    const [availableTopics, setAvailableTopics] = useState<Topic[]>(() => {
+        if (typeof window !== 'undefined') {
+            const cached = sessionStorage.getItem('dashboard_topics');
+            if (cached) return JSON.parse(cached);
+        }
+        return [];
+    });
+    const [availableInterests, setAvailableInterests] = useState<Interest[]>(() => {
+        if (typeof window !== 'undefined') {
+            const cached = sessionStorage.getItem('dashboard_interests');
+            if (cached) return JSON.parse(cached);
+        }
+        return [];
+    });
+    const [loadingFeeds, setLoadingFeeds] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const cachedT = sessionStorage.getItem('dashboard_topics');
+            const cachedI = sessionStorage.getItem('dashboard_interests');
+            if (cachedT && cachedI) return false;
+        }
+        // Default to true if no cache or on server
+        return true;
+    });
     const [showOnboarding, setShowOnboarding] = useState(false);
 
     // Logic for 'today' view filtering
@@ -44,16 +79,14 @@ function DashboardContent() {
         }
 
         const filterFeeds = async () => {
-            // Try to load from session storage first to avoid skeleton
-            const cachedTopics = sessionStorage.getItem('dashboard_topics');
-            const cachedInterests = sessionStorage.getItem('dashboard_interests');
-
-            if (cachedTopics && cachedInterests) {
-                setAvailableTopics(JSON.parse(cachedTopics));
-                setAvailableInterests(JSON.parse(cachedInterests));
-                setLoadingFeeds(false);
+            // Check cache again or force refresh if needed? 
+            // Since we lazy loaded, we already have data if cached.
+            // But we might want to refresh in background or if cache is empty.
+            if (!loadingFeeds && availableTopics.length > 0) {
+                // Already loaded from cache, maybe verify? 
+                // For now, assume cache is good to avoid flicker.
             } else if (availableTopics.length === 0 && availableInterests.length === 0) {
-                // Only show full page skeleton if we have NO data at all and no cache
+                // No data, show skeleton (loadingFeeds is likely true already)
                 setLoadingFeeds(true);
             }
 
@@ -85,16 +118,16 @@ function DashboardContent() {
         filterFeeds();
     }, [view]);
 
-    // Logic for Onboarding (only relevant for 'today' usually, but code had it)
+    // Logic for Onboarding
     useEffect(() => {
-        if (view === 'today' && !feedsLoading) {
+        if (view === 'today' && !loadingFeeds) {
             const subscribedTopics = getSubscribedTopics();
             const subscribedInterests = getSubscribedInterests();
             if (!hasSeenOnboarding || (subscribedTopics.length === 0 && subscribedInterests.length === 0)) {
                 setShowOnboarding(true);
             }
         }
-    }, [hasSeenOnboarding, feedsLoading, view]);
+    }, [hasSeenOnboarding, loadingFeeds, view]);
 
     // Determine props based on view
     const carouselProps = useMemo(() => {
@@ -161,7 +194,7 @@ function DashboardContent() {
     }, [view, searchParams, availableTopics, availableInterests]);
 
     return (
-        <main className="h-screen w-full bg-transparent">
+        <main className="h-screen w-full bg-transparent" suppressHydrationWarning>
             <OnboardingProvider>
                 <OnboardingFlow
                     isOpen={showOnboarding}
@@ -184,6 +217,7 @@ function DashboardContent() {
                             initialViewState={carouselProps.initialViewState}
                             isIntroPaused={showOnboarding}
                             periodLabel={carouselProps.periodLabel}
+                            view={view}
                         />
                     )}
                 </PremiumGuard>

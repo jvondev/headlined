@@ -1,14 +1,13 @@
 "use client";
 
 import type { Post } from "@/types";
-import React, { useEffect, type FC, useMemo, useState, useRef } from "react";
+import React, { type FC, useMemo } from "react";
 
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { X, Sparkles, Clock, ChevronRight, Lock, Heart } from "lucide-react";
-
 import { Button } from "./ui/button";
 import { addToReadHistory } from "@/lib/indexeddb";
 
@@ -35,11 +34,7 @@ const decodeHtmlEntities = (text: string) => {
 
 const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest, onSave, isSaved, onShare, isPremium }) => {
     const router = useRouter();
-    const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     const isCTA = post.slug === 'premium-cta';
 

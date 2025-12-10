@@ -26,12 +26,26 @@ type SynchronizedCarouselProps = {
     initialViewState?: "intro" | "dashboard";
     isIntroPaused?: boolean;
     periodLabel?: string;
+    view: string;
 };
 
-export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, date, dateRange, initialViewState, isIntroPaused, periodLabel }) => {
-    const pathname = usePathname();
+export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, date, dateRange, initialViewState, isIntroPaused, periodLabel, view }) => {
+    // pathname used only for legacy/fallback if view isn't provided, but we enforce view
     const { subscribedTopics, subscribedInterests } = useSubscribedFeeds();
-    const [isDashboardIntro, setIsDashboardIntro] = useState(true);
+    // Initialize state from sessionStorage if available to handle remounts (e.g. closing modal)
+    const [isDashboardIntro, setIsDashboardIntro] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const cached = sessionStorage.getItem(`dashboard_intro_${view}`);
+            if (cached) return JSON.parse(cached);
+        }
+        return true;
+    });
+
+    // Update session storage when intro state changes
+    useEffect(() => {
+        sessionStorage.setItem(`dashboard_intro_${view}`, JSON.stringify(isDashboardIntro));
+    }, [isDashboardIntro, view]);
+
     const [filteredItems, setFilteredItems] = useState<CarouselItem[]>([]);
 
     useEffect(() => {
@@ -41,7 +55,9 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 { name: "Dashboard", type: "none" as const, href: "/", icon: "LayoutDashboard", isIconOnly: true },
             ];
 
-            if (pathname === "/app/today" || pathname === "/app/yesterday" || pathname === "/app/this-week" || pathname === "/app/this-month" || pathname === "/app/archive") {
+            const supportedViews = ["today", "yesterday", "this-week", "this-month", "archive"];
+
+            if (supportedViews.includes(view)) {
                 const subscribedTopicItems = subscribedTopics.map(topic => ({
                     ...topic,
                     type: "topic" as const,
@@ -80,17 +96,24 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         };
 
         filterItems();
-    }, [topics, interests, subscribedTopics, subscribedInterests, pathname, date, dateRange]);
+    }, [topics, interests, subscribedTopics, subscribedInterests, view, date, dateRange]);
 
     const allFilterItems = filteredItems;
 
     const getInitialIndex = useCallback(() => {
-        if (pathname === "/app/today" || pathname === "/" || pathname === "/app/yesterday" || pathname === "/app/this-week" || pathname === "/app/this-month" || pathname === "/app/archive") {
+        // Try storage first
+        if (typeof window !== 'undefined') {
+            const cachedIndex = sessionStorage.getItem(`dashboard_index_${view}`);
+            if (cachedIndex) return parseInt(cachedIndex, 10);
+        }
+
+        const supportedViews = ["today", "yesterday", "this-week", "this-month", "archive"];
+        if (supportedViews.includes(view)) {
             const dashboardIndex = allFilterItems.findIndex(item => item.name === "Dashboard");
             if (dashboardIndex !== -1) return dashboardIndex;
         }
         return 0;
-    }, [allFilterItems, pathname]);
+    }, [allFilterItems, view]);
 
     const [selectedIndex, setSelectedIndex] = useState(getInitialIndex());
 
@@ -106,7 +129,8 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         if (!emblaMainApi || !navEmblaApi) return;
         const newSelectedIndex = emblaMainApi.selectedScrollSnap();
         setSelectedIndex(newSelectedIndex);
-    }, [navEmblaApi, allFilterItems]);
+        sessionStorage.setItem(`dashboard_index_${view}`, newSelectedIndex.toString());
+    }, [navEmblaApi, allFilterItems, view]);
 
     const onNavClick = useCallback((index: number) => {
         if (emblaApi) emblaApi.scrollTo(index);
@@ -216,6 +240,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 className="pt-[60px] md:pt-[48px]"
                 isIntroPaused={isIntroPaused}
                 periodLabel={periodLabel}
+                view={view}
             />
             <KeyboardShortcutsHint />
         </div>

@@ -55,10 +55,8 @@ export default function ArticleClientPage() {
         async function loadArticle() {
             if (!articleInfo.isArticle || !articleInfo.date || !articleInfo.slug) {
                 // If we are at /article root or invalid path, handle gracefully
-                // For now, we can redirect to home or show error
                 if (pathname === '/article' || pathname === '/article/') {
-                    // Allow clean initial render for base path if needed, or redirect
-                    // router.replace('/app/today'); 
+                    router.replace('/app/today');
                 } else {
                     setLoadingState('error');
                 }
