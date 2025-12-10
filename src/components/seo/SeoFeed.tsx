@@ -6,6 +6,7 @@ import { PostCarousel } from '@/components/post-carousel';
 import { OnboardingProvider } from '@/context/onboarding-provider';
 import { SEO_DATA_URL } from '@/lib/seo-config';
 import { checkLicenseStatus } from "@/lib/license-manager";
+
 // Define the shape of data from our scraper
 interface ScraperPost {
     slug: string;
@@ -33,6 +34,12 @@ interface SeoFeedProps {
 export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
     const [posts, setPosts] = useState<ScraperPost[]>(initialPosts);
     const [isPremium, setIsPremium] = useState(false);
+    const [hasMounted, setHasMounted] = useState(false);
+
+    // Mark as mounted after hydration to avoid SSR mismatch
+    useEffect(() => {
+        setHasMounted(true);
+    }, []);
 
     useEffect(() => {
         checkLicenseStatus().then(setIsPremium);
@@ -57,21 +64,7 @@ export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
         fetchFreshData();
     }, [category, slug]);
 
-    // Ad Injection Logic
-    const createNativeAdPost = (): Post => {
-        return {
-            slug: `ad-native-${Math.random().toString(36).substr(2, 9)}`,
-            title: 'Sponsored Content',
-            description: 'Sponsored',
-            link: '#',
-            thumbnail_url: null,
-            topic: 'Sponsored',
-            summaries: [],
-            date: new Date().toISOString().split('T')[0]
-        };
-    };
-
-    // Map to 'Post' type
+    // Map to 'Post' type (without ads - same on server and client)
     const mappedPosts: Post[] = posts.map(p => ({
         slug: p.slug || 'unknown',
         title: p.title,
@@ -86,9 +79,21 @@ export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
         keywords: p.keywords || []
     }));
 
-    // Inject Ads
+    // Ad Injection Logic - ONLY after hydration to avoid SSR mismatch
     const postsWithAds = (() => {
-        if (isPremium) return mappedPosts;
+        // Don't inject ads until mounted (client-side only)
+        if (!hasMounted || isPremium) return mappedPosts;
+
+        const createNativeAdPost = (): Post => ({
+            slug: `ad-native-${Math.random().toString(36).substr(2, 9)}`,
+            title: 'Sponsored Content',
+            description: 'Sponsored',
+            link: '#',
+            thumbnail_url: null,
+            topic: 'Sponsored',
+            summaries: [],
+            date: new Date().toISOString().split('T')[0]
+        });
 
         const withAds: Post[] = [];
         let nextAdDistance = Math.floor(Math.random() * 5) + 4;
@@ -117,3 +122,4 @@ export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
         </div>
     );
 }
+
