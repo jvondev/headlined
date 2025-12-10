@@ -2,26 +2,15 @@
 
 import type { Post } from "@/types";
 import React, { useEffect, type FC, useMemo, useState, useRef } from "react";
-import { createPortal } from "react-dom";
+
 import type { UseEmblaCarouselType } from "embla-carousel-react";
-import { motion, AnimatePresence, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { X, Sparkles, Clock, ChevronRight, Lock, Heart } from "lucide-react";
+
 import { Button } from "./ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
 import { addToReadHistory } from "@/lib/indexeddb";
-import html2canvas from "html2canvas";
-import { PostExportTemplate } from "./post-export-template";
-import { ExpandedReader } from "./expanded-reader";
-import { FloatingActionDock } from "./floating-action-dock";
 
 interface PostViewProps {
     post: Post;
@@ -42,125 +31,15 @@ const decodeHtmlEntities = (text: string) => {
     return textArea.value;
 };
 
-const TypewriterText = ({ text, onComplete, shouldSkip }: { text: string; onComplete?: () => void; shouldSkip: boolean }) => {
-    const [displayedText, setDisplayedText] = useState("");
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const hasCompleted = useRef(false);
 
-    const textChars = useMemo(() => Array.from(text), [text]);
-
-    useEffect(() => {
-        setDisplayedText("");
-        setCurrentIndex(0);
-        hasCompleted.current = false;
-    }, [text]);
-
-    useEffect(() => {
-        if (currentIndex < textChars.length) {
-            let delay = 30;
-            let charsToAdd = 1;
-
-            if (shouldSkip) {
-                delay = 2;
-                charsToAdd = 5;
-            } else {
-                const progress = currentIndex / textChars.length;
-                delay = Math.max(5, 30 * (1 - progress));
-            }
-
-            const timer = setTimeout(() => {
-                const nextIndex = Math.min(currentIndex + charsToAdd, textChars.length);
-                setDisplayedText(textChars.slice(0, nextIndex).join(''));
-                setCurrentIndex(nextIndex);
-            }, delay);
-            return () => clearTimeout(timer);
-        } else if (currentIndex === textChars.length && !hasCompleted.current) {
-            hasCompleted.current = true;
-            onComplete?.();
-        }
-    }, [currentIndex, textChars, onComplete, shouldSkip]);
-
-    return (
-        <p className="text-lg md:text-xl leading-relaxed font-serif text-zinc-300">
-            {displayedText}
-            {currentIndex < textChars.length && <span className="inline-block w-[2px] h-5 ml-1 bg-white animate-pulse align-middle" />}
-        </p>
-    );
-};
 
 const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest, onSave, isSaved, onShare, isPremium }) => {
     const router = useRouter();
-    const [isExpanded, setIsExpanded] = useState(false);
     const [mounted, setMounted] = useState(false);
-    const [skipTypewriter, setSkipTypewriter] = useState(false);
-    const [isExporting, setIsExporting] = useState(false);
-    const [exportPlatform, setExportPlatform] = useState<'tiktok' | 'instagram'>('tiktok');
-    const [base64Thumbnail, setBase64Thumbnail] = useState<string | null>(null);
-    const exportRef = useRef<HTMLDivElement>(null);
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-    // ExpandedReader continue state
-    const [hasMoreContent, setHasMoreContent] = useState(false);
-    const [isGeneratingContent, setIsGeneratingContent] = useState(false);
-    const [remainingSections, setRemainingSections] = useState(0);
-    const [readerDarkMode, setReaderDarkMode] = useState(true);
-    // Track sticky header state for mobile close button "morph"
-    const [isMobileHeaderSticky, setIsMobileHeaderSticky] = useState(false);
-    // Track the original URL before expansion for restoration
-    const originalUrlRef = useRef<string | null>(null);
-
-    // Gestures
-    const y = useMotionValue(0);
-    const x = useMotionValue(0);
-    const opacityScale = useTransform([y, x], ([latestY, latestX]) => {
-        const distance = Math.sqrt((latestY as number) ** 2 + (latestX as number) ** 2);
-        return Math.max(0.5, 1 - distance / 400);
-    });
-    const scaleAnim = useTransform([y, x], ([latestY, latestX]) => {
-        const distance = Math.sqrt((latestY as number) ** 2 + (latestX as number) ** 2);
-        return Math.max(0.95, 1 - distance / 4000);
-    });
-    const touchStart = useRef<{ x: number; y: number; scrollTop: number } | null>(null);
 
     useEffect(() => {
         setMounted(true);
     }, []);
-
-    useEffect(() => {
-        if (isExpanded) {
-            document.body.style.overflow = 'hidden';
-            document.body.style.touchAction = 'none';
-            y.set(0);
-            x.set(0);
-            setSkipTypewriter(false);
-
-            // Use hash fragment for URL - doesn't affect Next.js routing
-            // Format: /app/today#article/2025-12-10/slug
-            const postDate = post.date || new Date().toISOString().split('T')[0];
-            const articleHash = `#article/${postDate}/${post.slug}`;
-            originalUrlRef.current = window.location.pathname + window.location.search + window.location.hash;
-            window.history.pushState({ expanded: true, slug: post.slug }, '', window.location.pathname + window.location.search + articleHash);
-        } else {
-            document.body.style.overflow = '';
-            document.body.style.touchAction = '';
-        }
-        return () => {
-            document.body.style.overflow = '';
-            document.body.style.touchAction = '';
-        };
-    }, [isExpanded, y, x, post.date, post.slug]);
-
-    // Handle browser back button - close modal without page reload
-    useEffect(() => {
-        const handlePopState = (event: PopStateEvent) => {
-            if (isExpanded) {
-                setIsExpanded(false);
-            }
-        };
-
-        window.addEventListener('popstate', handlePopState);
-        return () => window.removeEventListener('popstate', handlePopState);
-    }, [isExpanded]);
 
     const isCTA = post.slug === 'premium-cta';
 
@@ -178,106 +57,13 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             return;
         }
 
-        // Add to read history and expand locally (no page navigation)
         addToReadHistory(post).catch(console.error);
-        setIsExpanded(true);
+
+        const postDate = post.date || new Date().toISOString().split('T')[0];
+        router.push(`/article/${postDate}/${post.slug}`, { scroll: false });
     };
 
-    // Handle closing the expanded card
-    const handleCloseExpanded = () => {
-        setIsExpanded(false);
-        // Go back in history to restore original URL
-        if (originalUrlRef.current) {
-            window.history.back();
-        }
-    };
 
-    const handleDownload = async (platform: 'tiktok' | 'instagram') => {
-        if (isExporting) return;
-        setExportPlatform(platform);
-        setIsExporting(true);
-
-        try {
-            // Pre-process image to Base64 to avoid CORS/Loading issues with html2canvas
-            if (post.thumbnail_url) {
-                try {
-                    const response = await fetch(post.thumbnail_url);
-                    const blob = await response.blob();
-                    await new Promise<void>((resolve) => {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                            if (reader.result) {
-                                setBase64Thumbnail(reader.result as string);
-                            }
-                            resolve();
-                        };
-                        reader.readAsDataURL(blob);
-                    });
-                } catch (e) {
-                    console.warn("Direct fetch failed, trying proxy...", e);
-                    try {
-                        const proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(post.thumbnail_url!)}&output=jpg`;
-                        const response = await fetch(proxyUrl);
-                        const blob = await response.blob();
-                        await new Promise<void>((resolve) => {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                                if (reader.result) {
-                                    setBase64Thumbnail(reader.result as string);
-                                }
-                                resolve();
-                            };
-                            reader.readAsDataURL(blob);
-                        });
-                    } catch (proxyError) {
-                        console.error("Proxy fetch also failed", proxyError);
-                    }
-                }
-            }
-
-            // Small delay to ensure React renders the new Base64 src
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            const element = exportRef.current;
-            if (!element) {
-                console.error("Export template not found");
-                setIsExporting(false);
-                return;
-            }
-
-            const canvas = await html2canvas(element, {
-                scale: 1, // 1:1 scale since we set width/height explicitly
-                useCORS: true,
-                backgroundColor: null, // Transparent background
-                logging: false,
-                width: 1080,
-                height: 1350,
-                onclone: (clonedDoc) => {
-                    // Ensure the cloned element is visible and properly styled if needed
-                    const clonedElement = clonedDoc.getElementById('post-export-template');
-                    if (clonedElement) {
-                        clonedElement.style.display = 'block';
-                    }
-                }
-            });
-
-            const image = canvas.toDataURL("image/png");
-            const link = document.createElement("a");
-            link.href = image;
-            link.download = `headlined-${post.slug || 'post'}.png`;
-            link.click();
-        } catch (error) {
-            console.error("Export failed:", error);
-        } finally {
-            setIsExporting(false);
-        }
-    };
-
-    useEffect(() => {
-        if (!isActive) {
-            setIsExpanded(false);
-        }
-    }, [isActive]);
 
     const summaryText = useMemo(() => {
         let text = "No summary available.";
@@ -307,52 +93,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     }, [post.readingTime, post.fullText, post.description, summaryText]);
 
     // Enhanced Touch Handling for "Award Worthy" Feel
-    const handleTouchStart = (e: React.TouchEvent) => {
-        const scrollContainer = scrollContainerRef.current;
-        // Allow gesture if at top of scroll
-        if (scrollContainer && scrollContainer.scrollTop > 5) return;
 
-        touchStart.current = {
-            x: e.touches[0].clientX,
-            y: e.touches[0].clientY,
-            scrollTop: scrollContainer ? scrollContainer.scrollTop : 0,
-        };
-    };
-
-    const handleTouchMove = (e: React.TouchEvent) => {
-        if (!touchStart.current) return;
-        const scrollContainer = scrollContainerRef.current;
-        if (scrollContainer && scrollContainer.scrollTop > 5) return;
-
-        const currentY = e.touches[0].clientY;
-        const currentX = e.touches[0].clientX;
-        const deltaY = currentY - touchStart.current.y;
-        const deltaX = currentX - touchStart.current.x;
-
-        // Only allow dragging DOWN to close
-        if (deltaY > 0) {
-            // Add resistance
-            const resistance = 0.5;
-            y.set(deltaY * resistance);
-
-            // Optional: slight horizontal movement for natural feel
-            x.set(deltaX * 0.2);
-        }
-    };
-
-    const handleTouchEnd = (e: React.TouchEvent) => {
-        touchStart.current = null;
-        const verticalDistance = y.get();
-
-        // Threshold to close
-        if (verticalDistance > 120) {
-            setIsExpanded(false);
-        } else {
-            // Spring back
-            animate(y, 0, { type: "spring", stiffness: 400, damping: 40 });
-            animate(x, 0, { type: "spring", stiffness: 400, damping: 40 });
-        }
-    };
 
     return (
         <>
@@ -360,7 +101,6 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
             <motion.div
                 className={cn(
                     "relative w-full h-full cursor-pointer group",
-                    isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
                 )}
                 layoutId={`card-container-${uniqueId}`}
                 onClick={handleCardClick}
@@ -480,148 +220,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                 </motion.div>
             )}
 
-            {/* EXPANDED VIEW PORTAL */}
-            {mounted && createPortal(
-                <AnimatePresence>
-                    {isExpanded && (
-                        <motion.div
-                            layoutId={`card-container-${uniqueId}`}
-                            className="fixed inset-0 z-[100] flex flex-col bg-zinc-950 backdrop-blur-xl overscroll-none"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            {/* Hidden Export Template - Rendered off-screen */}
-                            <div style={{ position: 'fixed', left: '-9999px', top: 0, zIndex: -1 }}>
-                                <PostExportTemplate ref={exportRef} post={post} isLocked={isLocked} variant={exportPlatform} thumbnailOverride={base64Thumbnail} />
-                            </div>
 
-                            <motion.div
-                                className="relative w-full h-full flex flex-col will-change-transform touch-pan-y overflow-hidden"
-                                style={{ x, y, opacity: opacityScale, scale: scaleAnim }}
-                                onTouchStart={handleTouchStart}
-                                onTouchMove={handleTouchMove}
-                                onTouchEnd={handleTouchEnd}
-                                onClick={() => setSkipTypewriter(true)}
-                            >
-                                {/* Close Button */}
-                                <motion.button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleCloseExpanded();
-                                    }}
-                                    className={cn(
-                                        "absolute top-6 right-6 z-[60] p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all active:scale-95 shadow-lg",
-                                        isMobileHeaderSticky && "md:opacity-100 md:pointer-events-auto pointer-events-none"
-                                    )}
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{
-                                        opacity: isMobileHeaderSticky ? 0 : 1,
-                                        scale: 1
-                                    }}
-                                    transition={{ duration: 0.2 }}
-                                >
-                                    <X className="w-5 h-5" />
-                                </motion.button>
-
-                                {/* Single Scrollable Container */}
-                                <div
-                                    ref={scrollContainerRef}
-                                    id="post-view-scroll-container"
-                                    className="flex-1 overflow-y-auto no-scrollbar overscroll-contain pb-32"
-                                >
-                                    {/* Hero Section - Scrolls with content */}
-                                    <div className="relative w-full h-[45vh] md:h-[55vh] overflow-hidden">
-                                        {post.thumbnail_url ? (
-                                            <motion.img
-                                                src={post.thumbnail_url}
-                                                alt=""
-                                                className="w-full h-full object-cover"
-                                                layoutId={`image-${uniqueId}`}
-                                                style={{ WebkitTapHighlightColor: 'transparent' }}
-                                            />
-                                        ) : (
-                                            <motion.div
-                                                className="w-full h-full bg-gradient-to-br from-zinc-800 to-black"
-                                                layoutId={`image-${uniqueId}`}
-                                            />
-                                        )}
-                                        {/* Gradient Overlay for Text Readability */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent opacity-90" />
-
-                                        {/* Title on Image */}
-                                        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 pb-12 flex flex-col justify-end z-20">
-                                            <motion.div layoutId={`header-${uniqueId}`} className="space-y-4">
-                                                <div className="flex items-center gap-3">
-                                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white text-black uppercase tracking-widest shadow-lg">
-                                                        {post.topic || 'News'}
-                                                    </span>
-                                                    <span className="flex items-center gap-1.5 text-xs font-medium text-white/90 uppercase tracking-wide bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
-                                                        <Clock className="w-3 h-3" />
-                                                        {new Date(post.date || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
-                                                    </span>
-                                                </div>
-                                                <h1 className="font-sans text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tighter text-balance drop-shadow-2xl">
-                                                    {decodedTitle}
-                                                </h1>
-                                            </motion.div>
-                                        </div>
-                                    </div>
-
-                                    {/* Content Body - Dark Mode */}
-                                    <div className="relative z-10 bg-zinc-950 -mt-6 rounded-t-[30px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border-t border-white/5">
-                                        {/* Drag Handle Indicator */}
-                                        <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mt-4 mb-2 sticky top-0 z-50" />
-
-                                        {/* Expanded Reader Component */}
-                                        <ExpandedReader
-                                            fullText={post.fullText ?? null}
-                                            description={post.description}
-                                            keywords={post.keywords || []}
-                                            slug={post.slug}
-                                            date={post.date}
-                                            readingTime={post.readingTime || parseInt(readingTime) || 3}
-                                            isPremium={isPremium}
-                                            articleUrl={post.link}
-                                            onHighlightSave={(quote) => {
-                                                console.log('Quote saved:', quote);
-                                            }}
-                                            onContinueStateChange={(hasMore, isGen, remaining) => {
-                                                setHasMoreContent(hasMore);
-                                                setIsGeneratingContent(isGen);
-                                                setRemainingSections(remaining);
-                                            }}
-                                            onContinueRequest={() => { }}
-                                            onDownload={handleDownload}
-                                            isExporting={isExporting}
-                                            onThemeChange={(isDark) => setReaderDarkMode(isDark)}
-                                            onClose={handleCloseExpanded}
-                                            onStickyChange={setIsMobileHeaderSticky}
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Floating Action Dock */}
-                                <FloatingActionDock
-                                    post={post}
-                                    hasMoreContent={hasMoreContent}
-                                    isGeneratingContent={isGeneratingContent}
-                                    remainingSections={remainingSections}
-                                    onContinue={() => (window as any).__expandedReaderContinue?.()}
-                                    onSave={onSave}
-                                    isSaved={isSaved}
-                                    onDownload={handleDownload}
-                                    isExporting={isExporting}
-                                    visible={!isGeneratingContent}
-                                    isDarkMode={readerDarkMode}
-                                />
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>,
-                document.body
-            )}
         </>
     );
 };
