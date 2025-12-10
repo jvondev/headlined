@@ -32,13 +32,21 @@ const decodeHtmlEntities = (text: string) => {
 
 
 
+import { useArticleModal } from "@/context/article-modal-context";
+
+// ... inside component ...
 const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest, onSave, isSaved, onShare, isPremium }) => {
     const router = useRouter();
-
+    const { openArticle } = useArticleModal();
 
     const isCTA = post.slug === 'premium-cta';
 
-    const handleCardClick = () => {
+    const handleCardClick = (e: React.MouseEvent) => {
+        // Allow default link behavior (new tab) if modifier keys are pressed
+        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+
+        e.preventDefault();
+
         if (isCTA) {
             onUnlockRequest?.();
             return;
@@ -55,7 +63,9 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
         addToReadHistory(post).catch(console.error);
 
         const postDate = post.date || new Date().toISOString().split('T')[0];
-        router.push(`/article/${postDate}/${post.slug}`, { scroll: false });
+
+        // Open modal instead of navigating
+        openArticle(postDate, post.slug, post);
     };
 
 

@@ -89,7 +89,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // 4. Page Component
+import { Suspense } from 'react';
+
+// ... (previous imports and functions)
+
+// 4. Page Component
 export default async function SeoTopicPage({ params }: Props) {
+    // ... (params logic matches original)
     const { category: categoryParam, slug } = await params;
     const category = categoryParam as CategoryId;
 
@@ -99,10 +105,9 @@ export default async function SeoTopicPage({ params }: Props) {
     }
 
     const data = getTopicData(category, slug);
-
-    // Get all dynamic texts
     const seo = getSeoMetadata(category, slug);
 
+    // ... (Stack Schema Logic matches original)
     // Stacked Schema Logic
     const schemas = [
         // CollectionPage
@@ -287,33 +292,35 @@ export default async function SeoTopicPage({ params }: Props) {
     }));
 
     return (
-        <main className="h-screen w-full bg-background flex flex-col overflow-hidden relative">
-            {/* Inject Schemas */}
-            {schemas.map((schema, i) => (
-                <script
-                    key={i}
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        <Suspense fallback={<div className="min-h-screen bg-background" />}>
+            <main className="h-screen w-full bg-background flex flex-col overflow-hidden relative">
+                {/* Inject Schemas */}
+                {schemas.map((schema, i) => (
+                    <script
+                        key={i}
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+                    />
+                ))}
+
+                {/* The Cover Layer (Landing Experience) */}
+                <SeoCover
+                    category={category}
+                    slug={slug}
+                    title={seo.h1}
+                    intro={seo.intro}
+                    richTitle={seo.richTitle}
+                    aliases={seo.aliases}
+                    faqs={seo.faqs}
+                    posts={mappedPosts}
+                    relatedTopics={data[0]?.relatedTopics}
                 />
-            ))}
 
-            {/* The Cover Layer (Landing Experience) */}
-            <SeoCover
-                category={category}
-                slug={slug}
-                title={seo.h1}
-                intro={seo.intro}
-                richTitle={seo.richTitle}
-                aliases={seo.aliases}
-                faqs={seo.faqs}
-                posts={mappedPosts}
-                relatedTopics={data[0]?.relatedTopics}
-            />
-
-            {/* Client Feed (Background Layer, revealed on dismiss) */}
-            <div className="flex-1 w-full relative z-0 flex items-center justify-center mt-6">
-                <SeoFeed category={category} slug={slug} initialPosts={data} />
-            </div>
-        </main>
+                {/* Client Feed (Background Layer, revealed on dismiss) */}
+                <div className="flex-1 w-full relative z-0 flex items-center justify-center mt-6">
+                    <SeoFeed category={category} slug={slug} initialPosts={data} />
+                </div>
+            </main>
+        </Suspense>
     );
 }

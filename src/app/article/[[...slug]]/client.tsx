@@ -13,11 +13,19 @@ import { PostExportTemplate } from '@/components/post-export-template';
 
 type LoadingState = 'loading' | 'success' | 'error' | 'not-article';
 
-export default function ArticleClientPage() {
+// ... imports
+
+interface ArticleClientPageProps {
+    overrideSlug?: string;
+    overrideDate?: string;
+    initialPost?: Post | null;
+}
+
+export default function ArticleClientPage({ overrideSlug, overrideDate, initialPost }: ArticleClientPageProps) {
     const router = useRouter();
     const pathname = usePathname();
 
-    const [post, setPost] = useState<Post | null>(null);
+    const [post, setPost] = useState<Post | null>(initialPost || null);
     const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
     const [loadingState, setLoadingState] = useState<LoadingState>('loading');
     const [readerDarkMode, setReaderDarkMode] = useState(true);
@@ -33,20 +41,24 @@ export default function ArticleClientPage() {
     const [base64Thumbnail, setBase64Thumbnail] = useState<string | null>(null);
     const exportRef = useRef<HTMLDivElement>(null);
 
-    // Parse date/slug from pathname
+    // Parse date/slug from pathname OR props
     const articleInfo = useMemo(() => {
+        if (overrideDate && overrideSlug) {
+            return { date: overrideDate, slug: overrideSlug, isArticle: true };
+        }
+
         // Match /article/YYYY-MM-DD/slug
-        // We look for the pattern segments after /article/
-        // pathname might be "/article/2025-12-10/my-slug"
         const match = pathname?.match(/\/article\/(\d{4}-\d{2}-\d{2})\/(.+)/);
 
         if (match) {
             return { date: match[1], slug: match[2], isArticle: true };
         }
 
-        // Handle root /article path or invalid formats
         return { date: null, slug: null, isArticle: false };
-    }, [pathname]);
+    }, [pathname, overrideDate, overrideSlug]);
+
+    // ... useEffect for fetching logic needs update to skip if initialPost is provided AND matches
+
 
     // Fetch article data
     useEffect(() => {

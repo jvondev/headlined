@@ -1,11 +1,16 @@
+import { Suspense } from 'react';
 import { DashboardClient } from "@/components/dashboard/dashboard-client";
+import { ArticleModalProvider } from "@/context/article-modal-context";
+import { ArticleModal } from "@/components/article-modal";
 
-export default function AppLayout({ children, modal }: { children: React.ReactNode, modal: React.ReactNode }) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
     return (
-        <>
-            <DashboardClient />
+        <ArticleModalProvider>
+            <Suspense fallback={<div className="h-screen w-full bg-background" />}>
+                <DashboardClient />
+            </Suspense>
             <div className="hidden">{children}</div>
-            {modal}
-        </>
+            <ArticleModal />
+        </ArticleModalProvider>
     );
 }

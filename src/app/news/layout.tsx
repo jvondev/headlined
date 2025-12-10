@@ -1,14 +1,15 @@
+import { ArticleModalProvider } from "@/context/article-modal-context";
+import { ArticleModal } from "@/components/article-modal";
+
 export default function NewsLayout({
     children,
-    modal,
 }: {
     children: React.ReactNode;
-    modal: React.ReactNode;
 }) {
     return (
-        <>
+        <ArticleModalProvider>
             {children}
-            {modal}
-        </>
+            <ArticleModal />
+        </ArticleModalProvider>
     );
 }
