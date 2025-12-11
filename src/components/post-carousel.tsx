@@ -295,12 +295,13 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
     }
   }, [emblaApi]);
 
-  // ROBUST STREAM LOGIC: Fixes "Stuck" & "Delay"
-  // 1. Noise (<6): Ignored (Let existing timer expire -> Unlocks).
-  // 2. Active (>6): Extends lock timer (Keep Alive).
-  // 3. Trigger: Only on Leading Edge (>20).
-  const isScrollActive = useRef(false);
-  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+  // HYBRID LOGIC: Cooldown + Velocity Check
+  // Solves "Triple Swipe" / "Ghost Triggers"
+  // 1. Hard Lock (300ms) prevents rapid-fire.
+  // 2. Velocity Check (>1.5x previous) prevents momentum tail from re-triggering.
+  const isLocked = useRef(false);
+  const lockTimeout = useRef<NodeJS.Timeout | null>(null);
+  const lastAbsDelta = useRef(0);
 
   useEffect(() => {
     if (!emblaApi || !hasActivated) return;
@@ -313,28 +314,27 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
       e.preventDefault();
 
       const absDelta = Math.abs(e.deltaY);
+      const prevDelta = lastAbsDelta.current;
+      lastAbsDelta.current = absDelta;
 
-      // NOISE GATE: If it's just noise, DO NOT clear the timer.
-      // Let the previous timer run to completion to unlock.
-      if (absDelta < 6) return;
+      // 1. HARD LOCK: Ignore everything during cooldown
+      if (isLocked.current) return;
 
-      // ACTIVE MOVEMENT: Extend the lock
-      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+      // 2. TRIGGER LOGIC:
+      // A) Must be strong (>20)
+      // B) Must be ACCELERATING (>1.2x previous) to prove it's a new finger flick
+      //    (Momentum tails are always DECELERATING, so they will fail this check)
+      if (absDelta > 20 && absDelta > prevDelta * 1.2) {
+        // Trigger
+        if (e.deltaY > 0) emblaApi.scrollNext();
+        else emblaApi.scrollPrev();
 
-      scrollTimeout.current = setTimeout(() => {
-        isScrollActive.current = false;
-      }, 150); // Midsilence (150ms) to detect end of stream
+        // Lock for 350ms
+        isLocked.current = true;
 
-      // TRIGGER LOGIC: Leading Edge Only
-      if (!isScrollActive.current) {
-        // Strong threshold for initial trigger to avoid accidental firing
-        if (absDelta > 20) {
-          isScrollActive.current = true;
-
-          // Direct API call - FASTER than event dispatch (0ms latency)
-          if (e.deltaY > 0) emblaApi.scrollNext();
-          else emblaApi.scrollPrev();
-        }
+        lockTimeout.current = setTimeout(() => {
+          isLocked.current = false;
+        }, 350);
       }
     };
 

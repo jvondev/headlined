@@ -174,12 +174,12 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     }, [emblaApi, allFilterItems.length]);
 
 
-    // CATCH ALL STREAM LOGIC: Horizontal
-    // 1. Trigger immediately on first event (Leading Edge)
-    // 2. Continuous stream keeps resetting timer (Catch All)
-    // 3. New trigger allowed only after 75ms silence
-    const isScrollActive = useRef(false);
-    const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+    // HYBRID LOGIC: Horizontal
+    // 1. Hard Lock (350ms)
+    // 2. Velocity Check (>1.2x previous)
+    const isLocked = useRef(false);
+    const lockTimeout = useRef<NodeJS.Timeout | null>(null);
+    const lastAbsDelta = useRef(0);
 
     useEffect(() => {
         if (!emblaApi) return;
@@ -196,24 +196,25 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
             e.preventDefault();
 
             const absDelta = Math.abs(e.deltaX);
+            const prevDelta = lastAbsDelta.current;
+            lastAbsDelta.current = absDelta;
 
-            // NOISE GATE: If it's just noise, DO NOT clear the timer.
-            if (absDelta < 6) return;
+            // 1. HARD LOCK: Ignore everything during cooldown
+            if (isLocked.current) return;
 
-            // ACTIVE MOVEMENT: Extend the lock
-            if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+            // 2. TRIGGER LOGIC:
+            // strong (>25) AND accelerating (>1.2x)
+            if (absDelta > 25 && absDelta > prevDelta * 1.2) {
+                // Trigger
+                if (e.deltaX > 0) emblaApi.scrollNext();
+                else emblaApi.scrollPrev();
 
-            scrollTimeout.current = setTimeout(() => {
-                isScrollActive.current = false;
-            }, 150);
+                // Lock for 350ms
+                isLocked.current = true;
 
-            // TRIGGER LOGIC: Leading Edge Only
-            if (!isScrollActive.current) {
-                if (absDelta > 25) {
-                    isScrollActive.current = true;
-                    if (e.deltaX > 0) emblaApi.scrollNext();
-                    else emblaApi.scrollPrev();
-                }
+                lockTimeout.current = setTimeout(() => {
+                    isLocked.current = false;
+                }, 350);
             }
         };
 
