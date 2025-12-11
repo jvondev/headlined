@@ -295,47 +295,51 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
     }
   }, [emblaApi]);
 
-  // BULLETPROOF WHEEL HANDLER: 1 gesture = 1 slide, no matter how fast
-  // Uses Embla's settle event to block input until animation completes
+  // ROBUST STREAM LOGIC: Fixes "Stuck" & "Delay"
+  // 1. Noise (<6): Ignored (Let existing timer expire -> Unlocks).
+  // 2. Active (>6): Extends lock timer (Keep Alive).
+  // 3. Trigger: Only on Leading Edge (>20).
+  const isScrollActive = useRef(false);
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     if (!emblaApi || !hasActivated) return;
 
     const container = emblaApi.rootNode();
     if (!container) return;
 
-    let isScrolling = false;
-
-    // Unlock when animation settles
-    const onSettle = () => {
-      isScrolling = false;
-    };
-    emblaApi.on('settle', onSettle);
-
     const handleWheel = (e: WheelEvent) => {
+      e.stopPropagation();
       e.preventDefault();
 
-      // Block ALL wheel events while scrolling - this is the key
-      if (isScrolling) return;
+      const absDelta = Math.abs(e.deltaY);
 
-      // Any scroll input (regardless of delta size) = one slide
-      if (Math.abs(e.deltaY) > 5) { // Small threshold to filter noise
-        isScrolling = true; // Lock immediately
+      // NOISE GATE: If it's just noise, DO NOT clear the timer.
+      // Let the previous timer run to completion to unlock.
+      if (absDelta < 6) return;
 
-        if (e.deltaY > 0) {
-          emblaApi.scrollNext();
-        } else {
-          emblaApi.scrollPrev();
+      // ACTIVE MOVEMENT: Extend the lock
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+
+      scrollTimeout.current = setTimeout(() => {
+        isScrollActive.current = false;
+      }, 150); // Midsilence (150ms) to detect end of stream
+
+      // TRIGGER LOGIC: Leading Edge Only
+      if (!isScrollActive.current) {
+        // Strong threshold for initial trigger to avoid accidental firing
+        if (absDelta > 20) {
+          isScrollActive.current = true;
+
+          // Direct API call - FASTER than event dispatch (0ms latency)
+          if (e.deltaY > 0) emblaApi.scrollNext();
+          else emblaApi.scrollPrev();
         }
-        // Will unlock when 'settle' event fires
       }
     };
 
     container.addEventListener('wheel', handleWheel, { passive: false });
-
-    return () => {
-      container.removeEventListener('wheel', handleWheel);
-      emblaApi.off('settle', onSettle);
-    };
+    return () => container.removeEventListener('wheel', handleWheel);
   }, [emblaApi, hasActivated]);
 
   useEffect(() => {

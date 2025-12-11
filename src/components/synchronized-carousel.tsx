@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useState, useCallback } from "react";
+import React, { FC, useEffect, useState, useCallback, useRef } from "react";
 import useEmblaCarousel, { UseEmblaCarouselType } from "embla-carousel-react";
-import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures"; // Re-added for trackpad
+// Custom wheel handler instead of WheelGesturesPlugin - more predictable
 import { CarouselNav } from "@/components/carousel-nav";
 import { MainContentCarousel } from "@/components/main-content-carousel";
 import type { Topic, Interest } from "@/types";
@@ -117,14 +117,12 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
 
     const [selectedIndex, setSelectedIndex] = useState(getInitialIndex());
 
-    // TIKTOK-STYLE with trackpad support
+    // LIGHTWEIGHT: No plugins, custom wheel handler instead
     const [emblaRef, emblaApi] = useEmblaCarousel(
-        { loop: false, axis: 'x', align: 'start', duration: 15, skipSnaps: false },
-        [WheelGesturesPlugin({ forceWheelAxis: 'x' })]
+        { loop: false, axis: 'x', align: 'start', duration: 15, skipSnaps: false }
     );
     const [navEmblaRef, navEmblaApi] = useEmblaCarousel(
-        { loop: false, axis: 'x', align: 'start', duration: 20 },
-        [WheelGesturesPlugin({ forceWheelAxis: 'x' })]
+        { loop: false, axis: 'x', align: 'start', duration: 20 }
     );
 
     // Effect to handle the initial scroll position
@@ -174,6 +172,54 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
             emblaApi.off("reInit", updateVisibility);
         };
     }, [emblaApi, allFilterItems.length]);
+
+
+    // CATCH ALL STREAM LOGIC: Horizontal
+    // 1. Trigger immediately on first event (Leading Edge)
+    // 2. Continuous stream keeps resetting timer (Catch All)
+    // 3. New trigger allowed only after 75ms silence
+    const isScrollActive = useRef(false);
+    const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+
+    useEffect(() => {
+        if (!emblaApi) return;
+
+        const container = emblaApi.rootNode();
+        if (!container) return;
+
+        const handleWheel = (e: WheelEvent) => {
+            // Only handle clearly horizontal scroll
+            const isHorizontalScroll = Math.abs(e.deltaX) > Math.abs(e.deltaY) * 2;
+            if (!isHorizontalScroll) return;
+
+            e.stopPropagation();
+            e.preventDefault();
+
+            const absDelta = Math.abs(e.deltaX);
+
+            // NOISE GATE: If it's just noise, DO NOT clear the timer.
+            if (absDelta < 6) return;
+
+            // ACTIVE MOVEMENT: Extend the lock
+            if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+
+            scrollTimeout.current = setTimeout(() => {
+                isScrollActive.current = false;
+            }, 150);
+
+            // TRIGGER LOGIC: Leading Edge Only
+            if (!isScrollActive.current) {
+                if (absDelta > 25) {
+                    isScrollActive.current = true;
+                    if (e.deltaX > 0) emblaApi.scrollNext();
+                    else emblaApi.scrollPrev();
+                }
+            }
+        };
+
+        container.addEventListener('wheel', handleWheel, { passive: false });
+        return () => container.removeEventListener('wheel', handleWheel);
+    }, [emblaApi]);
 
     useEffect(() => {
         if (emblaApi) {
