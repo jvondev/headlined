@@ -182,6 +182,10 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     const lastAbsDelta = useRef(0);
 
     useEffect(() => {
+        // 1. SKIP ON MOBILE/TOUCH DEVICES
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+        if (isTouchDevice) return;
+
         if (!emblaApi) return;
 
         const container = emblaApi.rootNode();
@@ -219,7 +223,11 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         };
 
         container.addEventListener('wheel', handleWheel, { passive: false });
-        return () => container.removeEventListener('wheel', handleWheel);
+        // Clean up timeout on unmount
+        return () => {
+            container.removeEventListener('wheel', handleWheel);
+            if (lockTimeout.current) clearTimeout(lockTimeout.current);
+        };
     }, [emblaApi]);
 
     useEffect(() => {

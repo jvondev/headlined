@@ -304,12 +304,18 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
   const lastAbsDelta = useRef(0);
 
   useEffect(() => {
+    // 1. SKIP ON MOBILE/TOUCH DEVICES
+    // Zero overhead for mobile users. Logic only runs if user has a fine pointer (mouse/trackpad).
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+    if (isTouchDevice) return;
+
     if (!emblaApi || !hasActivated) return;
 
     const container = emblaApi.rootNode();
     if (!container) return;
 
     const handleWheel = (e: WheelEvent) => {
+      // Logic remains the same, but now guarded by isTouchDevice check above
       e.stopPropagation();
       e.preventDefault();
 
