@@ -344,33 +344,53 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
   }, [isLoading, hasMore, topicName, searchQuery, externalPosts, date, dateRange, injectAds]);
 
 
+  // RAF-throttled scroll transforms - PERFORMANCE CRITICAL
   useEffect(() => {
     if (!emblaApi || !hasActivated) return;
 
+    let rafId: number | null = null;
+    let lastSelectedIndex = emblaApi.selectedScrollSnap();
+
     const applyTransforms = () => {
-      const scrollProgress = emblaApi.scrollProgress();
-      const slides = emblaApi.slideNodes();
-      const snapList = emblaApi.scrollSnapList();
+      // Skip if RAF already scheduled
+      if (rafId !== null) return;
 
-      slides.forEach((slide, index) => {
-        const snap = snapList[index];
-        const diffToTarget = snap - scrollProgress;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const scrollProgress = emblaApi.scrollProgress();
+        const slides = emblaApi.slideNodes();
+        const snapList = emblaApi.scrollSnapList();
+        const selectedIndex = emblaApi.selectedScrollSnap();
 
-        if (Math.abs(diffToTarget) > 2) {
-          slide.style.opacity = '0';
-          slide.style.pointerEvents = 'none';
-          return;
-        }
+        // Only update nearby slides (±2) for performance
+        slides.forEach((slide, index) => {
+          const distance = Math.abs(index - selectedIndex);
+          const snap = snapList[index];
+          const diffToTarget = snap - scrollProgress;
 
-        slide.style.pointerEvents = 'auto';
-        const scale = 1 - Math.abs(diffToTarget * 0.9); // Scale down by 90% at the edges
-        const translateY = diffToTarget * 300; // Adjust vertical position
-        const zIndex = Math.round(20 - Math.abs(diffToTarget * 10));
+          // Far slides: hide completely, skip expensive transforms
+          if (distance > 2) {
+            if (slide.style.opacity !== '0') {
+              slide.style.opacity = '0';
+              slide.style.pointerEvents = 'none';
+              slide.style.transform = 'translateZ(0)';
+            }
+            return;
+          }
 
-        slide.style.transform = `scale(${scale}) translateY(${translateY}px) translateZ(0)`;
-        slide.style.opacity = Math.max(0, 1 - Math.abs(diffToTarget * 1.5)).toString();
-        slide.style.zIndex = zIndex.toString();
-        slide.style.position = 'relative';
+          // Nearby slides: apply transforms
+          slide.style.pointerEvents = 'auto';
+          const scale = 1 - Math.abs(diffToTarget * 0.9);
+          const translateY = diffToTarget * 300;
+          const zIndex = Math.round(20 - Math.abs(diffToTarget * 10));
+
+          slide.style.transform = `scale(${scale}) translateY(${translateY}px) translateZ(0)`;
+          slide.style.opacity = Math.max(0, 1 - Math.abs(diffToTarget * 1.5)).toString();
+          slide.style.zIndex = zIndex.toString();
+          slide.style.position = 'relative';
+        });
+
+        lastSelectedIndex = selectedIndex;
       });
     };
 
@@ -379,6 +399,7 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
     applyTransforms(); // Apply initial transforms
 
     return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
       emblaApi.off("scroll", applyTransforms);
       emblaApi.off("reInit", applyTransforms);
     };

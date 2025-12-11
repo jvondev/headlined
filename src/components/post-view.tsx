@@ -4,7 +4,7 @@ import type { Post } from "@/types";
 import React, { type FC, useMemo } from "react";
 
 import type { UseEmblaCarouselType } from "embla-carousel-react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+// PERFORMANCE: Removed useMotionValue/useTransform - causes per-scroll recalculations
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -103,15 +103,13 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
 
     return (
         <>
-            {/* PREMIUM COLLAPSED CARD */}
-            <motion.div
+            {/* PREMIUM COLLAPSED CARD - PERFORMANCE OPTIMIZED */}
+            <div
                 className={cn(
                     "relative w-full h-full cursor-pointer group",
+                    "transform-gpu transition-transform duration-300 ease-out",
+                    "hover:scale-[0.985] hover:-translate-y-0.5 active:scale-[0.97]"
                 )}
-                layoutId={`card-container-${uniqueId}`}
-                whileHover={{ scale: 0.985, y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
                 style={{ WebkitTapHighlightColor: 'transparent' }}
             >
                 {/* SEO: Actual Link for Crawlers & Accessibility */}
@@ -146,18 +144,16 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                     {/* Background Image */}
                     <div className="absolute inset-0 overflow-hidden rounded-[32px]">
                         {post.thumbnail_url ? (
-                            <motion.img
+                            <img
                                 src={post.thumbnail_url}
                                 alt=""
-                                className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-110 rounded-[32px]"
-                                layoutId={`image-${uniqueId}`}
+                                loading="lazy"
+                                decoding="async"
+                                className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 rounded-[32px] will-change-transform"
                                 style={{ WebkitTapHighlightColor: 'transparent' }}
                             />
                         ) : (
-                            <motion.div
-                                className="w-full h-full bg-gradient-to-br from-zinc-800 via-zinc-900 to-black rounded-[32px]"
-                                layoutId={`image-${uniqueId}`}
-                            />
+                            <div className="w-full h-full bg-gradient-to-br from-zinc-800 via-zinc-900 to-black rounded-[32px]" />
                         )}
 
                         {/* Multi-layer Gradients */}
@@ -167,10 +163,10 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
 
                     {/* Card Content */}
                     <div className="absolute inset-0 flex flex-col justify-between p-7 md:p-10">
-                        <motion.div layoutId={`header-${uniqueId}`} className="space-y-5 pt-2">
+                        <div className="space-y-5 pt-2">
                             {/* Meta Info */}
                             <div className="flex items-center gap-3 flex-wrap">
-                                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-xs font-semibold text-white tracking-wide uppercase shadow-lg">
+                                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 md:bg-white/10 md:backdrop-blur-xl border border-white/20 text-xs font-semibold text-white tracking-wide uppercase shadow-lg">
                                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                                     {post.topic || 'News'}
                                 </span>
@@ -189,12 +185,12 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                             <p className="text-white/70 text-sm md:text-base leading-relaxed font-light line-clamp-2 opacity-80">
                                 {post.description?.substring(0, 120) || summaryText.substring(0, 120)}...
                             </p>
-                        </motion.div>
+                        </div>
 
                         {/* Bottom Section */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
+                                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/30 md:bg-white/5 md:backdrop-blur-sm border border-white/10">
                                     <Sparkles className="w-3.5 h-3.5 text-white" />
                                     <span className="text-xs font-medium text-white/90">{readingTime}</span>
                                 </div>
@@ -203,8 +199,8 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
 
                         {/* Locked Overlay */}
                         {isLocked && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md z-20">
-                                <div className="flex flex-col items-center gap-4 p-6 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 shadow-2xl">
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/70 md:bg-black/60 md:backdrop-blur-md z-20">
+                                <div className="flex flex-col items-center gap-4 p-6 rounded-3xl bg-black/50 md:bg-gradient-to-br md:from-white/10 md:to-white/5 md:backdrop-blur-xl border border-white/20 shadow-2xl">
                                     <div className="w-14 h-14 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-800 flex items-center justify-center shadow-xl">
                                         <Lock className="w-7 h-7 text-white" />
                                     </div>
@@ -217,12 +213,12 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                         )}
                     </div>
                 </div>
-            </motion.div>
+            </div>
 
             {/* CTA Card Override */}
             {isCTA && (
-                <motion.div
-                    className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-gradient-to-br from-primary/20 via-background to-background p-8 text-center"
+                <div
+                    className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-gradient-to-br from-primary/20 via-background to-background p-8 text-center cursor-pointer"
                     onClick={handleCardClick}
                 >
                     <div className="mb-6 p-4 bg-primary/10 rounded-full">
@@ -232,7 +228,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                     <Button size="lg" className="w-full max-w-xs rounded-full text-lg h-14 font-bold shadow-lg mt-8">
                         Unlock Premium
                     </Button>
-                </motion.div>
+                </div>
             )}
 
 

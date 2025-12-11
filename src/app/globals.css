@@ -136,4 +136,41 @@
       transform: translateY(0);
     }
   }
+
+  /* ============================================
+   * CAROUSEL PERFORMANCE OPTIMIZATIONS
+   * Mobile Safari scroll performance fixes
+   * ============================================ */
+  
+  /* Force GPU compositing for smooth scrolling */
+  .carousel-slide {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-slide,
+    .post-card {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+
+  /* Mobile blur optimization - Safari struggles with backdrop-filter during scroll */
+  @media (max-width: 768px) {
+    .mobile-no-blur {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+  }
+
+  /* Touch-scroll optimization */
+  .touch-scroll-container {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+  }
 }

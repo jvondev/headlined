@@ -136,31 +136,46 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         if (emblaApi) emblaApi.scrollTo(index);
     }, [emblaApi]);
 
-    // Direct DOM manipulation for animations - NO React state updates
+    // RAF-throttled DOM transforms - PERFORMANCE CRITICAL
     useEffect(() => {
         if (!emblaApi) return;
 
+        let rafId: number | null = null;
+
         const applyTransforms = () => {
-            const scrollProgress = emblaApi.scrollProgress();
-            const slides = emblaApi.slideNodes();
-            const snapList = emblaApi.scrollSnapList();
+            // Skip if RAF already scheduled
+            if (rafId !== null) return;
 
-            slides.forEach((slide, index) => {
-                const snap = snapList[index];
-                const diffToTarget = snap - scrollProgress;
+            rafId = requestAnimationFrame(() => {
+                rafId = null;
+                const scrollProgress = emblaApi.scrollProgress();
+                const slides = emblaApi.slideNodes();
+                const snapList = emblaApi.scrollSnapList();
+                const selectedIndex = emblaApi.selectedScrollSnap();
 
-                if (Math.abs(diffToTarget) > 2) {
-                    slide.style.opacity = '0';
-                    slide.style.pointerEvents = 'none';
-                    return;
-                }
+                // Only update nearby slides (±2) for performance
+                slides.forEach((slide, index) => {
+                    const distance = Math.abs(index - selectedIndex);
+                    const snap = snapList[index];
+                    const diffToTarget = snap - scrollProgress;
 
-                slide.style.pointerEvents = 'auto';
-                const scale = 1 - Math.abs(diffToTarget * 0.9);
-                const translateX = diffToTarget * 300;
+                    // Far slides: hide completely, skip expensive transforms
+                    if (distance > 2) {
+                        if (slide.style.opacity !== '0') {
+                            slide.style.opacity = '0';
+                            slide.style.pointerEvents = 'none';
+                            slide.style.transform = 'translateZ(0)';
+                        }
+                        return;
+                    }
 
-                slide.style.transform = `scale(${scale}) translateX(${translateX}px) translateZ(0)`;
-                slide.style.opacity = Math.max(0, 1 - Math.abs(diffToTarget * 1.5)).toString();
+                    slide.style.pointerEvents = 'auto';
+                    const scale = 1 - Math.abs(diffToTarget * 0.9);
+                    const translateX = diffToTarget * 300;
+
+                    slide.style.transform = `scale(${scale}) translateX(${translateX}px) translateZ(0)`;
+                    slide.style.opacity = Math.max(0, 1 - Math.abs(diffToTarget * 1.5)).toString();
+                });
             });
         };
 
@@ -169,6 +184,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         applyTransforms(); // Apply initial transforms
 
         return () => {
+            if (rafId !== null) cancelAnimationFrame(rafId);
             emblaApi.off("scroll", applyTransforms);
             emblaApi.off("reInit", applyTransforms);
         };
