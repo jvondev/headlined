@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, type FC, useRef, useMemo } from "react";
-import { motion } from "framer-motion";
+// PERFORMANCE: Removed framer-motion - using CSS transitions instead
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, Pencil, HelpCircle, Sparkles } from "lucide-react";
@@ -10,7 +10,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { PostView } from "@/components/post-view";
 import { PostCardSkeleton } from "./post-card-skeleton";
-import { useIsMobile } from "@/hooks/use-mobile";
+// PERFORMANCE: Removed useIsMobile - was unused but caused re-renders
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { CarouselContext } from "@/context/carousel-context";
@@ -55,7 +55,7 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const isMobile = useIsMobile();
+  // PERFORMANCE: Removed useIsMobile hook call - was unused
   const returnToSlug = searchParams.get("returnTo");
   const action = searchParams.get("action");
 
@@ -252,10 +252,14 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
     return 0;
   }, []);
 
+  // PERFORMANCE: Optimized Embla config for smoother scrolling
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
     axis: 'y',
     startIndex: initialSlide,
+    skipSnaps: false, // Ensure snapping for predictable scroll
+    containScroll: 'trimSnaps', // Prevent over-scrolling
+    dragFree: false, // Snap to slides for TikTok feel
   }, [WheelGesturesPlugin({
     forceWheelAxis: 'y',
     wheelDraggingClass: 'is-wheel-dragging'
@@ -561,13 +565,13 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
     return (
       <>
         {posts.map((post, index) => {
-          // Virtualization: Only render slides within a buffer of the active index
-          // This drastically reduces DOM weight and React reconciliation cost
-          const shouldRender = Math.abs(index - activeSlideIndex) <= 3;
+          // PERFORMANCE: Reduced virtualization window from ±3 to ±2
+          // This decreases DOM nodes by 33% while still feeling smooth
+          const shouldRender = Math.abs(index - activeSlideIndex) <= 2;
 
           return (
             <div
-              className="relative min-w-0 flex-[0_0_100%] h-full flex justify-center py-2 px-4 md:py-4 md:px-8 lg:py-8 lg:px-16 will-change-[transform,opacity] transition-transform transition-opacity duration-200 ease-out"
+              className="relative min-w-0 flex-[0_0_100%] h-full flex justify-center py-2 px-4 md:py-4 md:px-8 lg:py-8 lg:px-16 carousel-slide"
               key={`${post.slug}-${index}-${topicName || searchQuery}`}
               role="group"
               aria-roledescription="slide"
@@ -611,10 +615,9 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                   </div>
                 ) : post.slug.startsWith('ad-') ? (
                   <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
-                    <motion.div
-                      className="relative w-full h-full rounded-[28px] overflow-hidden group"
-                      whileHover={{ scale: 0.985, y: -2 }}
-                      transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                    {/* PERFORMANCE: Replaced motion.div with CSS transitions */}
+                    <div
+                      className="relative w-full h-full rounded-[28px] overflow-hidden group transform-gpu transition-transform duration-300 ease-out hover:scale-[0.985] hover:-translate-y-0.5"
                     >
                       {/* Main Card Container - Dark */}
                       <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl">
@@ -626,7 +629,7 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                           <div className="space-y-5 pt-2">
                             {/* Sponsored Label */}
                             <div className="flex items-center gap-3 flex-wrap">
-                              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-800/80 backdrop-blur-sm border border-white/10 text-xs font-semibold text-zinc-400 tracking-wide uppercase shadow-sm">
+                              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-800/80 border border-white/10 text-xs font-semibold text-zinc-400 tracking-wide uppercase shadow-sm">
                                 Sponsored
                               </span>
                             </div>
@@ -638,7 +641,7 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                           <div {...{ 'ta-ad-container': '' }} className="w-full h-full flex items-center justify-center relative rounded-2xl" />
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   </div>
                 ) : (
                   <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
