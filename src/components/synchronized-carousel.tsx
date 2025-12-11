@@ -29,6 +29,12 @@ type SynchronizedCarouselProps = {
     view: string;
 };
 
+// Define base items outside component for stable reference and initial state
+const BASE_ITEMS: CarouselItem[] = [
+    { name: "Saved", type: "none" as const, href: "/saved", icon: "Bookmark", isIconOnly: true },
+    { name: "Dashboard", type: "none" as const, href: "/", icon: "LayoutDashboard", isIconOnly: true },
+];
+
 export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, interests, date, dateRange, initialViewState, isIntroPaused, periodLabel, view }) => {
     // pathname used only for legacy/fallback if view isn't provided, but we enforce view
     const { subscribedTopics, subscribedInterests } = useSubscribedFeeds();
@@ -46,7 +52,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
         sessionStorage.setItem(`dashboard_intro_${view}`, JSON.stringify(isDashboardIntro));
     }, [isDashboardIntro, view]);
 
-    const [filteredItems, setFilteredItems] = useState<CarouselItem[]>([]);
+    const [filteredItems, setFilteredItems] = useState<CarouselItem[]>(BASE_ITEMS);
 
     useEffect(() => {
         const filterItems = async () => {
@@ -72,7 +78,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                 }));
 
                 const allPotentialItems = [...subscribedTopicItems, ...subscribedInterestItems];
-                const validItems: CarouselItem[] = [];
+                let validItems: CarouselItem[] = [];
                 const isPremium = await checkLicenseStatus();
                 const isArchiveMode = !!(date || dateRange);
 
@@ -89,9 +95,9 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
                     }
                 }
 
-                setFilteredItems([...baseItems, ...validItems, { name: "Explore", type: "none" as const, href: "/explore", icon: "Compass", isIconOnly: true }, { name: "Search", type: "none" as const, href: "/search", icon: "Search", isIconOnly: true }]);
+                setFilteredItems([...BASE_ITEMS, ...validItems, { name: "Explore", type: "none" as const, href: "/explore", icon: "Compass", isIconOnly: true }, { name: "Search", type: "none" as const, href: "/search", icon: "Search", isIconOnly: true }]);
             } else {
-                setFilteredItems(baseItems);
+                setFilteredItems(BASE_ITEMS);
             }
         };
 
@@ -103,12 +109,13 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
     const getInitialIndex = useCallback(() => {
         // Try storage first
         if (typeof window !== 'undefined') {
-            const cachedIndex = sessionStorage.getItem(`dashboard_index_${view}`);
+            const cachedIndex = sessionStorage.getItem(`dashboard_index_v2_${view}`);
             if (cachedIndex) return parseInt(cachedIndex, 10);
         }
 
         const supportedViews = ["today", "yesterday", "this-week", "this-month", "archive"];
         if (supportedViews.includes(view)) {
+            // Default to "Dashboard" (Index 1) if available
             const dashboardIndex = allFilterItems.findIndex(item => item.name === "Dashboard");
             if (dashboardIndex !== -1) return dashboardIndex;
         }
