@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, type FC, useRef, useMemo } from "react";
 // PERFORMANCE: Removed framer-motion - using CSS transitions instead
 import useEmblaCarousel from "embla-carousel-react";
-import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
+// TIKTOK: Removed WheelGesturesPlugin - using native Embla snap for instant response
 import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, Pencil, HelpCircle, Sparkles } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
@@ -252,18 +252,21 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
     return 0;
   }, []);
 
-  // PERFORMANCE: Optimized Embla config for smoother scrolling
+  // TIKTOK-STYLE SCROLL: Instant snap, one slide per gesture
+  // Key settings: 
+  // - duration: 15 = lightning fast snap (TikTok feel)
+  // - inViewThreshold: 0.7 = trigger snap with minimal scroll (30% = snap)
+  // - No momentum/wheel plugins = predictable single-slide behavior
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
     axis: 'y',
     startIndex: initialSlide,
-    skipSnaps: false, // Ensure snapping for predictable scroll
-    containScroll: 'trimSnaps', // Prevent over-scrolling
-    dragFree: false, // Snap to slides for TikTok feel
-  }, [WheelGesturesPlugin({
-    forceWheelAxis: 'y',
-    wheelDraggingClass: 'is-wheel-dragging'
-  })]);
+    duration: 15, // Ultra-fast snap animation (TikTok uses ~200ms, we use faster)
+    skipSnaps: false, // Never skip slides
+    containScroll: 'trimSnaps', // Clean start/end
+    dragFree: false, // Snap mode, not free scroll
+    inViewThreshold: 0.7, // Trigger snap at 30% scroll distance
+  });
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(initialSlide);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
@@ -348,64 +351,41 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
   }, [isLoading, hasMore, topicName, searchQuery, externalPosts, date, dateRange, injectAds]);
 
 
-  // RAF-throttled scroll transforms - PERFORMANCE CRITICAL
+  // TIKTOK-STYLE: Simple visibility toggle - no complex transforms during scroll
+  // TikTok doesn't scale/rotate cards - it just snaps instantly to next slide
   useEffect(() => {
     if (!emblaApi || !hasActivated) return;
 
-    let rafId: number | null = null;
-    let lastSelectedIndex = emblaApi.selectedScrollSnap();
+    const updateVisibility = () => {
+      const slides = emblaApi.slideNodes();
+      const selectedIndex = emblaApi.selectedScrollSnap();
 
-    const applyTransforms = () => {
-      // Skip if RAF already scheduled
-      if (rafId !== null) return;
+      // Simple visibility: show current ±1, hide rest
+      slides.forEach((slide, index) => {
+        const distance = Math.abs(index - selectedIndex);
 
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
-        const scrollProgress = emblaApi.scrollProgress();
-        const slides = emblaApi.slideNodes();
-        const snapList = emblaApi.scrollSnapList();
-        const selectedIndex = emblaApi.selectedScrollSnap();
-
-        // Only update nearby slides (±2) for performance
-        slides.forEach((slide, index) => {
-          const distance = Math.abs(index - selectedIndex);
-          const snap = snapList[index];
-          const diffToTarget = snap - scrollProgress;
-
-          // Far slides: hide completely, skip expensive transforms
-          if (distance > 2) {
-            if (slide.style.opacity !== '0') {
-              slide.style.opacity = '0';
-              slide.style.pointerEvents = 'none';
-              slide.style.transform = 'translateZ(0)';
-            }
-            return;
-          }
-
-          // Nearby slides: apply transforms
-          slide.style.pointerEvents = 'auto';
-          const scale = 1 - Math.abs(diffToTarget * 0.9);
-          const translateY = diffToTarget * 300;
-          const zIndex = Math.round(20 - Math.abs(diffToTarget * 10));
-
-          slide.style.transform = `scale(${scale}) translateY(${translateY}px) translateZ(0)`;
-          slide.style.opacity = Math.max(0, 1 - Math.abs(diffToTarget * 1.5)).toString();
-          slide.style.zIndex = zIndex.toString();
-          slide.style.position = 'relative';
-        });
-
-        lastSelectedIndex = selectedIndex;
+        if (distance > 1) {
+          // Far slides: completely hidden
+          slide.style.opacity = '0';
+          slide.style.pointerEvents = 'none';
+        } else {
+          // Current and adjacent slides: visible
+          slide.style.opacity = '1';
+          slide.style.pointerEvents = distance === 0 ? 'auto' : 'none';
+        }
+        // No scale/translate = no "wavy" effect
+        slide.style.transform = 'translateZ(0)';
       });
     };
 
-    emblaApi.on("scroll", applyTransforms);
-    emblaApi.on("reInit", applyTransforms);
-    applyTransforms(); // Apply initial transforms
+    // Update on select (snap complete) - not on every scroll tick
+    emblaApi.on("select", updateVisibility);
+    emblaApi.on("reInit", updateVisibility);
+    updateVisibility();
 
     return () => {
-      if (rafId !== null) cancelAnimationFrame(rafId);
-      emblaApi.off("scroll", applyTransforms);
-      emblaApi.off("reInit", applyTransforms);
+      emblaApi.off("select", updateVisibility);
+      emblaApi.off("reInit", updateVisibility);
     };
   }, [emblaApi, posts.length, hasActivated]);
 
