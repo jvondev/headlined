@@ -633,9 +633,10 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                 ) : post.slug.startsWith('ad-') ? (
                   <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
                     {/* SPONSORED CARD - Museum Glass Style (matches PostView) */}
+                    {/* touch-action: manipulation prevents ad from capturing scroll */}
                     <div
                       className="relative w-full h-full cursor-pointer group transform-gpu transition-transform duration-300 ease-out hover:scale-[0.985] hover:-translate-y-0.5 active:scale-[0.97]"
-                      style={{ WebkitTapHighlightColor: 'transparent' }}
+                      style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                     >
                       {/* Outer Ring - Museum Glass Boundary */}
                       <div
@@ -663,9 +664,9 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                           </div>
                         </div>
 
-                        {/* Ad Container - Full height, clickable */}
-                        <div className="absolute inset-0 flex items-center justify-center p-7 md:p-10 z-0">
-                          <div {...{ 'ta-ad-container': '' }} className="w-full h-full flex items-center justify-center relative rounded-2xl" />
+                        {/* Ad Container - pointer-events-none for scroll, auto on click */}
+                        <div className="absolute inset-0 flex items-center justify-center p-7 md:p-10 z-0 pointer-events-none">
+                          <div {...{ 'ta-ad-container': '' }} className="w-full h-full flex items-center justify-center relative rounded-2xl pointer-events-auto" />
                         </div>
                       </div>
                     </div>
