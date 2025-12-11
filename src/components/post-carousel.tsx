@@ -595,28 +595,38 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
                   </div>
                 ) : post.slug.startsWith('ad-') ? (
                   <div className="w-full h-full max-h-[85vh] md:max-h-[85vh] lg:max-h-[85vh]">
-                    {/* PERFORMANCE: Replaced motion.div with CSS transitions */}
+                    {/* SPONSORED CARD - Museum Glass Style (matches PostView) */}
                     <div
-                      className="relative w-full h-full rounded-[28px] overflow-hidden group transform-gpu transition-transform duration-300 ease-out hover:scale-[0.985] hover:-translate-y-0.5"
+                      className="relative w-full h-full cursor-pointer group transform-gpu transition-transform duration-300 ease-out hover:scale-[0.985] hover:-translate-y-0.5 active:scale-[0.97]"
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
                     >
-                      {/* Main Card Container - Dark */}
-                      <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl">
+                      {/* Outer Ring - Museum Glass Boundary */}
+                      <div
+                        className="absolute inset-0 rounded-[48px] z-20 pointer-events-none"
+                        style={{
+                          boxShadow: "0 0 0 1px rgba(0,0,0,0.06), inset 0 0 0 1.5px rgba(255,255,255,0.8), inset 0 0 20px rgba(0,0,0,0.02)"
+                        }}
+                      />
+
+                      {/* Main Card Container */}
+                      <div className="absolute inset-4 md:inset-5 rounded-[32px] overflow-hidden bg-zinc-950 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] border border-white/10 z-10">
                         {/* Functional Background */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black opacity-50" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black" />
 
                         {/* Card Content */}
                         <div className="absolute inset-0 flex flex-col justify-between p-7 md:p-10 pointer-events-none z-10">
                           <div className="space-y-5 pt-2">
                             {/* Sponsored Label */}
                             <div className="flex items-center gap-3 flex-wrap">
-                              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-800/80 border border-white/10 text-xs font-semibold text-zinc-400 tracking-wide uppercase shadow-sm">
+                              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 md:bg-white/10 md:backdrop-blur-xl border border-white/20 text-xs font-semibold text-white tracking-wide uppercase shadow-lg">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
                                 Sponsored
                               </span>
                             </div>
                           </div>
                         </div>
 
-                        {/* Ad Container - Full height to fill card, MUST be clickable */}
+                        {/* Ad Container - Full height, clickable */}
                         <div className="absolute inset-0 flex items-center justify-center p-7 md:p-10 z-0">
                           <div {...{ 'ta-ad-container': '' }} className="w-full h-full flex items-center justify-center relative rounded-2xl" />
                         </div>
