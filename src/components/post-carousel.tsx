@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, type FC, useRef, useMemo } from "react";
 // PERFORMANCE: Removed framer-motion - using CSS transitions instead
 import useEmblaCarousel from "embla-carousel-react";
-// TIKTOK: Removed WheelGesturesPlugin - using native Embla snap for instant response
+// Custom wheel handler instead of WheelGesturesPlugin - more predictable
 import { ArrowUp, Bookmark, MoreVertical, ThumbsUp, ThumbsDown, ArrowDown, Pencil, HelpCircle, Sparkles } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
@@ -252,20 +252,15 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
     return 0;
   }, []);
 
-  // TIKTOK-STYLE SCROLL: Instant snap, one slide per gesture
-  // Key settings: 
-  // - duration: 15 = lightning fast snap (TikTok feel)
-  // - inViewThreshold: 0.7 = trigger snap with minimal scroll (30% = snap)
-  // - No momentum/wheel plugins = predictable single-slide behavior
+  // TIKTOK-STYLE SCROLL: Instant snap, native Embla only (no plugins)
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
     axis: 'y',
     startIndex: initialSlide,
-    duration: 15, // Ultra-fast snap animation (TikTok uses ~200ms, we use faster)
+    duration: 15, // Ultra-fast snap animation
     skipSnaps: false, // Never skip slides
-    containScroll: 'trimSnaps', // Clean start/end
-    dragFree: false, // Snap mode, not free scroll
-    inViewThreshold: 0.7, // Trigger snap at 30% scroll distance
+    containScroll: 'trimSnaps',
+    dragFree: false,
   });
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(initialSlide);
@@ -300,6 +295,48 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
     }
   }, [emblaApi]);
 
+  // BULLETPROOF WHEEL HANDLER: 1 gesture = 1 slide, no matter how fast
+  // Uses Embla's settle event to block input until animation completes
+  useEffect(() => {
+    if (!emblaApi || !hasActivated) return;
+
+    const container = emblaApi.rootNode();
+    if (!container) return;
+
+    let isScrolling = false;
+
+    // Unlock when animation settles
+    const onSettle = () => {
+      isScrolling = false;
+    };
+    emblaApi.on('settle', onSettle);
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+
+      // Block ALL wheel events while scrolling - this is the key
+      if (isScrolling) return;
+
+      // Any scroll input (regardless of delta size) = one slide
+      if (Math.abs(e.deltaY) > 5) { // Small threshold to filter noise
+        isScrolling = true; // Lock immediately
+
+        if (e.deltaY > 0) {
+          emblaApi.scrollNext();
+        } else {
+          emblaApi.scrollPrev();
+        }
+        // Will unlock when 'settle' event fires
+      }
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      emblaApi.off('settle', onSettle);
+    };
+  }, [emblaApi, hasActivated]);
 
   useEffect(() => {
     if (!hasActivated) return;

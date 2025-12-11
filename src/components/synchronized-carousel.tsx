@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback } from "react";
 import useEmblaCarousel, { UseEmblaCarouselType } from "embla-carousel-react";
-// TIKTOK: Removed WheelGesturesPlugin for instant snap
+import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures"; // Re-added for trackpad
 import { CarouselNav } from "@/components/carousel-nav";
 import { MainContentCarousel } from "@/components/main-content-carousel";
 import type { Topic, Interest } from "@/types";
@@ -117,9 +117,15 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
 
     const [selectedIndex, setSelectedIndex] = useState(getInitialIndex());
 
-    // TIKTOK-STYLE: Instant snap with fast duration
-    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 15, skipSnaps: false });
-    const [navEmblaRef, navEmblaApi] = useEmblaCarousel({ loop: false, axis: 'x', align: 'start', duration: 20 });
+    // TIKTOK-STYLE with trackpad support
+    const [emblaRef, emblaApi] = useEmblaCarousel(
+        { loop: false, axis: 'x', align: 'start', duration: 15, skipSnaps: false },
+        [WheelGesturesPlugin({ forceWheelAxis: 'x' })]
+    );
+    const [navEmblaRef, navEmblaApi] = useEmblaCarousel(
+        { loop: false, axis: 'x', align: 'start', duration: 20 },
+        [WheelGesturesPlugin({ forceWheelAxis: 'x' })]
+    );
 
     // Effect to handle the initial scroll position
     useEffect(() => {
