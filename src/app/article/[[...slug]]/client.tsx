@@ -114,6 +114,38 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         return () => { cancelled = true; };
     }, [articleInfo, pathname, router]);
 
+    // Construct JSON-LD for SEO
+    const jsonLd = useMemo(() => {
+        if (!post) return null;
+
+        return {
+            '@context': 'https://schema.org',
+            '@type': 'NewsArticle',
+            headline: post.title,
+            datePublished: post.date,
+            description: post.description || '',
+            articleBody: post.fullText || '',
+            image: post.thumbnail_url ? [post.thumbnail_url] : [],
+            author: {
+                '@type': 'Organization',
+                name: 'Headlined',
+                url: 'https://headlined.app'
+            },
+            publisher: {
+                '@type': 'Organization',
+                name: 'Headlined',
+                logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://headlined.app/icon.png'
+                }
+            },
+            mainEntityOfPage: {
+                '@type': 'WebPage',
+                '@id': `https://headlined.app${pathname}`
+            }
+        };
+    }, [post, pathname]);
+
     const handleClose = () => {
         // If we have history, go back (smooth SPA feel)
         // Otherwise go to home (e.g. deep link landing)
@@ -360,6 +392,14 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
                         )}
                     </div>
                 </div>
+
+                {/* Structured Data for SEO */}
+                {jsonLd && (
+                    <script
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                    />
+                )}
 
                 <FloatingActionDock
                     post={post}
