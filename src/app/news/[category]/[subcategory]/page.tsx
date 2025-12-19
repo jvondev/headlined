@@ -8,7 +8,7 @@ import { SEO_CONFIG, getSeoMetadata, CategoryId } from '@/lib/seo-config';
 
 // Define Parameter Type
 type Props = {
-    params: Promise<{ category: string; slug: string }>
+    params: Promise<{ category: string; subcategory: string }>
 };
 
 const CACHE_DIR = path.join(process.cwd(), 'src', 'data', 'static-cache');
@@ -16,7 +16,7 @@ const CACHE_DIR = path.join(process.cwd(), 'src', 'data', 'static-cache');
 // 1. Generate Static Params (The Build List)
 // Generate params from BOTH manifest (has data) AND seo-keywords.ts (all defined keywords)
 export async function generateStaticParams() {
-    const params: { category: string; slug: string }[] = [];
+    const params: { category: string; subcategory: string }[] = [];
     const seen = new Set<string>();
 
     // First, add all routes from manifest (these have actual data)
@@ -30,7 +30,7 @@ export async function generateStaticParams() {
                     seen.add(key);
                     params.push({
                         category: item.params.category,
-                        slug: item.params.slug
+                        subcategory: item.params.slug
                     });
                 }
             }
@@ -49,7 +49,7 @@ export async function generateStaticParams() {
                 seen.add(key);
                 params.push({
                     category: category,
-                    slug: keyword.slug
+                    subcategory: keyword.slug
                 });
             }
         }
@@ -59,19 +59,19 @@ export async function generateStaticParams() {
 }
 
 // 2. Fetch Data (Local Helper)
-function getTopicData(category: string, slug: string) {
-    const filePath = path.join(CACHE_DIR, category, `${slug}.json`);
+function getTopicData(category: string, subcategory: string) {
+    const filePath = path.join(CACHE_DIR, category, `${subcategory}.json`);
     if (!fs.existsSync(filePath)) return null;
     return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 }
 
 // 3. Dynamic Metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { category: categoryParam, slug } = await params;
+    const { category: categoryParam, subcategory } = await params;
     const category = categoryParam as CategoryId;
 
     // Get dynamic metadata from engine
-    const seo = getSeoMetadata(category, slug);
+    const seo = getSeoMetadata(category, subcategory);
 
     return {
         title: seo.title,
@@ -82,7 +82,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             type: 'website',
         },
         alternates: {
-            canonical: `https://headlined.app/news/${category}/${slug}`
+            canonical: `https://headlined.app/news/${category}/${subcategory}`
         },
         keywords: seo.aliases
     };
@@ -96,7 +96,7 @@ import { Suspense } from 'react';
 // 4. Page Component
 export default async function SeoTopicPage({ params }: Props) {
     // ... (params logic matches original)
-    const { category: categoryParam, slug } = await params;
+    const { category: categoryParam, subcategory } = await params;
     const category = categoryParam as CategoryId;
 
     // Validate Category
@@ -104,8 +104,8 @@ export default async function SeoTopicPage({ params }: Props) {
         notFound();
     }
 
-    const data = getTopicData(category, slug);
-    const seo = getSeoMetadata(category, slug);
+    const data = getTopicData(category, subcategory);
+    const seo = getSeoMetadata(category, subcategory);
 
     // ... (Stack Schema Logic matches original)
     // Stacked Schema Logic
@@ -117,7 +117,7 @@ export default async function SeoTopicPage({ params }: Props) {
             "name": seo.title,
             "headline": seo.h1,
             "description": seo.intro,
-            "url": `https://headlined.app/news/${category}/${slug}`,
+            "url": `https://headlined.app/news/${category}/${subcategory}`,
             "mainEntity": {
                 "@type": "ItemList",
                 "itemListElement": (data || []).map((post: any, index: number) => ({
@@ -168,7 +168,7 @@ export default async function SeoTopicPage({ params }: Props) {
                     "@type": "ListItem",
                     "position": 4,
                     "name": seo.richTitle,
-                    "item": `https://headlined.app/news/${category}/${slug}`
+                    "item": `https://headlined.app/news/${category}/${subcategory}`
                 }
             ]
         },
@@ -216,7 +216,7 @@ export default async function SeoTopicPage({ params }: Props) {
             "name": seo.richTitle,
             "description": seo.intro,
             "sameAs": `https://www.wikidata.org/wiki/${seo.wikidata}`,
-            "url": `https://headlined.app/news/${category}/${slug}`
+            "url": `https://headlined.app/news/${category}/${subcategory}`
         } as any);
     }
 
@@ -306,7 +306,7 @@ export default async function SeoTopicPage({ params }: Props) {
                 {/* The Cover Layer (Landing Experience) */}
                 <SeoCover
                     category={category}
-                    slug={slug}
+                    subcategory={subcategory}
                     title={seo.h1}
                     intro={seo.intro}
                     richTitle={seo.richTitle}
@@ -318,7 +318,7 @@ export default async function SeoTopicPage({ params }: Props) {
 
                 {/* Client Feed (Background Layer, revealed on dismiss) */}
                 <div className="flex-1 w-full relative z-0 flex items-center justify-center mt-6">
-                    <SeoFeed category={category} slug={slug} initialPosts={data} />
+                    <SeoFeed category={category} subcategory={subcategory} initialPosts={data} />
                 </div>
             </main>
         </Suspense>

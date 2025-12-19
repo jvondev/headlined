@@ -27,11 +27,11 @@ interface ScraperPost {
 
 interface SeoFeedProps {
     category: string;
-    slug: string;
+    subcategory: string;
     initialPosts: ScraperPost[];
 }
 
-export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
+export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
     const [posts, setPosts] = useState<ScraperPost[]>(initialPosts);
     const [isPremium, setIsPremium] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
@@ -49,7 +49,7 @@ export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
         // Hydrate/Refresh from CDN to get the absolute latest if build is stale
         const fetchFreshData = async () => {
             try {
-                const res = await fetch(`${SEO_DATA_URL}/data/${category}/${slug}.json`);
+                const res = await fetch(`${SEO_DATA_URL}/data/${category}/${subcategory}.json`);
                 if (res.ok) {
                     const freshData: ScraperPost[] = await res.json();
                     if (freshData.length > 0 && freshData[0].link !== posts[0]?.link) {
@@ -62,7 +62,7 @@ export function SeoFeed({ category, slug, initialPosts }: SeoFeedProps) {
         };
 
         fetchFreshData();
-    }, [category, slug]);
+    }, [category, subcategory]);
 
     // Map to 'Post' type (without ads - same on server and client)
     const mappedPosts: Post[] = posts.map(p => ({

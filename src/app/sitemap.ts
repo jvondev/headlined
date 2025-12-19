@@ -10,70 +10,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://headlined.app';
     const now = new Date().toISOString();
 
-    // Static routes - prioritized and cleaned up
+    // Static routes
     const staticRoutes: MetadataRoute.Sitemap = [
-        {
-            url: baseUrl,
-            lastModified: now,
-            changeFrequency: 'daily',
-            priority: 1.0,
-        },
-        {
-            url: `${baseUrl}/news`,
-            lastModified: now,
-            changeFrequency: 'daily',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/today`,
-            lastModified: now,
-            changeFrequency: 'hourly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/about`,
-            lastModified: now,
-            changeFrequency: 'monthly',
-            priority: 0.5,
-        },
-        {
-            url: `${baseUrl}/support`,
-            lastModified: now,
-            changeFrequency: 'monthly',
-            priority: 0.4,
-        },
-        {
-            url: `${baseUrl}/privacy-policy`,
-            lastModified: now,
-            changeFrequency: 'monthly',
-            priority: 0.3,
-        },
-        {
-            url: `${baseUrl}/terms-of-service`,
-            lastModified: now,
-            changeFrequency: 'monthly',
-            priority: 0.3,
-        },
+        { url: baseUrl, lastModified: now, changeFrequency: 'daily', priority: 1.0 },
+        { url: `${baseUrl}/news`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
+        { url: `${baseUrl}/today`, lastModified: now, changeFrequency: 'hourly', priority: 0.8 },
+        { url: `${baseUrl}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
     ];
 
-    // Dynamic pSEO routes from manifest (now under /news)
+    // Dynamic pSEO routes
     const pseoRoutes: MetadataRoute.Sitemap = [];
     const manifestPath = path.join(CACHE_DIR, 'manifest.json');
 
     if (fs.existsSync(manifestPath)) {
         try {
             const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
-
             manifest.forEach((item: { params: { category: string; slug: string } }) => {
                 const { category, slug } = item.params;
-                // Add category hub page
                 pseoRoutes.push({
                     url: `${baseUrl}/news/${category}`,
                     lastModified: now,
                     changeFrequency: 'daily',
                     priority: 0.8,
                 });
-                // Add topic page
                 pseoRoutes.push({
                     url: `${baseUrl}/news/${category}/${slug}`,
                     lastModified: now,
@@ -81,17 +40,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
                     priority: 0.9,
                 });
             });
-        } catch (e) {
-            console.error('Error reading manifest for sitemap:', e);
-        }
+        } catch (e) { }
     }
 
-    // Deduplicate category hub pages
-    const uniqueRoutes = pseoRoutes.filter((route, index, self) =>
-        index === self.findIndex((r) => r.url === route.url)
-    );
-
-    // Article permalink routes from all category data
+    // Article routes
     const articleRoutes: MetadataRoute.Sitemap = [];
     try {
         const categories = fs.readdirSync(CACHE_DIR, { withFileTypes: true })
@@ -100,6 +52,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
         for (const category of categories) {
             const categoryDir = path.join(CACHE_DIR, category);
+            if (!fs.existsSync(categoryDir)) continue;
+
             const files = fs.readdirSync(categoryDir).filter(f => f.endsWith('.json'));
 
             for (const file of files) {
@@ -112,27 +66,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
                         const slug = post.slug || '';
                         if (!slug) continue;
 
+                        const [year, month, day] = postDate.split('-');
+                        const topic = post.topic ? post.topic.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'general';
+
                         articleRoutes.push({
-                            url: `${baseUrl}/article/${postDate}/${slug}`,
+                            url: `${baseUrl}/news/${category}/${topic}/${year}/${month}/${day}/${slug}`,
                             lastModified: post.created_at || now,
                             changeFrequency: 'daily',
                             priority: 0.7,
                         });
                     }
-                } catch (e) {
-                    // Skip invalid files
-                }
+                } catch (e) { }
             }
         }
-    } catch (e) {
-        console.error('Error reading static cache for article sitemap:', e);
-    }
+    } catch (e) { }
 
-    // Deduplicate article routes
-    const uniqueArticleRoutes = articleRoutes.filter((route, index, self) =>
+    const uniqueRoutes = [...staticRoutes, ...pseoRoutes, ...articleRoutes].filter((route, index, self) =>
         index === self.findIndex((r) => r.url === route.url)
     );
 
-    return [...staticRoutes, ...uniqueRoutes, ...uniqueArticleRoutes];
+    return uniqueRoutes;
 }
-

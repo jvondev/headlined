@@ -18,14 +18,13 @@ type LoadingState = 'loading' | 'success' | 'error' | 'not-article';
 interface ArticleClientPageProps {
     overrideSlug?: string;
     overrideDate?: string;
-    initialPost?: Post | null;
 }
 
-export default function ArticleClientPage({ overrideSlug, overrideDate, initialPost }: ArticleClientPageProps) {
+export default function ArticleClientPage({ overrideSlug, overrideDate }: ArticleClientPageProps) {
     const router = useRouter();
     const pathname = usePathname();
 
-    const [post, setPost] = useState<Post | null>(initialPost || null);
+    const [post, setPost] = useState<Post | null>(null);
     const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
     const [loadingState, setLoadingState] = useState<LoadingState>('loading');
     const [readerDarkMode, setReaderDarkMode] = useState(true);
@@ -47,11 +46,16 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, initialP
             return { date: overrideDate, slug: overrideSlug, isArticle: true };
         }
 
-        // Match /article/YYYY-MM-DD/slug
-        const match = pathname?.match(/\/article\/(\d{4}-\d{2}-\d{2})\/(.+)/);
+        // Match /news/[category]/[topic]/YYYY/MM/DD/slug
+        const newsMatch = pathname?.match(/\/news\/[^\/]+\/[^\/]+\/(\d{4})\/(\d{2})\/(\d{2})\/(.+)/);
+        if (newsMatch) {
+            return { date: `${newsMatch[1]}-${newsMatch[2]}-${newsMatch[3]}`, slug: newsMatch[4], isArticle: true };
+        }
 
-        if (match) {
-            return { date: match[1], slug: match[2], isArticle: true };
+        // Match legacy /article/YYYY-MM-DD/slug
+        const legacyMatch = pathname?.match(/\/article\/(\d{4}-\d{2}-\d{2})\/(.+)/);
+        if (legacyMatch) {
+            return { date: legacyMatch[1], slug: legacyMatch[2], isArticle: true };
         }
 
         return { date: null, slug: null, isArticle: false };
@@ -302,42 +306,46 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, initialP
                                 </div>
 
                                 <nav className="grid gap-4" aria-label="Related articles">
-                                    {relatedPosts.map((relatedPost) => (
-                                        <Link
-                                            key={relatedPost.slug}
-                                            href={`/article/${relatedPost.date || articleInfo.date}/${relatedPost.slug}`}
-                                            className="flex gap-4 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group"
-                                        >
-                                            <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                                                {relatedPost.thumbnail_url ? (
-                                                    <img
-                                                        src={relatedPost.thumbnail_url}
-                                                        alt=""
-                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                                                        loading="lazy"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full bg-gradient-to-br from-zinc-700 to-zinc-900" />
-                                                )}
-                                            </div>
-
-                                            <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                                <span className="text-[9px] font-bold text-white/50 uppercase tracking-wider mb-1">
-                                                    {relatedPost.topic || 'News'}
-                                                </span>
-                                                <h3 className="text-sm font-semibold text-white line-clamp-2 leading-snug mb-2">
-                                                    {relatedPost.title}
-                                                </h3>
-                                                <div className="flex items-center gap-3 text-white/40">
-                                                    <span className="flex items-center gap-1 text-[10px]">
-                                                        <Clock className="w-3 h-3" />
-                                                        {relatedPost.readingTime || 1} min
-                                                    </span>
-                                                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                                    {relatedPosts.map((relatedPost) => {
+                                        const { getArticleCanonicalPath } = require('@/lib/category-utils');
+                                        const canonicalUrl = getArticleCanonicalPath(relatedPost);
+                                        return (
+                                            <Link
+                                                key={relatedPost.slug}
+                                                href={canonicalUrl}
+                                                className="flex gap-4 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group"
+                                            >
+                                                <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                                                    {relatedPost.thumbnail_url ? (
+                                                        <img
+                                                            src={relatedPost.thumbnail_url}
+                                                            alt=""
+                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                                            loading="lazy"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full bg-gradient-to-br from-zinc-700 to-zinc-900" />
+                                                    )}
                                                 </div>
-                                            </div>
-                                        </Link>
-                                    ))}
+
+                                                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                                    <span className="text-[9px] font-bold text-white/50 uppercase tracking-wider mb-1">
+                                                        {relatedPost.topic || 'News'}
+                                                    </span>
+                                                    <h3 className="text-sm font-semibold text-white line-clamp-2 leading-snug mb-2">
+                                                        {relatedPost.title}
+                                                    </h3>
+                                                    <div className="flex items-center gap-3 text-white/40">
+                                                        <span className="flex items-center gap-1 text-[10px]">
+                                                            <Clock className="w-3 h-3" />
+                                                            {relatedPost.readingTime || 1} min
+                                                        </span>
+                                                        <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        );
+                                    })}
                                 </nav>
 
                                 <Link

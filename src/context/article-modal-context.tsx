@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Post } from '@/types';
+import { getArticleCanonicalPath } from '@/lib/category-utils';
 
 interface ArticleModalContextType {
     isOpen: boolean;
@@ -54,9 +55,11 @@ export function ArticleModalProvider({ children }: { children: ReactNode }) {
         setCurrentDate(date);
         if (initialData) setArticleData(initialData);
 
-        // Update URL without navigation
-        // Construct new URL
-        const newUrl = `/article/${date}/${slug}`;
+        // Update URL to the NEW canonical structure
+        const { getArticleCanonicalPath } = require('@/lib/category-utils');
+        const newUrl = initialData
+            ? getArticleCanonicalPath(initialData)
+            : `/article/${date}/${slug}`; // Fallback if data is missing, redirect will handle it
 
         // Push state so back button works to close it
         window.history.pushState({ modalOpen: true }, '', newUrl);

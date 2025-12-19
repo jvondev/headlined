@@ -53,7 +53,7 @@ function DashboardContent() {
 
     // Update the ref only if we are still conceptually in the dashboard (not viewing an article)
     const currentPathView = getViewFromPathname(pathname);
-    if (!pathname?.includes('/article/')) {
+    if (!pathname?.includes('/article/') && !pathname?.includes('/news/')) {
         lastViewRef.current = currentPathView;
     }
 

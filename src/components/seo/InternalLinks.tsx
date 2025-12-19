@@ -8,10 +8,10 @@ import { cn } from "@/lib/utils";
 
 interface InternalLinksProps {
     currentCategory: CategoryId;
-    currentSlug: string;
+    currentSubcategory: string;
 }
 
-export function InternalLinks({ currentCategory, currentSlug }: InternalLinksProps) {
+export function InternalLinks({ currentCategory, currentSubcategory }: InternalLinksProps) {
     // Access Record directly
     // @ts-ignore - Validating category existence
     const categoryItems = SEO_CATEGORIES[currentCategory];
@@ -20,7 +20,7 @@ export function InternalLinks({ currentCategory, currentSlug }: InternalLinksPro
 
     // Filter out current slug and limit to 8 items
     const relatedLinks = categoryItems
-        .filter((item: SeoKeywordDef) => item.slug !== currentSlug)
+        .filter((item: SeoKeywordDef) => item.slug !== currentSubcategory)
         .slice(0, 8);
 
     if (relatedLinks.length === 0) return null;
@@ -38,7 +38,7 @@ export function InternalLinks({ currentCategory, currentSlug }: InternalLinksPro
                 {relatedLinks.map((item: SeoKeywordDef, index: number) => (
                     <Link
                         key={item.slug}
-                        href={`/${currentCategory}/${item.slug}`}
+                        href={`/news/${currentCategory}/${item.slug}`}
                         className={cn(
                             "group flex flex-col p-4 rounded-2xl bg-card/20 border border-border/40 hover:bg-card/60 hover:border-primary/20 transition-all duration-300 hover:shadow-sm",
                             index >= 6 && "hidden md:flex" // Hide last 2 items on mobile (total 6 visible) to prevent overflow/too long list

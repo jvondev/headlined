@@ -4,6 +4,7 @@ import { Post } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, ArrowRight, Newspaper, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getArticleCanonicalPath } from '@/lib/category-utils';
 import Link from 'next/link';
 
 interface RelatedArticlesSidebarProps {
@@ -107,7 +108,7 @@ export function RelatedArticlesSidebar({
                                     transition={{ delay: index * 0.05 }}
                                 >
                                     <Link
-                                        href={`/article/${post.date || currentDate}/${post.slug}`}
+                                        href={getArticleCanonicalPath(post)}
                                         onClick={onClose}
                                         className={cn(
                                             "block rounded-2xl overflow-hidden transition-all group",

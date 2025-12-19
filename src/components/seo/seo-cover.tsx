@@ -14,7 +14,7 @@ import { TypewriterText } from "./typewriter-text";
 
 interface SeoCoverProps {
     category: string;
-    slug: string;
+    subcategory: string;
     title: string;
     intro: string;
     richTitle?: string;
@@ -24,7 +24,7 @@ interface SeoCoverProps {
     relatedTopics?: { category: string; slug: string; title: string }[];
 }
 
-export function SeoCover({ category, slug, title, intro, richTitle, aliases, faqs, posts, relatedTopics }: SeoCoverProps) {
+export function SeoCover({ category, subcategory, title, intro, richTitle, aliases, faqs, posts, relatedTopics }: SeoCoverProps) {
     const [isVisible, setIsVisible] = useState(true);
     const [isDismissing, setIsDismissing] = useState(false);
     const controls = useAnimation();
@@ -34,7 +34,7 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
     const scrollRef = useRef<HTMLDivElement>(null);
 
     // Use rich title if provided, otherwise format slug
-    const displayTitle = richTitle || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const displayTitle = richTitle || subcategory.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
     // Calculate Stats
     const totalArticles = posts.length;
@@ -111,7 +111,7 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
     // Get fallback topics if relatedTopics is empty
     const fallbackTopics = (!relatedTopics || relatedTopics.length === 0)
         // @ts-ignore
-        ? (SEO_CATEGORIES[category] || []).filter((k: SeoKeywordDef) => k.slug !== slug).slice(0, 6) // Limit to 6 for balance
+        ? (SEO_CATEGORIES[category] || []).filter((k: SeoKeywordDef) => k.slug !== subcategory).slice(0, 6) // Limit to 6 for balance
         : [];
 
     return (
@@ -373,7 +373,7 @@ export function SeoCover({ category, slug, title, intro, richTitle, aliases, faq
                                         </Link>
                                     ))}
                                 </div>
-                                <InternalLinks currentCategory={category as CategoryId} currentSlug={slug} />
+                                <InternalLinks currentCategory={category as CategoryId} currentSubcategory={subcategory} />
                             </div>
                         ) : (
                             <div className="space-y-12">

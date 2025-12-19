@@ -11,6 +11,7 @@ import Link from "next/link";
 import { X, Sparkles, Clock, ChevronRight, Lock, Heart } from "lucide-react";
 import { Button } from "./ui/button";
 import { addToReadHistory } from "@/lib/indexeddb";
+import { getArticleCanonicalPath } from "@/lib/category-utils";
 
 interface PostViewProps {
     post: Post;
@@ -99,7 +100,7 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
     }, [post.readingTime, post.fullText, post.description, summaryText]);
 
     // Enhanced Touch Handling for "Award Worthy" Feel
-    const postUrl = `/article/${post.date || new Date().toISOString().split('T')[0]}/${post.slug}`;
+    const postUrl = getArticleCanonicalPath(post);
 
     return (
         <>
