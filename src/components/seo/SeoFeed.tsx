@@ -49,11 +49,69 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
         // Hydrate/Refresh from CDN to get the absolute latest if build is stale
         const fetchFreshData = async () => {
             try {
+                // 1. Try local cache first (Instant)
+                const { getPostsByTopic, addPosts, getLastFetchTime, setLastFetchTime } = await import('@/lib/indexeddb');
+                const cached = await getPostsByTopic(category);
+                const cacheKey = `topic:${category}/${subcategory}`;
+                const lastFetch = await getLastFetchTime(cacheKey);
+                const twelveHours = 12 * 60 * 60 * 1000;
+
+                // Map cached posts to ScraperPost-like shape if needed, or just use them
+                // DB stores 'Post' type, which is compatible.
+                if (cached && cached.length > 0) {
+                    // We need to cast because DB stores 'Post' but this component uses 'ScraperPost' internal logic temporarily
+                    // Actually, let's just use the cached data as the source of truth for display
+                    // and map it back. 
+                    // Simplification: The state 'posts' uses ScraperPost but mappedPosts uses 'Post'.
+                    // Let's rely on the fact that ScraperPost is a superset of what we get from DB roughly, 
+                    // but DB stores strictly 'Post'.
+                    // We will prioritize mappedPosts being correct.
+                    setPosts(cached as unknown as ScraperPost[]);
+                }
+
+                // 2. Check if we really need to fetch network?
+                const now = Date.now();
+                if (lastFetch && (now - lastFetch < twelveHours)) {
+                    console.log(`Cache valid for ${cacheKey}, skipping network.`);
+                    return;
+                }
+
+                // 3. Fetch fresh from Network (Background)
                 const res = await fetch(`${SEO_DATA_URL}/data/${category}/${subcategory}.json`);
                 if (res.ok) {
                     const freshData: ScraperPost[] = await res.json();
-                    if (freshData.length > 0 && freshData[0].link !== posts[0]?.link) {
-                        setPosts(freshData);
+
+                    if (freshData.length > 0) {
+                        // Check if we need to update
+                        const freshLink = freshData[0].link;
+                        const validCached = cached && cached.length > 0;
+                        const isDifferent = !validCached || (cached[0].link !== freshLink);
+
+                        if (isDifferent) {
+                            console.log("Updating from network...");
+                            setPosts(freshData);
+
+                            // 4. Cache the new data
+                            // Map ScraperPost -> Post for DB
+                            const postsToSave: Post[] = freshData.map(p => ({
+                                slug: p.slug || 'unknown',
+                                title: p.title,
+                                description: p.description,
+                                link: p.link,
+                                thumbnail_url: p.thumbnail_url,
+                                topic: p.topic || category,
+                                summaries: [],
+                                date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                                fullText: p.fullText || p.full_text || p.content || null,
+                                readingTime: p.readingTime || p.min,
+                                keywords: p.keywords || []
+                            }));
+                            await addPosts(postsToSave);
+                            await setLastFetchTime(cacheKey, now);
+                        } else {
+                            // Data is same, but let's update timestamp so we don't check again for 12h
+                            await setLastFetchTime(cacheKey, now);
+                        }
                     }
                 }
             } catch (e) {

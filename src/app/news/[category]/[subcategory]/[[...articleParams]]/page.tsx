@@ -119,26 +119,10 @@ export default async function NewsCatchAllPage({ params }: Props) {
     }
 
     // BRANCH: Topic View (Default)
-    if (!SEO_CONFIG[category]) {
-        notFound();
-    }
+    // We defer all heavy data loading to the client (CSR)
+    // We only need basic SEO metadata here.
 
-    const data = getTopicData(category, subcategory);
     const seo = getSeoMetadata(category, subcategory);
-
-    const mappedPosts: any[] = (data || []).map((p: any) => ({
-        slug: p.slug || '',
-        title: p.title,
-        description: p.description,
-        link: p.link,
-        thumbnail_url: p.thumbnail_url,
-        topic: p.topic || category,
-        summaries: [],
-        date: p.created_at || new Date().toISOString(),
-        fullText: p.fullText || p.full_text || p.content || null,
-        readingTime: p.readingTime || p.min,
-        keywords: p.keywords || []
-    }));
 
     return (
         <Suspense fallback={<div className="min-h-screen bg-background" />}>
@@ -151,12 +135,12 @@ export default async function NewsCatchAllPage({ params }: Props) {
                     richTitle={seo.richTitle}
                     aliases={seo.aliases}
                     faqs={seo.faqs}
-                    posts={mappedPosts}
-                    relatedTopics={data ? data[0]?.relatedTopics : []}
+                    posts={[]} // CSR: Load on client
+                    relatedTopics={[]} // CSR: can fetch related topics on client wrapper or just show fallback
                 />
 
                 <div className="flex-1 w-full relative z-0 flex items-center justify-center mt-6">
-                    <SeoFeed category={category} subcategory={subcategory} initialPosts={data || []} />
+                    <SeoFeed category={category} subcategory={subcategory} initialPosts={[]} />
                 </div>
             </main>
         </Suspense>

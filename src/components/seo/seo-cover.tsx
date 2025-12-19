@@ -24,8 +24,55 @@ interface SeoCoverProps {
     relatedTopics?: { category: string; slug: string; title: string }[];
 }
 
-export function SeoCover({ category, subcategory, title, intro, richTitle, aliases, faqs, posts, relatedTopics }: SeoCoverProps) {
+import { SEO_DATA_URL } from '@/lib/seo-config'; // Add import
+
+export function SeoCover({ category, subcategory, title, intro, richTitle, aliases, faqs, posts: initialPosts, relatedTopics }: SeoCoverProps) {
+    const [posts, setPosts] = useState<Post[]>(initialPosts);
     const [isVisible, setIsVisible] = useState(true);
+
+    // FETCH DATA IF EMPTY (CSR)
+    useEffect(() => {
+        if (posts.length > 0) return; // Already have data
+
+        const loadData = async () => {
+            try {
+                // 1. Try DB
+                const { getPostsByTopic, addPosts } = await import('@/lib/indexeddb');
+                const cached = await getPostsByTopic(category);
+                if (cached && cached.length > 0) {
+                    setPosts(cached);
+                }
+
+                // 2. Try Network
+                const res = await fetch(`${SEO_DATA_URL}/data/${category}/${subcategory}.json`);
+                if (res.ok) {
+                    const freshData: any[] = await res.json();
+                    if (freshData.length > 0) {
+                        const mapped: Post[] = freshData.map(p => ({
+                            slug: p.slug || 'unknown',
+                            title: p.title,
+                            description: p.description,
+                            link: p.link,
+                            thumbnail_url: p.thumbnail_url,
+                            topic: p.topic || category,
+                            summaries: [],
+                            date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                            fullText: p.fullText || p.full_text || p.content || null,
+                            readingTime: p.readingTime || p.min,
+                            keywords: p.keywords || []
+                        }));
+
+                        // Update if new or if we had nothing
+                        if (!cached || cached.length === 0 || cached[0].link !== mapped[0].link) {
+                            setPosts(mapped);
+                            addPosts(mapped);
+                        }
+                    }
+                }
+            } catch (e) { console.error("SeoCover load failed", e); }
+        };
+        loadData();
+    }, [category, subcategory, posts.length]);
     const [isDismissing, setIsDismissing] = useState(false);
     const controls = useAnimation();
     const y = useMotionValue(0);

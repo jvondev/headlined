@@ -107,6 +107,22 @@ export const getPostsByDate = async (date: string): Promise<Post[]> => {
   });
 };
 
+export const getPostsByTopic = async (topic: string): Promise<Post[]> => {
+  const database = await openDatabase();
+  const transaction = database.transaction(STORE_NAME, 'readonly');
+  const store = transaction.objectStore(STORE_NAME);
+  const index = store.index('topic');
+
+  return new Promise((resolve, reject) => {
+    const request = index.getAll(IDBKeyRange.only(topic));
+    request.onsuccess = () => resolve(request.result as Post[]);
+    request.onerror = (event) => {
+      console.error('Get posts by topic transaction error:', (event.target as IDBRequest).error);
+      reject((event.target as IDBRequest).error);
+    };
+  });
+};
+
 export const getPostsDateRange = async (startDate: string, endDate: string): Promise<Post[]> => {
   const database = await openDatabase();
   const transaction = database.transaction(STORE_NAME, 'readonly');
