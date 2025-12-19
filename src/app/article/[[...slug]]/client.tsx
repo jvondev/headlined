@@ -118,12 +118,17 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
     const jsonLd = useMemo(() => {
         if (!post) return null;
 
+        const { getSeoMetadata } = require('@/lib/seo-templates');
+        const seoData = getSeoMetadata(post);
+        // Fallback for attribution if not found
+        const sourceName = seoData?.sourceName || 'Headlined';
+
         return {
             '@context': 'https://schema.org',
             '@type': 'NewsArticle',
-            headline: post.title,
+            headline: seoData?.headline || post.title,
             datePublished: post.date,
-            description: post.description || '',
+            description: seoData?.description || post.description || '',
             articleBody: post.fullText || '',
             image: post.thumbnail_url ? [post.thumbnail_url] : [],
             author: {
@@ -138,6 +143,11 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
                     '@type': 'ImageObject',
                     url: 'https://headlined.app/icon.png'
                 }
+            },
+            isBasedOn: post.link,
+            copyrightHolder: {
+                '@type': 'Organization',
+                name: sourceName
             },
             mainEntityOfPage: {
                 '@type': 'WebPage',
