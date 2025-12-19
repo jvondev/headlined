@@ -43,7 +43,9 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
             try {
                 // 1. Try DB
                 const { getPostsByTopic, addPosts, getLastFetchTime, setLastFetchTime } = await import('@/lib/indexeddb');
-                const cached = await getPostsByTopic(category);
+
+                // CRITICAL: Query by subcategory because SEO data is sharded by it
+                const cached = await getPostsByTopic(subcategory);
                 const cacheKey = `topic:${category}/${subcategory}`;
                 const lastFetch = await getLastFetchTime(cacheKey);
                 const cacheDuration = 6 * 60 * 60 * 1000; // 6 Hours
@@ -55,9 +57,9 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
                 // 2. Check Cache Validity
                 const now = Date.now();
                 if (lastFetch && (now - lastFetch < cacheDuration)) {
-                    // Check if we actually have data though
+                    // Only skip if we actually HAVE the data in IndexedDB
                     if (cached && cached.length > 0) {
-                        console.log(`SeoCover cache valid for ${cacheKey}, skipping.`);
+                        console.log(`SeoCover cache valid for ${cacheKey}, skipping network.`);
                         return;
                     }
                 }
@@ -73,7 +75,7 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
                             description: p.description,
                             link: p.link,
                             thumbnail_url: p.thumbnail_url,
-                            topic: p.topic || category,
+                            topic: subcategory, // Use subcategory as topic for target retrieval
                             summaries: [],
                             date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                             fullText: p.fullText || p.full_text || p.content || null,

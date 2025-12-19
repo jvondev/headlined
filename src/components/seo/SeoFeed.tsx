@@ -36,6 +36,21 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
     const [isPremium, setIsPremium] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
 
+    // Map to 'Post' type (without ads - same on server and client)
+    const mappedPosts: Post[] = posts.map(p => ({
+        slug: p.slug || 'unknown',
+        title: p.title,
+        description: p.description,
+        link: p.link,
+        thumbnail_url: p.thumbnail_url,
+        topic: p.topic || subcategory, // Use subcategory as primary topic for finding
+        summaries: [], // SEO posts don't have generated summaries yet
+        date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        fullText: p.fullText || p.full_text || p.content || null,
+        readingTime: p.readingTime || p.min,
+        keywords: p.keywords || []
+    }));
+
     // Mark as mounted after hydration to avoid SSR mismatch
     useEffect(() => {
         setHasMounted(true);
@@ -51,29 +66,25 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
             try {
                 // 1. Try local cache first (Instant)
                 const { getPostsByTopic, addPosts, getLastFetchTime, setLastFetchTime } = await import('@/lib/indexeddb');
-                const cached = await getPostsByTopic(category);
+
+                // CRITICAL: Query by subcategory because SEO data is sharded by it
+                const cached = await getPostsByTopic(subcategory);
                 const cacheKey = `topic:${category}/${subcategory}`;
                 const lastFetch = await getLastFetchTime(cacheKey);
                 const cacheDuration = 6 * 60 * 60 * 1000; // 6 Hours
 
-                // Map cached posts to ScraperPost-like shape if needed, or just use them
-                // DB stores 'Post' type, which is compatible.
                 if (cached && cached.length > 0) {
-                    // We need to cast because DB stores 'Post' but this component uses 'ScraperPost' internal logic temporarily
-                    // Actually, let's just use the cached data as the source of truth for display
-                    // and map it back. 
-                    // Simplification: The state 'posts' uses ScraperPost but mappedPosts uses 'Post'.
-                    // Let's rely on the fact that ScraperPost is a superset of what we get from DB roughly, 
-                    // but DB stores strictly 'Post'.
-                    // We will prioritize mappedPosts being correct.
                     setPosts(cached as unknown as ScraperPost[]);
                 }
 
                 // 2. Check if we really need to fetch network?
                 const now = Date.now();
                 if (lastFetch && (now - lastFetch < cacheDuration)) {
-                    console.log(`Cache valid for ${cacheKey}, skipping network.`);
-                    return;
+                    // Only skip if we actually HAVE the data in IndexedDB
+                    if (cached && cached.length > 0) {
+                        console.log(`Cache valid for ${cacheKey}, skipping network.`);
+                        return;
+                    }
                 }
 
                 // 3. Fetch fresh from Network (Background)
@@ -99,7 +110,7 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
                                 description: p.description,
                                 link: p.link,
                                 thumbnail_url: p.thumbnail_url,
-                                topic: p.topic || category,
+                                topic: subcategory, // Tag with subcategory for target retrieval
                                 summaries: [],
                                 date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                                 fullText: p.fullText || p.full_text || p.content || null,
@@ -109,7 +120,7 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
                             await addPosts(postsToSave);
                             await setLastFetchTime(cacheKey, now);
                         } else {
-                            // Data is same, but let's update timestamp so we don't check again for 12h
+                            // Data is same, but let's update timestamp
                             await setLastFetchTime(cacheKey, now);
                         }
                     }
@@ -121,21 +132,6 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
 
         fetchFreshData();
     }, [category, subcategory]);
-
-    // Map to 'Post' type (without ads - same on server and client)
-    const mappedPosts: Post[] = posts.map(p => ({
-        slug: p.slug || 'unknown',
-        title: p.title,
-        description: p.description,
-        link: p.link,
-        thumbnail_url: p.thumbnail_url,
-        topic: p.topic || category,
-        summaries: [], // SEO posts don't have generated summaries yet
-        date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-        fullText: p.fullText || p.full_text || p.content || null,
-        readingTime: p.readingTime || p.min,
-        keywords: p.keywords || []
-    }));
 
     // Ad Injection Logic - ONLY after hydration to avoid SSR mismatch
     const postsWithAds = (() => {
@@ -167,6 +163,19 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
         }
         return withAds;
     })();
+
+    // If we're not mounted yet OR have no posts yet, show a clean state or skeleton 
+    // to avoid the "No Posts Found" flash during network fetch
+    if (!hasMounted || (posts.length === 0)) {
+        return (
+            <div className="h-full w-full flex items-center justify-center">
+                <div className="animate-pulse flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-muted" />
+                    <div className="h-4 w-32 bg-muted rounded" />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="h-full w-full">
