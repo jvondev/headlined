@@ -9,28 +9,38 @@ const CDN_BASE_URL = 'https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89
  * Returns null if not found.
  */
 export async function fetchArticleByDateAndSlug(date: string, slug: string): Promise<Post | null> {
-    try {
-        const url = `${CDN_BASE_URL}/${date}.json`;
-        const response = await fetch(url, {
-            next: { revalidate: 300 } // Cache for 5 minutes
-        });
+    const datesToCheck = [
+        date,
+        // Check previous day (timezone behind)
+        new Date(new Date(date).setDate(new Date(date).getDate() - 1)).toISOString().split('T')[0],
+        // Check next day (timezone ahead)
+        new Date(new Date(date).setDate(new Date(date).getDate() + 1)).toISOString().split('T')[0]
+    ];
 
-        if (!response.ok) {
-            if (response.status === 404) return null;
-            throw new Error(`Failed to fetch: ${response.status}`);
+    for (const checkDate of datesToCheck) {
+        try {
+            const url = `${CDN_BASE_URL}/${checkDate}.json`;
+            const response = await fetch(url, {
+                next: { revalidate: 300 }
+            });
+
+            if (!response.ok) continue;
+
+            const posts: Post[] = await response.json();
+            const post = posts.find(p => p.slug === slug);
+
+            if (post) {
+                // Return found post, but keep the REQUESTED date in the object if needed, 
+                // OR prefer the actual found date. 
+                // Using found date is safer for content accuracy.
+                return { ...post, date: checkDate };
+            }
+        } catch (error) {
+            console.warn(`Error fetching article for date ${checkDate}:`, error);
         }
-
-        const posts: Post[] = await response.json();
-        const post = posts.find(p => p.slug === slug);
-
-        if (post) {
-            return { ...post, date };
-        }
-        return null;
-    } catch (error) {
-        console.error(`Error fetching article ${date}/${slug}:`, error);
-        return null;
     }
+
+    return null;
 }
 
 /**

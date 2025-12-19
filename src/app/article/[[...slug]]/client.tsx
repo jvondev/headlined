@@ -47,7 +47,8 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         }
 
         // Match /news/[category]/[topic]/YYYY/MM/DD/slug
-        const newsMatch = pathname?.match(/\/news\/[^\/]+\/[^\/]+\/(\d{4})\/(\d{2})\/(\d{2})\/(.+)/);
+        // Use a more robust regex that handles optional trailing slashes and ensures clean slug capture
+        const newsMatch = pathname?.match(/\/news\/[^\/]+\/[^\/]+\/(\d{4})\/(\d{2})\/(\d{2})\/([^\/\?\#]+)/);
         if (newsMatch) {
             return { date: `${newsMatch[1]}-${newsMatch[2]}-${newsMatch[3]}`, slug: newsMatch[4], isArticle: true };
         }
