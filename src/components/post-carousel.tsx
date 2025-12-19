@@ -39,6 +39,8 @@ type PostCarouselProps = {
   date?: string;
   dateRange?: { start: string; end: string };
   isPremium?: boolean;
+  topComponent?: React.ReactNode;
+  topComponentPadding?: boolean;
 }
 
 const PAGE_SIZE = 10; // Define page size for client-side pagination
@@ -51,6 +53,8 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
   date,
   dateRange,
   isPremium: initialIsPremium,
+  topComponent,
+  topComponentPadding = true,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -420,12 +424,10 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
           slide.style.opacity = '1';
           slide.style.pointerEvents = distance === 0 ? 'auto' : 'none';
         }
-        // No scale/translate = no "wavy" effect
         slide.style.transform = 'translateZ(0)';
       });
     };
 
-    // Update on select (snap complete) - not on every scroll tick
     emblaApi.on("select", updateVisibility);
     emblaApi.on("reInit", updateVisibility);
     updateVisibility();
@@ -434,7 +436,7 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
       emblaApi.off("select", updateVisibility);
       emblaApi.off("reInit", updateVisibility);
     };
-  }, [emblaApi, posts.length, hasActivated]);
+  }, [emblaApi, posts.length, hasActivated, topComponent]);
 
   useEffect(() => {
     if (!emblaApi || !hasActivated) return;
@@ -443,7 +445,8 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
       const newIndex = api!.selectedScrollSnap();
       setActiveSlideIndex(newIndex);
 
-      if (hasMore && !isLoading && newIndex >= posts.length - 5) {
+      const totalSlides = posts.length + (topComponent ? 1 : 0);
+      if (hasMore && !isLoading && newIndex >= totalSlides - 5) {
         loadMorePosts();
       }
     };
@@ -455,7 +458,7 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
     return () => {
       emblaApi.off("select", onSelect);
     };
-  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery, hasActivated, date, dateRange]);
+  }, [emblaApi, hasMore, isLoading, posts.length, loadMorePosts, topicName, searchQuery, hasActivated, date, dateRange, topComponent]);
 
 
 
@@ -591,10 +594,21 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
 
     return (
       <>
+        {topComponent && (
+          <div
+            className={cn(
+              "relative min-w-0 flex-[0_0_100%] h-full flex justify-center carousel-slide",
+              topComponentPadding ? "py-2 px-4 md:py-4 md:px-8 lg:py-8 lg:px-16" : ""
+            )}
+            key="top-component"
+            role="group"
+          >
+            {topComponent}
+          </div>
+        )}
         {posts.map((post, index) => {
-          // PERFORMANCE: Reduced virtualization window from ±3 to ±2
-          // This decreases DOM nodes by 33% while still feeling smooth
-          const shouldRender = Math.abs(index - activeSlideIndex) <= 2;
+          const actualIndex = topComponent ? index + 1 : index;
+          const shouldRender = Math.abs(actualIndex - activeSlideIndex) <= 2;
 
           return (
             <div

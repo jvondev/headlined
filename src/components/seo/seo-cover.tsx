@@ -125,16 +125,8 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
         .map(([name]) => name);
 
     const handleDismiss = async () => {
-        if (isDismissing) return;
-        setIsDismissing(true);
-        await controls.start({
-            y: "-100%",
-            transition: {
-                duration: 0.65,
-                ease: [0.16, 1, 0.3, 1]
-            }
-        });
-        setIsVisible(false);
+        // When used as a slide, 'Dismiss' means scrolling to the next vertical slide
+        // We can expose an onExplore callback or just let the user scroll naturally
     };
 
     const handleExploreData = () => {
@@ -144,38 +136,20 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
         }
     };
 
-    // Handle Wheel (Desktop/Trackpad Scroll)
+    // Simplified wheel logic - let parent handle vertical
     useEffect(() => {
         if (!isVisible || isDismissing) return;
 
-        let accumulateDelta = 0;
-
         const handleWheel = (e: WheelEvent) => {
-            // Dismiss on vertical scroll down
-            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-                accumulateDelta += e.deltaY;
-                if (accumulateDelta > 50) { // Threshold for trackpad swipe
-                    handleDismiss();
-                }
-            }
+            // Only allow horizontal scroll propagation if we are at edges? 
+            // Actually, browsers handle horizontal scroll boxes well inside vertical ones.
         };
 
-        window.addEventListener("wheel", handleWheel, { passive: true });
-        containerRef.current?.addEventListener("wheel", handleWheel, { passive: true }); // Attach to container too
+        containerRef.current?.addEventListener("wheel", handleWheel, { passive: true });
         return () => {
-            window.removeEventListener("wheel", handleWheel);
             containerRef.current?.removeEventListener("wheel", handleWheel);
         };
     }, [isVisible]);
-
-    const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-        // If dragged up (finger moves up, content moves up) -> Dismiss
-        if (info.offset.y < -50 || info.velocity.y < -300) {
-            handleDismiss();
-        } else {
-            controls.start({ y: 0 });
-        }
-    };
 
     if (!isVisible) return null;
 
@@ -186,18 +160,12 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
         : [];
 
     return (
-        <motion.div
+        <div
             ref={containerRef}
             className={cn(
-                "fixed inset-0 z-50 bg-background/95 backdrop-blur-3xl overflow-hidden flex flex-col",
+                "w-full h-full bg-background/95 backdrop-blur-3xl overflow-hidden flex flex-col rounded-[32px] md:rounded-[48px] border border-white/10 shadow-2xl",
                 isDismissing && "pointer-events-none"
             )}
-            animate={controls}
-            style={{ y, opacity }}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0.2}
-            onDragEnd={onDragEnd}
         >
             {/* Horizontal Scroll Container */}
             <div ref={scrollRef} className="flex-1 flex overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x">
@@ -489,8 +457,7 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
                         </div>
                     </div>
                 </nav>
-
             </div>
-        </motion.div>
+        </div>
     );
 }

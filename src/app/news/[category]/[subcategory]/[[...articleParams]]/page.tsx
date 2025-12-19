@@ -126,22 +126,8 @@ export default async function NewsCatchAllPage({ params }: Props) {
 
     return (
         <Suspense fallback={<div className="min-h-screen bg-background" />}>
-            <main className="h-screen w-full bg-background flex flex-col overflow-hidden relative">
-                <SeoCover
-                    category={category}
-                    subcategory={subcategory}
-                    title={seo.h1}
-                    intro={seo.intro}
-                    richTitle={seo.richTitle}
-                    aliases={seo.aliases}
-                    faqs={seo.faqs}
-                    posts={[]} // CSR: Load on client
-                    relatedTopics={[]} // CSR: can fetch related topics on client wrapper or just show fallback
-                />
-
-                <div className="flex-1 w-full relative z-0 flex items-center justify-center mt-6">
-                    <SeoFeed category={category} subcategory={subcategory} initialPosts={[]} />
-                </div>
+            <main className="h-screen w-full bg-background overflow-hidden relative">
+                <SeoFeed category={category} subcategory={subcategory} initialPosts={[]} />
             </main>
         </Suspense>
     );

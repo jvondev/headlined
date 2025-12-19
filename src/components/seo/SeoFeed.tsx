@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import { Post } from '@/types';
 import { PostCarousel } from '@/components/post-carousel';
 import { OnboardingProvider } from '@/context/onboarding-provider';
-import { SEO_DATA_URL } from '@/lib/seo-config';
 import { checkLicenseStatus } from "@/lib/license-manager";
+import { getSeoMetadata, CategoryId, SEO_DATA_URL } from '@/lib/seo-config';
+import { SeoCover } from './seo-cover';
 
 // Define the shape of data from our scraper
 interface ScraperPost {
@@ -35,6 +36,8 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
     const [posts, setPosts] = useState<ScraperPost[]>(initialPosts);
     const [isPremium, setIsPremium] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
+
+    const seo = getSeoMetadata(category as CategoryId, subcategory);
 
     // Map to 'Post' type (without ads - same on server and client)
     const mappedPosts: Post[] = posts.map(p => ({
@@ -177,6 +180,20 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
         );
     }
 
+    const seoCoverSlide = (
+        <SeoCover
+            category={category}
+            subcategory={subcategory}
+            title={seo.h1}
+            intro={seo.intro}
+            richTitle={seo.richTitle}
+            aliases={seo.aliases}
+            faqs={seo.faqs}
+            posts={mappedPosts}
+            relatedTopics={[]}
+        />
+    );
+
     return (
         <div className="h-full w-full">
             <OnboardingProvider>
@@ -184,6 +201,8 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
                     posts={postsWithAds}
                     topicName={category}
                     isPremium={isPremium}
+                    topComponent={seoCoverSlide}
+                    topComponentPadding={false}
                 />
             </OnboardingProvider>
         </div>
