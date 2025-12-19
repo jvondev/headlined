@@ -19,9 +19,11 @@ export async function fetchArticleByDateAndSlug(date: string, slug: string): Pro
 
     for (const checkDate of datesToCheck) {
         try {
-            const url = `${CDN_BASE_URL}/${checkDate}.json`;
+            // Add cache buster to bypass stale CDN/Browser cache
+            const url = `${CDN_BASE_URL}/${checkDate}.json?t=${Date.now()}`;
             const response = await fetch(url, {
-                next: { revalidate: 300 }
+                next: { revalidate: 0 }, // Force Next.js to not cache this
+                cache: 'no-store' // Force browser to not cache this
             });
 
             if (!response.ok) continue;
