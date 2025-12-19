@@ -16,7 +16,8 @@ interface PageProps {
 }
 
 export default async function ArticlePage({ params }: PageProps) {
-    const slugParts = params.slug || [];
+    const { slug } = await params;
+    const slugParts = slug || [];
 
     // Case 1: /article (root) -> Redirect to today
     if (slugParts.length === 0) {

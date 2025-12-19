@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Post } from '@/types';
 
