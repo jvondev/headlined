@@ -123,7 +123,8 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
                                 date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                                 fullText: p.fullText || p.full_text || p.content || null,
                                 readingTime: p.readingTime || p.min,
-                                keywords: p.keywords || []
+                                keywords: p.keywords || [],
+                                isPersistent: true // Add new posts (marked as persistent so they aren't cleared)
                             }));
                             await addPosts(postsToSave);
                             await setLastFetchTime(cacheKey, now);

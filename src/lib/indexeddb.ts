@@ -1,7 +1,7 @@
 import { Post } from '@/types';
 
 const DB_NAME = 'HeadlinedDB';
-const DB_VERSION = 5;
+const DB_VERSION = 6;
 const STORE_NAME = 'posts';
 const READ_HISTORY_STORE_NAME = 'read_history';
 const METADATA_STORE_NAME = 'metadata';
@@ -25,7 +25,11 @@ const openDatabase = (): Promise<IDBDatabase> => {
         store = (event.target as IDBOpenDBRequest).transaction?.objectStore(STORE_NAME);
       }
       if (store && !store.indexNames.contains('topic')) {
-        store.createIndex('topic', 'topic', { unique: false });
+        store.createIndex('topic', 'topic', { unique: false, multiEntry: true });
+      } else if (store && store.indexNames.contains('topic')) {
+        // Recreate index with multiEntry if needed
+        store.deleteIndex('topic');
+        store.createIndex('topic', 'topic', { unique: false, multiEntry: true });
       }
       if (store && !store.indexNames.contains('date')) {
         store.createIndex('date', 'date', { unique: false });
@@ -68,9 +72,44 @@ export const addPosts = async (posts: Post[]): Promise<void> => {
   const transaction = database.transaction(STORE_NAME, 'readwrite');
   const store = transaction.objectStore(STORE_NAME);
 
-  posts.forEach((post) => {
-    store.put(post); // Use put to add or update
-  });
+  for (const post of posts) {
+    await new Promise<void>((resolve, reject) => {
+      const getRequest = store.get(post.slug);
+      getRequest.onsuccess = () => {
+        const existing = getRequest.result as Post | undefined;
+        if (existing) {
+          // Merge topics
+          const existingTopics = Array.isArray(existing.topic)
+            ? existing.topic
+            : (existing.topic ? [existing.topic] : []);
+          const newTopics = Array.isArray(post.topic)
+            ? post.topic
+            : (post.topic ? [post.topic] : []);
+
+          // Use latest post data but combined topics
+          // Preserve persistence if either is marked
+          const combined = Array.from(new Set([...existingTopics, ...newTopics]));
+          const isPersistent = !!(existing as any).isPersistent || !!(post as any).isPersistent;
+
+          store.put({ ...post, topic: combined, isPersistent });
+        } else {
+          // Wrap topic in array for consistency if it's a string
+          const normalizedPost = {
+            ...post,
+            topic: Array.isArray(post.topic) ? post.topic : (post.topic ? [post.topic] : []),
+            isPersistent: (post as any).isPersistent || false
+          };
+          store.put(normalizedPost);
+        }
+        resolve();
+      };
+      getRequest.onerror = (e) => {
+        console.warn("Error checking existing post", e);
+        store.put(post);
+        resolve();
+      };
+    });
+  }
 
   return new Promise((resolve, reject) => {
     transaction.oncomplete = () => resolve();
@@ -162,7 +201,12 @@ export const clearOldPosts = async (daysToKeep: number): Promise<void> => {
     request.onsuccess = (event) => {
       const cursor = (event.target as IDBRequest).result as IDBCursorWithValue;
       if (cursor) {
-        cursor.delete();
+        const post = cursor.value as Post;
+        // Don't delete if post is marked as persistent (e.g. SEO content)
+        // @ts-ignore - added field
+        if (!post.isPersistent) {
+          cursor.delete();
+        }
         cursor.continue();
       } else {
         resolve(); // Done

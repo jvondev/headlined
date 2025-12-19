@@ -85,7 +85,8 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
                             date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                             fullText: p.fullText || p.full_text || p.content || null,
                             readingTime: p.readingTime || p.min,
-                            keywords: p.keywords || []
+                            keywords: p.keywords || [],
+                            isPersistent: true
                         }));
 
                         // Update if new or if we had nothing

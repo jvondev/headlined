@@ -67,7 +67,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
                         if (!slug) continue;
 
                         const [year, month, day] = postDate.split('-');
-                        const topic = post.topic ? post.topic.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'general';
+                        const rawTopic = Array.isArray(post.topic) ? (post.topic.length > 0 ? post.topic[0] : null) : post.topic;
+                        const topic = rawTopic ? rawTopic.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'general';
 
                         articleRoutes.push({
                             url: `${baseUrl}/news/${category}/${topic}/${year}/${month}/${day}/${slug}`,

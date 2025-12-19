@@ -217,7 +217,13 @@ export const getFilteredPosts = async ({ topic_name, search_query, interest_name
   let filteredPosts = posts;
 
   if (topic_name) {
-    filteredPosts = filteredPosts.filter(post => post.topic === topic_name);
+    filteredPosts = filteredPosts.filter(post => {
+      if (!post.topic) return false;
+      if (Array.isArray(post.topic)) {
+        return post.topic.includes(topic_name);
+      }
+      return post.topic === topic_name;
+    });
   }
 
   if (interest_name) {

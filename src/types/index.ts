@@ -31,7 +31,7 @@ export interface Post {
   description: string | null;
   link: string;
   thumbnail_url: string | null;
-  topic: string | null;
+  topic: string | string[] | null;
   summaries: Summary[];
   date?: string; // YYYY-MM-DD
   // New fields from enhanced scraper
@@ -39,6 +39,7 @@ export interface Post {
   keywords?: string[];           // Top 10 keywords for highlighting
   readingTime?: number;          // Minutes to read
   qualityScore?: number;         // 0.0-1.0 extraction quality
+  isPersistent?: boolean;        // If true, post won't be cleared by retention policy
 }
 
 export interface SearchableItem {

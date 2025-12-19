@@ -18,16 +18,19 @@ export interface ArticleCategoryPath {
  * 3. Fallback to 'news' / 'general' or similar.
  */
 export function getArticleCategory(post: Post): { category: string; subcategory: string } {
-    const textToScan = `${post.title} ${post.description || ''} ${post.topic || ''}`.toLowerCase();
+    const topicStr = Array.isArray(post.topic) ? post.topic.join(' ') : (post.topic || '');
+    const textToScan = `${post.title} ${post.description || ''} ${topicStr}`.toLowerCase();
 
     // Priority 1: Explicit Topic Match (often set by scraper)
-    if (post.topic) {
-        const topicSlug = post.topic.toLowerCase();
+    const topics = Array.isArray(post.topic) ? post.topic : (post.topic ? [post.topic] : []);
+
+    for (const topic of topics) {
+        if (!topic) continue;
+        const topicSlug = topic.toLowerCase();
 
         // Check if topic matches a main category ID
         const mainCat = CATEGORIES.find(c => c.id === topicSlug);
         if (mainCat) {
-            // If the topic is a main category, try to find a subcategory, otherwise use 'general' or first item
             return { category: mainCat.id, subcategory: mainCat.items[0]?.slug || 'general' };
         }
 

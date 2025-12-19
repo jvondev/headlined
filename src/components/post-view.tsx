@@ -169,7 +169,9 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
                             <div className="flex items-center gap-3 flex-wrap">
                                 <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 md:bg-white/10 md:backdrop-blur-xl border border-white/20 text-xs font-semibold text-white tracking-wide uppercase shadow-lg">
                                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                                    {post.topic || 'News'}
+                                    {Array.isArray(post.topic)
+                                        ? (post.topic.length > 0 ? post.topic[0] : 'News')
+                                        : (post.topic || 'News')}
                                 </span>
                                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/30 border border-white/10 text-xs font-medium text-white/80">
                                     <Clock className="w-3 h-3" />

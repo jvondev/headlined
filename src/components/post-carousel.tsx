@@ -96,7 +96,8 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
 
   const filterDistractions = useCallback((postsToFilter: Post[]) => {
     return postsToFilter.filter(post => {
-      const content = `${post.title} ${post.description || ""} ${post.topic || ""}`.toLowerCase();
+      const topicStr = Array.isArray(post.topic) ? post.topic.join(' ') : (post.topic || "");
+      const content = `${post.title} ${post.description || ""} ${topicStr}`.toLowerCase();
 
       // Check Custom Keywords (Premium Only)
       if (isPremium && distractionEnabled && distractionKeywords.some(keyword => content.includes(keyword.toLowerCase()))) {

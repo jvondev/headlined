@@ -69,16 +69,20 @@ export async function fetchPostsByDate(date: string): Promise<Post[]> {
  * Get related articles for a post (same topic, same date, excluding current).
  */
 export function getRelatedArticles(currentPost: Post, allPosts: Post[], limit: number = 5): Post[] {
-    const related = allPosts.filter(p =>
-        p.slug !== currentPost.slug &&
-        p.topic === currentPost.topic
-    );
+    const currentTopics = Array.isArray(currentPost.topic) ? currentPost.topic : (currentPost.topic ? [currentPost.topic] : []);
+
+    const related = allPosts.filter(p => {
+        if (p.slug === currentPost.slug) return false;
+        const pTopics = Array.isArray(p.topic) ? p.topic : (p.topic ? [p.topic] : []);
+        // Check if there is any overlap in topics
+        return pTopics.some(t => currentTopics.includes(t));
+    });
 
     // If not enough from same topic, add from any topic
     if (related.length < limit) {
         const others = allPosts.filter(p =>
             p.slug !== currentPost.slug &&
-            p.topic !== currentPost.topic
+            !related.find(r => r.slug === p.slug)
         );
         related.push(...others.slice(0, limit - related.length));
     }
@@ -118,7 +122,14 @@ export function transformTitleForSEO(title: string, topic?: string): string {
 
     // Use hash of title to pick consistent prefix
     const hash = cleanTitle.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
-    const prefixes = (topic && topicPrefixes[topic.toLowerCase()]) || defaultPrefixes;
+
+    let prefixes = defaultPrefixes;
+    if (topic) {
+        const targetTopic = Array.isArray(topic) ? (topic.length > 0 ? topic[0] : null) : topic;
+        if (targetTopic) {
+            prefixes = topicPrefixes[targetTopic.toLowerCase()] || defaultPrefixes;
+        }
+    }
     const prefix = prefixes[hash % prefixes.length];
 
     return `${prefix} ${cleanTitle}`;
@@ -166,7 +177,12 @@ export function generateMetaDescription(post: Post): string {
 
     // Add topic context
     if (post.topic) {
-        parts.push(`[${post.topic.toUpperCase()}]`);
+        const topicStr = Array.isArray(post.topic)
+            ? (post.topic.length > 0 ? post.topic[0] : "")
+            : post.topic;
+        if (topicStr) {
+            parts.push(`[${topicStr.toUpperCase()}]`);
+        }
     }
 
     // Add date context
