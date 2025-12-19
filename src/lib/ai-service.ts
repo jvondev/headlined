@@ -1,12 +1,30 @@
 'use server';
 
 import { genkit } from 'genkit';
-import { googleAI, gemini20FlashLite } from '@genkit-ai/googleai';
+import { googleAI } from '@genkit-ai/googleai';
 import { buildArticlePrompt, KEYWORD_EXTRACTION_PROMPT, SEO_GENERATION_PROMPT } from './ai-prompts';
 import { AIGenerationInput, AIGenerationOutput } from '@/types/article';
 
+// Updated to use the latest high-performance model
+// User preference: Gemini 2.5 Flash
+const MODEL_ID = 'googleai/gemini-2.5-flash';
+
+
+
 // Initialize Genkit with Google AI plugin
-const ai = genkit({ plugins: [googleAI()] });
+// Explicitly check for API key to provide better error messages
+const apiKey = process.env.GOOGLE_GENAI_API_KEY || process.env.GEMINI_API_KEY;
+
+if (!apiKey && process.env.NODE_ENV === 'development') {
+    console.warn('⚠️ Warning: GOOGLE_GENAI_API_KEY is not defined in environment variables.');
+}
+
+const ai = genkit({
+    plugins: [
+        googleAI({ apiKey }) // Pass apiKey explicitly if process.env is unstable
+    ]
+});
+
 
 /**
  * Generate a complete article from keywords using Gemini AI
@@ -22,8 +40,9 @@ export async function generateArticleContent(
     );
 
     const { text } = await ai.generate({
-        model: gemini20FlashLite,
+        model: MODEL_ID,
         prompt,
+
         config: {
             temperature: 0.7,
             maxOutputTokens: 4096,
@@ -58,8 +77,9 @@ export async function extractKeywords(content: string): Promise<string[]> {
     const prompt = KEYWORD_EXTRACTION_PROMPT.replace('{content}', content.slice(0, 2000));
 
     const { text } = await ai.generate({
-        model: gemini20FlashLite,
+        model: MODEL_ID,
         prompt,
+
         config: {
             temperature: 0.3,
             maxOutputTokens: 256,
@@ -97,8 +117,9 @@ export async function generateSEO(
         .replace('{keyword}', keyword);
 
     const { text } = await ai.generate({
-        model: gemini20FlashLite,
+        model: MODEL_ID,
         prompt,
+
         config: {
             temperature: 0.5,
             maxOutputTokens: 256,
