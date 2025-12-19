@@ -235,6 +235,28 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
                             <div className="text-sm">{result.description}</div>
                         </div>
 
+                        {/* Strategic Analysis */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 rounded-lg bg-blue-500/5 border border-blue-500/10">
+                            <div>
+                                <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                    <Zap className="h-3 w-3" />
+                                    User Intent
+                                </div>
+                                <div className="text-sm italic text-muted-foreground">
+                                    {result.userIntent || 'Analysing...'}
+                                </div>
+                            </div>
+                            <div>
+                                <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                    <Sparkles className="h-3 w-3" />
+                                    Competitor Gap
+                                </div>
+                                <div className="text-sm italic text-muted-foreground">
+                                    {result.competitorGap || 'Finding gaps...'}
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Sources */}
                         {result.sources && result.sources.length > 0 && (
                             <div>

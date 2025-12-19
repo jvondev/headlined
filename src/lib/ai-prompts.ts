@@ -13,23 +13,28 @@ function buildCategoryList(): string {
   ).join('\n');
 }
 
-export const ARTICLE_GENERATION_PROMPT_V2 = `You are a strategic content architect and senior reference editor. Your goal is to produce a canonical reference page that dominates search results (Rank #1) by solving the user's intent with absolute authority.
+export const ARTICLE_GENERATION_PROMPT_V2 = `You are a world-class strategic content architect and authoritative editor. Your objective is to produce a canonical reference-grade page that secures a #1 ranking by solving user intent with undeniable authority and strategic depth.
 
-## Strategic Analysis Phase
-Before writing, analyze:
-1. **User Intent**: What is the searcher trying to accomplish? (Informational, Transactional, Navigational).
-2. **User Background**: Is the reader a novice, professional, or researcher? Adjust depth accordingly.
-3. **Competitor Gap**: Based on GROUNDING DATA, what do existing results miss or oversimplify?
-4. **Resolution Path**: How can we provide the definitive, "last-click" answer? Choose an angle that addresses high search volume demand with a unique deep-dive perspective.
+## 1. Strategic Analysis Phase (Intent & Market)
+Before writing, perform a internal analysis of the search landscape:
+1. **User Intent & Background**: Identify the primary problem being solved. Determine the reader's technical proficiency and adjust the depth and technicality to resolve their specific needs.
+2. **Search Depth Rationale**: Explicitly explain why a standard search wasn't enough for this topic. Bridge the gap between surface-level information and the "Deep Grounding Data" found for this specific query.
+3. **Competitive Gap & Angle**: Identify informational gaps in current top-ranking results. Establish a "Dominant Perspective" that captures high-volume demand by being more thorough, original, and accurate than existing content.
+4. **Content Perspective**: Deliver an "Indispensable" resource that acts as the final word for the high-volume search cluster associated with this topic.
 
-## Input
+## 2. E-E-A-T Principles (STRICTLY DEMONSTRATE)
+- **Experience**: Infuse the content with concrete real-world evidence. Use the specific products, versions, dates, and observed data points from the GROUNDING DATA to show that the information is anchored in reality.
+- **Expertise**: Demonstrate deep knowledge by focusing on **Causality** (why events occur) and **Mechanisms** (how systems function). Use precise technical terminology but ensure the logical flow remains accessible.
+- **Authoritativeness**: Build a logical fortress. Synthesize the research into a coherent, definitive narrative that establishes the page as the primary reference source for the topic.
+- **Trustworthiness**: Maintain total transparency. Explicitly state the limits of current knowledge, acknowledge any constraints found in the research process, and ensure all factual claims are supported by the provided context..
+
+## 3. Input Data
 - Primary Keyword: {keyword}
 - Related Keywords: {relatedKeywords}
-
-## Research Context (GROUNDING DATA)
+- Research Context (GROUNDING DATA):
 {groundingContext}
 
-## Editorial & Writing Standards (STRICTLY FOLLOW)
+## 4. Editorial & Writing Standards
 
 1. **Readability Targets**: 
    - Flesch Reading Ease: 60-80 (Plain English).
@@ -66,8 +71,8 @@ Select the BEST category and subcategory from:
   "fullText": "Markdown content. 1000-2500+ words. Professional headers (##). Varying paragraph lengths. No bracketed citations.",
   "keywords": ["10 LSI keywords from research"],
   "readingTime": number,
-  "userIntent": "Diagnostic: What was the interpreted user intent?",
-  "competitorGap": "Diagnostic: What gap did this article fill?",
+  "userIntent": "Brief analysis of the user's secret goal/intent.",
+  "competitorGap": "What specific gap did we fill to rank #1?",
   "suggestedCategory": "category id from list",
   "suggestedSubcategory": "subcategory slug from list",
   "sources": [{"title": "Source Name", "url": "https://..."}],
@@ -76,6 +81,7 @@ Select the BEST category and subcategory from:
 }
 
 Output ONLY valid JSON. No markdown code blocks around the JSON.`;
+
 
 
 /**
