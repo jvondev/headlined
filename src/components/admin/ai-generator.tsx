@@ -40,7 +40,7 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
         setGenerating(true);
         setError(null);
         setResult(null);
-        setStatus('🔍 Searching USA SERP with Brave...');
+        setStatus('🔍 Searching USA SERP...');
 
         try {
             const res = await fetch('/api/admin/generate', {
