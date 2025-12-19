@@ -6,8 +6,9 @@ import { buildEnhancedArticlePrompt, buildArticlePrompt, KEYWORD_EXTRACTION_PROM
 import { gatherGroundingData, formatGroundingContext } from './data-grounding';
 import { AIGenerationInput, AIGenerationOutput } from '@/types/article';
 
-// User preference: Gemini 2.5 Flash
-const MODEL_ID = 'googleai/gemini-2.5-flash';
+// Model Configuration
+const PRIMARY_MODEL = 'googleai/gemini-3-flash';
+const FALLBACK_MODEL = 'googleai/gemini-2.5-flash';
 
 // Initialize Genkit with Google AI plugin
 const apiKey = process.env.GOOGLE_GENAI_API_KEY || process.env.GEMINI_API_KEY;
@@ -19,6 +20,26 @@ if (!apiKey && process.env.NODE_ENV === 'development') {
 const ai = genkit({
     plugins: [googleAI({ apiKey })]
 });
+
+/**
+ * Robust generation helper with fallback logic
+ */
+async function generateWithFallback(options: any) {
+    try {
+        console.log(`🤖 Attempting generation with ${PRIMARY_MODEL}...`);
+        return await ai.generate({
+            ...options,
+            model: PRIMARY_MODEL,
+        });
+    } catch (error) {
+        console.warn(`⚠️ ${PRIMARY_MODEL} failed, falling back to ${FALLBACK_MODEL}...`);
+        console.error('Error detail:', error);
+        return await ai.generate({
+            ...options,
+            model: FALLBACK_MODEL,
+        });
+    }
+}
 
 /**
  * Helper to clean AI response and parse JSON
@@ -54,14 +75,12 @@ export async function generateEnhancedArticle(
     // Step 2: Build enhanced prompt with all data
     const prompt = buildEnhancedArticlePrompt(keyword, relatedKeywords, groundingContext);
 
-    // Step 3: Generate with Gemini (single call includes auto-categorization)
-    console.log('🤖 Generating with Gemini 2.5 Flash...');
-    const { text } = await ai.generate({
-        model: MODEL_ID,
+    // Step 3: Generate with Fallback Logic
+    const { text } = await generateWithFallback({
         prompt,
         config: {
-            temperature: 0.8, // Slightly higher for more human-like variation
-            maxOutputTokens: 8192, // More room for detailed content
+            temperature: 0.8,
+            maxOutputTokens: 8192,
         },
     });
 
@@ -100,8 +119,7 @@ export async function generateArticleContent(
         input.subcategory
     );
 
-    const { text } = await ai.generate({
-        model: MODEL_ID,
+    const { text } = await generateWithFallback({
         prompt,
         config: {
             temperature: 0.7,
@@ -132,8 +150,7 @@ export async function generateArticleContent(
 export async function extractKeywords(content: string): Promise<string[]> {
     const prompt = KEYWORD_EXTRACTION_PROMPT.replace('{content}', content.slice(0, 2000));
 
-    const { text } = await ai.generate({
-        model: MODEL_ID,
+    const { text } = await generateWithFallback({
         prompt,
         config: {
             temperature: 0.3,
@@ -161,8 +178,7 @@ export async function generateSEO(
         .replace('{summary}', summary.slice(0, 500))
         .replace('{keyword}', keyword);
 
-    const { text } = await ai.generate({
-        model: MODEL_ID,
+    const { text } = await generateWithFallback({
         prompt,
         config: {
             temperature: 0.5,
