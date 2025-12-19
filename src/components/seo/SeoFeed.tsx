@@ -59,6 +59,11 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
         setHasMounted(true);
     }, []);
 
+    // Reset posts when category/subcategory changes to avoid stale data during navigation
+    useEffect(() => {
+        setPosts(initialPosts);
+    }, [category, subcategory, initialPosts]);
+
     useEffect(() => {
         checkLicenseStatus().then(setIsPremium);
     }, []);
@@ -199,7 +204,7 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
             <OnboardingProvider>
                 <PostCarousel
                     posts={postsWithAds}
-                    topicName={category}
+                    topicName={`${category}/${subcategory}`}
                     isPremium={isPremium}
                     topComponent={seoCoverSlide}
                     topComponentPadding={false}

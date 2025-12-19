@@ -35,6 +35,11 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
     const [posts, setPosts] = useState<Post[]>(initialPosts);
     const [isVisible, setIsVisible] = useState(true);
 
+    // Sync state if initialPosts change (e.g. navigation in parent)
+    useEffect(() => {
+        setPosts(initialPosts);
+    }, [initialPosts]);
+
     // FETCH DATA IF EMPTY (CSR)
     useEffect(() => {
         if (posts.length > 0) return; // Already have data

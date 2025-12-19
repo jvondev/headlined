@@ -270,7 +270,10 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
   const [activeSlideIndex, setActiveSlideIndex] = useState(initialSlide);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
 
-  const currentPost = posts[activeSlideIndex];
+  // Correct indexing: if topComponent exists, posts start at index 1
+  const currentPost = topComponent
+    ? (activeSlideIndex === 0 ? undefined : posts[activeSlideIndex - 1])
+    : posts[activeSlideIndex];
 
   const { toast } = useToast();
   const { setVerticalEmblaApi } = useOnboardingContext();
@@ -750,9 +753,10 @@ const PostCarouselComponent: FC<PostCarouselProps> = ({
     return <div className="w-full h-full" />;
   }
 
-  if (!currentPost && posts.length > 0) {
-    return null;
-  }
+  // Removed the null return that caused blank screens when indexing was off
+  // if (!currentPost && posts.length > 0) {
+  //   return null;
+  // }
 
   const SaveIcon = isCurrentItemSaved ? Pencil : Bookmark;
   const saveIconClassName = isCurrentItemSaved ? 'fill-current' : '';
