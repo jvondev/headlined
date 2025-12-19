@@ -1,7 +1,10 @@
 
 import ArticleClientPage from './client';
+import ArticleListingPage from './listing';
+import InternalArticlePage from './internal';
 import { fetchArticleByDateAndSlug } from '@/lib/article-utils';
 import { getArticleCanonicalPath } from '@/lib/category-utils';
+import { getArticleBySlug, validateCategoryPath } from '@/lib/article-service';
 import { redirect } from 'next/navigation';
 
 // Generate a single static entry point for the catch-all route
@@ -19,19 +22,18 @@ export default async function ArticlePage({ params }: PageProps) {
     const { slug } = await params;
     const slugParts = slug || [];
 
-    // Case 1: /article (root) -> Redirect to today
+    // Case 1: /article (root) -> Show article listing page
     if (slugParts.length === 0) {
-        redirect('/today');
+        return <ArticleListingPage />;
     }
 
-    // Case 2: /article/YYYY-MM-DD/slug (Old Pattern) -> Redirect to New News Pattern
-    // Check if first part looks like a date and second part exists
+    // Case 2: /article/YYYY-MM-DD/slug (Old Pattern) -> 301 Redirect to News Pattern
     if (slugParts.length >= 2) {
         const potentialDate = slugParts[0];
         const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
         if (dateRegex.test(potentialDate)) {
-            const articleSlug = slugParts.slice(1).join('/'); // In case slug has slashes, though unlikely
+            const articleSlug = slugParts.slice(1).join('/');
             const article = await fetchArticleByDateAndSlug(potentialDate, articleSlug);
 
             if (article) {
@@ -43,8 +45,20 @@ export default async function ArticlePage({ params }: PageProps) {
         }
     }
 
-    // Case 3: Evergreen Content / Fallback
-    // e.g. /article/some-evergreen-slug or /article/category/slug (if we use that for pages)
-    // For now, render the Client Page which will attempt to load it or show 404
+    // Case 3: /article/[category]/[subcategory]/[slug] - Internal article
+    if (slugParts.length === 3) {
+        const [category, subcategory, articleSlug] = slugParts;
+
+        // Check if this is a valid internal article
+        if (validateCategoryPath(category, subcategory)) {
+            const internalArticle = getArticleBySlug(category, subcategory, articleSlug);
+            if (internalArticle && internalArticle.status === 'published') {
+                return <InternalArticlePage article={internalArticle} />;
+            }
+        }
+    }
+
+    // Case 4: Fallback - render the Client Page for legacy/external articles
     return <ArticleClientPage />;
 }
+
