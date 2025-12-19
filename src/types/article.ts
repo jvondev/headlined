@@ -15,6 +15,10 @@ export interface InternalArticle extends Post {
     // AI generation metadata
     aiGenerated?: boolean;
     sourceKeywords?: string[];
+    // E-E-A-T enhancements
+    sources?: { title: string; url: string }[];
+    factsCited?: string[];
+    lastVerified?: string;
 }
 
 /**
@@ -26,17 +30,18 @@ export interface ArticleStorage {
 }
 
 /**
- * AI Generation input
+ * AI Generation input - simplified for single-request generation
  */
 export interface AIGenerationInput {
     keyword: string;
     relatedKeywords?: string[];
-    category: string;
-    subcategory: string;
+    // Category/subcategory now optional - AI will suggest
+    category?: string;
+    subcategory?: string;
 }
 
 /**
- * AI Generation output
+ * AI Generation output V2 - includes auto-categorization and E-E-A-T
  */
 export interface AIGenerationOutput {
     title: string;
@@ -46,6 +51,14 @@ export interface AIGenerationOutput {
     fullText: string;
     keywords: string[];
     readingTime: number;
-    userIntent: string;
-    competitorGap: string;
+    // Auto-categorization (single request)
+    suggestedCategory: string;
+    suggestedSubcategory: string;
+    // E-E-A-T fields
+    sources: { title: string; url: string }[];
+    factsCited: string[];
+    lastVerified: string;
+    // Legacy fields (optional for backward compat)
+    userIntent?: string;
+    competitorGap?: string;
 }

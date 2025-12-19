@@ -42,6 +42,10 @@ export default function AdminEditor({ article, onSave, onCancel }: AdminEditorPr
         summaries: [],
         aiGenerated: false,
         sourceKeywords: [],
+        // E-E-A-T fields
+        sources: [],
+        factsCited: [],
+        lastVerified: '',
     });
     const [showPreview, setShowPreview] = useState(false);
     const [subcategoryOptions, setSubcategoryOptions] = useState<{ slug: string; title: string }[]>([]);

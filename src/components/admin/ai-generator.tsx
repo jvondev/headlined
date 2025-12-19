@@ -1,20 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Sparkles, Loader2, Check, AlertCircle } from 'lucide-react';
+import { Sparkles, Loader2, Check, AlertCircle, Zap, Globe, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import {
     Card,
     CardContent,
@@ -24,7 +17,6 @@ import {
 } from '@/components/ui/card';
 import ReactMarkdown from 'react-markdown';
 import { InternalArticle, AIGenerationOutput } from '@/types/article';
-import { CATEGORIES } from '@scraper/categories';
 
 interface AIGeneratorProps {
     onGenerated: (article: Partial<InternalArticle>) => void;
@@ -34,26 +26,21 @@ interface AIGeneratorProps {
 export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps) {
     const [keyword, setKeyword] = useState('');
     const [relatedKeywords, setRelatedKeywords] = useState('');
-    const [category, setCategory] = useState('');
-    const [subcategory, setSubcategory] = useState('');
     const [generating, setGenerating] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<AIGenerationOutput | null>(null);
-
-    // Get subcategory options based on selected category
-    const subcategoryOptions = category
-        ? CATEGORIES.find(c => c.id === category)?.items.map(i => ({ slug: i.slug, title: i.title })) || []
-        : [];
+    const [status, setStatus] = useState('');
 
     const handleGenerate = async () => {
-        if (!keyword.trim() || !category || !subcategory) {
-            setError('Please fill in keyword, category, and subcategory');
+        if (!keyword.trim()) {
+            setError('Please enter a keyword');
             return;
         }
 
         setGenerating(true);
         setError(null);
         setResult(null);
+        setStatus('🔍 Searching USA SERP with Brave...');
 
         try {
             const res = await fetch('/api/admin/generate', {
@@ -65,10 +52,11 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
                         .split('\n')
                         .map(k => k.trim())
                         .filter(Boolean),
-                    category,
-                    subcategory,
+                    // No category/subcategory - AI will auto-suggest!
                 }),
             });
+
+            setStatus('🤖 Generating E-E-A-T content with Gemini...');
 
             if (!res.ok) {
                 const errorData = await res.json();
@@ -77,8 +65,10 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
 
             const data = await res.json();
             setResult(data);
+            setStatus('');
         } catch (e: any) {
             setError(e.message || 'Failed to generate article');
+            setStatus('');
         } finally {
             setGenerating(false);
         }
@@ -101,15 +91,20 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
             fullText: result.fullText,
             keywords: result.keywords,
             readingTime: result.readingTime,
-            category,
-            subcategory,
+            // Use AI-suggested category and subcategory
+            category: result.suggestedCategory,
+            subcategory: result.suggestedSubcategory,
             status: 'draft',
             aiGenerated: true,
             sourceKeywords: [keyword, ...relatedKeywords.split('\n').filter(Boolean)],
+            // E-E-A-T fields
+            sources: result.sources,
+            factsCited: result.factsCited,
+            lastVerified: result.lastVerified,
             thumbnail_url: null,
             link: '',
             summaries: [],
-            topic: category,
+            topic: result.suggestedCategory,
         };
 
         onGenerated(article);
@@ -121,10 +116,21 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5" />
-                        AI Article Generator
+                        AI Article Generator V2
                     </CardTitle>
-                    <CardDescription>
-                        Generate a reference-grade article from keywords using Gemini AI
+                    <CardDescription className="flex items-center gap-4 mt-2">
+                        <span className="flex items-center gap-1">
+                            <Globe className="h-4 w-4" />
+                            USA SERP Data
+                        </span>
+                        <span className="flex items-center gap-1">
+                            <Zap className="h-4 w-4" />
+                            Auto-Category
+                        </span>
+                        <span className="flex items-center gap-1">
+                            <BookOpen className="h-4 w-4" />
+                            E-E-A-T Optimized
+                        </span>
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -136,57 +142,32 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
                             value={keyword}
                             onChange={(e) => setKeyword(e.target.value)}
                             placeholder="e.g., best rss readers 2025"
+                            className="text-lg"
                         />
+                        <p className="text-xs text-muted-foreground">
+                            Just enter a keyword - AI will auto-detect category and gather real-time data
+                        </p>
                     </div>
 
                     {/* Related Keywords */}
                     <div className="space-y-2">
-                        <Label htmlFor="related">Related Keywords (one per line)</Label>
+                        <Label htmlFor="related">Related Keywords (optional, one per line)</Label>
                         <Textarea
                             id="related"
                             value={relatedKeywords}
                             onChange={(e) => setRelatedKeywords(e.target.value)}
                             placeholder="rss reader apps&#10;news aggregator&#10;feed reader comparison"
-                            rows={4}
+                            rows={3}
                         />
                     </div>
 
-                    {/* Category & Subcategory */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label>Category</Label>
-                            <Select value={category} onValueChange={(v) => {
-                                setCategory(v);
-                                setSubcategory('');
-                            }}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {CATEGORIES.map(cat => (
-                                        <SelectItem key={cat.id} value={cat.id}>{cat.label}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                    {/* Status */}
+                    {status && (
+                        <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 text-sm">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            {status}
                         </div>
-                        <div className="space-y-2">
-                            <Label>Subcategory</Label>
-                            <Select
-                                value={subcategory}
-                                onValueChange={setSubcategory}
-                                disabled={!category}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select subcategory" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {subcategoryOptions.map(sub => (
-                                        <SelectItem key={sub.slug} value={sub.slug}>{sub.title}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
+                    )}
 
                     {/* Error */}
                     {error && (
@@ -199,18 +180,19 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
                     {/* Generate Button */}
                     <Button
                         onClick={handleGenerate}
-                        disabled={generating || !keyword.trim() || !category || !subcategory}
+                        disabled={generating || !keyword.trim()}
                         className="w-full"
+                        size="lg"
                     >
                         {generating ? (
                             <>
                                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                Generating with AI...
+                                Generating (SERP + AI + E-E-A-T)...
                             </>
                         ) : (
                             <>
                                 <Sparkles className="h-4 w-4 mr-2" />
-                                Generate Article
+                                Generate Article (1-Click)
                             </>
                         )}
                     </Button>
@@ -228,7 +210,7 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {/* Meta Info */}
-                        <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                             <div>
                                 <div className="text-muted-foreground">Title</div>
                                 <div className="font-medium">{result.title}</div>
@@ -238,12 +220,12 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
                                 <div className="font-medium">{result.readingTime} min</div>
                             </div>
                             <div>
-                                <div className="text-muted-foreground">User Intent</div>
-                                <div className="font-medium">{result.userIntent}</div>
+                                <div className="text-muted-foreground">Category</div>
+                                <Badge variant="outline">{result.suggestedCategory}</Badge>
                             </div>
                             <div>
-                                <div className="text-muted-foreground">Competitor Gap</div>
-                                <div className="font-medium">{result.competitorGap}</div>
+                                <div className="text-muted-foreground">Subcategory</div>
+                                <Badge variant="outline">{result.suggestedSubcategory}</Badge>
                             </div>
                         </div>
 
@@ -252,6 +234,38 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
                             <div className="text-sm text-muted-foreground">Meta Description</div>
                             <div className="text-sm">{result.description}</div>
                         </div>
+
+                        {/* Sources */}
+                        {result.sources && result.sources.length > 0 && (
+                            <div>
+                                <div className="text-sm text-muted-foreground mb-2">Sources ({result.sources.length})</div>
+                                <div className="flex flex-wrap gap-2">
+                                    {result.sources.slice(0, 5).map((source, i) => (
+                                        <a
+                                            key={i}
+                                            href={source.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-xs px-2 py-1 rounded bg-blue-500/10 text-blue-500 hover:bg-blue-500/20"
+                                        >
+                                            {source.title.slice(0, 30)}...
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Facts Cited */}
+                        {result.factsCited && result.factsCited.length > 0 && (
+                            <div>
+                                <div className="text-sm text-muted-foreground mb-2">Facts Cited ({result.factsCited.length})</div>
+                                <ul className="text-sm space-y-1">
+                                    {result.factsCited.slice(0, 3).map((fact, i) => (
+                                        <li key={i} className="text-muted-foreground">• {fact}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
 
                         {/* Keywords */}
                         <div>
@@ -270,6 +284,13 @@ export default function AIGenerator({ onGenerated, onCancel }: AIGeneratorProps)
                                 <ReactMarkdown>{result.fullText}</ReactMarkdown>
                             </div>
                         </div>
+
+                        {/* Last Verified */}
+                        {result.lastVerified && (
+                            <div className="text-xs text-muted-foreground">
+                                Last verified: {result.lastVerified}
+                            </div>
+                        )}
 
                         {/* Actions */}
                         <div className="flex gap-2 pt-4">

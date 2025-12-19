@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateArticleContent } from '@/lib/ai-service';
-import { AIGenerationInput } from '@/types/article';
+import { generateEnhancedArticle } from '@/lib/ai-service';
 
 // Only allow in development
 function checkDevMode() {
@@ -10,22 +9,23 @@ function checkDevMode() {
     return null;
 }
 
-// POST - Generate article content using AI
+// POST - Generate article content using enhanced AI with grounding
 export async function POST(request: NextRequest) {
     const devCheck = checkDevMode();
     if (devCheck) return devCheck;
 
     try {
-        const input: AIGenerationInput = await request.json();
+        const { keyword, relatedKeywords } = await request.json();
 
-        if (!input.keyword || !input.category || !input.subcategory) {
+        if (!keyword) {
             return NextResponse.json(
-                { error: 'keyword, category, and subcategory are required' },
+                { error: 'keyword is required' },
                 { status: 400 }
             );
         }
 
-        const result = await generateArticleContent(input);
+        // Single request: grounding + generation + auto-categorization
+        const result = await generateEnhancedArticle(keyword, relatedKeywords || []);
         return NextResponse.json(result);
     } catch (e: any) {
         console.error('AI generation error:', e);
