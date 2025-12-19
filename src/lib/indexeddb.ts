@@ -1,9 +1,10 @@
 import { Post } from '@/types';
 
 const DB_NAME = 'HeadlinedDB';
-const DB_VERSION = 4;
+const DB_VERSION = 5;
 const STORE_NAME = 'posts';
 const READ_HISTORY_STORE_NAME = 'read_history';
+const METADATA_STORE_NAME = 'metadata';
 
 let db: IDBDatabase | null = null;
 
@@ -33,6 +34,10 @@ const openDatabase = (): Promise<IDBDatabase> => {
       if (!db.objectStoreNames.contains(READ_HISTORY_STORE_NAME)) {
         const historyStore = db.createObjectStore(READ_HISTORY_STORE_NAME, { keyPath: 'slug' });
         historyStore.createIndex('readAt', 'readAt', { unique: false });
+      }
+
+      if (!db.objectStoreNames.contains(METADATA_STORE_NAME)) {
+        db.createObjectStore(METADATA_STORE_NAME, { keyPath: 'key' });
       }
     };
 
@@ -244,6 +249,43 @@ export const removeFromReadHistory = async (slug: string): Promise<void> => {
     transaction.onerror = (event) => {
       console.error('Remove from read history transaction error:', (event.target as IDBTransaction).error);
       reject((event.target as IDBTransaction).error);
+    };
+  });
+};
+
+export const getLastFetchTime = async (key: string): Promise<number | null> => {
+  const database = await openDatabase();
+  const transaction = database.transaction(METADATA_STORE_NAME, 'readonly');
+  const store = transaction.objectStore(METADATA_STORE_NAME);
+
+  return new Promise((resolve, reject) => {
+    const request = store.get(key);
+    request.onsuccess = () => {
+      if (request.result) {
+        resolve(request.result.time);
+      } else {
+        resolve(null);
+      }
+    };
+    request.onerror = (event) => {
+      // Don't reject, just return null so we fetch fresh
+      console.warn('Get last fetch time error:', (event.target as IDBRequest).error);
+      resolve(null);
+    };
+  });
+};
+
+export const setLastFetchTime = async (key: string, time: number): Promise<void> => {
+  const database = await openDatabase();
+  const transaction = database.transaction(METADATA_STORE_NAME, 'readwrite');
+  const store = transaction.objectStore(METADATA_STORE_NAME);
+
+  return new Promise((resolve, reject) => {
+    const request = store.put({ key, time });
+    request.onsuccess = () => resolve();
+    request.onerror = (event) => {
+      console.error('Set last fetch time error:', (event.target as IDBRequest).error);
+      reject((event.target as IDBRequest).error);
     };
   });
 };

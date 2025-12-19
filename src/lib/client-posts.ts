@@ -1,17 +1,14 @@
 'use client';
 
 import { Post } from '@/types';
-import { addPosts, getAllPostsFromIndexedDB, clearAllPosts, clearOldPosts, getPostsByDate, getPostsDateRange, getReadHistory } from './indexeddb';
+import { addPosts, getAllPostsFromIndexedDB, clearAllPosts, clearOldPosts, getPostsByDate, getPostsDateRange, getReadHistory, getLastFetchTime, setLastFetchTime } from './indexeddb';
 import { topicsData } from '@/data/topics-data';
 import { interestsData } from '@/data/interests-data';
 import { checkLicenseStatus } from './license-manager';
 
 const PAGE_SIZE = 10; // Define page size for pagination
-const LAST_SYNC_TIMESTAMP_KEY = 'lastSyncTimestamp';
-
-// TODO: Replace with actual GitHub Action run time and timezone
-const GITHUB_ACTION_RUN_HOUR_UTC = 10; // Runs every day at 10:00 AM UTC
-const CLEANUP_INTERVAL_HOURS = 1;
+const LAST_SYNC_TIMESTAMP_KEY = 'lastSyncTimestamp'; // Keeping for legacy/backup, but primary is IDB metadata
+const FEED_TODAY_KEY = 'feed:today';
 
 let allPosts: Post[] = [];
 let isFetchingAllPosts = false;
@@ -42,29 +39,6 @@ export const fetchAllPosts = async (): Promise<Post[]> => {
   return await synchronizePostsInBackground();
 };
 
-const shouldTriggerFullSync = (): boolean => {
-  const lastSyncTimestamp = localStorage.getItem(LAST_SYNC_TIMESTAMP_KEY);
-  const now = new Date();
-
-  // Calculate the GitHub Action run time for today
-  const githubActionRunTimeToday = new Date();
-  githubActionRunTimeToday.setUTCHours(GITHUB_ACTION_RUN_HOUR_UTC, 0, 0, 0);
-
-  // Calculate the cleanup threshold time (1 hour after GitHub Action)
-  const cleanupThresholdTime = new Date(githubActionRunTimeToday.getTime() + CLEANUP_INTERVAL_HOURS * 60 * 60 * 1000);
-
-  if (!lastSyncTimestamp) {
-    // Never synced before, or localStorage was cleared, so trigger full sync
-    return true;
-  }
-
-  const lastSyncDate = new Date(lastSyncTimestamp);
-
-  // If current time is past cleanup threshold AND last sync was before cleanup threshold
-  const trigger = now > cleanupThresholdTime && lastSyncDate < cleanupThresholdTime;
-  return trigger;
-};
-
 const synchronizePostsInBackground = async (): Promise<Post[]> => {
   if (isFetchingAllPosts) {
     // If a fetch is already in progress, wait for it to complete
@@ -86,9 +60,17 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
     let postsToReturn: Post[] = [];
     let fetchedFromNetwork = false;
 
-    // Always attempt to fetch from network if no posts in memory or a full sync is needed
-    if (allPosts.length === 0 || shouldTriggerFullSync()) {
+    // Check Cache Validity (6 Hours)
+    const lastFetch = await getLastFetchTime(FEED_TODAY_KEY);
+    const now = Date.now();
+    const cacheDuration = 6 * 60 * 60 * 1000; // 6 Hours
+    const isCacheStale = !lastFetch || (now - lastFetch > cacheDuration);
+
+    // Always attempt to fetch from network if no posts in memory or cache is stale
+    if (allPosts.length === 0 || isCacheStale) {
       try {
+        console.log(`Fetching /today feed (Stale: ${isCacheStale})`);
+
         // Construct the URL for today's data
         const today = new Date().toISOString().split('T')[0];
         const url = `https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-/output/${today}.json`;
@@ -127,6 +109,7 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
 
         // Add new posts
         await addPosts(networkPosts);
+        await setLastFetchTime(FEED_TODAY_KEY, now); // Update metadata
 
         localStorage.setItem(LAST_SYNC_TIMESTAMP_KEY, new Date().toISOString());
         postsToReturn = networkPosts;

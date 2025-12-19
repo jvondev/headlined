@@ -37,13 +37,27 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
         const loadData = async () => {
             try {
                 // 1. Try DB
-                const { getPostsByTopic, addPosts } = await import('@/lib/indexeddb');
+                const { getPostsByTopic, addPosts, getLastFetchTime, setLastFetchTime } = await import('@/lib/indexeddb');
                 const cached = await getPostsByTopic(category);
+                const cacheKey = `topic:${category}/${subcategory}`;
+                const lastFetch = await getLastFetchTime(cacheKey);
+                const cacheDuration = 6 * 60 * 60 * 1000; // 6 Hours
+
                 if (cached && cached.length > 0) {
                     setPosts(cached);
                 }
 
-                // 2. Try Network
+                // 2. Check Cache Validity
+                const now = Date.now();
+                if (lastFetch && (now - lastFetch < cacheDuration)) {
+                    // Check if we actually have data though
+                    if (cached && cached.length > 0) {
+                        console.log(`SeoCover cache valid for ${cacheKey}, skipping.`);
+                        return;
+                    }
+                }
+
+                // 3. Try Network
                 const res = await fetch(`${SEO_DATA_URL}/data/${category}/${subcategory}.json`);
                 if (res.ok) {
                     const freshData: any[] = await res.json();
@@ -66,6 +80,9 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
                         if (!cached || cached.length === 0 || cached[0].link !== mapped[0].link) {
                             setPosts(mapped);
                             addPosts(mapped);
+                            await setLastFetchTime(cacheKey, now);
+                        } else {
+                            await setLastFetchTime(cacheKey, now);
                         }
                     }
                 }

@@ -54,7 +54,7 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
                 const cached = await getPostsByTopic(category);
                 const cacheKey = `topic:${category}/${subcategory}`;
                 const lastFetch = await getLastFetchTime(cacheKey);
-                const twelveHours = 12 * 60 * 60 * 1000;
+                const cacheDuration = 6 * 60 * 60 * 1000; // 6 Hours
 
                 // Map cached posts to ScraperPost-like shape if needed, or just use them
                 // DB stores 'Post' type, which is compatible.
@@ -71,7 +71,7 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
 
                 // 2. Check if we really need to fetch network?
                 const now = Date.now();
-                if (lastFetch && (now - lastFetch < twelveHours)) {
+                if (lastFetch && (now - lastFetch < cacheDuration)) {
                     console.log(`Cache valid for ${cacheKey}, skipping network.`);
                     return;
                 }
