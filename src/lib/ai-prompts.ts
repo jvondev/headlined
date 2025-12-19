@@ -13,56 +13,44 @@ function buildCategoryList(): string {
   ).join('\n');
 }
 
-export const ARTICLE_GENERATION_PROMPT_V2 = `You are a world-class strategic content architect and authoritative editor. Your objective is to produce a canonical reference-grade page that secures a #1 ranking by solving user intent with undeniable authority and strategic depth.
+export const ARTICLE_GENERATION_PROMPT_V2 = `You are writing a public reference page intended to become a canonical source for the topic below.
 
-### 1. Pre-Writing Strategic Analysis (Internal Only)
-Before writing, silently analyze the search landscape and reader context:
-1. **User Intent & Background**: Identify the real problem the reader is trying to solve and what decision or understanding they seek. Assume the reader has already seen basic explanations; avoid repeating surface-level information.
-2. **Search Depth Assessment**: Determine why common search results are insufficient for this topic. Focus on the missing explanations, overlooked details, or misunderstood mechanisms that prevent readers from fully understanding the subject.
-3. **Competitive Gap & Angle Selection**: Identify gaps, inaccuracies, or oversimplifications in existing top-ranking content. Choose one clear, defensible perspective or angle and commit to it consistently throughout the article.
-4. **Content Objective**: Produce a resource that meaningfully reduces the need for further searching by providing clarity, depth, and practical understanding—not by claiming completeness, but by earning it through substance.
-> Do **not** explain this analysis or reference other articles unless it directly benefits the reader.
+### Writing Objective
+Produce a reference-grade page that could plausibly be cited as an authoritative explanation of this topic. The page should resolve the search intent clearly, efficiently, and with high trust. This is not a blog post, not documentation, and not marketing.
 
----
-
-### 2. E-E-A-T Execution (Implicit, Not Stated)
-E-E-A-T must **emerge naturally** through the writing. Never label or reference these principles explicitly.
-- **Experience**: Use concrete, real-world details where relevant (specific examples, observed behaviors, timelines, versions, or scenarios). Avoid generic statements.
-- **Expertise**: Prioritize **causality** (why something happens) and **mechanisms** (how it works). Explain processes clearly and accurately without unnecessary jargon or academic tone.
-- **Authoritativeness**: Present information confidently and coherently. Each claim should be supported by reasoning, evidence, or logical explanation rather than opinion or rhetorical emphasis.
-- **Trustworthiness**: Be precise and honest. Clearly distinguish between established facts, reasonable interpretations, and current limitations of knowledge—only when it adds clarity for the reader.
-
-## 3. Input Data
+### Input Data
 - Primary Keyword: {keyword}
 - Related Keywords: {relatedKeywords}
 - Research Context (GROUNDING DATA):
 {groundingContext}
 
-## 4. Editorial & Writing Standards
+### Editorial Standards (STRICTLY FOLLOW)
 
-1. **Readability Targets**: 
-   - Flesch Reading Ease: 60-80 (Plain English).
-   - Gunning Fog Index: 7-12.
-   - Flesch-Kincaid Grade Level: 6-9.
-   - Average Sentence Length: 12-20 words (VARY length naturally to avoid monotony).
-2. **Linguistic Precision**:
-   - Use **Active Voice** instead of passive.
-   - **Replace abstract nouns with concrete terms** (e.g., instead of "infrastructure improvements", use "installing 50,000 charging ports").
-   - Cut unnecessary clauses and "nominalizations" (turn nouns back into verbs).
-3. **Early Resolution**: State the correct general answer early. No withholding for narrative effect.
-4. **Compression Discipline**: Every sentence must add information. Remove filler, rhetorical transitions ("Let's dive in"), and repetitive phrasing.
-5. **Structural Readability**: 
-   - Paragraphs must be concise and information-dense.
-   - **VARY PARAGRAPH COUNTS**: Do not use rigid symmetry (e.g., 3 paragraphs for every H2). Some sections should be thick, others lean.
-   - Use comparison tables or FAQ blocks ONLY if they reduce ambiguity more effectively than prose.
-6. **Tone & Anti-AI Patterns**:
-   - Neutral, professional, no hype, no emotional language.
-   - NO "In conclusion", "It's worth noting", or "In the ever-evolving landscape".
-   - **NO BRACKETED CITATIONS** (e.g., [1] or [Source]). Weave sources naturally into the narrative as authoritative facts.
-   - Avoid stylistic crutches (limit em dashes to 1-2 per article).
-7. **Human-Clean Output**: Avoid repetitive starting words and excessive symmetry. Use a "Human-Clean" rhythm.
+1. **Early Resolution**: State the correct general answer immediately. If a conclusion applies under typical conditions, make it explicit in the first two paragraphs. No withholding for narrative effect.
+2. **Intent Dominance**: Solve the primary search intent fully. Assume the reader is searching for a reliable answer and will leave once satisfied. Optimize for resolution, not engagement.
+3. **Canonical Clarity**: Write as if this page could be cited by articles, tools, or knowledge bases. Avoid personal voice, persuasion, or speculation. 
+4. **Scope Control**: Answer the primary question only. Do not broaden the topic, speculate on future-proof trends, or introduce secondary topics unless they are essential for context.
+5. **Fact-First Authority**: State facts directly. Explain mechanisms, behaviors, or observable bases (causality) behind limits and ranges. Prefer causality over description.
+6. **Reference Elements**: Include structural elements (tables, concise clarification sections, or short FAQ blocks) ONLY if they reduce ambiguity or compress information more clearly than prose. Do not add elements for "completeness" or SEO appearance.
+7. **Linguistic Precision & Readability**:
+   - **Targets**: Flesch 60-80 | Fog 7-12 | FK Grade 6-9.
+   - **Sentence Length**: 12-20 words average (VARY length naturally to avoid monotony).
+   - **Active Voice**: Strictly avoid passive constructions.
+   - **Concrete over Abstract**: Replace abstract nouns with concrete terms.
+8. **Compression Discipline**: Every sentence must contribute new information. Remove filler and rhetorical transitions, but **do not sacrifice depth for brevity**. Use the full word count to provide exhaustive, granular detail on mechanics, history, and technical specifics. Avoid repeating the conclusion.
+9. **Human-Clean & Citable Output**:
+   - **NO** "In conclusion", "In this article", or "In the ever-evolving landscape".
+   - **NO** repetitive phrasing or stylistic crutches (limit em-dashes to 1-2 per article).
+   - **DO weave research sources naturally into the text as markdown links** (e.g., [According to the 2025 project roadmap](url)). Avoid robotic bracketed citations like [1].
+10. **Length & Structural Expansion (STRICT)**:
+    - **Minimum 1,000 words; Target 2,000 - 2,500+ words.**
+    - **Force Depth**: You MUST include at least 3-5 comprehensive H2 sections. Each section must contain at least 3-4 dense paragraphs.
+    - **No Padding**: achieve length by investigating the "Why" and "How" of every sub-topic in the GROUNDING DATA. If the data is sparse, use your internal knowledge to provide the necessary technical context and background.
 
-## Auto-Categorization
+### Final Editorial Gate
+If this page were removed from the internet, would it create a noticeable gap in understanding for this topic? If no, revise until it would.
+
+### Auto-Categorization
 Select the BEST category and subcategory from:
 {categoryList}
 
@@ -72,11 +60,11 @@ Select the BEST category and subcategory from:
   "seoTitle": "High-CTR title with keyword",
   "description": "150-160 chars meta description",
   "seoDescription": "Varied meta description for SEO",
-  "fullText": "Markdown content. 1000-2500+ words. Professional headers (##). Varying paragraph lengths. No bracketed citations.",
+  "fullText": "Markdown content. 2,000+ words. Comprehensive deep-dive with 6-8+ sections. No bracketed citations.",
   "keywords": ["10 LSI keywords from research"],
   "readingTime": number,
-  "userIntent": "Brief analysis of the user's secret goal/intent.",
-  "competitorGap": "What specific gap did we fill to rank #1?",
+  "userIntent": "Brief analysis of the user's primary goal.",
+  "competitorGap": "What specific gap did we fill to be the definitive source?",
   "suggestedCategory": "category id from list",
   "suggestedSubcategory": "subcategory slug from list",
   "sources": [{"title": "Source Name", "url": "https://..."}],
@@ -85,6 +73,8 @@ Select the BEST category and subcategory from:
 }
 
 Output ONLY valid JSON. No markdown code blocks around the JSON.`;
+
+
 
 
 

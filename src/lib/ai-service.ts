@@ -7,7 +7,7 @@ import { gatherGroundingData, formatGroundingContext } from './data-grounding';
 import { AIGenerationInput, AIGenerationOutput } from '@/types/article';
 
 // Model Configuration
-const PRIMARY_MODEL = 'googleai/gemini-3-flash';
+const PRIMARY_MODEL = 'googleai/gemini-3-flash-preview';
 const FALLBACK_MODEL = 'googleai/gemini-2.5-flash';
 
 // Initialize Genkit with Google AI plugin
@@ -80,7 +80,7 @@ export async function generateEnhancedArticle(
         prompt,
         config: {
             temperature: 0.8,
-            maxOutputTokens: 8192,
+            maxOutputTokens: 12288, // Increased to support 2500+ words
         },
     });
 
