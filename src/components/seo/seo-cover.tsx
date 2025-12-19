@@ -27,6 +27,11 @@ interface SeoCoverProps {
 import { SEO_DATA_URL } from '@/lib/seo-config'; // Add import
 
 export function SeoCover({ category, subcategory, title, intro, richTitle, aliases, faqs, posts: initialPosts, relatedTopics }: SeoCoverProps) {
+    const [hasMounted, setHasMounted] = useState(false);
+    useEffect(() => {
+        setHasMounted(true);
+    }, []);
+
     const [posts, setPosts] = useState<Post[]>(initialPosts);
     const [isVisible, setIsVisible] = useState(true);
 
@@ -354,8 +359,9 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
                             <div className="p-4 md:p-6 rounded-3xl border border-border/40 bg-card/20 backdrop-blur-sm">
                                 <h3 className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">Freshness</h3>
                                 <time
-                                    dateTime={posts[0]?.date || new Date().toISOString()}
+                                    dateTime={posts[0]?.date || (hasMounted ? new Date().toISOString() : undefined)}
                                     className="text-2xl md:text-4xl font-bold tracking-tighter block truncate"
+                                    suppressHydrationWarning
                                 >
                                     {latestUpdate.split(',')[0]}
                                 </time>
