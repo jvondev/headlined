@@ -169,7 +169,7 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
         <div
             ref={containerRef}
             className={cn(
-                "w-full h-full bg-background/95 backdrop-blur-3xl overflow-hidden flex flex-col rounded-[32px] md:rounded-[48px] border border-white/10 shadow-2xl",
+                "w-full h-full bg-background/95 backdrop-blur-3xl overflow-hidden flex flex-col rounded-[32px] md:rounded-[48px] border border-white/10",
                 isDismissing && "pointer-events-none"
             )}
         >
