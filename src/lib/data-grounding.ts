@@ -179,32 +179,30 @@ export async function getWikipedia(topic: string): Promise<{
  * MAIN GROUNDING ORCHESTRATOR
  */
 export async function gatherGroundingData(keyword: string): Promise<GroundingData> {
-    console.log('📡 Grounding search for:', keyword);
+    console.log('📡 Grounding search (ALL-IN) for:', keyword);
 
-    const [wikiResult, jinaResults] = await Promise.all([
+    // Run ALL search functions in parallel
+    const [wikiResult, jinaResults, tavilyResult, googleResults] = await Promise.all([
         getWikipedia(keyword),
-        searchJina(keyword)
+        searchJina(keyword),
+        searchTavily(keyword),
+        searchGoogle(keyword)
     ]);
-
-    let tavilyResult: { results: SearchResult[]; answer: string | null } = { results: [], answer: null };
-    let googleResults: SearchResult[] = [];
-
-    const hasEnoughData = (jinaResults.length >= 3) || (wikiResult.summary !== null);
-
-    if (!hasEnoughData) {
-        console.log('🔄 Free sources were thin, calling Tavily/Google fallbacks...');
-        [tavilyResult, googleResults] = await Promise.all([
-            searchTavily(keyword),
-            searchGoogle(keyword)
-        ]);
-    }
 
     const serpResults: SearchResult[] = [];
     const seenUrls = new Set<string>();
-    const allResults = [...jinaResults, ...wikiResult.related, ...tavilyResult.results, ...googleResults];
+
+    // Ordered pool of results for priority-based selection
+    // Priority: Tavily (often better snippets) > Jina > Google > Wiki
+    const allResults = [
+        ...tavilyResult.results,
+        ...jinaResults,
+        ...googleResults,
+        ...wikiResult.related
+    ];
 
     for (const r of allResults) {
-        if (r.url && !seenUrls.has(r.url) && serpResults.length < 5) {
+        if (r.url && !seenUrls.has(r.url) && serpResults.length < 8) {
             if (r.description.includes('Access Denied')) continue;
             serpResults.push(r);
             seenUrls.add(r.url);
@@ -212,6 +210,8 @@ export async function gatherGroundingData(keyword: string): Promise<GroundingDat
     }
 
     const articleContent: string[] = [];
+    // If we have an instant answer or wiki summary, we might not need deep dive, 
+    // but we check if we lack a "definitive" summary.
     if (!tavilyResult.answer && !wikiResult.summary && serpResults.length > 0) {
         const content = await readWithJina(serpResults[0].url);
         if (content) articleContent.push(content);
