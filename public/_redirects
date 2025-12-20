@@ -1,12 +1,12 @@
 # SPA fallback for News Articles
 # This ensures that deep links like /news/topics/sports/2025/12/19/slug 
 # don't 404 and instead load the subcategory hub which handles the article logic.
-/news/:category/:subcategory/* /news/:category/:subcategory/ 200
+/news/:category/:subcategory/* /news/:category/:subcategory 200
 
 # SPA fallback for Legacy/Internal Articles
 # Since /article is a catch-all route with only the root pre-rendered,
 # any subpath must redirect to the root article index.
-/article/* /article/ 200
+/article/* /article 200
 
 # Global fallback for any other non-existent routes
 /* /index.html 200

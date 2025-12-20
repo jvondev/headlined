@@ -55,9 +55,16 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         }
 
         // 2. Match /article/[category]/[subcategory]/[slug] (Internal)
-        const internalMatch = pathname.match(/\/article\/[^\/]+\/[^\/]+\/([^\/\?\#]+)/);
+        // Groups: [1]: category, [2]: subcategory, [3]: slug
+        const internalMatch = pathname.match(/\/article\/([^\/]+)\/([^\/]+)\/([^\/\?\#]+)/);
         if (internalMatch && !pathname.match(/\/article\/\d{4}-\d{2}-\d{2}\//)) {
-            return { date: 'internal', slug: internalMatch[1], isArticle: true, isInternal: true, internalSlug: internalMatch[3] };
+            return {
+                date: 'internal',
+                slug: internalMatch[3],
+                isArticle: true,
+                isInternal: true,
+                internalSlug: internalMatch[3]
+            };
         }
 
         // 3. Match legacy /article/YYYY-MM-DD/slug
