@@ -1,4 +1,3 @@
-'use server';
 
 /**
  * Free Data Grounding Service V4 - 2025 Edition
