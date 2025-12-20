@@ -46,7 +46,10 @@ export function ArticleModal() {
                                 NOTE: Requires ArticleClientPage to be able to read from window.location OR props.
                                 We will check ArticleClientPage next.
                             */}
-                            <ArticleClientPage />
+                            <ArticleClientPage
+                                overrideDate={currentDate || undefined}
+                                overrideSlug={currentSlug || undefined}
+                            />
                         </div>
                     </motion.div>
                 </div>
