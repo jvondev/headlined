@@ -8,7 +8,7 @@ const CDN_BASE_URL = 'https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89
  * Fetch a single article by date and slug from the jsDelivr CDN.
  * Returns null if not found.
  */
-export async function fetchArticleByDateAndSlug(date: string, slug: string): Promise<Post | null> {
+export async function fetchArticleByDateAndSlug(date: string, slug: string, topicHint?: string): Promise<Post | null> {
     const datesToCheck = [
         date,
         // Check previous day (timezone behind)
@@ -32,9 +32,6 @@ export async function fetchArticleByDateAndSlug(date: string, slug: string): Pro
             const post = posts.find(p => p.slug === slug);
 
             if (post) {
-                // Return found post, but keep the REQUESTED date in the object if needed, 
-                // OR prefer the actual found date. 
-                // Using found date is safer for content accuracy.
                 return { ...post, date: checkDate };
             }
         } catch (error) {
@@ -42,7 +39,32 @@ export async function fetchArticleByDateAndSlug(date: string, slug: string): Pro
         }
     }
 
+    // FALLBACK: If we have a hint where the article might be (category/subcategory)
+    // and it wasn't found in the date buckets, traverse that specific bucket.
+    if (topicHint) {
+        return await fetchArticleBySlugAndTopic(slug, topicHint);
+    }
+
     return null;
+}
+
+/**
+ * Fetch article by searching a specific topic feed.
+ * Path should be "category/subcategory" (e.g. "topics/sports")
+ */
+export async function fetchArticleBySlugAndTopic(slug: string, topicPath: string): Promise<Post | null> {
+    try {
+        // topicPath is expected to be "category/subcategory"
+        const url = `${CDN_BASE_URL}/data/${topicPath}.json?t=${Date.now()}`;
+        const response = await fetch(url, { next: { revalidate: 60 } });
+        if (!response.ok) return null;
+
+        const posts: Post[] = await response.json();
+        const post = posts.find(p => p.slug === slug);
+        return post || null;
+    } catch (e) {
+        return null;
+    }
 }
 
 /**

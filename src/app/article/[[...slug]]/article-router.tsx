@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import ArticleClientPage from './client';
 import ArticleListingPage from './listing';
 import InternalArticlePage from './internal';
@@ -8,16 +8,40 @@ import { validateCategoryPath } from '@/lib/category-utils';
 import { useEffect, useState } from 'react';
 import { InternalArticle } from '@/types/article';
 
+import { fetchArticleByDateAndSlug } from '@/lib/article-utils';
+import { getArticleCanonicalPath } from '@/lib/category-utils';
+
 export default function ArticlePageRouter() {
     const params = useParams();
+    const router = useRouter();
     const [mounted, setMounted] = useState(false);
     const [internalArticles, setInternalArticles] = useState<InternalArticle[]>([]);
     const [loading, setLoading] = useState(true);
     const [slugParts, setSlugParts] = useState<string[]>([]);
     const [isDeepLink, setIsDeepLink] = useState(false);
+    const [isLegacyRedirect, setIsLegacyRedirect] = useState(false);
 
     useEffect(() => {
         setMounted(true);
+
+        const checkLegacyRedirect = async (date: string, slug: string) => {
+            try {
+                // Try to find the article to get its category/subcategory
+                // This now uses the fallback logic if not found in date.json
+                const article = await fetchArticleByDateAndSlug(date, slug);
+                if (article) {
+                    const canonical = getArticleCanonicalPath(article);
+                    console.log('Redirecting legacy link to:', canonical);
+                    router.replace(canonical);
+                } else {
+                    // If strictly not found, maybe show 404 or let it fall through?
+                    // Falling through to Client Page handles 404 UI.
+                    setLoading(false);
+                }
+            } catch (e) {
+                setLoading(false);
+            }
+        };
 
         // Detect slug from useParams OR window.location
         const rawSlug = (params.slug as string[]) || [];
@@ -30,19 +54,19 @@ export default function ArticlePageRouter() {
             // Robust match for 4 segments: /article, category, subcategory, slug
             const articleMatch = pathname.match(/\/article\/([^\/]+)\/([^\/]+)\/([^\/\?\#]+)/);
 
-            // Exclude legacy date paths from this specific match if needed, but stricter regex is better
-            const isLegacyDate = pathname.match(/\/article\/\d{4}-\d{2}-\d{2}\//);
+            const legacyMatch = pathname.match(/\/article\/(\d{4}-\d{2}-\d{2})\/([^\/\?\#]+)/);
 
-            if (articleMatch && !isLegacyDate) {
+            if (legacyMatch) {
+                // LEGACY REDIRECT MODE
+                setIsLegacyRedirect(true);
+                setSlugParts([]); // Clear parts so we don't render internal page
+                checkLegacyRedirect(legacyMatch[1], legacyMatch[2].replace(/\/$/, ''));
+                return; // Stop further processing in this useEffect
+            }
+
+            if (articleMatch) {
                 setSlugParts([articleMatch[1], articleMatch[2], articleMatch[3].replace(/\/$/, '')]);
                 setIsDeepLink(true);
-            } else {
-                // Handle legacy /article/YYYY-MM-DD/slug
-                const legacyMatch = pathname.match(/\/article\/(\d{4}-\d{2}-\d{2})\/(.+)/);
-                if (legacyMatch) {
-                    setSlugParts([legacyMatch[1], legacyMatch[2].replace(/\/$/, '')]);
-                    setIsDeepLink(true);
-                }
             }
         }
 
@@ -94,7 +118,8 @@ export default function ArticlePageRouter() {
     // Case 3: Fallback / Loading for other patterns
     // If we detected a deep link but haven't finished loading internal articles yet, KEEP LOADING
     // Do NOT fall through to ArticleClientPage (which might redirect) until we are sure.
-    if (loading && isDeepLink) {
+    // ALSO: If we are processing a legacy redirect, keep showing the loader.
+    if ((loading && isDeepLink) || isLegacyRedirect) {
         return <div className="min-h-screen bg-background animate-pulse" />;
     }
 

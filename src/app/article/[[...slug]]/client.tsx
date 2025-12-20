@@ -19,9 +19,10 @@ type LoadingState = 'loading' | 'success' | 'error' | 'not-article';
 interface ArticleClientPageProps {
     overrideSlug?: string;
     overrideDate?: string;
+    fallbackTopicHint?: string;
 }
 
-export default function ArticleClientPage({ overrideSlug, overrideDate }: ArticleClientPageProps) {
+export default function ArticleClientPage({ overrideSlug, overrideDate, fallbackTopicHint }: ArticleClientPageProps) {
     const router = useRouter();
     const pathname = usePathname();
     const modalContext = useArticleModal();
@@ -51,14 +52,14 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
     const articleInfo = useMemo(() => {
         // If we have data in the modal context, use it immediately
         if (modalContext?.articleData && (modalContext.articleData.slug === overrideSlug || modalContext.articleData.slug === (overrideSlug as any)?.internalSlug)) {
-            return { date: modalContext.currentDate, slug: modalContext.currentSlug, isArticle: true, preLoaded: true };
+            return { date: modalContext.currentDate, slug: modalContext.currentSlug, isArticle: true, preLoaded: true, topicHint: fallbackTopicHint };
         }
 
         if (overrideDate && overrideSlug) {
-            return { date: overrideDate, slug: overrideSlug, isArticle: true };
+            return { date: overrideDate, slug: overrideSlug, isArticle: true, topicHint: fallbackTopicHint };
         }
 
-        if (!pathname) return { date: null, slug: null, isArticle: false };
+        if (!pathname) return { date: null, slug: null, isArticle: false, topicHint: undefined };
 
         // Regex helper for cleaning path segments
         const cleanPathname = pathname?.replace(/\/+$/, '') || '';
@@ -70,7 +71,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
             const year = newsMatch[1];
             const month = newsMatch[2].padStart(2, '0');
             const day = newsMatch[3].padStart(2, '0');
-            return { date: `${year}-${month}-${day}`, slug: newsMatch[4].replace(/\/$/, ''), isArticle: true };
+            return { date: `${year}-${month}-${day}`, slug: newsMatch[4].replace(/\/$/, ''), isArticle: true, topicHint: undefined };
         }
 
         // 2. Match /article/[category]/[subcategory]/[slug] (Internal)
@@ -147,7 +148,17 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
                 }
                 // Priority 3: Fetch news article from CDN
                 else if (articleInfo.date && articleInfo.slug) {
-                    article = await fetchArticleByDateAndSlug(articleInfo.date, articleInfo.slug);
+                    // Add minimum loading time to prevent flicker
+                    const minLoadTime = new Promise(resolve => setTimeout(resolve, 300));
+
+                    const [data] = await Promise.all([
+                        fetchArticleByDateAndSlug(articleInfo.date!, articleInfo.slug!, articleInfo.topicHint),
+                        minLoadTime
+                    ]);
+
+                    if (data) {
+                        article = data;
+                    }
                 }
 
                 if (cancelled) return;

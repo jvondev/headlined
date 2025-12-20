@@ -2,6 +2,8 @@
 
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import { ArticleAd } from '@/components/article-ad';
+import { ArticleCTA } from '@/components/article-cta';
 import Link from 'next/link';
 import { InternalArticle } from '@/types/article';
 import { ArticleFAQ } from '@/components/article-faq';
