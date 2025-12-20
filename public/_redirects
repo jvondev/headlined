@@ -4,7 +4,9 @@
 /news/:category/:subcategory/* /news/:category/:subcategory/ 200
 
 # SPA fallback for Legacy/Internal Articles
-/article/:category/:subcategory/* /article/:category/:subcategory/ 200
+# Since /article is a catch-all route with only the root pre-rendered,
+# any subpath must redirect to the root article index.
+/article/* /article/ 200
 
 # Global fallback for any other non-existent routes
 /* /index.html 200
