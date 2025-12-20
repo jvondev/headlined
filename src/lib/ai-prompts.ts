@@ -48,6 +48,10 @@ Produce a reference-grade page that could plausibly be cited as an authoritative
     - **VARY PARAGRAPH COUNTS**: Do not use rigid symmetry. Some sections should be thick, others lean.
     - **VARY SENTENCE COUNTS**: Do not use rigid symmetry. Some paragraph should be thick, others lean.
     - **No Padding**: achieve length by investigating the "Why" and "How" of every sub-topic in the GROUNDING DATA. If the data is sparse, use your internal knowledge to provide the necessary technical context and background.
+11. **Strategic FAQ Generation**: 
+    - Generate a list of "Frequently Asked Questions" that addresses high-demand search queries and common user pain points identified in research.
+    - Adjust the count of FAQs (typically 3-8) based on the article's complexity. Don't force a count; prioritize high-value questions.
+    - Ensure each answer is concise (2-4 sentences) and highly informative.
 
 ### Final Editorial Gate
 If this page were removed from the internet, would it create a noticeable gap in understanding for this topic? If no, revise until it would.
@@ -71,6 +75,7 @@ Select the BEST category and subcategory from:
   "suggestedSubcategory": "subcategory slug from list",
   "sources": [{"title": "Source Name", "url": "https://..."}],
   "factsCited": ["Specific fact 1 with source", "Specific fact 2 with source"],
+  "faq": [{"question": "Demand-driven question?", "answer": "Concise, expert answer."}],
   "lastVerified": "{today}"
 }
 

@@ -1,5 +1,10 @@
 import { Post } from './index';
 
+export interface FAQItem {
+    question: string;
+    answer: string;
+}
+
 /**
  * Internal Article - extends Post with admin/CMS fields
  */
@@ -19,6 +24,7 @@ export interface InternalArticle extends Post {
     sources?: { title: string; url: string }[];
     factsCited?: string[];
     lastVerified?: string;
+    faq?: FAQItem[];
 }
 
 /**
@@ -58,6 +64,7 @@ export interface AIGenerationOutput {
     sources: { title: string; url: string }[];
     factsCited: string[];
     lastVerified: string;
+    faq: FAQItem[];
     // Legacy fields (optional for backward compat)
     userIntent?: string;
     competitorGap?: string;

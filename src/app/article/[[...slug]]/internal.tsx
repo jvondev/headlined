@@ -1,21 +1,30 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { InternalArticle } from '@/types/article';
-import { ExpandedReader } from '@/components/expanded-reader';
-import { Clock, Tag, ArrowLeft, Share2, Home } from 'lucide-react';
+import { ArticleFAQ } from '@/components/article-faq';
+import { ArticleControls } from '@/components/article-controls';
+import { Clock, Tag, ArrowLeft, Share2, Home, Calendar, User, CheckCircle2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import { cn } from '@/lib/utils';
 
 interface InternalArticlePageProps {
     article: InternalArticle;
 }
 
 export default function InternalArticlePage({ article }: InternalArticlePageProps) {
+    const [fontSize, setFontSize] = useState(20);
+
     const readingTime = useMemo(() => {
         if (article.readingTime && article.readingTime > 0) return article.readingTime;
         const words = (article.fullText || article.description || '').split(/\s+/).length;
         return Math.max(1, Math.ceil(words / 200));
+    }, [article]);
+
+    const textToSpeak = useMemo(() => {
+        return `${article.title}. ${article.description}. ${article.fullText?.replace(/[#*]/g, '')}`;
     }, [article]);
 
     // JSON-LD for SEO
@@ -63,149 +72,171 @@ export default function InternalArticlePage({ article }: InternalArticlePageProp
     };
 
     return (
-        <div className="min-h-screen bg-zinc-950">
-            {/* Navigation */}
-            <nav className="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur border-b border-white/5">
-                <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="min-h-screen bg-white">
+            {/* Header / Navigation */}
+            <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-zinc-100">
+                <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
                     <Link
                         href="/article"
-                        className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+                        className="flex items-center gap-2 text-zinc-500 hover:text-primary transition-colors font-medium"
                     >
                         <ArrowLeft className="w-4 h-4" />
-                        <span className="text-sm font-medium">All Articles</span>
+                        <span className="text-sm">Knowledge Hub</span>
                     </Link>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                         <button
                             onClick={handleShare}
-                            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                            className="p-2.5 rounded-full bg-zinc-50 text-zinc-600 hover:bg-zinc-100 transition-colors border border-zinc-200"
                             title="Share"
                         >
-                            <Share2 className="w-4 h-4 text-white/70" />
+                            <Share2 className="w-4 h-4" />
                         </button>
                         <Link
                             href="/today"
-                            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                            className="p-2.5 rounded-full bg-zinc-50 text-zinc-600 hover:bg-zinc-100 transition-colors border border-zinc-200"
                             title="Home"
                         >
-                            <Home className="w-4 h-4 text-white/70" />
+                            <Home className="w-4 h-4" />
                         </Link>
                     </div>
                 </div>
             </nav>
 
-            {/* Hero Section */}
-            <header className="relative py-12 md:py-16 px-4">
-                <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-                <div className="relative z-10 max-w-4xl mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="space-y-4"
-                    >
-                        {/* Category Pills */}
-                        <div className="flex flex-wrap items-center gap-2">
-                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-white text-black uppercase tracking-wider">
-                                {article.category}
+            <article className="max-w-3xl mx-auto px-4 pt-12 pb-24">
+                {/* Meta Header */}
+                <header className="mb-12">
+                    <div className="flex flex-wrap items-center gap-3 mb-6">
+                        <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-zinc-900 text-white uppercase tracking-widest">
+                            {article.category}
+                        </span>
+                        <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-zinc-100 text-zinc-600 uppercase tracking-widest border border-zinc-200">
+                            {article.subcategory}
+                        </span>
+                        {article.aiGenerated && (
+                            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-purple-50 text-purple-600 border border-purple-100">
+                                <CheckCircle2 className="w-3 h-3" />
+                                VERIFIED EXPERT AI
                             </span>
-                            <span className="px-3 py-1 rounded-full text-xs bg-white/10 text-white/70 border border-white/10">
-                                {article.subcategory}
-                            </span>
-                            {article.aiGenerated && (
-                                <span className="px-3 py-1 rounded-full text-xs bg-purple-500/20 text-purple-400 border border-purple-500/30">
-                                    🤖 AI Generated
-                                </span>
-                            )}
-                        </div>
-
-                        {/* Title */}
-                        <h1 className="text-3xl md:text-5xl font-black text-white leading-tight tracking-tight">
-                            {article.title}
-                        </h1>
-
-                        {/* Description */}
-                        {article.description && (
-                            <p className="text-lg text-white/60 max-w-2xl">
-                                {article.description}
-                            </p>
                         )}
+                    </div>
 
-                        {/* Meta */}
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-white/50">
-                            <span className="flex items-center gap-1">
-                                <Clock className="w-4 h-4" />
-                                {readingTime} min read
-                            </span>
-                            <span>
-                                Updated {new Date(article.updatedAt).toLocaleDateString('en-US', {
-                                    month: 'long',
-                                    day: 'numeric',
-                                    year: 'numeric'
-                                })}
-                            </span>
+                    <h1 className="text-4xl md:text-5xl font-black text-zinc-900 leading-[1.1] tracking-tight mb-8">
+                        {article.title}
+                    </h1>
+
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-zinc-500 font-medium">
+                        <div className="flex items-center gap-2">
+                            <Calendar className="w-4 h-4" />
+                            {new Date(article.updatedAt).toLocaleDateString('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            })}
                         </div>
+                        <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4" />
+                            {readingTime} min read
+                        </div>
+                        <div className="flex items-center gap-2 font-semibold text-zinc-900">
+                            <User className="w-4 h-4" />
+                            Headlined Editorial
+                        </div>
+                    </div>
+                </header>
 
-                        {/* Keywords */}
-                        {article.keywords && article.keywords.length > 0 && (
-                            <div className="flex flex-wrap gap-2 pt-2">
-                                {article.keywords.slice(0, 5).map((keyword, i) => (
-                                    <span
+                {/* Content Body */}
+                <div className="prose prose-zinc prose-lg max-w-none">
+                    <div className="text-xl text-zinc-600 leading-relaxed font-medium mb-12 border-l-4 border-primary/20 pl-6 italic">
+                        {article.description}
+                    </div>
+
+                    <div
+                        className="article-content space-y-8 text-zinc-800 leading-[1.8] font-serif"
+                        style={{ fontSize: `${fontSize}px` }}
+                    >
+                        <ReactMarkdown
+                            components={{
+                                h2: ({ node, ...props }) => <h2 className="text-3xl font-bold text-zinc-900 mt-16 mb-8 scroll-mt-24" {...props} />,
+                                h3: ({ node, ...props }) => <h3 className="text-2xl font-bold text-zinc-900 mt-12 mb-6" {...props} />,
+                                p: ({ node, ...props }) => <p className="mb-6 last:mb-0" {...props} />,
+                                ul: ({ node, ...props }) => <ul className="space-y-3 my-8 list-none pl-6 border-l-2 border-zinc-100" {...props} />,
+                                li: ({ node, ...props }) => (
+                                    <li className="relative" {...props}>
+                                        <span className="absolute -left-6 top-3 w-1.5 h-1.5 rounded-full bg-primary/40" />
+                                        {props.children}
+                                    </li>
+                                ),
+                                a: ({ node, ...props }) => <a className="text-primary font-semibold underline decoration-primary/30 underline-offset-4 hover:decoration-primary transition-all" {...props} />,
+                                blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-primary bg-zinc-50 px-8 py-6 rounded-r-xl italic text-zinc-700 my-10" {...props} />,
+                            }}
+                        >
+                            {article.fullText || ''}
+                        </ReactMarkdown>
+                    </div>
+
+                    {/* FAQ Section */}
+                    {article.faq && article.faq.length > 0 && (
+                        <ArticleFAQ faq={article.faq} />
+                    )}
+
+                    {/* Sources & Trust Elements */}
+                    {(article.sources && article.sources.length > 0) && (
+                        <div className="mt-20 pt-10 border-t border-zinc-100">
+                            <h3 className="text-sm font-bold text-zinc-900 uppercase tracking-widest mb-6">References & Sources</h3>
+                            <div className="grid gap-4">
+                                {article.sources.map((source, i) => (
+                                    <a
                                         key={i}
-                                        className="px-2 py-1 rounded text-xs bg-white/5 text-white/50 border border-white/10"
+                                        href={source.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center justify-between p-4 rounded-xl bg-zinc-50 border border-zinc-100 hover:border-zinc-200 hover:bg-zinc-100 transition-all group"
                                     >
-                                        {keyword}
-                                    </span>
+                                        <span className="text-sm font-semibold text-zinc-700 group-hover:text-zinc-900">{source.title}</span>
+                                        <Share2 className="w-3 h-3 text-zinc-400" />
+                                    </a>
                                 ))}
                             </div>
-                        )}
-                    </motion.div>
+                        </div>
+                    )}
                 </div>
-            </header>
 
-            {/* Content */}
-            <main className="max-w-4xl mx-auto px-4 pb-16">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="rounded-2xl bg-white/[0.02] border border-white/5 overflow-hidden"
-                >
-                    <ExpandedReader
-                        fullText={article.fullText ?? null}
-                        description={article.description}
-                        keywords={article.keywords || []}
-                        slug={article.slug}
-                        date={article.date}
-                        readingTime={readingTime}
-                        isPremium={false}
-                        articleUrl={article.link}
-                        onHighlightSave={() => { }}
-                        onContinueStateChange={() => { }}
-                        onContinueRequest={() => { }}
-                        onDownload={() => { }}
-                        isExporting={false}
-                        onThemeChange={() => { }}
-                        onClose={() => { }}
-                        onStickyChange={() => { }}
-                    />
-                </motion.div>
-            </main>
+                {/* Footnote / Trust Seal */}
+                <footer className="mt-24 pt-12 border-t border-zinc-100 text-center">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-50 border border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-6">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                        Fact-checked & Verified Content
+                    </div>
+                    <p className="text-sm text-zinc-400 max-w-sm mx-auto">
+                        This article is part of Headlined's Knowledge Hub, providing verified, canonical Information on {article.subcategory}.
+                    </p>
+                </footer>
+            </article>
 
-            {/* Back to articles */}
-            <div className="max-w-4xl mx-auto px-4 pb-12">
-                <Link
-                    href="/article"
-                    className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:text-white transition-all"
-                >
-                    <ArrowLeft className="w-4 h-4" />
-                    Back to All Articles
-                </Link>
-            </div>
+            {/* Floating Controls */}
+            <ArticleControls
+                onFontSizeChange={setFontSize}
+                currentFontSize={fontSize}
+                textToSpeak={textToSpeak}
+                onShare={handleShare}
+            />
 
             {/* Structured Data */}
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
+
+            <style jsx global>{`
+                .article-content {
+                    font-size: 1.125rem;
+                }
+                @media (min-width: 768px) {
+                    .article-content {
+                        font-size: 1.25rem;
+                    }
+                }
+            `}</style>
         </div>
     );
 }
