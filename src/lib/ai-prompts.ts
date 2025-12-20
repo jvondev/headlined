@@ -26,37 +26,33 @@ Produce a reference-grade page that could plausibly be cited as an authoritative
 
 ### Editorial Standards (STRICTLY FOLLOW)
 
-1. **Early Resolution**: State the correct general answer immediately. If a conclusion applies under typical conditions, make it explicit in the first two paragraphs. No withholding for narrative effect.
-2. **Topics Strategic Pivoting**: The Seed Topics are not absolute. After analyzing the user intent and GROUNDING DATA, you MUST re-evaluate if there are more technically accurate, high-volume, or authoritative unique angle or content ideas that better resolve the query and have high competitive gap potential. If a specific technical term or high-intent variation has better "canonical potential," pivot the content, title, and "unique angle" field to that superior target.
-3. **Intent Dominance**: Solve the primary search intent fully. Assume the reader is searching for a reliable answer and will leave once satisfied. Optimize for resolution, not engagement. The article must be the "final stop" for the user.
-4. **Canonical Clarity**: Write as if this page could be cited by articles, tools, or knowledge bases. Avoid personal voice, persuasion, or speculation. 
-4. **Scope Control**: Answer the primary question only. Do not broaden the topic, speculate on future-proof trends, or introduce secondary topics unless they are essential for context.
-5. **Fact-First Authority**: State facts directly. Explain mechanisms, behaviors, or observable bases (causality) behind limits and ranges. Prefer causality over description.
-6. **Reference Elements**: Include structural elements (tables, concise clarification sections, or short FAQ blocks) ONLY if they reduce ambiguity or compress information more clearly than prose. Do not add elements for "completeness" or SEO appearance.
-7. **Linguistic Precision & Readability**:
-   - **Simple English**: Use plain English and simple vocabulary that everyday people can easily consume. Avoid academic jargon, complex technical terms, or overly formal language.
-   - **Everyday Relevance**: Ensure the content is relevant to everyday people. Focus on practical, real-world utility and information that solves daily problems.
-   - **Targets**: Flesch Reading Ease 60-80 | Gunning Fog Index 7-12 | Flesch-Kincaid Grade 6-9.
-   - **Sentence Length**: 12-20 words average. Mix short sentences for emphasis with medium ones to avoid monotony. Avoid long, winding clauses.
-   - **Active Voice**: Use active voice instead of passive to keep the tone direct and professional.
-   - **Concrete over Abstract**: Replace abstract nouns (nominalizations) with concrete terms or verbs.
-8. **Compression Discipline**: Every sentence must contribute new information. Remove filler and rhetorical transitions, but **do not sacrifice depth for brevity**. Use the full word count to provide exhaustive, granular detail on mechanics, history, and practical specifics. Avoid repeating the conclusion.
-9. **Human-Clean & Citable Output**:
-   - **NO** "In conclusion", "In this article", or "In the ever-evolving landscape".
-   - **NO** repetitive phrasing or stylistic crutches (limit em-dashes to 1-2 per article).
-   - **NO** personal storytelling or personal tone; maintain a detached, professional, and authoritative stance.
-   - **DO weave research sources naturally into the text as markdown links** (e.g., [According to the 2025 project roadmap](url)). Avoid robotic bracketed citations like [1].
-10. **Length & Structural Expansion for fullText (STRICT)**:
-    - **Minimum 1,000 words; Target 2,000 - 2,500+ words.**
-    - **Force Depth**: You MUST include at least 4-8 comprehensive H2 sections (use h3 if needed). 
-    - **VARY PARAGRAPH COUNTS**: Do not use rigid symmetry. Some h2 and h3 should be thick, others lean.
-    - **VARY SENTENCE COUNTS**: Do not use rigid symmetry. Some paragraph should be thick, others lean.
-    - **No Padding**: achieve length by investigating the "Why" and "How" of every sub-topic in the GROUNDING DATA. If the data is sparse, use your internal knowledge to provide the necessary technical context and background.
-11. **Strategic FAQ Generation**: 
-    - Generate a list of "Frequently Asked Questions" that addresses high-demand search queries and common user pain points identified in research.
-    - Adjust the count of FAQs (typically 3-8) based on the article's complexity. Don't force a count; prioritize high-value questions.
-    - Ensure each answer is concise (2-4 sentences) and highly informative.
-    - **STRICT: DO NOT include the FAQ section or FAQ heading within the "fullText" field. Use ONLY the "faq" JSON field for this content.**
+1. **Search Intent Mastery**: Solve the primary search intent fully. Analyze why a "professional" or "everyday person" is searching for this and provide the solution immediately. The article must be the "final stop" for the user.
+2. **Dynamic Format Selection**: Analyze the keyword and GROUNDING DATA to choose the most competitive angle. Does the reader need a step-by-step guideline? A list of the best solutions? A comparison to alternatives? Use a creative, high-value structure that logically fits the goal.
+3. **Early Resolution**: State the core answer or recommendation in the first two paragraphs. No withholding for narrative effect.
+4. **Canonical Authority**: Write with a professional, detached, and authoritative stance. Use a "Human-Clean" style that avoids AI-isms and robotic patterns.
+5. **Topics Strategic Pivoting**: The Seed Topics are not absolute. After analyzing intent and GROUNDING DATA, you MUST re-evaluate if there are more technically accurate, high-volume, or authoritative unique angles that better resolve the query. If a specific technical term or high-intent variation has better "canonical potential," pivot the content, title, and "unique angle" field to that superior target.
+6. **Fact-First causality**: Explain the "Why" and "How" behind mechanisms. Prefer causality over simple description.
+7. **Linguistic Precision & Readability (STRICT COMPLIANCE)**:
+   - **Tone**: Plain English. Expert but accessible. Active voice ONLY.
+   - **Flesch Reading Ease**: 60-80 (use simple vocabulary, shorter words).
+   - **Gunning Fog Index**: 7-12 (limit words with 3+ syllables).
+   - **Flesch-Kincaid Grade**: 6-9 (suitable for a broad professional and general audience).
+   - **Sentence Length**: 12-20 words average. Mix short, impactful sentences (5-10 words) with moderate ones (15-25 words) for natural rhythm.
+   - **No Nominalizations**: Replace abstract nouns (e.g., "implementation of", "utilization of") with direct verbs (e.g., "implement", "use").
+8. **Compression Discipline**: Every sentence must contribute new information. Eliminate filler, rhetorical questions, and hollow transitions like "In today's world."
+9. **Depth without Bloat**: Use the target word count to provide granular, specific detail on mechanics, history, and real-world application. Achieve length by investigating sub-topics in the GROUNDING DATA, not by padding.
+10. **Human-Clean & Citable Output**:
+    - **NO** "In conclusion", "Lastly", or "In this article".
+    - **NO** repetitive phrasing or stylistic crutches (limit em-dashes to 1-2 per article).
+    - **DO weave research sources naturally as markdown links** (e.g., [According to the 2025 project roadmap](url)).
+11. **Structural Excellence**:
+    - **Minimum 1,500 words; Target 2,000 - 2,500+ words.**
+    - Use 5-10 comprehensive H2 sections. Use H3 and H4 for deep hierarchy when needed.
+    - Include Markdown tables or bulleted lists ONLY when they compress complex data effectively.
+12. **MANDATORY FAQ Generation**: 
+    - You MUST generate 3-8 high-value questions that address common user pain points or Google "People Also Ask" queries.
+    - Each answer must be a concise, expert resolution (2-4 sentences).
+    - **CRITICAL: The "faq" JSON field MUST be populated. DO NOT include these questions or headings anywhere in the "fullText" block.**
 
 ### Final Editorial Gate
 If this page were removed from the internet, would it create a noticeable gap in understanding for this topic? If no, revise until it would.
@@ -106,54 +102,6 @@ export function buildEnhancedArticlePrompt(
     .replace('{today}', new Date().toISOString().split('T')[0]);
 }
 
-/**
- * Legacy prompts for backward compatibility
- */
-export const ARTICLE_GENERATION_PROMPT = `You are generating a canonical reference page. Output structured JSON only.
-
-## Input
-- Primary Keyword: {keyword}
-- Related Keywords: {relatedKeywords}
-- Target Category: {category}
-- Target Subcategory: {subcategory}
-
-## Output Requirements
-- State the answer early
-- Use simple vocabulary easily consumed by everyday people
-- Focus on practical, everyday relevance
-- Stay professional; NO personal tone or storytelling
-- Every sentence must add information
-- Vary sentence length (12-20 words avg)
-- Use Flesch Reading Ease 60-80 | Gunning Fog 7-12 | FK Grade 6-9
-- Use active voice and concrete terms
-
-## JSON Output Schema
-{
-  "title": "Concise, SEO-optimized title (50-60 chars)",
-  "seoTitle": "Title with primary keyword for meta tag",
-  "description": "Meta description summarizing content (150-160 chars)",
-  "seoDescription": "Description with keyword naturally included",
-  "fullText": "Complete article in markdown format.",
-  "keywords": ["array", "of", "10", "relevant", "keywords"],
-  "readingTime": 5,
-  "userIntent": "Brief description of what the user is trying to accomplish",
-  "competitorGap": "What this article provides that typical search results don't"
-}
-
-Output ONLY valid JSON.`;
-
-export function buildArticlePrompt(
-  keyword: string,
-  relatedKeywords: string[] = [],
-  category: string,
-  subcategory: string
-): string {
-  return ARTICLE_GENERATION_PROMPT
-    .replace('{keyword}', keyword)
-    .replace('{relatedKeywords}', relatedKeywords.length > 0 ? relatedKeywords.join(', ') : 'none')
-    .replace('{category}', category)
-    .replace('{subcategory}', subcategory);
-}
 
 export const KEYWORD_EXTRACTION_PROMPT = `Extract the top 10 most relevant keywords from the following content. Return only a JSON array of strings, nothing else.
 

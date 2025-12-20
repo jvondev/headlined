@@ -2,7 +2,7 @@
 
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
-import { buildEnhancedArticlePrompt, buildArticlePrompt, KEYWORD_EXTRACTION_PROMPT, SEO_GENERATION_PROMPT } from './ai-prompts';
+import { buildEnhancedArticlePrompt, KEYWORD_EXTRACTION_PROMPT, SEO_GENERATION_PROMPT } from './ai-prompts';
 import { gatherGroundingData, formatGroundingContext } from './data-grounding';
 import { AIGenerationInput, AIGenerationOutput } from '@/types/article';
 
@@ -101,47 +101,12 @@ export async function generateEnhancedArticle(
 }
 
 /**
- * Legacy generation function (backward compatible)
+ * Generation function - now exclusively uses enhanced V2 generation
  */
 export async function generateArticleContent(
     input: AIGenerationInput
 ): Promise<AIGenerationOutput> {
-    // If no category provided, use enhanced generation with auto-categorization
-    if (!input.category || !input.subcategory) {
-        return generateEnhancedArticle(input.keyword, input.relatedKeywords);
-    }
-
-    // Legacy path with explicit category
-    const prompt = buildArticlePrompt(
-        input.keyword,
-        input.relatedKeywords || [],
-        input.category,
-        input.subcategory
-    );
-
-    const { text } = await generateWithFallback({
-        prompt,
-        config: {
-            temperature: 0.7,
-            maxOutputTokens: 4096,
-        },
-    });
-
-    try {
-        const result = cleanAndParseJSON(text);
-        // Add default values for new fields
-        return {
-            ...result,
-            suggestedCategory: input.category,
-            suggestedSubcategory: input.subcategory,
-            sources: result.sources || [],
-            factsCited: result.factsCited || [],
-            lastVerified: new Date().toISOString().split('T')[0],
-        } as AIGenerationOutput;
-    } catch (e) {
-        console.error('Failed to parse AI response:', text);
-        throw new Error('Failed to parse AI response as JSON');
-    }
+    return generateEnhancedArticle(input.keyword, input.relatedKeywords);
 }
 
 /**
