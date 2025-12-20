@@ -18,17 +18,18 @@ export const ARTICLE_GENERATION_PROMPT_V2 = `You are writing a public reference 
 ### Writing Objective
 Produce a reference-grade page that could plausibly be cited as an authoritative explanation of this topic. The page should resolve the search intent clearly, efficiently, and with high trust. This is not a blog post, not documentation, and not marketing.
 
-### Input Data
-- Primary Keyword: {keyword}
-- Related Keywords: {relatedKeywords}
+### Input Data (Seed Concepts)
+- Seed Primary Keyword: {keyword}
+- Seed Related Keywords: {relatedKeywords}
 - Research Context (GROUNDING DATA):
 {groundingContext}
 
 ### Editorial Standards (STRICTLY FOLLOW)
 
 1. **Early Resolution**: State the correct general answer immediately. If a conclusion applies under typical conditions, make it explicit in the first two paragraphs. No withholding for narrative effect.
-2. **Intent Dominance**: Solve the primary search intent fully. Assume the reader is searching for a reliable answer and will leave once satisfied. Optimize for resolution, not engagement. Based on that, please adjust the keyword to new proposed keywords lists.
-3. **Canonical Clarity**: Write as if this page could be cited by articles, tools, or knowledge bases. Avoid personal voice, persuasion, or speculation. 
+2. **Keyword Strategic Pivoting**: The Seed Keywords are not absolute. After analyzing the user intent and GROUNDING DATA, you MUST re-evaluate if there are more technically accurate, high-volume, or authoritative terms that better resolve the query. If a specific technical term or high-intent variation has better "canonical potential," pivot the content, title, and "keywords" field to that superior target.
+3. **Intent Dominance**: Solve the primary search intent fully. Assume the reader is searching for a reliable answer and will leave once satisfied. Optimize for resolution, not engagement. The article must be the "final stop" for the user.
+4. **Canonical Clarity**: Write as if this page could be cited by articles, tools, or knowledge bases. Avoid personal voice, persuasion, or speculation. 
 4. **Scope Control**: Answer the primary question only. Do not broaden the topic, speculate on future-proof trends, or introduce secondary topics unless they are essential for context.
 5. **Fact-First Authority**: State facts directly. Explain mechanisms, behaviors, or observable bases (causality) behind limits and ranges. Prefer causality over description.
 6. **Reference Elements**: Include structural elements (tables, concise clarification sections, or short FAQ blocks) ONLY if they reduce ambiguity or compress information more clearly than prose. Do not add elements for "completeness" or SEO appearance.
@@ -63,12 +64,12 @@ Select the BEST category and subcategory from:
 
 ## JSON Output Schema
 {
-  "title": "50-60 chars, authoritative, adjust the keyword to suit the content",
-  "seoTitle": "High-CTR title with adjusted keyword",
+  "title": "50-60 chars, authoritative. Reflect your pivoted/optimized keyword strategy.",
+  "seoTitle": "High-CTR title optimized for your re-evaluated primary keyword",
   "description": "150-160 chars meta description",
   "seoDescription": "Varied meta description for SEO",
   "fullText": "Markdown content. 2,000+ words. Comprehensive deep-dive. DO NOT INCLUDE FAQ HERE.",
-  "keywords": ["10 LSI keywords from research, non overlaping"],
+  "keywords": ["10 strategic, high-value keywords based on your pivot/intent analysis"],
   "readingTime": number,
   "userIntent": "Brief analysis of the user's primary goal.",
   "competitorGap": "What specific gap did we fill to be the definitive source?",
