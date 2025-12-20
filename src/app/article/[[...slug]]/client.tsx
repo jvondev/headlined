@@ -10,6 +10,7 @@ import { FloatingActionDock } from '@/components/floating-action-dock';
 import { X, Loader2, AlertCircle, Home, Newspaper, Clock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { PostExportTemplate } from '@/components/post-export-template';
+import { useArticleModal } from '@/context/article-modal-context';
 
 type LoadingState = 'loading' | 'success' | 'error' | 'not-article';
 
@@ -23,6 +24,7 @@ interface ArticleClientPageProps {
 export default function ArticleClientPage({ overrideSlug, overrideDate }: ArticleClientPageProps) {
     const router = useRouter();
     const pathname = usePathname();
+    const modalContext = useArticleModal();
 
     const [post, setPost] = useState<Post | null>(null);
     const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
@@ -47,16 +49,25 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
 
     // Parse date/slug from pathname OR props
     const articleInfo = useMemo(() => {
+        // If we have data in the modal context, use it immediately
+        if (modalContext.articleData && (modalContext.articleData.slug === overrideSlug || modalContext.articleData.slug === (overrideSlug as any)?.internalSlug)) {
+            return { date: modalContext.currentDate, slug: modalContext.currentSlug, isArticle: true, preLoaded: true };
+        }
+
         if (overrideDate && overrideSlug) {
             return { date: overrideDate, slug: overrideSlug, isArticle: true };
         }
 
         if (!pathname) return { date: null, slug: null, isArticle: false };
 
-        // 1. Match /news/[category]/[topic]/YYYY/MM/DD/slug (Allow optional trailing slash)
-        const newsMatch = pathname.match(/\/news\/[^\/]+\/[^\/]+\/(\d{4})\/(\d{2})\/(\d{2})\/([^\/\?\#]+)/);
+        // 1. Match /news/[category]/[topic]/YYYY/MM/DD/slug (Allow optional trailing slash and varying date parts)
+        const newsMatch = pathname.match(/\/news\/[^\/]+\/[^\/]+\/(\d{4})\/(\d{1,2})\/(\d{1,2})\/([^\/\?\#]+)/);
         if (newsMatch) {
-            return { date: `${newsMatch[1]}-${newsMatch[2]}-${newsMatch[3]}`, slug: newsMatch[4], isArticle: true };
+            // Pad month/day with zeros if needed for CDN matching
+            const year = newsMatch[1];
+            const month = newsMatch[2].padStart(2, '0');
+            const day = newsMatch[3].padStart(2, '0');
+            return { date: `${year}-${month}-${day}`, slug: newsMatch[4].replace(/\/$/, ''), isArticle: true };
         }
 
         // 2. Match /article/[category]/[subcategory]/[slug] (Internal)
@@ -64,21 +75,21 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         if (internalMatch && !pathname.match(/\/article\/\d{4}-\d{2}-\d{2}\//)) {
             return {
                 date: 'internal',
-                slug: internalMatch[3],
+                slug: internalMatch[3].replace(/\/$/, ''),
                 isArticle: true,
                 isInternal: true,
-                internalSlug: internalMatch[3]
+                internalSlug: internalMatch[3].replace(/\/$/, '')
             };
         }
 
         // 3. Match legacy /article/YYYY-MM-DD/slug
         const legacyMatch = pathname.match(/\/article\/(\d{4}-\d{2}-\d{2})\/([^\/\?\#]+)/);
         if (legacyMatch) {
-            return { date: legacyMatch[1], slug: legacyMatch[2], isArticle: true };
+            return { date: legacyMatch[1], slug: legacyMatch[2].replace(/\/$/, ''), isArticle: true };
         }
 
         return { date: null, slug: null, isArticle: false };
-    }, [pathname, overrideDate, overrideSlug]);
+    }, [pathname, overrideDate, overrideSlug, modalContext.articleData, modalContext.currentDate, modalContext.currentSlug]);
 
     // ... useEffect for fetching logic needs update to skip if initialPost is provided AND matches
 
@@ -109,13 +120,19 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
             try {
                 let article: Post | null = null;
 
-                if ((articleInfo as any).isInternal) {
-                    // Fetch internal article from our API
+                // Priority 1: Check modal context data (fixes "Not Found" when opening from hub)
+                if (modalContext.articleData && (modalContext.articleData.slug === articleInfo.slug || modalContext.articleData.slug === (articleInfo as any).internalSlug)) {
+                    article = modalContext.articleData;
+                }
+                // Priority 2: Fetch internal article
+                else if ((articleInfo as any).isInternal) {
                     const res = await fetch('/api/articles');
                     const data = await res.json();
                     const articles: any[] = data.articles || [];
                     article = articles.find(a => a.slug === (articleInfo as any).internalSlug) || null;
-                } else if (articleInfo.date && articleInfo.slug) {
+                }
+                // Priority 3: Fetch news article from CDN
+                else if (articleInfo.date && articleInfo.slug) {
                     article = await fetchArticleByDateAndSlug(articleInfo.date, articleInfo.slug);
                 }
 

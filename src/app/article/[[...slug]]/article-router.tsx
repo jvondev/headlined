@@ -27,12 +27,12 @@ export default function ArticlePageRouter() {
             // Handle /article/category/subcategory/slug
             const articleMatch = pathname.match(/\/article\/([^\/]+)\/([^\/]+)\/([^\/\?\#]+)/);
             if (articleMatch) {
-                setSlugParts([articleMatch[1], articleMatch[2], articleMatch[3]]);
+                setSlugParts([articleMatch[1], articleMatch[2], articleMatch[3].replace(/\/$/, '')]);
             } else {
                 // Handle legacy /article/YYYY-MM-DD/slug
                 const legacyMatch = pathname.match(/\/article\/(\d{4}-\d{2}-\d{2})\/(.+)/);
                 if (legacyMatch) {
-                    setSlugParts([legacyMatch[1], legacyMatch[2]]);
+                    setSlugParts([legacyMatch[1], legacyMatch[2].replace(/\/$/, '')]);
                 }
             }
         }
