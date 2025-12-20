@@ -5,7 +5,6 @@ import * as path from 'path';
 import { SeoFeed } from '@/components/seo/SeoFeed';
 import { SeoCover } from '@/components/seo/seo-cover';
 import { SEO_CONFIG, getSeoMetadata, CategoryId } from '@/lib/seo-config';
-import ArticleClientPage from '@/app/article/[[...slug]]/client';
 import { Suspense } from 'react';
 
 // Define Parameter Type
@@ -100,34 +99,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
+import { ArticleOverlay } from './article-overlay';
+
 export default async function NewsCatchAllPage({ params }: Props) {
     const { category: categoryParam, subcategory, articleParams } = await params;
     const category = categoryParam as CategoryId;
 
-    // BRANCH: Article View
-    // URL pattern: /news/[category]/[subcategory]/[year]/[month]/[day]/[slug]
-    // articleParams will be [year, month, day, slug]
-    if (articleParams && articleParams.length >= 4) {
-        const [year, month, day, slug] = articleParams;
-        const date = `${year}-${month}-${day}`;
-        return (
-            <ArticleClientPage
-                overrideDate={date}
-                overrideSlug={slug}
-            />
-        );
-    }
-
-    // BRANCH: Topic View (Default)
-    // We defer all heavy data loading to the client (CSR)
-    // We only need basic SEO metadata here.
-
-    const seo = getSeoMetadata(category, subcategory);
+    const isArticleView = articleParams && articleParams.length >= 4;
+    const [year, month, day, slug] = isArticleView ? articleParams : [null, null, null, null];
+    const date = isArticleView ? `${year}-${month}-${day}` : null;
 
     return (
         <Suspense fallback={<div className="min-h-screen bg-background" />}>
             <main className="h-screen w-full bg-background overflow-hidden relative">
-                <SeoFeed category={category} subcategory={subcategory} initialPosts={[]} />
+                {/* 
+                    Always render the Hub Feed. 
+                    This ensures that if the article is closed, the user is back at the hub.
+                    It also prevents 404/blank screen issues on direct navigation.
+                */}
+                <SeoFeed
+                    category={category}
+                    subcategory={subcategory}
+                    initialPosts={[]}
+                />
+
+                {/* Overlaid Article View - Handled by a client-side wrapper to ensure reliability and no hydration mismatch */}
+                <ArticleOverlay date={date} slug={slug} />
             </main>
         </Suspense>
     );

@@ -1,2 +1,10 @@
-# Handle SPA routing for article pages
-/article/* /article 200
+# SPA fallback for News Articles
+# This ensures that deep links like /news/topics/sports/2025/12/19/slug 
+# don't 404 and instead load the subcategory hub which handles the article logic.
+/news/:category/:subcategory/* /news/:category/:subcategory/ 200
+
+# SPA fallback for Legacy/Internal Articles
+/article/:category/:subcategory/* /article/:category/:subcategory/ 200
+
+# Global fallback for any other non-existent routes
+/* /index.html 200
