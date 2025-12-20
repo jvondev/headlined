@@ -10,16 +10,34 @@ import { InternalArticle } from '@/types/article';
 
 export default function ArticlePageRouter() {
     const params = useParams();
-    const slugParts = (params.slug as string[]) || [];
     const [mounted, setMounted] = useState(false);
     const [internalArticles, setInternalArticles] = useState<InternalArticle[]>([]);
     const [loading, setLoading] = useState(true);
+    const [slugParts, setSlugParts] = useState<string[]>([]);
 
     useEffect(() => {
         setMounted(true);
 
+        // Detect slug from useParams OR window.location
+        const rawSlug = (params.slug as string[]) || [];
+        if (rawSlug.length > 0) {
+            setSlugParts(rawSlug);
+        } else {
+            const pathname = window.location.pathname;
+            // Handle /article/category/subcategory/slug
+            const articleMatch = pathname.match(/\/article\/([^\/]+)\/([^\/]+)\/([^\/\?\#]+)/);
+            if (articleMatch) {
+                setSlugParts([articleMatch[1], articleMatch[2], articleMatch[3]]);
+            } else {
+                // Handle legacy /article/YYYY-MM-DD/slug
+                const legacyMatch = pathname.match(/\/article\/(\d{4}-\d{2}-\d{2})\/(.+)/);
+                if (legacyMatch) {
+                    setSlugParts([legacyMatch[1], legacyMatch[2]]);
+                }
+            }
+        }
+
         // Fetch published articles (this works client-side)
-        // We fetch these even if slug length is not 3, because it's cheap and provides the data needed for Case 2
         fetch('/api/articles')
             .then(res => res.json())
             .then(data => {
@@ -27,13 +45,13 @@ export default function ArticlePageRouter() {
                 setLoading(false);
             })
             .catch(() => setLoading(false));
-    }, []);
+    }, [params.slug]);
 
     // Prevent hydration mismatch
     if (!mounted) return <div className="min-h-screen bg-background" />;
 
     // Case 1: /article (root) -> Show article listing page
-    if (slugParts.length === 0) {
+    if (slugParts.length === 0 && !loading) {
         return <ArticleListingPage />;
     }
 

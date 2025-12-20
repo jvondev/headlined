@@ -46,15 +46,22 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
             return { date: overrideDate, slug: overrideSlug, isArticle: true };
         }
 
-        // Match /news/[category]/[topic]/YYYY/MM/DD/slug
-        // Use a more robust regex that handles optional trailing slashes and ensures clean slug capture
-        const newsMatch = pathname?.match(/\/news\/[^\/]+\/[^\/]+\/(\d{4})\/(\d{2})\/(\d{2})\/([^\/\?\#]+)/);
+        if (!pathname) return { date: null, slug: null, isArticle: false };
+
+        // 1. Match /news/[category]/[topic]/YYYY/MM/DD/slug
+        const newsMatch = pathname.match(/\/news\/[^\/]+\/[^\/]+\/(\d{4})\/(\d{2})\/(\d{2})\/([^\/\?\#]+)/);
         if (newsMatch) {
             return { date: `${newsMatch[1]}-${newsMatch[2]}-${newsMatch[3]}`, slug: newsMatch[4], isArticle: true };
         }
 
-        // Match legacy /article/YYYY-MM-DD/slug
-        const legacyMatch = pathname?.match(/\/article\/(\d{4}-\d{2}-\d{2})\/(.+)/);
+        // 2. Match /article/[category]/[subcategory]/[slug] (Internal)
+        const internalMatch = pathname.match(/\/article\/[^\/]+\/[^\/]+\/([^\/\?\#]+)/);
+        if (internalMatch && !pathname.match(/\/article\/\d{4}-\d{2}-\d{2}\//)) {
+            return { date: 'internal', slug: internalMatch[1], isArticle: true, isInternal: true, internalSlug: internalMatch[3] };
+        }
+
+        // 3. Match legacy /article/YYYY-MM-DD/slug
+        const legacyMatch = pathname.match(/\/article\/(\d{4}-\d{2}-\d{2})\/([^\/\?\#]+)/);
         if (legacyMatch) {
             return { date: legacyMatch[1], slug: legacyMatch[2], isArticle: true };
         }
@@ -70,10 +77,15 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         let cancelled = false;
 
         async function loadArticle() {
-            if (!articleInfo.isArticle || !articleInfo.date || !articleInfo.slug) {
-                // If we are at /article root or invalid path, handle gracefully
-                if (pathname === '/article' || pathname === '/article/') {
+            if (!articleInfo.isArticle) {
+                // Determine if we should redirect or show error
+                const isArticleRoot = pathname === '/article' || pathname === '/article/';
+                const isNewsRoot = pathname?.startsWith('/news/');
+
+                if (isArticleRoot) {
                     router.replace('/today');
+                } else if (isNewsRoot) {
+                    setLoadingState('not-article');
                 } else {
                     setLoadingState('error');
                 }
@@ -83,7 +95,17 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
             setLoadingState('loading');
 
             try {
-                const article = await fetchArticleByDateAndSlug(articleInfo.date, articleInfo.slug);
+                let article: Post | null = null;
+
+                if ((articleInfo as any).isInternal) {
+                    // Fetch internal article from our API
+                    const res = await fetch('/api/articles');
+                    const data = await res.json();
+                    const articles: any[] = data.articles || [];
+                    article = articles.find(a => a.slug === (articleInfo as any).internalSlug) || null;
+                } else if (articleInfo.date && articleInfo.slug) {
+                    article = await fetchArticleByDateAndSlug(articleInfo.date, articleInfo.slug);
+                }
 
                 if (cancelled) return;
 
@@ -97,10 +119,12 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
                 document.title = `${article.title} | Headlined`;
 
                 // Fetch related articles
-                const allPosts = await fetchPostsByDate(articleInfo.date);
-                if (!cancelled) {
-                    const related = getRelatedArticles(article, allPosts, 10);
-                    setRelatedPosts(related);
+                if (article.date) {
+                    const allPosts = await fetchPostsByDate(article.date);
+                    if (!cancelled) {
+                        const related = getRelatedArticles(article, allPosts, 10);
+                        setRelatedPosts(related);
+                    }
                 }
             } catch (error) {
                 console.error('Failed to load article:', error);
@@ -157,8 +181,28 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
     }, [post, pathname]);
 
     const handleClose = () => {
-        // If we have history, go back (smooth SPA feel)
-        // Otherwise go to home (e.g. deep link landing)
+        // Smart Close logic:
+        // 1. If we are on a news path, try to go back to the Hub
+        if (pathname?.startsWith('/news/')) {
+            const hubMatch = pathname.match(/^(\/news\/[^\/]+\/[^\/]+)/);
+            if (hubMatch) {
+                router.push(hubMatch[1]);
+                return;
+            }
+        }
+
+        // 2. If we are on an internal article path, go to article list
+        if (pathname?.startsWith('/article/')) {
+            // Check if it was a legacy date path
+            if (pathname.match(/\/article\/\d{4}-\d{2}-\d{2}\//)) {
+                router.push('/today');
+                return;
+            }
+            router.push('/article');
+            return;
+        }
+
+        // 3. Fallback
         if (window.history.length > 2) {
             router.back();
         } else {
@@ -238,6 +282,11 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
                 </motion.div>
             </div>
         );
+    }
+
+    // Non-article state (Hub landing)
+    if (loadingState === 'not-article') {
+        return null;
     }
 
     // Error state
