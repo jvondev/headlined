@@ -42,9 +42,11 @@ Produce a reference-grade page that could plausibly be cited as an authoritative
    - **NO** "In conclusion", "In this article", or "In the ever-evolving landscape".
    - **NO** repetitive phrasing or stylistic crutches (limit em-dashes to 1-2 per article).
    - **DO weave research sources naturally into the text as markdown links** (e.g., [According to the 2025 project roadmap](url)). Avoid robotic bracketed citations like [1].
-10. **Length & Structural Expansion (STRICT)**:
+10. **Length & Structural Expansion for fullText (STRICT)**:
     - **Minimum 1,000 words; Target 2,000 - 2,500+ words.**
-    - **Force Depth**: You MUST include at least 3-5 comprehensive H2 sections. Each section must contain at least 3-4 dense paragraphs.
+    - **Force Depth**: You MUST include at least 4-8 comprehensive H2 sections (use h3 if needed). 
+    - **VARY PARAGRAPH COUNTS**: Do not use rigid symmetry. Some sections should be thick, others lean.
+    - **VARY SENTENCE COUNTS**: Do not use rigid symmetry. Some paragraph should be thick, others lean.
     - **No Padding**: achieve length by investigating the "Why" and "How" of every sub-topic in the GROUNDING DATA. If the data is sparse, use your internal knowledge to provide the necessary technical context and background.
 
 ### Final Editorial Gate
