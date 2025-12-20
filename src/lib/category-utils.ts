@@ -90,3 +90,13 @@ export function getArticleCanonicalPath(post: Post): string {
 
     return `/news/${category}/${subcategory}/${year}/${month}/${day}/${post.slug}`;
 }
+
+/**
+ * Validate category and subcategory exist
+ */
+export function validateCategoryPath(category: string, subcategory: string): boolean {
+    const cat = CATEGORIES.find(c => c.id === category);
+    if (!cat) return false;
+    return cat.items.some(item => item.slug === subcategory);
+}
+
