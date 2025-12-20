@@ -28,6 +28,11 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
     const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
     const [loadingState, setLoadingState] = useState<LoadingState>('loading');
     const [readerDarkMode, setReaderDarkMode] = useState(true);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Floating Action Dock state
     const [hasMoreContent, setHasMoreContent] = useState(false);
@@ -48,14 +53,13 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
 
         if (!pathname) return { date: null, slug: null, isArticle: false };
 
-        // 1. Match /news/[category]/[topic]/YYYY/MM/DD/slug
+        // 1. Match /news/[category]/[topic]/YYYY/MM/DD/slug (Allow optional trailing slash)
         const newsMatch = pathname.match(/\/news\/[^\/]+\/[^\/]+\/(\d{4})\/(\d{2})\/(\d{2})\/([^\/\?\#]+)/);
         if (newsMatch) {
             return { date: `${newsMatch[1]}-${newsMatch[2]}-${newsMatch[3]}`, slug: newsMatch[4], isArticle: true };
         }
 
         // 2. Match /article/[category]/[subcategory]/[slug] (Internal)
-        // Groups: [1]: category, [2]: subcategory, [3]: slug
         const internalMatch = pathname.match(/\/article\/([^\/]+)\/([^\/]+)\/([^\/\?\#]+)/);
         if (internalMatch && !pathname.match(/\/article\/\d{4}-\d{2}-\d{2}\//)) {
             return {
@@ -86,14 +90,15 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         async function loadArticle() {
             if (!articleInfo.isArticle) {
                 // Determine if we should redirect or show error
-                const isArticleRoot = pathname === '/article' || pathname === '/article/';
-                const isNewsRoot = pathname?.startsWith('/news/');
+                const cleanPath = pathname?.replace(/\/+$/, '') || '';
+                const isArticleRoot = cleanPath === '/article';
+                const isNewsRoot = cleanPath.startsWith('/news/');
 
-                if (isArticleRoot) {
+                if (isArticleRoot && mounted) {
                     router.replace('/today');
                 } else if (isNewsRoot) {
                     setLoadingState('not-article');
-                } else {
+                } else if (mounted) {
                     setLoadingState('error');
                 }
                 return;

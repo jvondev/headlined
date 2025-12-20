@@ -9,6 +9,7 @@ const withPWAConfig = withPWA({
 
 const nextConfig: NextConfig = {
   output: process.env.NODE_ENV === 'development' && process.env.NO_EXPORT ? undefined : 'export',
+  trailingSlash: true,
   ...withPWAConfig,
   /* config options here */
   typescript: {
