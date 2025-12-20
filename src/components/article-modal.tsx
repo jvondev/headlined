@@ -7,7 +7,10 @@ import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export function ArticleModal() {
-    const { isOpen, closeArticle, currentSlug, currentDate } = useArticleModal();
+    const modalContext = useArticleModal();
+
+    if (!modalContext) return null;
+    const { isOpen, closeArticle, currentSlug, currentDate } = modalContext;
 
     // We don't need to pass params because ArticleClientPage uses useParams/usePathname
     // BUT, since we are faking the URL with pushState, Next.js hooks might not update immediately or correctly

@@ -39,7 +39,7 @@ import { useArticleModal } from "@/context/article-modal-context";
 // ... inside component ...
 const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest, onSave, isSaved, onShare, isPremium }) => {
     const router = useRouter();
-    const { openArticle } = useArticleModal();
+    const modalContext = useArticleModal();
 
     const isCTA = post.slug === 'premium-cta';
 
@@ -66,8 +66,12 @@ const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlo
 
         const postDate = post.date || new Date().toISOString().split('T')[0];
 
-        // Open modal instead of navigating
-        openArticle(postDate, post.slug, post);
+        // Open modal instead of navigating, fallback to direct navigation if provider is missing
+        if (modalContext) {
+            modalContext.openArticle(postDate, post.slug, post);
+        } else {
+            router.push(getArticleCanonicalPath(post));
+        }
     };
 
 

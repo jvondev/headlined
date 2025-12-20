@@ -94,10 +94,8 @@ export function ArticleModalProvider({ children }: { children: ReactNode }) {
     );
 }
 
-export function useArticleModal() {
+export const useArticleModal = () => {
     const context = useContext(ArticleModalContext);
-    if (context === undefined) {
-        throw new Error('useArticleModal must be used within a ArticleModalProvider');
-    }
-    return context;
-}
+    // Return null instead of throwing to allow robust usage in landing pages
+    return context || null;
+};

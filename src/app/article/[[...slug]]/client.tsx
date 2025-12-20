@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Post } from '@/types';
@@ -50,7 +50,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
     // Parse date/slug from pathname OR props
     const articleInfo = useMemo(() => {
         // If we have data in the modal context, use it immediately
-        if (modalContext.articleData && (modalContext.articleData.slug === overrideSlug || modalContext.articleData.slug === (overrideSlug as any)?.internalSlug)) {
+        if (modalContext?.articleData && (modalContext.articleData.slug === overrideSlug || modalContext.articleData.slug === (overrideSlug as any)?.internalSlug)) {
             return { date: modalContext.currentDate, slug: modalContext.currentSlug, isArticle: true, preLoaded: true };
         }
 
@@ -89,7 +89,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         }
 
         return { date: null, slug: null, isArticle: false };
-    }, [pathname, overrideDate, overrideSlug, modalContext.articleData, modalContext.currentDate, modalContext.currentSlug]);
+    }, [pathname, overrideDate, overrideSlug, modalContext?.articleData, modalContext?.currentDate, modalContext?.currentSlug]);
 
     // ... useEffect for fetching logic needs update to skip if initialPost is provided AND matches
 
@@ -102,14 +102,20 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
             if (!articleInfo.isArticle) {
                 // Determine if we should redirect or show error
                 const cleanPath = pathname?.replace(/\/+$/, '') || '';
-                const isArticleRoot = cleanPath === '/article';
+                const isArticleRoot = cleanPath === '/article' || cleanPath === '/article/';
                 const isNewsRoot = cleanPath.startsWith('/news/');
 
-                if (isArticleRoot && mounted) {
+                // CRITICAL: Only redirect if we are SURE we are at the root AND it's not a deep article path
+                // pathname should ONLY contain segment /article or /news/category/subcategory
+                const pathSegments = cleanPath.split('/').filter(Boolean);
+
+                if (isArticleRoot && mounted && pathSegments.length === 1) {
                     router.replace('/today');
                 } else if (isNewsRoot) {
+                    // For news root, just set state, don't redirect away
                     setLoadingState('not-article');
                 } else if (mounted) {
+                    // Check if it's a deep path but regex failed - still set error but be cautious
                     setLoadingState('error');
                 }
                 return;
@@ -121,7 +127,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
                 let article: Post | null = null;
 
                 // Priority 1: Check modal context data (fixes "Not Found" when opening from hub)
-                if (modalContext.articleData && (modalContext.articleData.slug === articleInfo.slug || modalContext.articleData.slug === (articleInfo as any).internalSlug)) {
+                if (modalContext?.articleData && (modalContext.articleData.slug === articleInfo.slug || modalContext.articleData.slug === (articleInfo as any).internalSlug)) {
                     article = modalContext.articleData;
                 }
                 // Priority 2: Fetch internal article
@@ -165,7 +171,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
 
         loadArticle();
         return () => { cancelled = true; };
-    }, [articleInfo, pathname, router]);
+    }, [articleInfo, pathname, router, modalContext?.articleData]);
 
     // Construct JSON-LD for SEO
     const jsonLd = useMemo(() => {
@@ -209,7 +215,12 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         };
     }, [post, pathname]);
 
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
+        if (modalContext?.isOpen) {
+            modalContext.closeArticle();
+            return;
+        }
+
         // Smart Close logic:
         // 1. If we are on a news path, try to go back to the Hub
         if (pathname?.startsWith('/news/')) {
@@ -237,7 +248,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         } else {
             router.push('/today');
         }
-    };
+    }, [router, pathname, modalContext]);
 
     // Handle download/export
     const handleDownload = async (platform: 'tiktok' | 'instagram') => {
