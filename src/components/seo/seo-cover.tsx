@@ -123,7 +123,11 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
     const allTopics = posts.map(p => p.topic).filter(Boolean);
     const topicCounts: Record<string, number> = {};
     allTopics.forEach(t => {
-        if (t) topicCounts[t] = (topicCounts[t] || 0) + 1;
+        if (!t) return;
+        const types = Array.isArray(t) ? t : [t];
+        types.forEach(name => {
+            topicCounts[name] = (topicCounts[name] || 0) + 1;
+        });
     });
     const topTopics = Object.entries(topicCounts)
         .sort((a, b) => b[1] - a[1])
@@ -320,7 +324,7 @@ export function SeoCover({ category, subcategory, title, intro, richTitle, alias
                             <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-border/30 flex items-center gap-4 text-[10px] md:text-xs text-muted-foreground">
                                 <span>Based on {totalArticles} sources</span>
                                 <span className="w-1 h-1 rounded-full bg-border"></span>
-                                <span>AI Curated</span>
+                                <span>Expertly Curated</span>
                             </div>
                         </div>
 

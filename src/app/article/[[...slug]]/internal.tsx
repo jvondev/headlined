@@ -113,9 +113,9 @@ export default function InternalArticlePage({ article }: InternalArticlePageProp
                             {article.subcategory}
                         </span>
                         {article.aiGenerated && (
-                            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-purple-50 text-purple-600 border border-purple-100">
+                            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
                                 <CheckCircle2 className="w-3 h-3" />
-                                VERIFIED EXPERT AI
+                                VERIFIED EXPERT CONTENT
                             </span>
                         )}
                     </div>

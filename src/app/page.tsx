@@ -62,7 +62,7 @@ const features = [
   {
     Icon: BookText,
     name: 'Article Summary',
-    description: 'Get the gist of any article with AI-powered summaries.',
+    description: 'Get the gist of any article with smart summaries.',
     href: '/',
     background: <div />,
     className: 'lg:col-start-3 lg:col-end-4 lg:row-start-1 lg:row-end-2',

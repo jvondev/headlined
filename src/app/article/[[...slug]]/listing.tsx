@@ -77,8 +77,8 @@ export default function ArticleListingPage() {
                                 key={cat}
                                 onClick={() => setSelectedCategory(cat)}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === cat
-                                        ? 'bg-primary text-primary-foreground'
-                                        : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-muted hover:bg-muted/80 text-muted-foreground'
                                     }`}
                             >
                                 {cat === 'all' ? 'All' : cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -141,8 +141,8 @@ export default function ArticleListingPage() {
                                                 {article.category}
                                             </span>
                                             {article.aiGenerated && (
-                                                <span className="px-2 py-0.5 rounded text-xs bg-purple-500/10 text-purple-500">
-                                                    AI Generated
+                                                <span className="px-2 py-0.5 rounded text-xs bg-emerald-500/10 text-emerald-600">
+                                                    Verified Content
                                                 </span>
                                             )}
                                         </div>

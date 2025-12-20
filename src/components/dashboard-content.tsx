@@ -140,8 +140,14 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
       }
 
       const subscribedNames = subscribedTopics.map(t => t.name);
-      const subscribed = filteredPosts.filter(p => p.topic && subscribedNames.includes(p.topic));
-      const others = filteredPosts.filter(p => !p.topic || !subscribedNames.includes(p.topic));
+      const isSubscribed = (topic: string | string[] | null | undefined) => {
+        if (!topic) return false;
+        if (Array.isArray(topic)) return topic.some(t => subscribedNames.includes(t));
+        return subscribedNames.includes(topic);
+      };
+
+      const subscribed = filteredPosts.filter(p => isSubscribed(p.topic));
+      const others = filteredPosts.filter(p => !isSubscribed(p.topic));
 
       setRecentPosts(subscribed.slice(0, 10));
       setTrendingPosts(others.slice(0, 5));
@@ -183,11 +189,18 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
 
   // Group history by Topics (based on post.topic field)
   const groupedTopics = readHistory.reduce((acc, post) => {
-    const topicName = post.topic;
-    if (topicName && subscribedTopics.some(t => t.name === topicName)) {
-      if (!acc[topicName]) acc[topicName] = [];
-      acc[topicName].push(post);
-    }
+    const topic = post.topic;
+    if (!topic) return acc;
+
+    const topicsToProcess = Array.isArray(topic) ? topic : [topic];
+
+    topicsToProcess.forEach(tName => {
+      if (subscribedTopics.some(t => t.name === tName)) {
+        if (!acc[tName]) acc[tName] = [];
+        acc[tName].push(post);
+      }
+    });
+
     return acc;
   }, {} as Record<string, (Post & { readAt: string })[]>);
 
@@ -290,7 +303,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
   ];
 
   const mockInterestStats = [
-    { interest: "AI", count: 8, percentage: 40 },
+    { interest: "Digital", count: 8, percentage: 40 },
     { interest: "Space", count: 6, percentage: 30 },
     { interest: "Wellness", count: 6, percentage: 30 }
   ];
@@ -315,7 +328,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
         acc[interest.name] = mockHistory.slice(0, Math.floor(Math.random() * 3) + 1);
         return acc;
       }, {} as Record<string, (Post & { readAt: string })[]>)
-      : { "AI": mockHistory.slice(0, 2), "Space": mockHistory.slice(3, 5) } // Fallback if no subs
+      : { "Digital": mockHistory.slice(0, 2), "Space": mockHistory.slice(3, 5) } // Fallback if no subs
   ) : groupedInterests;
 
   if (loading) return null;
