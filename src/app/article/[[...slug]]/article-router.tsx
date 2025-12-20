@@ -60,6 +60,11 @@ export default function ArticlePageRouter() {
         const [category, subcategory, articleSlug] = slugParts;
 
         if (validateCategoryPath(category, subcategory)) {
+            // If still loading, show a skeleton instead of falling through
+            if (loading) {
+                return <div className="min-h-screen bg-background animate-pulse" />;
+            }
+
             // Find in the fetched articles
             const internalArticle = internalArticles.find(
                 a => a.category === category && a.subcategory === subcategory && a.slug === articleSlug
@@ -68,16 +73,15 @@ export default function ArticlePageRouter() {
             if (internalArticle && internalArticle.status === 'published') {
                 return <InternalArticlePage article={internalArticle} />;
             }
-
-            // If still loading, show a skeleton
-            if (loading) {
-                return <div className="min-h-screen bg-background animate-pulse" />;
-            }
         }
     }
 
-    // Case 3: Fallback - render the Client Page for legacy/external news articles
-    // This component already handles both /news and legacy /article/YYYY-MM-DD paths
+    // Case 3: Fallback - render the Client Page for news articles or not-found
+    // We only render this if we are NOT in the middle of loading an internal article
+    if (loading && slugParts.length > 0) {
+        return <div className="min-h-screen bg-background animate-pulse" />;
+    }
+
     return <ArticleClientPage />;
 }
 

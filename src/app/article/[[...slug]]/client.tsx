@@ -60,10 +60,13 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
 
         if (!pathname) return { date: null, slug: null, isArticle: false };
 
-        // 1. Match /news/[category]/[topic]/YYYY/MM/DD/slug (Allow optional trailing slash and varying date parts)
+        // Regex helper for cleaning path segments
+        const cleanPathname = pathname?.replace(/\/+$/, '') || '';
+
+        // 1. Match /news/[category]/[topic]/YYYY/MM/DD/slug
+        // Pattern: /news/category/subcategory/year/month/day/slug
         const newsMatch = pathname.match(/\/news\/[^\/]+\/[^\/]+\/(\d{4})\/(\d{1,2})\/(\d{1,2})\/([^\/\?\#]+)/);
         if (newsMatch) {
-            // Pad month/day with zeros if needed for CDN matching
             const year = newsMatch[1];
             const month = newsMatch[2].padStart(2, '0');
             const day = newsMatch[3].padStart(2, '0');
@@ -71,15 +74,20 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         }
 
         // 2. Match /article/[category]/[subcategory]/[slug] (Internal)
+        // Ensure we don't match the root Hub or legacy date paths here
         const internalMatch = pathname.match(/\/article\/([^\/]+)\/([^\/]+)\/([^\/\?\#]+)/);
         if (internalMatch && !pathname.match(/\/article\/\d{4}-\d{2}-\d{2}\//)) {
-            return {
-                date: 'internal',
-                slug: internalMatch[3].replace(/\/$/, ''),
-                isArticle: true,
-                isInternal: true,
-                internalSlug: internalMatch[3].replace(/\/$/, '')
-            };
+            // Check if it's actually 3 segments after /article/
+            const segments = pathname.split('/').filter(Boolean);
+            if (segments.length >= 4 && segments[0] === 'article') {
+                return {
+                    date: 'internal',
+                    slug: internalMatch[3].replace(/\/$/, ''),
+                    isArticle: true,
+                    isInternal: true,
+                    internalSlug: internalMatch[3].replace(/\/$/, '')
+                };
+            }
         }
 
         // 3. Match legacy /article/YYYY-MM-DD/slug
@@ -87,6 +95,8 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         if (legacyMatch) {
             return { date: legacyMatch[1], slug: legacyMatch[2].replace(/\/$/, ''), isArticle: true };
         }
+
+        return { date: null, slug: null, isArticle: false };
 
         return { date: null, slug: null, isArticle: false };
     }, [pathname, overrideDate, overrideSlug, modalContext?.articleData, modalContext?.currentDate, modalContext?.currentSlug]);
@@ -100,22 +110,20 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
 
         async function loadArticle() {
             if (!articleInfo.isArticle) {
-                // Determine if we should redirect or show error
                 const cleanPath = pathname?.replace(/\/+$/, '') || '';
-                const isArticleRoot = cleanPath === '/article' || cleanPath === '/article/';
-                const isNewsRoot = cleanPath.startsWith('/news/');
-
-                // CRITICAL: Only redirect if we are SURE we are at the root AND it's not a deep article path
-                // pathname should ONLY contain segment /article or /news/category/subcategory
                 const pathSegments = cleanPath.split('/').filter(Boolean);
 
-                if (isArticleRoot && mounted && pathSegments.length === 1) {
-                    router.replace('/today');
+                // Determine if we should show knowledge base or error
+                const isArticleRoot = cleanPath === '/article';
+                const isNewsRoot = cleanPath.startsWith('/news/') && pathSegments.length <= 3;
+
+                if (isArticleRoot && mounted) {
+                    setLoadingState('not-article'); // Show Knowledge Hub list
                 } else if (isNewsRoot) {
-                    // For news root, just set state, don't redirect away
-                    setLoadingState('not-article');
+                    setLoadingState('not-article'); // Show News Hub feed
                 } else if (mounted) {
-                    // Check if it's a deep path but regex failed - still set error but be cautious
+                    // It's a deep path but article parsing failed
+                    // Wait a bit to ensure it's not a slow hydration
                     setLoadingState('error');
                 }
                 return;

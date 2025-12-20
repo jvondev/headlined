@@ -14,7 +14,7 @@ export function ArticleOverlay({ date: propDate, slug: propSlug }: { date: strin
         // we detect the article from the URL.
         if (!propDate || !propSlug) {
             const pathname = window.location.pathname;
-            // Pattern: /news/[category]/[subcategory]/YYYY/MM/DD/slug (Allow 1-2 digit month/day)
+            // Pattern: /news/[category]/[subcategory]/YYYY/MM/DD/slug (Allow 1-2 digit month/day and optional trailing slash)
             const match = pathname.match(/\/news\/[^\/]+\/[^\/]+\/(\d{4})\/(\d{1,2})\/(\d{1,2})\/([^\/\?\#]+)/);
             if (match) {
                 const year = match[1];
