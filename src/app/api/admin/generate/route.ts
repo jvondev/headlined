@@ -1,5 +1,10 @@
+export const dynamic = 'force-static';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateEnhancedArticle } from '@/lib/ai-service';
+
+export async function GET() {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+}
 
 // Only allow in development
 function checkDevMode() {
