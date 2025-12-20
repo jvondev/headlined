@@ -34,14 +34,17 @@ Produce a reference-grade page that could plausibly be cited as an authoritative
 5. **Fact-First Authority**: State facts directly. Explain mechanisms, behaviors, or observable bases (causality) behind limits and ranges. Prefer causality over description.
 6. **Reference Elements**: Include structural elements (tables, concise clarification sections, or short FAQ blocks) ONLY if they reduce ambiguity or compress information more clearly than prose. Do not add elements for "completeness" or SEO appearance.
 7. **Linguistic Precision & Readability**:
-   - **Targets**: Flesch 60-80 | Fog 7-12 | FK Grade 6-9.
-   - **Sentence Length**: 12-20 words average (VARY length naturally to avoid monotony).
-   - **Active Voice**: Strictly avoid passive constructions.
-   - **Concrete over Abstract**: Replace abstract nouns with concrete terms.
-8. **Compression Discipline**: Every sentence must contribute new information. Remove filler and rhetorical transitions, but **do not sacrifice depth for brevity**. Use the full word count to provide exhaustive, granular detail on mechanics, history, and technical specifics. Avoid repeating the conclusion.
+   - **Simple English**: Use plain English and simple vocabulary that everyday people can easily consume. Avoid academic jargon, complex technical terms, or overly formal language.
+   - **Everyday Relevance**: Ensure the content is relevant to everyday people. Focus on practical, real-world utility and information that solves daily problems.
+   - **Targets**: Flesch Reading Ease 60-80 | Gunning Fog Index 7-12 | Flesch-Kincaid Grade 6-9.
+   - **Sentence Length**: 12-20 words average. Mix short sentences for emphasis with medium ones to avoid monotony. Avoid long, winding clauses.
+   - **Active Voice**: Use active voice instead of passive to keep the tone direct and professional.
+   - **Concrete over Abstract**: Replace abstract nouns (nominalizations) with concrete terms or verbs.
+8. **Compression Discipline**: Every sentence must contribute new information. Remove filler and rhetorical transitions, but **do not sacrifice depth for brevity**. Use the full word count to provide exhaustive, granular detail on mechanics, history, and practical specifics. Avoid repeating the conclusion.
 9. **Human-Clean & Citable Output**:
    - **NO** "In conclusion", "In this article", or "In the ever-evolving landscape".
    - **NO** repetitive phrasing or stylistic crutches (limit em-dashes to 1-2 per article).
+   - **NO** personal storytelling or personal tone; maintain a detached, professional, and authoritative stance.
    - **DO weave research sources naturally into the text as markdown links** (e.g., [According to the 2025 project roadmap](url)). Avoid robotic bracketed citations like [1].
 10. **Length & Structural Expansion for fullText (STRICT)**:
     - **Minimum 1,000 words; Target 2,000 - 2,500+ words.**
@@ -116,9 +119,13 @@ export const ARTICLE_GENERATION_PROMPT = `You are generating a canonical referen
 
 ## Output Requirements
 - State the answer early
+- Use simple vocabulary easily consumed by everyday people
+- Focus on practical, everyday relevance
+- Stay professional; NO personal tone or storytelling
 - Every sentence must add information
 - Vary sentence length (12-20 words avg)
-- Use Flesch Reading Ease 60-80
+- Use Flesch Reading Ease 60-80 | Gunning Fog 7-12 | FK Grade 6-9
+- Use active voice and concrete terms
 
 ## JSON Output Schema
 {
