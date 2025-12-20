@@ -27,7 +27,7 @@ Produce a reference-grade page that could plausibly be cited as an authoritative
 ### Editorial Standards (STRICTLY FOLLOW)
 
 1. **Early Resolution**: State the correct general answer immediately. If a conclusion applies under typical conditions, make it explicit in the first two paragraphs. No withholding for narrative effect.
-2. **Intent Dominance**: Solve the primary search intent fully. Assume the reader is searching for a reliable answer and will leave once satisfied. Optimize for resolution, not engagement.
+2. **Intent Dominance**: Solve the primary search intent fully. Assume the reader is searching for a reliable answer and will leave once satisfied. Optimize for resolution, not engagement. Based on that, please adjust the keyword to new proposed keywords lists.
 3. **Canonical Clarity**: Write as if this page could be cited by articles, tools, or knowledge bases. Avoid personal voice, persuasion, or speculation. 
 4. **Scope Control**: Answer the primary question only. Do not broaden the topic, speculate on future-proof trends, or introduce secondary topics unless they are essential for context.
 5. **Fact-First Authority**: State facts directly. Explain mechanisms, behaviors, or observable bases (causality) behind limits and ranges. Prefer causality over description.
@@ -45,13 +45,14 @@ Produce a reference-grade page that could plausibly be cited as an authoritative
 10. **Length & Structural Expansion for fullText (STRICT)**:
     - **Minimum 1,000 words; Target 2,000 - 2,500+ words.**
     - **Force Depth**: You MUST include at least 4-8 comprehensive H2 sections (use h3 if needed). 
-    - **VARY PARAGRAPH COUNTS**: Do not use rigid symmetry. Some sections should be thick, others lean.
+    - **VARY PARAGRAPH COUNTS**: Do not use rigid symmetry. Some h2 and h3 should be thick, others lean.
     - **VARY SENTENCE COUNTS**: Do not use rigid symmetry. Some paragraph should be thick, others lean.
     - **No Padding**: achieve length by investigating the "Why" and "How" of every sub-topic in the GROUNDING DATA. If the data is sparse, use your internal knowledge to provide the necessary technical context and background.
 11. **Strategic FAQ Generation**: 
     - Generate a list of "Frequently Asked Questions" that addresses high-demand search queries and common user pain points identified in research.
     - Adjust the count of FAQs (typically 3-8) based on the article's complexity. Don't force a count; prioritize high-value questions.
     - Ensure each answer is concise (2-4 sentences) and highly informative.
+    - **STRICT: DO NOT include the FAQ section or FAQ heading within the "fullText" field. Use ONLY the "faq" JSON field for this content.**
 
 ### Final Editorial Gate
 If this page were removed from the internet, would it create a noticeable gap in understanding for this topic? If no, revise until it would.
@@ -62,12 +63,12 @@ Select the BEST category and subcategory from:
 
 ## JSON Output Schema
 {
-  "title": "50-60 chars, authoritative, keyword near front",
-  "seoTitle": "High-CTR title with keyword",
+  "title": "50-60 chars, authoritative, adjust the keyword to suit the content",
+  "seoTitle": "High-CTR title with adjusted keyword",
   "description": "150-160 chars meta description",
   "seoDescription": "Varied meta description for SEO",
-  "fullText": "Markdown content. 2,000+ words. Comprehensive deep-dive with 6-8+ sections. No bracketed citations.",
-  "keywords": ["10 LSI keywords from research"],
+  "fullText": "Markdown content. 2,000+ words. Comprehensive deep-dive. DO NOT INCLUDE FAQ HERE.",
+  "keywords": ["10 LSI keywords from research, non overlaping"],
   "readingTime": number,
   "userIntent": "Brief analysis of the user's primary goal.",
   "competitorGap": "What specific gap did we fill to be the definitive source?",

@@ -9,6 +9,7 @@ import { ArticleControls } from '@/components/article-controls';
 import { Clock, Tag, ArrowLeft, Share2, Home, Calendar, User, CheckCircle2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
+import remarkGfm from 'remark-gfm';
 
 interface InternalArticlePageProps {
     article: InternalArticle;
@@ -155,6 +156,7 @@ export default function InternalArticlePage({ article }: InternalArticlePageProp
                         style={{ fontSize: `${fontSize}px` }}
                     >
                         <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
                             components={{
                                 h2: ({ node, ...props }) => <h2 className="text-3xl font-bold text-zinc-900 mt-16 mb-8 scroll-mt-24" {...props} />,
                                 h3: ({ node, ...props }) => <h3 className="text-2xl font-bold text-zinc-900 mt-12 mb-6" {...props} />,
@@ -168,6 +170,15 @@ export default function InternalArticlePage({ article }: InternalArticlePageProp
                                 ),
                                 a: ({ node, ...props }) => <a className="text-primary font-semibold underline decoration-primary/30 underline-offset-4 hover:decoration-primary transition-all" {...props} />,
                                 blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-primary bg-zinc-50 px-8 py-6 rounded-r-xl italic text-zinc-700 my-10" {...props} />,
+                                table: ({ node, ...props }) => (
+                                    <div className="my-10 overflow-x-auto rounded-xl border border-zinc-100 shadow-sm">
+                                        <table className="w-full text-sm text-left" {...props} />
+                                    </div>
+                                ),
+                                thead: ({ node, ...props }) => <thead className="bg-zinc-50 border-b border-zinc-100" {...props} />,
+                                th: ({ node, ...props }) => <th className="px-6 py-4 font-bold text-zinc-900 uppercase tracking-wider" {...props} />,
+                                td: ({ node, ...props }) => <td className="px-6 py-4 text-zinc-600 border-b border-zinc-50 last:border-0" {...props} />,
+                                tr: ({ node, ...props }) => <tr className="hover:bg-zinc-50/50 transition-colors" {...props} />,
                             }}
                         >
                             {article.fullText || ''}
