@@ -230,6 +230,23 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         }
 
         // Smart Close logic:
+
+        // If we were passed explicit overrides (Article Overlay mode), 
+        // we might want to go back to the list view beneath it for News.
+        if (overrideSlug) {
+            // For news overlay deep links, the "background" is effectively the hub. 
+            // If we just clicked a link to get here, history might be stale or empty.
+            // If we entered via deep link, "back" might leave the site.
+            // Better to push to the hub if we are deep linked.
+            if (pathname?.startsWith('/news/')) {
+                const hubMatch = pathname.match(/^(\/news\/[^\/]+\/[^\/]+)/);
+                if (hubMatch) {
+                    router.push(hubMatch[1]);
+                    return;
+                }
+            }
+        }
+
         // 1. If we are on a news path, try to go back to the Hub
         if (pathname?.startsWith('/news/')) {
             const hubMatch = pathname.match(/^(\/news\/[^\/]+\/[^\/]+)/);
@@ -256,7 +273,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate }: Articl
         } else {
             router.push('/today');
         }
-    }, [router, pathname, modalContext]);
+    }, [router, pathname, modalContext, overrideSlug]);
 
     // Handle download/export
     const handleDownload = async (platform: 'tiktok' | 'instagram') => {
