@@ -190,16 +190,18 @@ async function indexPages() {
         const classifications = classifier.classify(post.title, post.description);
 
         let category = 'news'; // Default category
-        let subcategory = 'general'; // Default subcategory
+        // Avoid 'general' and try to use topic as subcategory if classifier misses
+        let subcategory = post.topic ? post.topic.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'updates';
 
         if (classifications.length > 0) {
             category = classifications[0].category;
             subcategory = classifications[0].slug;
         } else {
             // Fallback: simple topic map if classifier fails
-            if (post.topic === 'finance' || post.topic === 'business') category = 'finance';
-            else if (post.topic === 'tech' || post.topic === 'science') category = 'tech';
-            else if (post.topic === 'sports') category = 'sports';
+            const t = (post.topic || '').toLowerCase();
+            if (t.includes('finance') || t.includes('business') || t.includes('market')) category = 'finance';
+            else if (t.includes('tech') || t.includes('science') || t.includes('ai')) category = 'tech';
+            else if (t.includes('sport')) category = 'sports';
             else category = 'news';
         }
 
@@ -227,8 +229,13 @@ async function indexPages() {
             await new Promise(r => setTimeout(r, 200));
 
         } catch (e: any) {
-            console.error(`❌ Failed: ${internalUrl} - ${e.message}`);
-            failCount++;
+            // Handle expected permissions/ownership errors gracefully as skips
+            if (e.message && (e.message.includes('Permission denied') || e.message.includes('ownership'))) {
+                console.log(`⚠️ Skipped (Ownership): ${internalUrl}`);
+            } else {
+                console.error(`❌ Failed: ${internalUrl} - ${e.message}`);
+                failCount++;
+            }
         }
     }
 
