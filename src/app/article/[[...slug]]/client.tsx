@@ -30,7 +30,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
     const [post, setPost] = useState<Post | null>(null);
     const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
     const [loadingState, setLoadingState] = useState<LoadingState>('loading');
-    const [readerDarkMode, setReaderDarkMode] = useState(true);
+    const [readerDarkMode, setReaderDarkMode] = useState(false);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -424,6 +424,10 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
                                     <span className="text-xs text-white/90 uppercase bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
                                         {articleInfo.date && new Date(articleInfo.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
                                     </span>
+                                    <span className="text-xs text-white/90 uppercase bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 flex items-center gap-1.5 shadow-lg">
+                                        <Clock className="w-3 h-3" />
+                                        {readingTime} min
+                                    </span>
                                 </div>
                                 <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tighter drop-shadow-2xl">
                                     {post.title}
@@ -441,8 +445,11 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
                             fullText={post.fullText ?? null}
                             description={post.description}
                             keywords={post.keywords || []}
+                            title={post.title}
+                            category={(Array.isArray(post.topic) ? post.topic[0] : post.topic) || 'News'}
+                            subcategory={undefined}
                             slug={post.slug}
-                            date={post.date}
+                            date={post.date || undefined}
                             readingTime={readingTime}
                             isPremium={false}
                             articleUrl={post.link}
@@ -458,6 +465,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
                             onThemeChange={setReaderDarkMode}
                             onClose={handleClose}
                             onStickyChange={() => { }}
+                            hideHeader={pathname?.startsWith('/news/')}
                         />
 
                         {/* Related Articles */}

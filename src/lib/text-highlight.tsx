@@ -1,12 +1,18 @@
 import React from 'react';
 import { cn } from "@/lib/utils";
 
-// Rotating pastel highlight colors (subtle, not distracting)
+// Rotating highlight colors (native ebook style - soft but distinct)
 export const HIGHLIGHT_COLORS = [
-    "bg-blue-500/10 text-blue-300/90 border-blue-400/20",
-    "bg-emerald-500/10 text-emerald-300/90 border-emerald-400/20",
-    "bg-purple-500/10 text-purple-300/90 border-purple-400/20",
-    "bg-rose-500/10 text-rose-300/90 border-rose-400/20",
+    "bg-sky-200/60 text-sky-900 border-sky-300/50",
+    "bg-emerald-200/60 text-emerald-900 border-emerald-300/50",
+    "bg-amber-200/60 text-amber-900 border-amber-300/50",
+    "bg-rose-200/60 text-rose-900 border-rose-300/50",
+    "bg-purple-200/60 text-purple-900 border-purple-300/50",
+    "bg-orange-200/60 text-orange-900 border-orange-300/50",
+    "bg-teal-200/60 text-teal-900 border-teal-300/50",
+    "bg-indigo-200/60 text-indigo-900 border-indigo-300/50",
+    "bg-yellow-200/60 text-yellow-900 border-yellow-300/50",
+    "bg-fuchsia-200/60 text-fuchsia-900 border-fuchsia-300/50",
 ];
 
 // Highlight stopwords (common words to skip)

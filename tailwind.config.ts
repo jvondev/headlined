@@ -1,4 +1,4 @@
-import type {Config} from 'tailwindcss';
+import type { Config } from 'tailwindcss';
 
 export default {
   darkMode: ['class'],
@@ -6,6 +6,7 @@ export default {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/lib/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     container: {
@@ -36,7 +37,7 @@ export default {
             '--tw-prose-th-borders': 'hsl(var(--border))',
             '--tw-prose-td-borders': 'hsl(var(--border))',
 
-             // Invert colors for dark mode
+            // Invert colors for dark mode
             '--tw-prose-invert-body': 'hsl(var(--foreground))',
             '--tw-prose-invert-headings': 'hsl(var(--foreground))',
             '--tw-prose-invert-lead': 'hsl(var(--muted-foreground))',
@@ -93,8 +94,8 @@ export default {
           foreground: 'hsl(var(--destructive-foreground))',
         },
         benefit: {
-            DEFAULT: 'hsl(var(--benefit))',
-            foreground: 'hsl(var(--benefit-foreground))',
+          DEFAULT: 'hsl(var(--benefit))',
+          foreground: 'hsl(var(--benefit-foreground))',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -131,10 +132,10 @@ export default {
         },
         'shimmer': {
           '0%': {
-             'background-position': '-200% 0'
+            'background-position': '-200% 0'
           },
           '100%': {
-             'background-position': '200% 0'
+            'background-position': '200% 0'
           }
         }
       },

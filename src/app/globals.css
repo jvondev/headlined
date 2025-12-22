@@ -89,6 +89,11 @@
     touch-action: manipulation;
     /* Prevents double-tap zoom on mobile */
   }
+
+  mark {
+    background-color: transparent;
+    color: inherit;
+  }
 }
 
 @layer utilities {

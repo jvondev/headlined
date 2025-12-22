@@ -25,7 +25,14 @@ import {
     Music2,
     Instagram,
     X,
+    Calendar,
+    User,
+    CheckCircle2
 } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { ArticleCTA } from "./article-cta";
+import { highlightKeywords } from '@/lib/text-highlight';
 import { Button } from "./ui/button";
 import {
     DropdownMenu,
@@ -45,6 +52,9 @@ interface ExpandedReaderProps {
     fullText: string | null;
     description: string | null;
     keywords: string[];
+    title?: string;
+    category?: string;
+    subcategory?: string;
     slug: string;
     readingTime?: number;
     isPremium?: boolean;
@@ -63,6 +73,7 @@ interface ExpandedReaderProps {
     // Close & Sticky Sync
     onClose?: () => void;
     onStickyChange?: (isSticky: boolean) => void;
+    hideHeader?: boolean;
 }
 
 interface Section {
@@ -71,193 +82,9 @@ interface Section {
     isGenerated: boolean;
 }
 
-// Rotating pastel highlight colors (subtle, not distracting)
-const HIGHLIGHT_COLORS = [
-    "bg-blue-500/10 text-blue-300/90 border-blue-400/20",
-    "bg-emerald-500/10 text-emerald-300/90 border-emerald-400/20",
-    "bg-purple-500/10 text-purple-300/90 border-purple-400/20",
-    "bg-rose-500/10 text-rose-300/90 border-rose-400/20",
-];
+// Local highlighting logic removed in favor of @/lib/text-highlight
 
-// Highlight stopwords (common words to skip)
-const HIGHLIGHT_STOPWORDS = new Set([
-    'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with',
-    'by', 'from', 'as', 'is', 'was', 'are', 'were', 'been', 'be', 'have', 'has', 'had',
-    'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must',
-    'it', 'its', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'we', 'they',
-    'your', 'my', 'his', 'her', 'our', 'their', 'what', 'which', 'who', 'whom', 'when',
-    'where', 'why', 'how', 'all', 'each', 'every', 'both', 'few', 'more', 'most', 'other',
-    'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very',
-    'can', 'just', 'also', 'now', 'here', 'there', 'then', 'new', 'said', 'says', 'like',
-    'one', 'two', 'first', 'many', 'year', 'years', 'time', 'way', 'day', 'use', 'make',
-    'get', 'go', 'see', 'come', 'take', 'know', 'think', 'want', 'need', 'look', 'work',
-]);
-
-// Smart paragraph chunking - splits text into readable sections with deduplication
-// REFINED: Chunk size reduced to 80 words for better readability
-function chunkTextIntoSections(text: string, targetWordsPerSection: number = 80): Section[] {
-    if (!text) return [];
-
-    // Split by paragraphs and deduplicate
-    const allParagraphs = text.split(/\n\n+/).filter(p => p.trim().length > 0);
-    const seenParagraphs = new Set<string>();
-    const paragraphs: string[] = [];
-
-    for (const p of allParagraphs) {
-        const normalized = p.trim().toLowerCase().substring(0, 100); // Compare first 100 chars
-        if (!seenParagraphs.has(normalized)) {
-            seenParagraphs.add(normalized);
-            paragraphs.push(p);
-        }
-    }
-
-    const sections: Section[] = [];
-    let currentSection = "";
-    let currentWordCount = 0;
-    let sectionIndex = 0;
-
-    for (const paragraph of paragraphs) {
-        const paragraphWords = paragraph.split(/\s+/).length;
-
-        // Tighter chunking logic
-        if (currentWordCount > 0 && currentWordCount + paragraphWords > targetWordsPerSection * 1.3) {
-            sections.push({
-                id: `section-${sectionIndex}`,
-                content: currentSection.trim(),
-                isGenerated: sectionIndex === 0,
-            });
-            sectionIndex++;
-            currentSection = paragraph;
-            currentWordCount = paragraphWords;
-        } else {
-            currentSection += (currentSection ? "\n\n" : "") + paragraph;
-            currentWordCount += paragraphWords;
-
-            if (currentWordCount >= targetWordsPerSection) {
-                sections.push({
-                    id: `section-${sectionIndex}`,
-                    content: currentSection.trim(),
-                    isGenerated: sectionIndex === 0,
-                });
-                sectionIndex++;
-                currentSection = "";
-                currentWordCount = 0;
-            }
-        }
-    }
-
-    if (currentSection.trim()) {
-        sections.push({
-            id: `section-${sectionIndex}`,
-            content: currentSection.trim(),
-            isGenerated: sectionIndex === 0,
-        });
-    }
-
-    return sections;
-}
-
-// Filter keywords to remove stopwords and short words
-function filterKeywords(keywords: string[]): string[] {
-    return keywords.filter(k =>
-        k.length >= 4 && !HIGHLIGHT_STOPWORDS.has(k.toLowerCase())
-    );
-}
-
-// Create consistent color mapping: same keyword = same color
-function createKeywordColorMap(keywords: string[]): Map<string, string> {
-    const colorMap = new Map<string, string>();
-    keywords.forEach((keyword, index) => {
-        colorMap.set(keyword.toLowerCase(), HIGHLIGHT_COLORS[index % HIGHLIGHT_COLORS.length]);
-    });
-    return colorMap;
-}
-
-// Highlight keywords with consistent colors per keyword
-function highlightKeywords(text: string, keywords: string[]): React.ReactNode[] {
-    const filteredKeywords = filterKeywords(keywords);
-    if (!filteredKeywords || filteredKeywords.length === 0) return [text];
-
-    const colorMap = createKeywordColorMap(filteredKeywords);
-
-    const pattern = new RegExp(
-        `\\b(${filteredKeywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`,
-        'gi'
-    );
-
-    const parts = text.split(pattern);
-
-    return parts.map((part, index) => {
-        const lowerPart = part.toLowerCase();
-        const color = colorMap.get(lowerPart);
-        if (color) {
-            return (
-                <mark
-                    key={index}
-                    className={cn("px-1 py-0.5 rounded border-b", color)}
-                >
-                    {part}
-                </mark>
-            );
-        }
-        return <span key={index}>{part}</span>;
-    });
-}
-
-// Typewriter animation for sections
-const TypewriterSection = ({
-    text,
-    keywords,
-    onComplete,
-    speed = 12,
-    fontSize
-}: {
-    text: string;
-    keywords: string[];
-    onComplete?: () => void;
-    speed?: number;
-    fontSize: number;
-}) => {
-    const [displayedText, setDisplayedText] = useState("");
-    const [isComplete, setIsComplete] = useState(false);
-    const hasCompleted = useRef(false);
-
-    useEffect(() => {
-        setDisplayedText("");
-        setIsComplete(false);
-        hasCompleted.current = false;
-    }, [text]);
-
-    useEffect(() => {
-        if (displayedText.length < text.length) {
-            const timer = setTimeout(() => {
-                const charsToAdd = Math.min(4, text.length - displayedText.length);
-                setDisplayedText(text.substring(0, displayedText.length + charsToAdd));
-            }, speed);
-            return () => clearTimeout(timer);
-        } else if (!hasCompleted.current) {
-            hasCompleted.current = true;
-            setIsComplete(true);
-            onComplete?.();
-        }
-    }, [displayedText, text, speed, onComplete]);
-
-    const highlightedContent = useMemo(() => {
-        return highlightKeywords(displayedText, keywords);
-    }, [displayedText, keywords]);
-
-    return (
-        <p
-            className="leading-relaxed whitespace-pre-wrap"
-            style={{ fontSize: `${fontSize}px`, lineHeight: '1.8' }}
-        >
-            {highlightedContent}
-            {!isComplete && (
-                <span className="inline-block w-[2px] h-5 ml-1 bg-zinc-400 animate-pulse align-middle" />
-            )}
-        </p>
-    );
-};
+// TypewriterSection removed
 
 // Ad Slot Component
 const AdSlot = ({ index }: { index: number }) => (
@@ -281,6 +108,9 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     fullText,
     description,
     keywords = [],
+    title,
+    category,
+    subcategory,
     slug,
     readingTime = 1,
     isPremium = false,
@@ -293,7 +123,8 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     date,
     onThemeChange,
     onClose,
-    onStickyChange
+    onStickyChange,
+    hideHeader = false
 }) => {
     const contentToDisplay = fullText || description || "";
 
@@ -309,7 +140,7 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
             let scrollHeight = 0;
             let clientHeight = 0;
 
-            const container = document.getElementById('post-view-scroll-container');
+            const container = document.getElementById('article-scroll-container');
             if (container) {
                 scrollTop = container.scrollTop;
                 scrollHeight = container.scrollHeight;
@@ -352,13 +183,13 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
     const [isGenerating, setIsGenerating] = useState(false);
 
-    // Reader settings - with localStorage persistence for theme
+    // Reader settings - DEFAULT TO LIGHT
     const [isDarkMode, setIsDarkMode] = useState(() => {
         if (typeof window !== 'undefined') {
             const saved = localStorage.getItem('reader-theme');
-            return saved !== null ? saved === 'dark' : true;
+            return saved !== null ? saved === 'dark' : false;
         }
-        return true;
+        return false;
     });
     const [fontSize, setFontSize] = useState(18);
     const [isSpeaking, setIsSpeaking] = useState(false);
@@ -385,10 +216,40 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
     // Track if user was at bottom before new content
     const wasAtBottomRef = useRef(false);
 
-    // Initialize sections
+    // Initialize sections (Immediate render)
     useEffect(() => {
-        const chunked = chunkTextIntoSections(contentToDisplay);
-        setSections(chunked);
+        if (!contentToDisplay) return;
+
+        // Split by paragraphs and deduplicate
+        const allParagraphs = contentToDisplay.split(/\n\n+/).filter((p: string) => p.trim().length > 0);
+        const seenParagraphs = new Set<string>();
+        const paragraphs: string[] = [];
+
+        for (const p of allParagraphs) {
+            const normalized = p.trim().toLowerCase().substring(0, 100);
+            if (!seenParagraphs.has(normalized)) {
+                seenParagraphs.add(normalized);
+                paragraphs.push(p);
+            }
+        }
+
+        const chunks: Section[] = [];
+        let currentChunk: string[] = [];
+
+        paragraphs.forEach((p, i) => {
+            currentChunk.push(p);
+            // Inject every 6 paragraphs like internal.tsx
+            if (currentChunk.length === 6 || i === paragraphs.length - 1) {
+                chunks.push({
+                    id: `section-${chunks.length}`,
+                    content: currentChunk.join('\n\n'),
+                    isGenerated: true,
+                });
+                currentChunk = [];
+            }
+        });
+
+        setSections(chunks);
         setCurrentSectionIndex(0);
     }, [contentToDisplay]);
 
@@ -798,65 +659,131 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
             </div>
 
             {/* Content Area - with generous bottom padding for floating bar */}
-            <div className="max-w-3xl mx-auto px-6 py-8 pb-40 space-y-6">
-                {/* Generated Sections */}
-                <AnimatePresence mode="popLayout">
-                    {sections.map((section, index) => {
-                        if (!section.isGenerated) return null;
-
-                        const isCurrentlyGenerating = index === currentSectionIndex && isGenerating;
-                        const showAd = !isPremium && (index === 0 || (index > 0 && index % 3 === 0));
-
-                        return (
-                            <motion.div
-                                key={section.id}
-                                id={section.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, ease: "easeOut" }}
-                                className="space-y-4"
-                            >
-                                {/* Section Content */}
-                                <div className={cn(
-                                    "font-serif",
-                                    isDarkMode ? "text-zinc-300" : "text-zinc-700"
+            <div className="max-w-3xl mx-auto px-6 py-8 pb-40">
+                {!hideHeader && (
+                    <header className="mb-12">
+                        <div className="flex flex-wrap items-center gap-3 mb-6">
+                            {category && (
+                                <span className={cn(
+                                    "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest",
+                                    isDarkMode ? "bg-white/10 text-white" : "bg-zinc-900 text-white"
                                 )}>
-                                    {isCurrentlyGenerating ? (
-                                        <TypewriterSection
-                                            text={section.content}
-                                            keywords={highlightsEnabled ? keywords : []}
-                                            onComplete={handleSectionComplete}
-                                            fontSize={fontSize}
-                                        />
-                                    ) : (
-                                        <p
-                                            className="leading-relaxed whitespace-pre-wrap"
-                                            style={{ fontSize: `${fontSize}px`, lineHeight: '1.8' }}
-                                        >
-                                            {highlightsEnabled
-                                                ? highlightKeywords(section.content, keywords)
-                                                : section.content
-                                            }
-                                        </p>
+                                    {category}
+                                </span>
+                            )}
+                            {subcategory && (
+                                <span className={cn(
+                                    "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border",
+                                    isDarkMode ? "bg-white/5 border-white/10 text-zinc-400" : "bg-zinc-100 text-zinc-600 border-zinc-200"
+                                )}>
+                                    {subcategory}
+                                </span>
+                            )}
+                        </div>
+
+                        <h1 className={cn(
+                            "text-4xl md:text-5xl font-black leading-[1.1] tracking-tight mb-8",
+                            isDarkMode ? "text-white" : "text-zinc-900"
+                        )}>
+                            {title || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                        </h1>
+
+                        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-zinc-500 font-medium">
+                            <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4" />
+                                {date ? new Date(date).toLocaleDateString('en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                }) : 'Recently'}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Clock className="w-4 h-4" />
+                                {readingTime} min read
+                            </div>
+                        </div>
+                    </header>
+                )}
+
+                <div className="prose prose-zinc prose-lg max-w-none">
+                    {description && (
+                        <div className={cn(
+                            "text-xl leading-relaxed font-medium mb-12 border-l-4 pl-6 italic transition-colors",
+                            isDarkMode ? "text-zinc-400 border-primary/40" : "text-zinc-600 border-primary/20"
+                        )}>
+                            {description}
+                        </div>
+                    )}
+
+                    <div
+                        className={cn(
+                            "article-content space-y-8 leading-[1.8] font-serif transition-colors",
+                            isDarkMode ? "text-zinc-300" : "text-zinc-800"
+                        )}
+                        style={{ fontSize: `${fontSize}px` }}
+                    >
+                        {sections.map((section, index) => {
+                            const isLast = index === sections.length - 1;
+                            const injectionType = index % 2 === 0 ? 'ad' : 'cta';
+                            const showInjection = !isPremium;
+
+                            return (
+                                <React.Fragment key={section.id}>
+                                    <ReactMarkdown
+                                        remarkPlugins={[remarkGfm]}
+                                        components={{
+                                            h2: ({ node, ...props }) => <h2 className={cn("text-3xl font-bold mt-16 mb-8 scroll-mt-24", isDarkMode ? "text-white" : "text-zinc-900")} {...props} />,
+                                            h3: ({ node, ...props }) => <h3 className={cn("text-2xl font-bold mt-12 mb-6", isDarkMode ? "text-white" : "text-zinc-900")} {...props} />,
+                                            p: ({ node, children, ...props }) => (
+                                                <p className="mb-6 last:mb-0" {...props}>
+                                                    {React.Children.map(children, child => {
+                                                        if (typeof child === 'string') {
+                                                            return highlightsEnabled ? highlightKeywords(child, keywords) : child;
+                                                        }
+                                                        return child;
+                                                    })}
+                                                </p>
+                                            ),
+                                            ul: ({ node, ...props }) => <ul className={cn("space-y-3 my-8 list-none pl-6 border-l-2", isDarkMode ? "border-zinc-800" : "border-zinc-100")} {...props} />,
+                                            li: ({ node, ...props }) => (
+                                                <li className="relative" {...props}>
+                                                    <span className="absolute -left-6 top-3 w-1.5 h-1.5 rounded-full bg-primary/40" />
+                                                    {props.children}
+                                                </li>
+                                            ),
+                                            a: ({ node, ...props }) => <a className="text-primary font-semibold underline decoration-primary/30 underline-offset-4 hover:decoration-primary transition-all" {...props} />,
+                                            blockquote: ({ node, ...props }) => <blockquote className={cn("border-l-4 border-primary px-8 py-6 rounded-r-xl italic my-10", isDarkMode ? "bg-white/5 text-zinc-400" : "bg-zinc-50 text-zinc-700")} {...props} />,
+                                            table: ({ node, ...props }) => (
+                                                <div className={cn("my-10 overflow-x-auto rounded-xl border shadow-sm", isDarkMode ? "border-zinc-800" : "border-zinc-100")}>
+                                                    <table className="w-full text-sm text-left" {...props} />
+                                                </div>
+                                            ),
+                                            thead: ({ node, ...props }) => <thead className={cn("border-b", isDarkMode ? "bg-white/5 border-zinc-800" : "bg-zinc-50 border-zinc-100")} {...props} />,
+                                            th: ({ node, ...props }) => <th className={cn("px-6 py-4 font-bold uppercase tracking-wider", isDarkMode ? "text-white" : "text-zinc-900")} {...props} />,
+                                            td: ({ node, ...props }) => <td className={cn("px-6 py-4 border-b last:border-0", isDarkMode ? "text-zinc-400 border-zinc-800" : "text-zinc-600 border-zinc-50")} {...props} />,
+                                            tr: ({ node, ...props }) => <tr className={cn("transition-colors", isDarkMode ? "hover:bg-white/5" : "hover:bg-zinc-50/50")} {...props} />,
+                                        }}
+                                    >
+                                        {section.content}
+                                    </ReactMarkdown>
+
+                                    {!isLast && showInjection && (
+                                        <div className="my-12">
+                                            {injectionType === 'ad' ? (
+                                                <AdSlot index={index} />
+                                            ) : (
+                                                <ArticleCTA
+                                                    category={category || 'topics'}
+                                                    subcategory={subcategory || (category || 'general')}
+                                                />
+                                            )}
+                                        </div>
                                     )}
-                                </div>
-
-                                {/* Ad Slot */}
-                                {showAd && <AdSlot index={index} />}
-
-                                {/* Section Divider */}
-                                {index < sections.filter(s => s.isGenerated).length - 1 && (
-                                    <div className="flex items-center justify-center py-6">
-                                        <div className={cn(
-                                            "w-12 h-px",
-                                            isDarkMode ? "bg-white/10" : "bg-zinc-300"
-                                        )} />
-                                    </div>
-                                )}
-                            </motion.div>
-                        );
-                    })}
-                </AnimatePresence>
+                                </React.Fragment>
+                            );
+                        })}
+                    </div>
+                </div>
 
                 {/* Spacer to prevent content from scrolling behind floating dock */}
                 <div className="h-24" aria-hidden="true" />
@@ -931,6 +858,16 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                     </motion.div>
                 )}
             </AnimatePresence>
+            <style jsx global>{`
+                .article-content {
+                    font-size: 1.125rem;
+                }
+                @media (min-width: 768px) {
+                    .article-content {
+                        font-size: 1.25rem;
+                    }
+                }
+            `}</style>
         </div>
     );
 };
