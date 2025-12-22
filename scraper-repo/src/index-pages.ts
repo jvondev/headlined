@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { google } from 'googleapis';
 import { GoogleAuth } from 'google-auth-library';
+import { Classifier } from './classifier';
 
 // --- Configuration ---
 const MAX_URLS_TO_INDEX = 45; // Safe limit (quota is 200)
@@ -140,6 +141,10 @@ async function indexPages() {
     }
 
     console.log(`\nSelected Top ${topPosts.length} Articles for Indexing:`);
+
+    // Initialize Classifier
+    const classifier = new Classifier();
+
     topPosts.forEach((p, i) => {
         console.log(`${i + 1}. [${p.indexScore.toFixed(1)}] ${p.title} (${p.topic})`);
     });
@@ -181,10 +186,31 @@ async function indexPages() {
 
     for (const post of topPosts) {
         // Construct the correct internal URL
-        // Format: https://headlined.app/article/[topic]/[slug]
-        // Note: topic might need normalization (lowercase), defaulting to 'news' if missing
-        const topic = (post.topic || 'news').toLowerCase();
-        const internalUrl = `https://headlined.app/article/${topic}/${post.slug}`;
+        // 1. Classify to get correct category/subcategory
+        const classifications = classifier.classify(post.title, post.description);
+
+        let category = 'news'; // Default category
+        let subcategory = 'general'; // Default subcategory
+
+        if (classifications.length > 0) {
+            category = classifications[0].category;
+            subcategory = classifications[0].slug;
+        } else {
+            // Fallback: simple topic map if classifier fails
+            if (post.topic === 'finance' || post.topic === 'business') category = 'finance';
+            else if (post.topic === 'tech' || post.topic === 'science') category = 'tech';
+            else if (post.topic === 'sports') category = 'sports';
+            else category = 'news';
+        }
+
+        // 2. Format Date: YYYY/MM/DD
+        const dateObj = new Date(post.created_at || new Date().toISOString());
+        const yyyy = dateObj.getFullYear();
+        const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const dd = String(dateObj.getDate()).padStart(2, '0');
+
+        // Format: https://headlined.app/news/[category]/[subcategory]/[yyyy]/[mm]/[dd]/[slug]
+        const internalUrl = `https://headlined.app/news/${category}/${subcategory}/${yyyy}/${mm}/${dd}/${post.slug}`;
 
         try {
             // Google Indexing API - URL_UPDATED
