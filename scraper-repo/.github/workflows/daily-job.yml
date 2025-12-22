@@ -76,11 +76,12 @@ jobs:
       - name: Purge jsDelivr Cache
         run: |
           # Purge the specific daily file to force update
-          # Note: 'date' command depends on runner locale, assuming UTC or consistent with repo structure
           DATE=$(date +'%Y-%m-%d')
           echo "Purging cache for output/$DATE.json..."
           curl -I "https://purge.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-/output/$DATE.json"
-          
-          # Also try to purge the directory listing if possible (though jsDelivr API is file-specific mostly)
-          # We primarily care about the daily json file
+
+      - name: Run Google Indexing
+        env:
+          GOOGLE_JSON_KEY: ${{ secrets.GOOGLE_JSON_KEY }}
+        run: npm run index
 

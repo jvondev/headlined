@@ -8,9 +8,12 @@
         "obfuscate": "javascript-obfuscator dist --output dist --target node",
         "start": "node dist/job.js",
         "test": "node dist/job.js --test",
-        "merge": "node dist/merge-outputs.js"
+        "merge": "node dist/merge-outputs.js",
+        "index": "node dist/index-pages.js"
     },
     "dependencies": {
+        "google-auth-library": "^10.5.0",
+        "googleapis": "^169.0.0",
         "node-html-parser": "^6.1.13",
         "rss-parser": "^3.13.0"
     },
