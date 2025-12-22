@@ -180,22 +180,28 @@ async function indexPages() {
     let failCount = 0;
 
     for (const post of topPosts) {
+        // Construct the correct internal URL
+        // Format: https://headlined.app/article/[topic]/[slug]
+        // Note: topic might need normalization (lowercase), defaulting to 'news' if missing
+        const topic = (post.topic || 'news').toLowerCase();
+        const internalUrl = `https://headlined.app/article/${topic}/${post.slug}`;
+
         try {
             // Google Indexing API - URL_UPDATED
             await indexing.urlNotifications.publish({
                 requestBody: {
-                    url: post.link,
+                    url: internalUrl,
                     type: 'URL_UPDATED'
                 }
             });
-            console.log(`✅ Indexed: ${post.link}`);
+            console.log(`✅ Indexed: ${internalUrl}`);
             successCount++;
 
             // Tiny delay to be nice to the API
             await new Promise(r => setTimeout(r, 200));
 
         } catch (e: any) {
-            console.error(`❌ Failed: ${post.link} - ${e.message}`);
+            console.error(`❌ Failed: ${internalUrl} - ${e.message}`);
             failCount++;
         }
     }
