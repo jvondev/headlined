@@ -11,6 +11,7 @@ import { X, Loader2, AlertCircle, Home, Newspaper, Clock, ArrowRight } from 'luc
 import Link from 'next/link';
 import { PostExportTemplate } from '@/components/post-export-template';
 import { useArticleModal } from '@/context/article-modal-context';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type LoadingState = 'loading' | 'success' | 'error' | 'not-article';
 
@@ -350,12 +351,50 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
 
     // Loading state
     if (loadingState === 'loading') {
+        const isNews = pathname?.startsWith('/news/');
         return (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950">
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-8 h-8 text-white/60 animate-spin" />
-                    <p className="text-white/60 text-sm">Loading article...</p>
-                </motion.div>
+            <div className="fixed inset-0 z-[100] bg-white overflow-hidden">
+                <div className="h-full w-full flex flex-col">
+                    {/* Hero Skeleton (mimics [45vh] image) */}
+                    <div className="w-full h-[45vh] bg-zinc-100 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-10" />
+                        <div className="absolute bottom-12 left-6 right-6 z-20 space-y-4">
+                            <div className="flex gap-2">
+                                <Skeleton className="h-5 w-16 rounded-full bg-zinc-200" />
+                                <Skeleton className="h-5 w-24 rounded-full bg-zinc-200" />
+                            </div>
+                            <Skeleton className="h-10 md:h-16 w-3/4 bg-zinc-200" />
+                            <Skeleton className="h-10 md:h-16 w-1/2 bg-zinc-200" />
+                        </div>
+                    </div>
+
+                    {/* Content Skeleton */}
+                    <div className="flex-1 bg-white -mt-6 rounded-t-[30px] p-8 space-y-8 z-20">
+                        <div className="max-w-3xl mx-auto space-y-12">
+                            {/* Meta */}
+                            <div className="flex gap-6">
+                                <Skeleton className="h-4 w-32 bg-zinc-100" />
+                                <Skeleton className="h-4 w-24 bg-zinc-100" />
+                            </div>
+
+                            {/* Section 1 */}
+                            <div className="space-y-4">
+                                <Skeleton className="h-4 w-full bg-zinc-100" />
+                                <Skeleton className="h-4 w-full bg-zinc-100" />
+                                <Skeleton className="h-4 w-5/6 bg-zinc-100" />
+                                <Skeleton className="h-4 w-4/6 bg-zinc-100" />
+                            </div>
+
+                            {/* Section 2 */}
+                            <div className="space-y-4">
+                                <Skeleton className="h-6 w-1/3 bg-zinc-100 mb-6" />
+                                <Skeleton className="h-4 w-full bg-zinc-100" />
+                                <Skeleton className="h-4 w-full bg-zinc-100" />
+                                <Skeleton className="h-4 w-2/3 bg-zinc-100" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
