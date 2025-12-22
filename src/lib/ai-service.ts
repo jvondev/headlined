@@ -63,16 +63,97 @@ export async function generateEnhancedArticle(
 
     // Step 1: Gather grounding data with a combined query for 1-request efficiency
     console.log('📡 Fetching grounding data...');
-    const groundingQuery = relatedKeywords.length > 0
-        ? `${keyword} ${relatedKeywords.slice(0, 3).join(' ')}`
-        : keyword;
+    const groundingQuery = keyword;
 
     const groundingData = await gatherGroundingData(groundingQuery);
     const groundingContext = await formatGroundingContext(groundingData);
     console.log(`✅ Got ${groundingData.serpResults.length} SERP results, wiki: ${!!groundingData.wikiSummary}`);
 
     // Step 2: Build enhanced prompt with all data
-    const prompt = buildEnhancedArticlePrompt(keyword, relatedKeywords, groundingContext);
+    // Internal Linking Injection (Internal Articles + Static Cache)
+    let internalLinksContext = '';
+    const MAX_TOTAL_LINKS = 10;
+
+    try {
+        const potentialLinks: any[] = [];
+        const queryTokens = keyword.toLowerCase().split(' ');
+
+        // 1. Get Internal Articles
+        try {
+            const articlesData = await import('@/data/internal-articles/articles.json');
+            const articles = articlesData.articles || [];
+            potentialLinks.push(...articles.map((a: any) => ({
+                ...a,
+                sourceType: 'internal',
+                url: `/article/${a.category}/${a.subcategory}/${a.slug}`
+            })));
+        } catch (e) {
+            console.warn('Failed to load internal articles', e);
+        }
+
+        // 2. Get Static Cache Data (limited scan)
+        try {
+            const targetTopics = ['tech', 'business', 'finance', 'science', 'health', 'politics', 'world', 'sports'];
+
+            for (const topic of targetTopics) {
+                try {
+                    const topicData = await import(`@/data/static-cache/topics/${topic}.json`).then(m => m.default || m).catch(() => []);
+
+                    potentialLinks.push(...topicData.map((item: any) => {
+                        const date = new Date(item.created_at || new Date());
+                        const yyyy = date.getFullYear();
+                        const mm = String(date.getMonth() + 1).padStart(2, '0');
+                        const dd = String(date.getDate()).padStart(2, '0');
+                        const cat = 'news';
+                        const sub = item.topic ? item.topic.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'updates';
+
+                        return {
+                            ...item,
+                            sourceType: 'news',
+                            url: `/news/${cat}/${sub}/${yyyy}/${mm}/${dd}/${item.slug}`
+                        };
+                    }));
+                } catch (err) {
+                    // ignore missing files
+                }
+            }
+
+        } catch (e) {
+            console.warn('Failed to load static cache data', e);
+        }
+
+        // 3. Score and Filter
+        const relevantLinks = potentialLinks.filter((item: any) => {
+            if (!item.title) return false;
+            // Keywords check
+            const itemKeywords = item.keywords || [];
+            const textToSearch = (item.title + ' ' + (item.description || '')).toLowerCase();
+
+            // Relevancy Score (Simple)
+            let score = 0;
+            if (textToSearch.includes(keyword.toLowerCase())) score += 10;
+
+            queryTokens.forEach(token => {
+                if (token.length > 3 && textToSearch.includes(token)) score += 2;
+                if (itemKeywords.some((k: string) => k.toLowerCase().includes(token))) score += 3;
+            });
+
+            (item as any).score = score;
+            return score > 2; // Threshold
+        }).sort((a: any, b: any) => b.score - a.score)
+            .slice(0, MAX_TOTAL_LINKS);
+
+        if (relevantLinks.length > 0) {
+            internalLinksContext = relevantLinks.map((a: any) =>
+                `- ${a.title} (Type: ${a.sourceType}, URL: ${a.url})`
+            ).join('\n');
+            console.log(`🔗 Found ${relevantLinks.length} relevant internal/news links.`);
+        }
+    } catch (e) {
+        console.warn('Failed to load internal links context in ai-service', e);
+    }
+
+    const prompt = buildEnhancedArticlePrompt(keyword, relatedKeywords, groundingContext, internalLinksContext);
 
     // Step 3: Generate with Fallback Logic
     const { text } = await generateWithFallback({

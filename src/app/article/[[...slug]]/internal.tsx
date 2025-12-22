@@ -12,6 +12,7 @@ import { Clock, Tag, ArrowLeft, Share2, Home, Calendar, User, CheckCircle2 } fro
 import ReactMarkdown from 'react-markdown';
 import { cn } from '@/lib/utils';
 import remarkGfm from 'remark-gfm';
+import { highlightKeywords } from '@/lib/text-highlight';
 
 interface InternalArticlePageProps {
     article: InternalArticle;
@@ -184,7 +185,16 @@ export default function InternalArticlePage({ article }: InternalArticlePageProp
                                         components={{
                                             h2: ({ node, ...props }) => <h2 className="text-3xl font-bold text-zinc-900 mt-16 mb-8 scroll-mt-24" {...props} />,
                                             h3: ({ node, ...props }) => <h3 className="text-2xl font-bold text-zinc-900 mt-12 mb-6" {...props} />,
-                                            p: ({ node, ...props }) => <p className="mb-6 last:mb-0" {...props} />,
+                                            p: ({ node, children, ...props }) => (
+                                                <p className="mb-6 last:mb-0" {...props}>
+                                                    {React.Children.map(children, child => {
+                                                        if (typeof child === 'string') {
+                                                            return highlightKeywords(child, article.keywords || []);
+                                                        }
+                                                        return child;
+                                                    })}
+                                                </p>
+                                            ),
                                             ul: ({ node, ...props }) => <ul className="space-y-3 my-8 list-none pl-6 border-l-2 border-zinc-100" {...props} />,
                                             li: ({ node, ...props }) => (
                                                 <li className="relative" {...props}>

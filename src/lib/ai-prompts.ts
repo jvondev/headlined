@@ -23,6 +23,7 @@ Produce a reference-grade page that could plausibly be cited as an authoritative
 - Seed Related Topics: {relatedKeywords}
 - Research Context (GROUNDING DATA):
 {groundingContext}
+{internalLinksContext}
 
 ### Editorial Standards (STRICTLY FOLLOW)
 
@@ -86,18 +87,22 @@ Output ONLY valid JSON. No markdown code blocks around the JSON.`;
 
 
 
+// ... (previous imports)
+
 /**
  * Build the enhanced prompt with grounding data and category list
  */
 export function buildEnhancedArticlePrompt(
   keyword: string,
   relatedKeywords: string[] = [],
-  groundingContext: string
+  groundingContext: string,
+  internalLinksContext: string = ''
 ): string {
   return ARTICLE_GENERATION_PROMPT_V2
     .replace('{keyword}', keyword)
     .replace('{relatedKeywords}', relatedKeywords.length > 0 ? relatedKeywords.join(', ') : 'none')
     .replace('{groundingContext}', groundingContext || 'No research data available - use your training knowledge.')
+    .replace('{internalLinksContext}', internalLinksContext ? `\n\n### Internal Linking Strategy\nYou SHOULD weave in mentions of the following existing internal articles where semantically relevant. Do not force them if they don't fit, but prioritize connecting concepts.\nUse the format: [Article Title](/path/to/article)\n\nAvailable Internal Articles:\n${internalLinksContext}` : '')
     .replace('{categoryList}', buildCategoryList())
     .replace('{today}', new Date().toISOString().split('T')[0]);
 }
