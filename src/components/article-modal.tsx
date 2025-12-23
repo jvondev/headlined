@@ -43,7 +43,7 @@ export function ArticleModal() {
                         className="fixed inset-0 z-50 flex flex-col bg-background sm:inset-4 sm:rounded-2xl sm:border shadow-2xl overflow-hidden"
                     >
                         {/* We use a key to force re-mount when slug changes */}
-                        <div className="flex-1 w-full h-full relative overflow-y-auto overflow-x-hidden bg-background">
+                        <div className="flex-1 w-full h-full relative overflow-hidden bg-background">
                             {/* 
                                 IMPORTANT: We are rendering the existing Client Page.
                                 NOTE: Requires ArticleClientPage to be able to read from window.location OR props.

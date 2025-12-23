@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { PostExportTemplate } from '@/components/post-export-template';
 import { useArticleModal } from '@/context/article-modal-context';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 type LoadingState = 'loading' | 'success' | 'error' | 'not-article';
 
@@ -42,6 +43,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
     const [hasMoreContent, setHasMoreContent] = useState(false);
     const [isGeneratingContent, setIsGeneratingContent] = useState(false);
     const [remainingSections, setRemainingSections] = useState(0);
+    const [isHeaderSticky, setIsHeaderSticky] = useState(false);
 
     // Export state
     const [isExporting, setIsExporting] = useState(false);
@@ -97,8 +99,6 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
         if (legacyMatch) {
             return { date: legacyMatch[1], slug: legacyMatch[2].replace(/\/$/, ''), isArticle: true };
         }
-
-        return { date: null, slug: null, isArticle: false };
 
         return { date: null, slug: null, isArticle: false };
     }, [pathname, overrideDate, overrideSlug, modalContext?.articleData, modalContext?.currentDate, modalContext?.currentSlug]);
@@ -368,29 +368,19 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
                         </div>
                     </div>
 
-                    {/* Content Skeleton */}
-                    <div className="flex-1 bg-white -mt-6 rounded-t-[30px] p-8 space-y-8 z-20">
-                        <div className="max-w-3xl mx-auto space-y-12">
-                            {/* Meta */}
-                            <div className="flex gap-6">
-                                <Skeleton className="h-4 w-32 bg-zinc-100" />
-                                <Skeleton className="h-4 w-24 bg-zinc-100" />
+                    {/* Simple Content Skeleton */}
+                    <div className="flex-1 bg-white p-8 space-y-6">
+                        <div className="max-w-3xl mx-auto space-y-8">
+                            <Skeleton className="h-4 w-1/4 bg-zinc-100" />
+                            <div className="space-y-3">
+                                <Skeleton className="h-8 w-full bg-zinc-100" />
+                                <Skeleton className="h-8 w-1/2 bg-zinc-100" />
                             </div>
-
-                            {/* Section 1 */}
-                            <div className="space-y-4">
-                                <Skeleton className="h-4 w-full bg-zinc-100" />
-                                <Skeleton className="h-4 w-full bg-zinc-100" />
-                                <Skeleton className="h-4 w-5/6 bg-zinc-100" />
-                                <Skeleton className="h-4 w-4/6 bg-zinc-100" />
-                            </div>
-
-                            {/* Section 2 */}
-                            <div className="space-y-4">
-                                <Skeleton className="h-6 w-1/3 bg-zinc-100 mb-6" />
-                                <Skeleton className="h-4 w-full bg-zinc-100" />
-                                <Skeleton className="h-4 w-full bg-zinc-100" />
-                                <Skeleton className="h-4 w-2/3 bg-zinc-100" />
+                            <div className="space-y-4 pt-4">
+                                <Skeleton className="h-4 w-full bg-zinc-50" />
+                                <Skeleton className="h-4 w-full bg-zinc-50" />
+                                <Skeleton className="h-4 w-full bg-zinc-50" />
+                                <Skeleton className="h-4 w-3/4 bg-zinc-50" />
                             </div>
                         </div>
                     </div>
@@ -435,49 +425,65 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
                 </div>
 
                 {/* Close Button */}
-                <motion.button
-                    onClick={handleClose}
-                    className="absolute top-6 right-6 z-[60] p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all shadow-lg"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                >
-                    <X className="w-5 h-5" />
-                </motion.button>
+                <AnimatePresence>
+                    {!isHeaderSticky && (
+                        <motion.button
+                            onClick={handleClose}
+                            className="fixed top-4 right-4 md:top-6 md:right-6 z-[60] p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all shadow-lg active:scale-90"
+                            initial={{ opacity: 0, scale: 0.8, x: 20 }}
+                            animate={{ opacity: 1, scale: 1, x: 0 }}
+                            exit={{ opacity: 0, scale: 0.8, x: 20 }}
+                        >
+                            <X className="w-5 h-5" />
+                        </motion.button>
+                    )}
+                </AnimatePresence>
 
                 {/* Scrollable Content */}
                 <div id="article-scroll-container" className="flex-1 overflow-y-auto no-scrollbar overscroll-contain pb-32">
-                    {/* Hero Section */}
-                    <div className="relative w-full h-[45vh] md:h-[55vh] overflow-hidden">
+                    {/* Hero Section - Clean Editorial Design */}
+                    <div className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden bg-zinc-900">
                         {post.thumbnail_url ? (
-                            <img src={post.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                            <img
+                                src={post.thumbnail_url}
+                                alt=""
+                                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                            />
                         ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-black" />
+                            <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-950" />
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent opacity-90" />
-                        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 pb-12 z-20">
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3">
-                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-white text-black uppercase tracking-widest shadow-lg">
+
+                        {/* Dramatic Sophisticated Scrim */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+
+                        {/* Content Overlay */}
+                        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-16">
+                            <div className="max-w-4xl mx-auto w-full space-y-8">
+                                <div className="flex flex-wrap items-center gap-4">
+                                    <span className="px-3 py-1 rounded-sm bg-white text-zinc-950 text-[10px] font-bold uppercase tracking-[0.2em]">
                                         {post.topic || 'News'}
                                     </span>
-                                    <span className="text-xs text-white/90 uppercase bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
-                                        {articleInfo.date && new Date(articleInfo.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+                                    <span className="text-white/60 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+                                        <Clock className="w-3.5 h-3.5" />
+                                        {readingTime} MIN READ
                                     </span>
-                                    <span className="text-xs text-white/90 uppercase bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 flex items-center gap-1.5 shadow-lg">
-                                        <Clock className="w-3 h-3" />
-                                        {readingTime} min
-                                    </span>
+                                    <div className="h-px flex-1 bg-white/20" />
                                 </div>
-                                <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tighter drop-shadow-2xl">
+
+                                <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-white leading-[1.1] tracking-tight text-balance">
                                     {post.title}
                                 </h1>
+
+                                <div className="text-white/50 text-xs font-medium uppercase tracking-[0.3em]">
+                                    {articleInfo.date && new Date(articleInfo.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Content Body */}
-                    <div className="relative z-10 bg-zinc-950 -mt-6 rounded-t-[30px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border-t border-white/5">
-                        <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mt-4 mb-2" />
+                    <div className="relative z-10 bg-white dark:bg-zinc-950">
+                        <div className="h-1.5 w-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-20" />
 
                         {/* Expanded Reader */}
                         <ExpandedReader
@@ -503,24 +509,34 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
                             isExporting={isExporting}
                             onThemeChange={setReaderDarkMode}
                             onClose={handleClose}
-                            onStickyChange={() => { }}
+                            onStickyChange={setIsHeaderSticky}
                             hideHeader={pathname?.startsWith('/news/')}
                         />
 
                         {/* Related Articles */}
                         {relatedPosts.length > 0 && articleInfo.date && (
-                            <section className="px-6 pb-12 mt-8 pt-8 border-t border-white/10">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                                        <Newspaper className="w-4 h-4 text-white/70" />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-lg font-bold text-white">More Stories</h2>
-                                        <p className="text-xs text-white/50">From {new Date(articleInfo.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                            <section className={cn(
+                                "px-6 pb-12 mt-8 pt-8 border-t transition-colors",
+                                readerDarkMode ? "border-white/10 bg-zinc-950" : "border-zinc-200 bg-white"
+                            )}>
+                                <div className="flex items-center justify-between mb-8">
+                                    <div className="flex items-center gap-4">
+                                        <div className={cn(
+                                            "w-10 h-10 rounded-2xl border flex items-center justify-center shadow-inner",
+                                            readerDarkMode ? "bg-white/5 border-white/10" : "bg-zinc-50 border-zinc-200"
+                                        )}>
+                                            <Newspaper className={cn("w-5 h-5", readerDarkMode ? "text-white/70" : "text-zinc-500")} />
+                                        </div>
+                                        <div>
+                                            <h2 className={cn("text-xl font-black tracking-tight", readerDarkMode ? "text-white" : "text-zinc-900")}>More Stories</h2>
+                                            <p className={cn("text-[10px] font-bold uppercase tracking-widest", readerDarkMode ? "text-white/40" : "text-zinc-400")}>
+                                                {new Date(articleInfo.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <nav className="grid gap-4" aria-label="Related articles">
+                                <nav className="grid gap-3" aria-label="Related articles">
                                     {relatedPosts.map((relatedPost) => {
                                         const { getArticleCanonicalPath } = require('@/lib/category-utils');
                                         const canonicalUrl = getArticleCanonicalPath(relatedPost);
@@ -528,33 +544,52 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
                                             <Link
                                                 key={relatedPost.slug}
                                                 href={canonicalUrl}
-                                                className="flex gap-4 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group"
+                                                className={cn(
+                                                    "flex items-center gap-5 p-4 rounded-[24px] border transition-all group active:scale-[0.98] outline-none",
+                                                    readerDarkMode
+                                                        ? "bg-white/[0.03] border-white/5 hover:bg-white/[0.07] hover:border-white/10"
+                                                        : "bg-zinc-50 border-zinc-100 hover:bg-zinc-100/80 hover:border-zinc-200"
+                                                )}
                                             >
-                                                <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                                                <div className={cn(
+                                                    "w-24 h-24 rounded-[18px] overflow-hidden flex-shrink-0 shadow-2xl ring-1",
+                                                    readerDarkMode ? "ring-white/10" : "ring-zinc-200"
+                                                )}>
                                                     {relatedPost.thumbnail_url ? (
                                                         <img
                                                             src={relatedPost.thumbnail_url}
                                                             alt=""
-                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                             loading="lazy"
                                                         />
                                                     ) : (
-                                                        <div className="w-full h-full bg-gradient-to-br from-zinc-700 to-zinc-900" />
+                                                        <div className={cn(
+                                                            "w-full h-full bg-gradient-to-br",
+                                                            readerDarkMode ? "from-zinc-800 to-zinc-900" : "from-zinc-200 to-zinc-300"
+                                                        )} />
                                                     )}
                                                 </div>
-
-                                                <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                                    <span className="text-[9px] font-bold text-white/50 uppercase tracking-wider mb-1">
-                                                        {relatedPost.topic || 'News'}
-                                                    </span>
-                                                    <h3 className="text-sm font-semibold text-white line-clamp-2 leading-snug mb-2">
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
+                                                            {relatedPost.topic || 'News'}
+                                                        </span>
+                                                        <span className={cn("w-1 h-1 rounded-full", readerDarkMode ? "bg-white/20" : "bg-zinc-300")} />
+                                                        <span className={cn("text-[10px] font-bold uppercase tracking-widest", readerDarkMode ? "text-white/40" : "text-zinc-400")}>
+                                                            {relatedPost.readingTime || 1} min read
+                                                        </span>
+                                                    </div>
+                                                    <h3 className={cn(
+                                                        "text-[15px] font-bold leading-tight mb-3 line-clamp-2 group-hover:text-primary transition-colors",
+                                                        readerDarkMode ? "text-white" : "text-zinc-900"
+                                                    )}>
                                                         {relatedPost.title}
                                                     </h3>
-                                                    <div className="flex items-center gap-3 text-white/40">
-                                                        <span className="flex items-center gap-1 text-[10px]">
-                                                            <Clock className="w-3 h-3" />
-                                                            {relatedPost.readingTime || 1} min
-                                                        </span>
+                                                    <div className={cn(
+                                                        "flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider",
+                                                        readerDarkMode ? "text-white/30" : "text-zinc-400"
+                                                    )}>
+                                                        <span>Read Story</span>
                                                         <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                                                     </div>
                                                 </div>
@@ -565,7 +600,12 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
 
                                 <Link
                                     href="/today"
-                                    className="flex items-center justify-center gap-2 mt-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 text-sm font-medium hover:bg-white/10 hover:text-white transition-all"
+                                    className={cn(
+                                        "flex items-center justify-center gap-2 mt-6 py-3 rounded-xl border transition-all text-sm font-medium",
+                                        readerDarkMode
+                                            ? "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+                                            : "bg-zinc-100 border-zinc-200 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900"
+                                    )}
                                 >
                                     View All Headlines
                                     <ArrowRight className="w-4 h-4" />
@@ -595,6 +635,6 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
                     isDarkMode={readerDarkMode}
                 />
             </motion.div>
-        </AnimatePresence>
+        </AnimatePresence >
     );
 }

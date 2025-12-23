@@ -156,17 +156,16 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                 setReadingProgress(Math.min(100, Math.max(0, p)));
             }
 
-            // Sticky Header Detection for Mobile "Morph" Close Button
-            // Only apply on mobile (< 768px / md breakpoint)
-            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-            const isSticky = isMobile && scrollTop > 100;
+            // Sticky Header Detection for "Morph" Close Button
+            // Apply on all screen sizes, but threshold can vary
+            const isSticky = scrollTop > 150;
             onStickyChange?.(isSticky);
             setIsHeaderSticky(isSticky);
         };
 
-        const container = document.getElementById('post-view-scroll-container');
+        const container = document.getElementById('article-scroll-container');
         if (container) {
-            container.addEventListener('scroll', handleScroll);
+            container.addEventListener('scroll', handleScroll, { passive: true });
         }
         window.addEventListener('scroll', handleScroll, { passive: true });
 
@@ -424,29 +423,17 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
             <div
                 ref={stickyHeaderRef}
                 className={cn(
-                    "sticky top-0 z-40 border-b backdrop-blur-xl transition-all duration-300",
+                    "sticky top-0 z-40 border-b transition-all duration-300",
                     isDarkMode
-                        ? "bg-zinc-950/90 border-white/5"
-                        : "bg-white/90 border-zinc-200"
+                        ? "bg-zinc-950/95 border-white/5"
+                        : "bg-white/95 border-zinc-200"
                 )}>
-                <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+                <div className="max-w-4xl mx-auto px-4 py-2.5 flex items-center justify-between">
                     {/* Reading Stats */}
-                    <div className="flex items-center gap-3 text-xs">
-                        <div className={cn(
-                            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-colors",
-                            isDarkMode ? "bg-white/5" : "bg-zinc-100"
-                        )}>
-                            <Sparkles className="w-3 h-3 text-zinc-400" />
-                            <span>{readProgress}% read</span>
-                        </div>
+                    <div className="flex items-center gap-4 text-[10px] font-bold tracking-[0.2em] uppercase opacity-40">
+                        <span>{readProgress}% READ</span>
                         {hasMoreContent && (
-                            <div className={cn(
-                                "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full hidden sm:flex transition-colors",
-                                isDarkMode ? "bg-white/5" : "bg-zinc-100"
-                            )}>
-                                <Clock className="w-3 h-3" />
-                                <span>{remainingTime} min left</span>
-                            </div>
+                            <span className="hidden sm:inline-block">/ {remainingTime} MIN LEFT</span>
                         )}
                     </div>
 
@@ -517,21 +504,21 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                             </Button>
                         </div>
 
-                        {/* Mobile: Grouped Settings Menu + Close Morph */}
-                        <div className="md:hidden flex items-center">
+                        {/* Mobile & Tablet: Grouped Settings Menu + Close Morph */}
+                        <div className="md:hidden flex items-center gap-2">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button
                                         variant="ghost"
                                         size="sm"
                                         className={cn(
-                                            "h-9 w-9 p-0 rounded-full font-serif italic text-lg font-medium shadow-sm border",
+                                            "h-8 px-4 rounded-full font-serif italic text-base font-medium border flex items-center gap-2 transition-all",
                                             isDarkMode
-                                                ? "bg-white/10 border-white/10 text-zinc-100 hover:bg-white/20"
-                                                : "bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200"
+                                                ? "bg-white/5 border-white/10 text-zinc-100 hover:bg-white/10"
+                                                : "bg-zinc-50 border-zinc-200 text-zinc-800 hover:bg-zinc-100"
                                         )}
                                     >
-                                        Aa
+                                        Font
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent
@@ -636,7 +623,27 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
                                 </DropdownMenuContent>
                             </DropdownMenu>
 
-                            {/* Local Close Button (Right of Aa, appears when sticky) */}
+                            {/* Local Close Button (appears when sticky) */}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={onClose}
+                                className={cn(
+                                    "rounded-full shadow-sm border transition-all duration-300",
+                                    isDarkMode
+                                        ? "bg-white/10 border-white/10 text-zinc-100 hover:bg-white/20 hover:text-white"
+                                        : "bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200 hover:text-black",
+                                    isHeaderSticky
+                                        ? "w-9 h-9 p-0 opacity-100 scale-100 ml-2"
+                                        : "w-0 h-0 p-0 opacity-0 scale-0 ml-0 overflow-hidden border-none"
+                                )}
+                            >
+                                <X className="w-5 h-5" />
+                            </Button>
+                        </div>
+
+                        {/* Desktop-only Sticky Close button */}
+                        <div className="hidden md:block">
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -661,46 +668,18 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
             {/* Content Area - with generous bottom padding for floating bar */}
             <div className="max-w-3xl mx-auto px-6 py-8 pb-40">
                 {!hideHeader && (
-                    <header className="mb-12">
-                        <div className="flex flex-wrap items-center gap-3 mb-6">
-                            {category && (
-                                <span className={cn(
-                                    "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest",
-                                    isDarkMode ? "bg-white/10 text-white" : "bg-zinc-900 text-white"
-                                )}>
-                                    {category}
-                                </span>
-                            )}
-                            {subcategory && (
-                                <span className={cn(
-                                    "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border",
-                                    isDarkMode ? "bg-white/5 border-white/10 text-zinc-400" : "bg-zinc-100 text-zinc-600 border-zinc-200"
-                                )}>
-                                    {subcategory}
-                                </span>
-                            )}
-                        </div>
-
+                    <header className="mb-16">
+                        <div className="h-px w-full bg-gradient-to-r from-zinc-200 via-transparent to-transparent dark:from-white/10 mb-12" />
                         <h1 className={cn(
-                            "text-4xl md:text-5xl font-black leading-[1.1] tracking-tight mb-8",
+                            "text-5xl md:text-6xl lg:text-7xl font-serif font-medium leading-[1.05] tracking-tight mb-8 text-balance",
                             isDarkMode ? "text-white" : "text-zinc-900"
                         )}>
                             {title || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                         </h1>
-
-                        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-zinc-500 font-medium">
-                            <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4" />
-                                {date ? new Date(date).toLocaleDateString('en-US', {
-                                    month: 'long',
-                                    day: 'numeric',
-                                    year: 'numeric'
-                                }) : 'Recently'}
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Clock className="w-4 h-4" />
-                                {readingTime} min read
-                            </div>
+                        <div className="flex items-center gap-6 text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">
+                            <span>{date ? new Date(date).toLocaleDateString() : 'LATEST'}</span>
+                            <span className="w-1 h-1 rounded-full bg-current" />
+                            <span>{category || 'TOPIC'}</span>
                         </div>
                     </header>
                 )}
@@ -717,10 +696,10 @@ export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
 
                     <div
                         className={cn(
-                            "article-content space-y-8 leading-[1.8] font-serif transition-colors",
-                            isDarkMode ? "text-zinc-300" : "text-zinc-800"
+                            "article-content space-y-10 leading-[1.7] transition-all duration-500",
+                            isDarkMode ? "text-zinc-400" : "text-zinc-700"
                         )}
-                        style={{ fontSize: `${fontSize}px` }}
+                        style={{ fontSize: `${fontSize}px`, fontFamily: 'var(--font-serif), serif' }}
                     >
                         {sections.map((section, index) => {
                             const isLast = index === sections.length - 1;
