@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Script from "next/script";
-import { checkLicenseStatus } from "@/lib/license-manager";
 
 export function AdScripts() {
     const [isPremium, setIsPremium] = useState<boolean | null>(null);
 
     useEffect(() => {
-        checkLicenseStatus().then(setIsPremium);
+        setIsPremium(true);
 
         // Add global error handler for apitiny script errors
         const originalError = console.error;

@@ -6,11 +6,11 @@ import { SearchInput } from './search-input';
 import { getFilteredPosts } from '@/lib/client-posts';
 import { Post } from '@/types';
 import { PostView } from '@/components/post-view';
-import { checkLicenseStatus } from '@/lib/license-manager';
+
 import { Button } from '@/components/ui/button';
 import { PostCarousel } from '@/components/post-carousel';
 import { ArrowLeft } from 'lucide-react';
-import { PremiumModal } from '@/components/support/premium-modal';
+
 import { OnboardingProvider } from "@/context/onboarding-provider";
 
 export function SearchView() {
@@ -22,18 +22,13 @@ export function SearchView() {
 
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
-    const [isPremium, setIsPremium] = useState(false);
-    const [showPremiumModal, setShowPremiumModal] = useState(false);
+
 
     useEffect(() => {
         const fetchResults = async () => {
             setLoading(true);
-            const [results, premiumStatus] = await Promise.all([
-                getFilteredPosts({ search_query: q, topic_name: topic, interest_name: interest }),
-                checkLicenseStatus()
-            ]);
+            const results = await getFilteredPosts({ search_query: q, topic_name: topic, interest_name: interest });
             setPosts(results);
-            setIsPremium(premiumStatus);
             setLoading(false);
         };
 
@@ -61,8 +56,7 @@ export function SearchView() {
                             <SearchInput
                                 initialQuery={q}
                                 onSearch={handleSearch}
-                                isPremium={isPremium}
-                                onPremiumRequest={() => setShowPremiumModal(true)}
+                                isPremium={true}
                                 showSubscribeButton={true}
                             />
                         </div>
@@ -80,11 +74,11 @@ export function SearchView() {
                             searchQuery={q}
                             topicName={topic}
                             shouldFetchPaginatedPosts={!posts}
-                            isPremium={isPremium}
+                            isPremium={true}
                         />
                     )}
                 </div>
-                <PremiumModal isOpen={showPremiumModal} onClose={() => setShowPremiumModal(false)} />
+
             </div>
         </OnboardingProvider>
     );

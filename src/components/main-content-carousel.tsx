@@ -23,11 +23,8 @@ import { usePathname } from "next/navigation";
 
 type MainContentCarouselProps = {
   emblaRef: (instance: HTMLElement | null) => void;
-  emblaApi: UseEmblaCarouselType[1] | undefined;
   allFilterItems: CarouselItem[];
   selectedIndex: number;
-  topics: Topic[];
-  interests: Interest[];
   className?: string;
   date?: string;
   dateRange?: { start: string; end: string };
@@ -40,11 +37,8 @@ type MainContentCarouselProps = {
 
 const MainContentCarouselComponent: FC<MainContentCarouselProps> = ({
   emblaRef,
-  emblaApi,
   allFilterItems,
   selectedIndex,
-  topics,
-  interests,
   className,
   date,
   dateRange,

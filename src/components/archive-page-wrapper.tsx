@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PremiumGuard } from "@/components/premium-guard";
+
 import { SynchronizedCarousel } from "@/components/post-carousel";
 import { OnboardingProvider } from "@/context/onboarding-provider";
 import { Post } from "@/types";
@@ -34,7 +34,7 @@ export function ArchivePageWrapper({ fetchPosts }: ArchivePageWrapperProps) {
 
     return (
         <OnboardingProvider>
-            <PremiumGuard>
+
                 <div className="fixed top-4 left-4 z-50">
                     <Button variant="ghost" size="icon" onClick={() => router.push("/today")}>
                         <ArrowLeft className="w-6 h-6" />
@@ -47,7 +47,7 @@ export function ArchivePageWrapper({ fetchPosts }: ArchivePageWrapperProps) {
                 ) : (
                     <SynchronizedCarousel posts={posts} />
                 )}
-            </PremiumGuard>
+
         </OnboardingProvider>
     );
 }

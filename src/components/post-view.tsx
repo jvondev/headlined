@@ -15,14 +15,9 @@ import { getArticleCanonicalPath } from "@/lib/category-utils";
 
 interface PostViewProps {
     post: Post;
-    isActive: boolean;
     emblaApi?: UseEmblaCarouselType[1];
     isLocked?: boolean;
     onUnlockRequest?: () => void;
-    onSave?: () => void;
-    isSaved?: boolean;
-    onShare?: () => void;
-    isPremium?: boolean;
 }
 
 const decodeHtmlEntities = (text: string) => {
@@ -37,7 +32,7 @@ const decodeHtmlEntities = (text: string) => {
 import { useArticleModal } from "@/context/article-modal-context";
 
 // ... inside component ...
-const PostViewComponent: FC<PostViewProps> = ({ post, isActive, isLocked, onUnlockRequest, onSave, isSaved, onShare, isPremium }) => {
+const PostViewComponent: FC<PostViewProps> = ({ post, isLocked, onUnlockRequest }) => {
     const router = useRouter();
     const modalContext = useArticleModal();
 

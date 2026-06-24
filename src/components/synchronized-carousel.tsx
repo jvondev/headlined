@@ -7,7 +7,6 @@ import type { Topic, Interest } from "@/types";
 import { usePathname } from "next/navigation";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
 import { checkIfFeedHasPosts } from "@/lib/client-posts";
-import { checkLicenseStatus } from "@/lib/license-manager";
 import { KeyboardShortcutsHint } from "@/components/keyboard-shortcuts-hint";
 
 type CarouselItem = {
@@ -79,7 +78,7 @@ export const SynchronizedCarousel: FC<SynchronizedCarouselProps> = ({ topics, in
 
                 const allPotentialItems = [...subscribedTopicItems, ...subscribedInterestItems];
                 let validItems: CarouselItem[] = [];
-                const isPremium = await checkLicenseStatus();
+                const isPremium = true;
                 const isArchiveMode = !!(date || dateRange);
 
                 for (const item of allPotentialItems) {

@@ -7,7 +7,6 @@ import React, { useState, useEffect } from "react";
 import { UseEmblaCarouselType } from "embla-carousel-react";
 import { DynamicIcon } from "@/components/dynamic-icon";
 import Link from "next/link";
-import { checkLicenseStatus } from "@/lib/license-manager";
 
 type CarouselItem = {
     name: string;
@@ -36,7 +35,7 @@ export function CarouselNav({
     const [isPremium, setIsPremium] = useState(false);
 
     useEffect(() => {
-        checkLicenseStatus().then(setIsPremium);
+        setIsPremium(true);
     }, []);
 
     useEffect(() => {

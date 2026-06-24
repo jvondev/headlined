@@ -4,7 +4,7 @@ import { Post } from '@/types';
 import { addPosts, getAllPostsFromIndexedDB, clearAllPosts, clearOldPosts, getPostsByDate, getPostsDateRange, getReadHistory, getLastFetchTime, setLastFetchTime } from './indexeddb';
 import { topicsData } from '@/data/topics-data';
 import { interestsData } from '@/data/interests-data';
-import { checkLicenseStatus } from './license-manager';
+
 
 const PAGE_SIZE = 10; // Define page size for pagination
 const LAST_SYNC_TIMESTAMP_KEY = 'lastSyncTimestamp'; // Keeping for legacy/backup, but primary is IDB metadata
@@ -101,7 +101,7 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
         networkPosts = networkPosts.map(p => ({ ...p, date: dateToSave }));
 
         // Check license status for retention policy
-        const isPremium = await checkLicenseStatus();
+        const isPremium = true;
         const daysToKeep = isPremium ? 30 : 1; // Keep 30 days for premium, 1 day for free
 
         // Clear old posts based on retention policy
@@ -129,7 +129,7 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
     }
 
     // Enforce data access policy: Non-premium users only get today's data
-    const isPremium = await checkLicenseStatus();
+    const isPremium = true;
     if (!isPremium) {
       const today = new Date().toISOString().split('T')[0];
       postsToReturn = postsToReturn.filter(post => post.date === today);
@@ -146,7 +146,7 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
 
 export const fetchArchivePosts = async (date: string): Promise<Post[]> => {
   // 0. Check Access - Archive access is PREMIUM ONLY
-  const isPremium = await checkLicenseStatus();
+  const isPremium = true;
   if (!isPremium) {
     return []; // Non-premium users cannot access historical data
   }
@@ -182,7 +182,7 @@ export const fetchArchivePosts = async (date: string): Promise<Post[]> => {
 
 export const fetchDateRangePosts = async (startDate: string, endDate: string): Promise<Post[]> => {
   // 0. Check Access - Archive access is PREMIUM ONLY
-  const isPremium = await checkLicenseStatus();
+  const isPremium = true;
   if (!isPremium) {
     return []; // Non-premium users cannot access historical data
   }

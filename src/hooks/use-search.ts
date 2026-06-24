@@ -129,8 +129,7 @@ export function useSearch() {
                 if (!post) return null;
 
                 return {
-                    ...item,
-                    topic_id: post.topic_id,
+                    ...item
                 };
             })
             .filter((r): r is SearchResult => r !== null)

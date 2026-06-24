@@ -16,7 +16,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DynamicIcon } from "@/components/dynamic-icon";
 import { Topic, Interest } from "@/types";
 import { useSubscribedFeeds } from "@/hooks/use-subscribed-feeds";
-import { LicenseValidationModal } from "@/components/support/license-validation-modal";
 
 interface OnboardingFlowProps {
   isOpen: boolean;
@@ -136,15 +135,7 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({
           >
             Get Started
           </Button>
-          <div className="w-full flex justify-center mt-2">
-            <LicenseValidationModal
-              trigger={
-                <Button variant="link" size="sm" className="text-muted-foreground">
-                  Have a Headlined+ key?
-                </Button>
-              }
-            />
-          </div>
+
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

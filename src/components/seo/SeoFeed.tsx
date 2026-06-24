@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Post } from '@/types';
 import { PostCarousel } from '@/components/post-carousel';
 import { OnboardingProvider } from '@/context/onboarding-provider';
-import { checkLicenseStatus } from "@/lib/license-manager";
 import { getSeoMetadata, CategoryId, SEO_DATA_URL } from '@/lib/seo-config';
 import { SeoCover } from './seo-cover';
 
@@ -34,7 +33,7 @@ interface SeoFeedProps {
 
 export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
     const [posts, setPosts] = useState<ScraperPost[]>(initialPosts);
-    const [isPremium, setIsPremium] = useState(false);
+    const [isPremium, setIsPremium] = useState(true);
     const [hasMounted, setHasMounted] = useState(false);
 
     const seo = getSeoMetadata(category as CategoryId, subcategory);
@@ -63,10 +62,6 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
     useEffect(() => {
         setPosts(initialPosts);
     }, [category, subcategory, initialPosts]);
-
-    useEffect(() => {
-        checkLicenseStatus().then(setIsPremium);
-    }, []);
 
     useEffect(() => {
         // Hydrate/Refresh from CDN to get the absolute latest if build is stale

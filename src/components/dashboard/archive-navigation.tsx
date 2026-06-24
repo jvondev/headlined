@@ -5,7 +5,6 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { CalendarDays, Clock, Calendar, ChevronDown, History, Sparkles } from "lucide-react";
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { cn } from "@/lib/utils";
-import { useArchiveAccess } from "@/hooks/use-archive-access";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,15 +15,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { PremiumModal } from "@/components/support/premium-modal";
-import { Heart } from "lucide-react";
 
 function ArchiveNavigationContent() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    const { hasAccess: shouldShow, isPremium } = useArchiveAccess();
-    const [showModal, setShowModal] = useState(false);
+    const shouldShow = true;
+    const isPremium = true;
 
     const navData = useMemo(() => {
         const today = new Date();
@@ -129,22 +126,8 @@ function ArchiveNavigationContent() {
                         {renderMenuItem(navData.options.thisWeek, !isPremium)}
                         {renderMenuItem(navData.options.thisMonth, !isPremium)}
                     </DropdownMenuGroup>
-
-                    {!isPremium && (
-                        <>
-                            <DropdownMenuSeparator className="bg-border/30 my-2" />
-                            <DropdownMenuItem
-                                onClick={() => setShowModal(true)}
-                                className="rounded-lg bg-primary/10 text-primary focus:bg-primary/20 focus:text-primary cursor-pointer py-2.5 px-3 transition-colors duration-200"
-                            >
-                                <Heart className="w-4 h-4 mr-3 fill-primary text-primary" />
-                                <span className="font-medium">Support Headlined+</span>
-                            </DropdownMenuItem>
-                        </>
-                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
-            <PremiumModal isOpen={showModal} onClose={() => setShowModal(false)} />
         </>
     );
 }

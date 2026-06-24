@@ -13,12 +13,7 @@ import { TrendingUp, Newspaper, Bookmark, Search, PieChart, Calendar, Layers, Ar
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ArchiveNavigation } from "@/components/dashboard/archive-navigation";
-import { useArchiveAccess } from "@/hooks/use-archive-access";
-import { checkLicenseStatus } from "@/lib/license-manager";
-import { DistractionSettings } from "@/components/support/distraction-settings";
-import { useAppUsage } from "@/hooks/use-app-usage";
-import { PremiumModal } from "@/components/support/premium-modal";
-import { SupportButton } from "@/components/support-button";
+
 import { SearchModal } from "@/components/search/search-modal";
 
 interface DashboardContentProps {
@@ -33,8 +28,7 @@ interface DashboardContentProps {
 }
 
 export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, greetingMainText, greetingSubText, initialViewState = "intro", isIntroPaused, date, dateRange, periodLabel }) => {
-  const { hasAccess: hasArchiveAccess } = useArchiveAccess();
-  const usage = useAppUsage();
+
   const { subscribedTopics, subscribedInterests, loading: feedsLoading } = useSubscribedFeeds();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
@@ -63,8 +57,6 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
     }
   }, [viewState]);
 
-  const [isPremiumUser, setIsPremiumUser] = useState(false);
-  const [showSupportModal, setShowSupportModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
 
   const fetchData = async () => {
@@ -78,8 +70,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
       });
 
       let history = await getReadHistory();
-      const isPremium = await checkLicenseStatus();
-      setIsPremiumUser(isPremium);
+
 
       const now = new Date();
       const todayStr = now.toISOString().split('T')[0];
@@ -284,52 +275,11 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
     }
   };
 
-  const isPreviewMode = (date || dateRange) && !isPremiumUser;
-
-  // Mock Data for Preview Mode
-  const mockHistory = Array(5).fill(null).map((_, i) => ({
-    slug: `mock-${i}`,
-    title: "Premium Article Content Preview",
-    description: "This content is available for premium supporters.",
-    readAt: new Date().toISOString(),
-    topic: ["Technology", "Science", "Health", "Design", "Business"][i % 5],
-    thumbnail_url: null
-  })) as (Post & { readAt: string })[];
-
-  const mockTopicStats = [
-    { topic: "Technology", count: 15, percentage: 45 },
-    { topic: "Science", count: 10, percentage: 30 },
-    { topic: "Health", count: 8, percentage: 25 }
-  ];
-
-  const mockInterestStats = [
-    { interest: "Digital", count: 8, percentage: 40 },
-    { interest: "Space", count: 6, percentage: 30 },
-    { interest: "Wellness", count: 6, percentage: 30 }
-  ];
-
-  const displayHistory = isPreviewMode ? mockHistory : readHistory;
-  const displayTopicStats = isPreviewMode ? mockTopicStats : topicStats;
-  const displayInterestStats = isPreviewMode ? mockInterestStats : interestStats;
-
-  // Dynamic Mock Data based on User Subscriptions
-  const displayGroupedTopics = isPreviewMode ? (
-    subscribedTopics.length > 0 ?
-      subscribedTopics.reduce((acc, topic) => {
-        acc[topic.name] = mockHistory.slice(0, Math.floor(Math.random() * 3) + 1);
-        return acc;
-      }, {} as Record<string, (Post & { readAt: string })[]>)
-      : { "Technology": mockHistory.slice(0, 3), "Science": mockHistory.slice(2, 4) } // Fallback if no subs
-  ) : groupedTopics;
-
-  const displayGroupedInterests = isPreviewMode ? (
-    subscribedInterests.length > 0 ?
-      subscribedInterests.reduce((acc, interest) => {
-        acc[interest.name] = mockHistory.slice(0, Math.floor(Math.random() * 3) + 1);
-        return acc;
-      }, {} as Record<string, (Post & { readAt: string })[]>)
-      : { "Digital": mockHistory.slice(0, 2), "Space": mockHistory.slice(3, 5) } // Fallback if no subs
-  ) : groupedInterests;
+  const displayHistory = readHistory;
+  const displayTopicStats = topicStats;
+  const displayInterestStats = interestStats;
+  const displayGroupedTopics = groupedTopics;
+  const displayGroupedInterests = groupedInterests;
 
   if (loading) return null;
 
@@ -361,7 +311,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
               onComplete={handleIntroComplete}
               mainText={greetingMainText}
               subText={greetingSubText}
-              action={viewState === "dashboard" && hasArchiveAccess ? <ArchiveNavigation /> : undefined}
+              action={viewState === "dashboard" ? <ArchiveNavigation /> : undefined}
               isPaused={isIntroPaused}
             />
           </motion.div>
@@ -393,7 +343,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                           <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Daily Insight</span>
                         </div>
                         <div>
-                          <h2 className={cn("text-xl md:text-2xl font-semibold leading-tight tracking-tight text-foreground", isPreviewMode && "blur-sm select-none")}>
+                          <h2 className={cn("text-xl md:text-2xl font-semibold leading-tight tracking-tight text-foreground")}>
                             {displayHistory.length > 0
                               ? (
                                 periodLabel ? `You read ${displayHistory.length} articles ${periodLabel}.` :
@@ -408,7 +358,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                                       "Start your reading journey today."
                               )}
                           </h2>
-                          <p className={cn("text-muted-foreground mt-2 text-sm font-medium", isPreviewMode && "blur-sm select-none")}>
+                          <p className={cn("text-muted-foreground mt-2 text-sm font-medium")}>
                             {displayHistory.length > 5
                               ? `You're diving deep into ${displayTopicStats[0]?.topic}. Keep it up!`
                               : "Explore trending topics to stay informed."}
@@ -428,11 +378,11 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                       <div className="flex-1 space-y-3 overflow-y-auto pr-1">
                         {displayTopicStats.slice(0, 3).map((stat) => (
                           <div key={stat.topic} className="space-y-1.5">
-                            <div className={cn("flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground", isPreviewMode && "blur-sm select-none")}>
+                            <div className={cn("flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground")}>
                               <span>{stat.topic}</span>
                               <span className="opacity-70">{Math.round(stat.percentage)}%</span>
                             </div>
-                            <div className={cn("h-1.5 w-full bg-secondary rounded-full overflow-hidden", isPreviewMode && "blur-[2px]")}>
+                            <div className={cn("h-1.5 w-full bg-secondary rounded-full overflow-hidden")}>
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${stat.percentage}%` }}
@@ -459,11 +409,11 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                       <div className="flex-1 space-y-3 overflow-y-auto pr-1">
                         {displayInterestStats.slice(0, 3).map((stat) => (
                           <div key={stat.interest} className="space-y-1.5">
-                            <div className={cn("flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground", isPreviewMode && "blur-sm select-none")}>
+                            <div className={cn("flex justify-between text-[10px] font-medium uppercase tracking-wider text-muted-foreground")}>
                               <span className="line-clamp-1">{stat.interest}</span>
                               <span className="opacity-70">{Math.round(stat.percentage)}%</span>
                             </div>
-                            <div className={cn("h-1.5 w-full bg-secondary rounded-full overflow-hidden", isPreviewMode && "blur-[2px]")}>
+                            <div className={cn("h-1.5 w-full bg-secondary rounded-full overflow-hidden")}>
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${stat.percentage}%` }}
@@ -493,7 +443,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                       <div className="relative border-l border-border/50 ml-2 pl-6 space-y-8 py-2 flex-1">
                         {displayHistory.length > 0 ? (
                           <>
-                            <div className={cn(isPreviewMode && "blur-sm select-none pointer-events-none")}>
+                            <div className={cn("")}>
                               {displayHistory.slice(0, timelineItemsToShow).map((post, i) => (
                                 <div key={post.slug || i} className="relative group mb-8 last:mb-0">
                                   <span className="absolute -left-[29px] top-1.5 w-2.5 h-2.5 rounded-full bg-background border-2 border-primary z-10 group-hover:scale-125 transition-transform duration-300" />
@@ -508,7 +458,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                                 </div>
                               ))}
                             </div>
-                            {displayHistory.length > timelineItemsToShow && !isPreviewMode && (
+                            {displayHistory.length > timelineItemsToShow && (
                               <button
                                 onClick={() => setTimelineItemsToShow(displayHistory.length)}
                                 className="w-full py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors border border-border/50 rounded-md hover:bg-primary/5"
@@ -521,18 +471,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                           <p className="text-sm text-muted-foreground italic">No reading activity yet.</p>
                         )}
 
-                        {/* Preview Mode Message Overlay */}
-                        {isPreviewMode && (
-                          <div className="absolute inset-0 flex items-center justify-center p-4 z-20">
-                            <div className="bg-background/95 backdrop-blur-sm border border-border p-4 rounded-xl shadow-lg text-center max-w-[240px]">
-                              <Sparkles className="w-6 h-6 text-primary mx-auto mb-2" />
-                              <p className="text-xs font-medium text-foreground mb-3">
-                                Unlock your complete reading history and deep dive into your past interests.
-                              </p>
-                              <SupportButton onClick={() => setShowSupportModal(true)} className="w-full h-8 text-xs" />
-                            </div>
-                          </div>
-                        )}
+
                       </div>
                     </Card>
                   </div >
@@ -548,7 +487,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                             <Layers className="w-4 h-4 text-primary" />
                             <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Topics</h3>
                           </div>
-                          <div className={cn("grid grid-cols-1 sm:grid-cols-2 gap-4", isPreviewMode && "blur-sm select-none pointer-events-none")}>
+                          <div className={cn("grid grid-cols-1 sm:grid-cols-2 gap-4")}>
                             {Object.entries(displayGroupedTopics).map(([topic, posts]) => (
                               <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
                                 <div className="flex items-center justify-between border-b border-border/50 pb-2">
@@ -583,7 +522,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                             <Grid className="w-4 h-4 text-primary" />
                             <h3 className="font-bold text-sm tracking-wide uppercase text-muted-foreground">Your Interests</h3>
                           </div>
-                          <div className={cn("grid grid-cols-1 sm:grid-cols-2 gap-4", isPreviewMode && "blur-sm select-none pointer-events-none")}>
+                          <div className={cn("grid grid-cols-1 sm:grid-cols-2 gap-4")}>
                             {Object.entries(displayGroupedInterests).map(([topic, posts]) => (
                               <Card key={topic} className="p-4 bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/20 transition-colors flex flex-col gap-3">
                                 <div className="flex items-center justify-between border-b border-border/50 pb-2">
@@ -699,32 +638,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({ setIsIntroMode, gr
                     </Card>
                   </motion.div >
                 </div >
-
-                {/* Distraction Settings (Premium Feature - Unlocks after 2 days) */}
-                {usage.daysUsed > 2 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                    className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4"
-                  >
-                    <div className="col-span-1 md:col-span-2 md:col-start-2">
-                      <DistractionSettings
-                        isPremium={isPremiumUser}
-                        onOpenSupport={() => setShowSupportModal(true)}
-                      />
-                    </div>
-                  </motion.div>
-                )}
               </div>
-
-              <PremiumModal
-                isOpen={showSupportModal}
-                onClose={() => {
-                  setShowSupportModal(false);
-                  fetchData(); // Refresh data in case license was activated
-                }}
-              />
               <SearchModal isOpen={showSearchModal} onClose={() => setShowSearchModal(false)} />
             </motion.div >
           )

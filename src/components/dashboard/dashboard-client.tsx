@@ -13,7 +13,7 @@ import { useSubscribedFeeds } from '@/hooks/use-subscribed-feeds';
 import { checkIfFeedHasPosts } from '@/lib/client-posts';
 import { Topic, Interest } from '@/types';
 import { getSubscribedTopics, getSubscribedInterests } from '@/lib/local-storage';
-import { PremiumGuard } from "@/components/premium-guard";
+
 import { useRef } from 'react';
 
 const SynchronizedCarousel = dynamic(
@@ -142,7 +142,7 @@ function DashboardContent() {
         let initialViewState: "intro" | "dashboard" | undefined = undefined;
         let topics: Topic[] = [];
         let interests: Interest[] = [];
-        let usePremiumGuard = false;
+
         let periodLabel: string | undefined = undefined;
 
         switch (view) {
@@ -153,11 +153,11 @@ function DashboardContent() {
                 break;
             case 'yesterday':
                 date = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-                usePremiumGuard = false;
+
                 break;
             case 'archive':
                 date = searchParams.get("date") || undefined;
-                usePremiumGuard = false;
+
                 break;
             case 'this-week':
                 const today = new Date();
@@ -174,7 +174,7 @@ function DashboardContent() {
                     start: toLocalYMD(last7DaysStart),
                     end: toLocalYMD(today)
                 };
-                usePremiumGuard = false;
+
                 periodLabel = "in the last 7 days";
                 break;
             case 'this-month':
@@ -191,12 +191,12 @@ function DashboardContent() {
                     start: toLocalYMD2(last30DaysStart),
                     end: toLocalYMD2(t)
                 };
-                usePremiumGuard = false;
+
                 periodLabel = "in the last 30 days";
                 break;
         }
 
-        return { date, dateRange, initialViewState, topics, interests, usePremiumGuard, periodLabel };
+        return { date, dateRange, initialViewState, topics, interests, periodLabel };
     }, [view, searchParams, availableTopics, availableInterests]);
 
     return (
@@ -211,7 +211,7 @@ function DashboardContent() {
                     availableTopics={availableTopics}
                     availableInterests={availableInterests}
                 />
-                <PremiumGuard disabled={!carouselProps.usePremiumGuard}>
+
                     {loadingFeeds && view === 'today' ? (
                         <PostPageLoadingSkeleton />
                     ) : (
@@ -226,7 +226,7 @@ function DashboardContent() {
                             view={view}
                         />
                     )}
-                </PremiumGuard>
+
             </OnboardingProvider>
         </main>
     );
