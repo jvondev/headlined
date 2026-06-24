@@ -180,7 +180,7 @@ export default async function CategoryHubPage({ params }: Props) {
                             Open Headlined to pick your topics and get a daily news feed tailored to your interests.
                         </p>
                         <Link
-                            href="/today"
+                            href="/"
                             className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
                         >
                             Open App

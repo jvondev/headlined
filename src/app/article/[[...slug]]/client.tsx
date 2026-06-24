@@ -272,7 +272,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
         if (pathname?.startsWith('/article/')) {
             // Check if it was a legacy date path
             if (pathname.match(/\/article\/\d{4}-\d{2}-\d{2}\//)) {
-                router.push('/today');
+                router.push('/');
                 return;
             }
             router.push('/article');
@@ -283,7 +283,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
         if (window.history.length > 2) {
             router.back();
         } else {
-            router.push('/today');
+            router.push('/');
         }
     }, [router, pathname, modalContext, overrideSlug]);
 
@@ -402,7 +402,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
                     <div className="p-4 rounded-full bg-red-500/10"><AlertCircle className="w-8 h-8 text-red-400" /></div>
                     <h1 className="text-xl font-bold text-white">Article Not Found</h1>
                     <p className="text-white/60 text-sm max-w-sm">This article may have been removed or the link is invalid.</p>
-                    <Link href="/today" className="mt-4 inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg font-medium">
+                    <Link href="/" className="mt-4 inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg font-medium">
                         <Home className="w-4 h-4" /> Go to Headlines
                     </Link>
                 </motion.div>
@@ -599,7 +599,7 @@ export default function ArticleClientPage({ overrideSlug, overrideDate, fallback
                                 </nav>
 
                                 <Link
-                                    href="/today"
+                                    href="/"
                                     className={cn(
                                         "flex items-center justify-center gap-2 mt-6 py-3 rounded-xl border transition-all text-sm font-medium",
                                         readerDarkMode

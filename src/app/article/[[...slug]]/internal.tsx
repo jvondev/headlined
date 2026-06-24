@@ -96,7 +96,7 @@ export default function InternalArticlePage({ article }: InternalArticlePageProp
                             <Share2 className="w-4 h-4" />
                         </button>
                         <Link
-                            href="/today"
+                            href="/"
                             className="p-2.5 rounded-full bg-zinc-50 text-zinc-600 hover:bg-zinc-100 transition-colors border border-zinc-200"
                             title="Home"
                         >

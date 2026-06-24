@@ -178,7 +178,7 @@ export function RelatedArticlesSidebar({
                             isDarkMode ? "border-white/10" : "border-zinc-200"
                         )}>
                             <Link
-                                href="/today"
+                                href="/"
                                 className={cn(
                                     "flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all",
                                     isDarkMode

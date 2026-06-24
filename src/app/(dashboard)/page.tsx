@@ -8,10 +8,10 @@ export const metadata: Metadata = {
         follow: true,
     },
     alternates: {
-        canonical: 'https://headlined.app/today'
+        canonical: 'https://headlined.app'
     }
 };
 
-export default function TodayPage() {
+export default function RootPage() {
     return null;
 }
