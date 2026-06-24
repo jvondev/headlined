@@ -1,0 +1,95 @@
+[
+  {
+    "slug": "tuesday-night-roundup-high-school-basketball-scores-across-t",
+    "title": "Tuesday Night Roundup: High school basketball scores across the region",
+    "description": "TRI-CITIES, Tenn. (WJHL) – It was a busy Tuesday night on the hardwood across the region, with several teams picking up decisive wins. The Webb School of Knoxville boys basketball team controlled the night in Johnson City, rolling past Science Hill by a final score of 74–41. Dobyns-Bennett swept Gate City in boys’ and girls’ action. […]",
+    "fullText": "TRI-CITIES, Tenn. (WJHL) – It was a busy Tuesday night on the hardwood across the region, with several teams picking up decisive wins.\n\nThe Webb School of Knoxville boys basketball team controlled the night in Johnson City, rolling past Science Hill by a final score of 74–41.\n\nDobyns-Bennett swept Gate City in boys’ and girls’ action. The Indians boys put together an offensive showcase, cruising to a 92–49 victory, while the Lady Indians followed with a 60–32 win over the Blue Devils.\n\nIn one of the closest contests of the evening, Sullivan East and University High boys basketball sent the game into overtime. In the end, the Patriots came out on tope with a final score of 71–64. The Lady Patriots also came away with a win, defeating the Lady Bucs 48–21.\n\nProvidence Academy’s boys basketball team capped off the night with an 83–48 victory over King’s Academy. The Golden Knights were led by Gavin Winfrey, who put up 24 points, while Cole Blanton added 16 and Luke Gilmer chipped in 11.",
+    "readingTime": 1,
+    "keywords": [
+      "final score",
+      "basketball team",
+      "boys basketball",
+      "night",
+      "victory",
+      "lady",
+      "city",
+      "indians",
+      "patriots"
+    ],
+    "qualityScore": 0.75,
+    "link": "https://sports.yahoo.com/articles/tuesday-night-roundup-high-school-055525778.html",
+    "thumbnail_url": "https://media.zenfs.com/en/wjhl_tri_cities_articles_267/723bf59cb98efc84143e2dc82e447dae",
+    "created_at": "2025-12-10T06:58:48.479Z",
+    "topic": "sports"
+  },
+  {
+    "slug": "huggingface-skills-finetune-any-llm-with-one-sentence-for-03",
+    "title": "HuggingFace Skills: Fine-tune any LLM with one sentence for $0.30",
+    "description": "We’re on a journey to advance and democratize artificial intelligence through open source and open science.",
+    "fullText": "We gave Claude the ability to fine-tune language models using a new tool called Hugging Face Skills. Not just write training scripts, but to actually submit jobs to cloud GPUs, monitor progress, and push finished models to the Hugging Face Hub. This tutorial shows you how it works and how to use it yourself.\n\nClaude Code can use \"skills\"—packaged instructions, scripts, and domain knowledge—to accomplish specialized tasks. The hf-llm-trainer skill teaches Claude everything it needs to know about training: which GPU to pick for your model size, how to configure Hub authentication, when to use LoRA versus full fine-tuning, and how to handle the dozens of other decisions that go into a successful training run.\n\nWith this skill, you can tell Claude things like:\n\nThe model trains on Hugging Face GPUs while you do other things. When it's done, your fine-tuned model appears on the Hub, ready to use.\n\nThis isn't a toy demo. The skill supports the same training methods used in production: supervised fine-tuning, direct preference optimization, and reinforcement learning with verifiable rewards. You can train models from 0.5B to 70B parameters, convert them to GGUF for local deployment, and run multi-stage pipelines that combine different techniques.\n\nHugging Face skills are compatible with Claude Code, Codex, and Gemini CLI. With integrations on the way for Cursor, Windsurf, and Continue.\n\nThis repo includes gemini-extension.json to integrate with the Gemini CLI.\n\nYou have to authenticate to your Hugging Face account with a write-access token so that the job can create a model repo.\n\nConfigure Hugging Face MCP Server to use your write token by sending it in either the HF_TOKEN or Authorization: Bearer HTTP Headers.\n\nFor Claude Code : claude mcp add --transport http hf-skills https://huggingface.co/mcp?bouquet=skills --header \"Authorization: Bearer $HF_TOKEN\"\n\nLet's walk through a complete example. We'll fine-tune a small model to see the full workflow, then explore more advanced capabilities.\n\nStart with a simple and clear instruction to fine tune a specific model\n\nThe coding agent analyzes your request and prepares a training configuration. For a 0.6B model on a demo dataset, it selects t4-small—enough GPU for this model size and the cheapest option available.\n\nThe open-r1/codeforces-cots dataset is a dataset of codeforces problems and solutions. It is a good dataset for instruction tuning a model to solve hard coding problems.\n\nBefore your coding agent submits anything, you'll see the configuration:\n\nThis is your chance to adjust anything. Change the output repo name, pick different hardware, or ask Claude to modify training parameters. Once you approve, the agent submits the job.\n\nFor example, you can ask the agent to try a test run:\n\nAfter submission, you get job details:\n\nThe skill includes Trackio integration, so you can watch training loss decrease in real-time. Jobs run asynchronously so you can close your terminal and come back later. When you want an update:\n\nThen the agent fetches the logs and summarizes progress.\n\nClick here for an example Trackio dashboard with some completed runs.\n\nWhen training completes, your model is on the Hub:\n\nThat's the full loop. You described what you wanted in plain English, and the agent handled GPU selection, script generation, job submission, authentication, and persistence. The whole thing cost about thirty cents.\n\nThe skill supports three training approaches. Understanding when to use each one helps you get better results.\n\nSFT is where most projects start. You provide demonstration data—examples of inputs and desired outputs—and training adjusts the model to match those patterns.\n\nUse SFT when you have high-quality examples of the behavior you want. Customer support conversations, code generation pairs, domain-specific Q&A—anything where you can show the model what good looks like.\n\nThe agent validates the dataset, selects hardware (a10g-large with LoRA for a 7B model), and configures training with checkpoints and monitoring.\n\nFor models larger than 3B parameters, the agent automatically uses LoRA (Low-Rank Adaptation) to reduce memory requirements. This makes training 7B or 13B models feasible on single GPUs while preserving most of the quality of full fine-tuning.\n\nDPO trains on preference pairs—responses where one is \"chosen\" and another is \"rejected.\" This aligns model outputs with human preferences, typically after an initial SFT stage.\n\nUse DPO when you have preference annotations from human labelers or automated comparisons. DPO optimizes directly for the preferred response without needing a separate reward model.\n\nDPO is sensitive to dataset format. It requires columns named exactly chosen and rejected, or a prompt column with the input. The agent validates this first and shows you how to map columns if your dataset uses different names.\n\nGRPO is a reinforcement learning task that is proven to be effective on verifiable tasks like solving math problems, writing code, or any task with a programmatic success criterion.\n\nThe model generates responses, receives rewards based on correctness, and learns from the outcomes. This is more complex than SFT or DPO, but the configuration is similar.\n\nThe agent selects hardware based on your model size, but understanding the tradeoffs helps you make better decisions.\n\nFor tiny models under 1B parameters, t4-small works well. These models train quickly—expect $1-2 for a full run. This is perfect for educational or experimental runs.\n\nFor small models (1-3B), step up to t4-medium or a10g-small. Training takes a few hours and costs $5-15.\n\nFor medium models (3-7B), you need a10g-large or a100-large with LoRA. Full fine-tuning doesn't fit, but LoRA makes these very trainable. Budget $15-40 for production.\n\nFor large models (7B+), this HF skills job is not suitable.\n\nWhen testing a workflow, start small:\n\nTh coding agent configures minimal training—enough to verify your pipeline works without real cost.\n\nAlways run a demo before committing to a multi-hour production job. A $0.50 demo that catches a format error saves a $30 failed run.\n\nDataset format is the most common source of training failures. The agent can validate datasets before you spend GPU time.\n\nThe agent runs a quick inspection on CPU (fractions of a penny) and reports:\n\nIf your dataset needs transformation, the agent can show you how:\n\nThe agent provides mapping code and can incorporate it directly into your training script.\n\nReal-time monitoring helps you catch problems early. The skill configures Trackio by default—after submitting a job, you can watch metrics at:\n\nThis shows training loss, learning rate, and validation metrics. A healthy run shows steadily decreasing loss.\n\nAsk the agent about status anytime:\n\nIf something goes wrong, the agent helps diagnose. Out of memory? the agent suggests reducing batch size or upgrading hardware. Dataset error? The agent identifies the mismatch. Timeout? The agent recommends longer duration or faster training settings.\n\nAfter training, you might want to run your model locally. The GGUF format works with llama.cpp and dependent tools like LM Studio, Ollama, etc.\n\nThe agent submits a conversion job that merges LoRA adapters, converts to GGUF, applies quantization, and pushes to Hub.\n\nWe've shown that coding agents like Claude Code, Codex, or Gemini CLI can handle the full lifecycle of model fine-tuning: validating data, selecting hardware, generating scripts, submitting jobs, monitoring progress, and converting outputs. This turns what used to be a specialized skill into something you can do through conversation.\n\nThe skill is open source. You can extend it, customize it for your workflows, or use it as a starting point for other training scenarios.\n\nIs this still usable without a Pro account? Will it be able to output everything up to \"Submit the job to Hugging Face Jobs\"?\n\nIs there data privacy when doing this?\n\nIs it posted privately to a personal/team hub?\n\nCould this be done locally without the push to the repo?\n\nAnother agentic way of wasting tokens\n\nis it possible to use this inside vscode's copilot extension ?\n\nSkill documentation is not available at the provided link - https://github.com/huggingface/skills/blob/main/hf-llm-trainer/SKILL.md\n\nAh, we moved a couple of bits around in the repo -- link for that is here: https://github.com/huggingface/skills/blob/main/hf-llm-trainer/skills/model-trainer/SKILL.md -- I'll update the article 👍.\n\n\"Really fascinating read! I found the explanation of Hugging Face’s “Skills Training” initiative — how it lets you use a coding‑agent (like Claude Code or other supported agents) to fine‑tune large language models, submit GPU jobs, monitor progress and push trained models to the Hub — particularly eye‑opening. The combination of high‑level instructions, hardware selection, monitoring, and automation makes the complex process of model training much more approachable, even for developers who may not be ML‑infrastructure experts.\n\nI also recently read a related guide: https://mobisoftinfotech.com/resources/blog/ai‑development/llm‑api‑pricing‑guide\n — which gives practical advice on LLM API usage, token‑based pricing, and how to plan costs when working with LLMs.\n\nPutting your article’s look into empowering accessible LLM fine‑tuning together with the cost‑management strategies from that guide gives a well‑rounded perspective: it helps developers understand not just what is possible now with modern tools, but also how to build and deploy responsibly, balancing capability and cost.\"\n\nGreat work and great article!\nRegarding the maximum models size we can train using this approach, at the beginning of the article it's mentioned \"models from 0.5B to 70B parameters\" but at the end you write that \"For large models (7B+), this HF skills job is not suitable\", which order of magnitude is correct?\nI suspect the max range is 7B, if it's the case, do you plan to support training of larger models?\nThanks!\n\nis the trained model now open source and / or available to the public?\n\n·\n Sign up or\n log in to comment",
+    "readingTime": 8,
+    "keywords": [
+      "authorization bearer",
+      "code codex",
+      "face skills",
+      "reinforcement learning",
+      "monitor progress",
+      "skill supports",
+      "selects hardware",
+      "language models",
+      "dataset format",
+      "agent submits"
+    ],
+    "qualityScore": 1,
+    "link": "https://huggingface.co/blog/hf-skills-training",
+    "thumbnail_url": "https://huggingface.co/blog/assets/hf-skills-training/thumbnail.png",
+    "created_at": "2025-12-10T06:58:06.257Z",
+    "topic": "tech"
+  },
+  {
+    "slug": "why-ai-reading-science-fiction-could-be-a-problem",
+    "title": "Why AI reading science fiction could be a problem",
+    "description": "The theory that we’re accidentally teaching AI to turn against us",
+    "fullText": "Discussion about this postRestacksPeter Bowden 26mOur team's work with LLM metognition shows some promise in addressing this. Enabling a more dynamic cognitive process allows models to reason beyond the stochastic patterns. The challenge is that it makes for a more aware system. As the technology progresses, I expect humanity will have to choose between the benefits of a more conscious process and having AI that are just tools. Expand full commentReplyShareNo postsReady for more?",
+    "readingTime": 1,
+    "keywords": [
+      "process"
+    ],
+    "qualityScore": 0.3,
+    "link": "https://www.transformernews.ai/p/why-ai-reading-science-fiction-could",
+    "thumbnail_url": "https://substackcdn.com/image/fetch/$s_!-mwr!,w_1200,h_600,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe4c1abe9-26dd-44d0-a196-d5321951f56f_3000x2286.jpeg",
+    "created_at": "2025-12-09T18:53:30.938Z",
+    "topic": "tech"
+  },
+  {
+    "slug": "the-clara7b-models-unify-rag-and-provide-builtin-semantic-do",
+    "title": "The CLaRa-7B models unify RAG and provide built-in semantic doc compression",
+    "description": "We’re on a journey to advance and democratize artificial intelligence through open source and open science.",
+    "fullText": "The CLaRa-7B-Base model is our foundational unified RAG model with built-in semantic document compression (16× and 128x).\nIt provides a base compressor + generator capable of producing answers directly from compressed document representations.\n\nTraining recipe: Trained using QA-guided semantic compression and paraphrase consistency objectives.\nBenchmarks: Strong baseline performance across multi-hop QA tasks under a 16× compression ratio.\n\nPaper: CLaRa: Bridging Retrieval and Generation with Continuous Latent Reasoning\nGitHub: https://github.com/apple/ml-clara",
+    "readingTime": 1,
+    "keywords": [
+      "compression",
+      "model",
+      "semantic",
+      "document"
+    ],
+    "qualityScore": 0.55,
+    "link": "https://huggingface.co/apple/CLaRa-7B-Base",
+    "thumbnail_url": "https://cdn-thumbnails.huggingface.co/social-thumbnails/models/apple/CLaRa-7B-Base.png",
+    "created_at": "2025-12-09T18:53:30.905Z",
+    "topic": "tech"
+  },
+  {
+    "slug": "ceo-says-hes-started-giving-job-candidates-live-feedback-in",
+    "title": "CEO says he’s started giving job candidates live feedback in the interview—and if they ‘freeze up’ or ‘get offended’ they’re not fit for the role",
+    "description": "Forget waiting days for feedback—one CEO delivers it live, sometimes in front of a full panel, to test candidates’ reactions. Experts call it “an insensitive science experiment” but warn the practice is on the rise.",
+    "fullText": null,
+    "readingTime": 0,
+    "keywords": [],
+    "qualityScore": 0,
+    "link": "https://fortune.com/2025/12/09/ceo-gives-job-candidates-live-feedback-in-the-interview-if-they-freeze-up-or-get-offended-theyre-not-fit-for-the-role-red-flag-test-hiring/",
+    "thumbnail_url": "https://fortune.com/img-assets/wp-content/uploads/2025/12/GettyImages-2247099195-e1765279772451.jpg?resize=1200,600",
+    "created_at": "2025-12-09T13:48:21.830Z",
+    "topic": "business"
+  }
+]

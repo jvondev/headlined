@@ -1,0 +1,102 @@
+import type { Metadata } from 'next';
+import './globals.css';
+import Script from 'next/script';
+import { ClientLayout } from './client-layout';
+
+export const metadata: Metadata = {
+  title: 'Headlined',
+  description: 'Made for digital minimalists who quit social media but still want to know what’s going on. A simple swipe news app showing the day’s most important stories, so you can stay informed without doomscrolling.',
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning className="no-scrollbar h-full">
+      <head>
+        <meta charSet="utf-8" />
+        <link rel="manifest" href="/manifest.json" crossOrigin="use-credentials" />
+        <link rel="icon" href="/headlined-logo.svg" type="image/svg+xml" />
+        <meta name="theme-color" content="#f0f0f0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+
+        {/* Site-wide Structured Data for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Headlined",
+              "url": "https://headlined.app",
+              "description": "A simple swipe news app showing the day's most important stories. Stay informed without doomscrolling.",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "https://headlined.app/search?q={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              }
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "NewsMediaOrganization",
+              "name": "Headlined",
+              "url": "https://headlined.app",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://headlined.app/headlined-icon-512.png",
+                "width": 512,
+                "height": 512
+              },
+              "sameAs": [],
+              "masthead": "https://headlined.app/about",
+              "ethicsPolicy": "https://headlined.app/about"
+            })
+          }}
+        />
+      </head>
+      <body className="font-body antialiased no-scrollbar h-full" suppressHydrationWarning={true}>
+        <ClientLayout>{children}</ClientLayout>
+
+        {/* Analytics Scripts - Loaded after hydration */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-119CNXCR97"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-119CNXCR97');
+          `}
+        </Script>
+
+        <Script
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          strategy="afterInteractive"
+          data-cf-beacon='{"token": "1a3c52cd54ef44838d0cd99b4bf2f638"}'
+        />
+        {process.env.NODE_ENV === "development" && (
+          <Script
+            src="//unpkg.com/react-grab/dist/index.global.js"
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+            data-enabled="true"
+          />
+        )}
+      </body>
+    </html>
+  );
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "slug": "young-people-are-growing-up-fluent-in-ai-and-thats-helping-them-stand-apart-from-their-older-peers-says-gen-z-founder",
+    "title": "Young people are ‘growing up fluent in AI’ and that’s helping them stand apart from their older peers, says Gen Z founder Kiara Nirghin",
+    "description": "Nirghin explained that young entrepreneurs see coding as something to be done alongside AI agents, rather than done alone and from scratch.",
+    "fullText": null,
+    "readingTime": 0,
+    "keywords": [],
+    "qualityScore": 0,
+    "link": "https://fortune.com/2025/12/10/gen-z-growing-up-fluent-ai-helping-stand-apart-from-older-peers/",
+    "thumbnail_url": "https://fortune.com/img-assets/wp-content/uploads/2025/12/54974872644_4c9966d747_o.jpg?resize=1200,600",
+    "created_at": "2025-12-10T18:55:46.731Z",
+    "topic": "business"
+  },
+  {
+    "slug": "the-boundary-of-copyrightability-in-aigenerated-code-under-j",
+    "title": "The boundary of copyrightability in AI-generated code under Japan and US Law",
+    "description": "When GitHub Copilot first appeared, many developers viewed it as an assistive tool for coding. The honest impression of most developers was likely that while it was useful, it was not a tool to whi…",
+    "fullText": "A Curious Phenomenon with Gemma Model Outputs and License Propagation While examining the licensing details of Google’s Gemma model, I noticed a potentially puzzling phenomenon: you can freely assign a license to the model’s outputs, yet depending on how those outputs are used, the original Terms of Use might suddenly propagate to the resulting work. Outputs vs. Model Derivatives The Gemma Terms of Use distinguish…",
+    "readingTime": 1,
+    "keywords": [
+      "gemma model",
+      "outputs",
+      "license",
+      "phenomenon"
+    ],
+    "qualityScore": 0,
+    "link": "https://shujisado.org/2025/12/10/the-boundary-of-copyrightability-in-ai-generated-code/",
+    "thumbnail_url": "https://shujisado.org/wp-content/uploads/2025/12/chatgpt-image-2025e5b9b412e69c8810e697a5-21_53_59.png",
+    "created_at": "2025-12-10T13:50:09.359Z",
+    "topic": "tech"
+  },
+  {
+    "slug": "databricks-ceo-ali-ghodsi-says-his-company-will-be-worth-1-t",
+    "title": "Databricks CEO Ali Ghodsi says his company will be worth $1 trillion by doing these three things",
+    "description": "Databricks CEO says AI-powered coding, enterprise agents, and rapid app development could propel it into the trillion-dollar club.",
+    "fullText": null,
+    "readingTime": 0,
+    "keywords": [],
+    "qualityScore": 0,
+    "link": "https://fortune.com/2025/12/09/databticks-ceo-1-trillion-valuation-agents-brainstorm-ai/",
+    "thumbnail_url": "https://fortune.com/img-assets/wp-content/uploads/2025/12/54974307746_cdbc8c031a_o.jpg?resize=1200,600",
+    "created_at": "2025-12-10T03:48:33.338Z",
+    "topic": "business"
+  }
+]

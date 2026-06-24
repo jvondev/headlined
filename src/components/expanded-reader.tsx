@@ -1,0 +1,854 @@
+"use client";
+
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
+import {
+    ChevronDown,
+    Volume2,
+    VolumeX,
+    Moon,
+    Sun,
+    Minus,
+    Plus,
+    BookmarkPlus,
+    Share2,
+    Clock,
+    Sparkles,
+    ExternalLink,
+    Link2,
+    Check,
+    Highlighter,
+    Download,
+    Loader2,
+    Music2,
+    Instagram,
+    X,
+    Calendar,
+    User,
+    CheckCircle2
+} from "lucide-react";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { ArticleCTA } from "./article-cta";
+import { highlightKeywords } from '@/lib/text-highlight';
+import { Button } from "./ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+
+// ============================================================================
+// EXPANDED READER - Progressive full-text reading experience
+// Features: Floating action bar with exports, unified scroll, smart anchoring
+// ============================================================================
+
+interface ExpandedReaderProps {
+    fullText: string | null;
+    description: string | null;
+    keywords: string[];
+    title?: string;
+    category?: string;
+    subcategory?: string;
+    slug: string;
+    readingTime?: number;
+    isPremium?: boolean;
+    onHighlightSave?: (quote: string) => void;
+    // Callbacks for PostView to manage floating bar
+    onContinueStateChange?: (hasMore: boolean, isGenerating: boolean, remaining: number) => void;
+    onContinueRequest?: () => void;
+    articleUrl?: string;
+    // Export props
+    onDownload?: (platform: 'tiktok' | 'instagram') => void;
+    isExporting?: boolean;
+    date?: string;
+    // Theme sync callback
+    // Theme sync callback
+    onThemeChange?: (isDark: boolean) => void;
+    // Close & Sticky Sync
+    onClose?: () => void;
+    onStickyChange?: (isSticky: boolean) => void;
+    hideHeader?: boolean;
+}
+
+interface Section {
+    id: string;
+    content: string;
+    isGenerated: boolean;
+}
+
+// Local highlighting logic removed in favor of @/lib/text-highlight
+
+// TypewriterSection removed
+
+// Ad Slot Component
+const AdSlot = ({ index }: { index: number }) => (
+    <div className="w-full my-8 py-2">
+        <div className="relative w-full min-h-[280px] bg-transparent rounded-2xl flex flex-col items-center justify-center overflow-hidden">
+            <div
+                // @ts-ignore
+                ta-ad-container=""
+                id={`reader-ad-${index}`}
+                className="w-full h-full min-h-[280px] flex items-center justify-center"
+            />
+        </div>
+    </div>
+);
+
+// Reading Progress Bar component removed - progress shown inline
+
+
+
+export const ExpandedReader: React.FC<ExpandedReaderProps> = ({
+    fullText,
+    description,
+    keywords = [],
+    title,
+    category,
+    subcategory,
+    slug,
+    readingTime = 1,
+    isPremium = false,
+    onHighlightSave,
+    onContinueStateChange,
+    onContinueRequest,
+    articleUrl,
+    onDownload,
+    isExporting,
+    date,
+    onThemeChange,
+    onClose,
+    onStickyChange,
+    hideHeader = false
+}) => {
+    const contentToDisplay = fullText || description || "";
+
+    // URL rewriting disabled - modal stays on current page
+
+    // Scroll Progress Logic (Interactive)
+    const [readingProgress, setReadingProgress] = useState(0);
+    const [isHeaderSticky, setIsHeaderSticky] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            let scrollTop = 0;
+            let scrollHeight = 0;
+            let clientHeight = 0;
+
+            const container = document.getElementById('article-scroll-container');
+            if (container) {
+                scrollTop = container.scrollTop;
+                scrollHeight = container.scrollHeight;
+                clientHeight = container.clientHeight;
+            } else {
+                scrollTop = window.scrollY;
+                scrollHeight = document.documentElement.scrollHeight;
+                clientHeight = window.innerHeight;
+            }
+
+            if (scrollHeight > clientHeight) {
+                const p = (scrollTop / (scrollHeight - clientHeight)) * 100;
+                setReadingProgress(Math.min(100, Math.max(0, p)));
+            }
+
+            // Sticky Header Detection for "Morph" Close Button
+            // Apply on all screen sizes, but threshold can vary
+            const isSticky = scrollTop > 150;
+            onStickyChange?.(isSticky);
+            setIsHeaderSticky(isSticky);
+        };
+
+        const container = document.getElementById('article-scroll-container');
+        if (container) {
+            container.addEventListener('scroll', handleScroll, { passive: true });
+        }
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+            if (container) {
+                container.removeEventListener('scroll', handleScroll);
+            }
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    // Section state
+    const [sections, setSections] = useState<Section[]>([]);
+    const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+    const [isGenerating, setIsGenerating] = useState(false);
+
+    // Reader settings - DEFAULT TO LIGHT
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('reader-theme');
+            return saved !== null ? saved === 'dark' : false;
+        }
+        return false;
+    });
+    const [fontSize, setFontSize] = useState(18);
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
+    const [linkCopied, setLinkCopied] = useState(false);
+    const [highlightsEnabled, setHighlightsEnabled] = useState(true);
+
+    // Persist theme preference and sync to parent
+    useEffect(() => {
+        localStorage.setItem('reader-theme', isDarkMode ? 'dark' : 'light');
+    }, [isDarkMode]);
+
+    // Sync initial theme to parent on mount
+    useEffect(() => {
+        onThemeChange?.(isDarkMode);
+    }, []); // Only run on mount
+
+    // Refs
+    const containerRef = useRef<HTMLDivElement>(null);
+    const stickyHeaderRef = useRef<HTMLDivElement>(null);
+    const contentEndRef = useRef<HTMLDivElement>(null);
+    const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+    // Track if user was at bottom before new content
+    const wasAtBottomRef = useRef(false);
+
+    // Initialize sections (Immediate render)
+    useEffect(() => {
+        if (!contentToDisplay) return;
+
+        // Split by paragraphs and deduplicate
+        const allParagraphs = contentToDisplay.split(/\n\n+/).filter((p: string) => p.trim().length > 0);
+        const seenParagraphs = new Set<string>();
+        const paragraphs: string[] = [];
+
+        for (const p of allParagraphs) {
+            const normalized = p.trim().toLowerCase().substring(0, 100);
+            if (!seenParagraphs.has(normalized)) {
+                seenParagraphs.add(normalized);
+                paragraphs.push(p);
+            }
+        }
+
+        const chunks: Section[] = [];
+        let currentChunk: string[] = [];
+
+        paragraphs.forEach((p, i) => {
+            currentChunk.push(p);
+            // Inject every 6 paragraphs like internal.tsx
+            if (currentChunk.length === 6 || i === paragraphs.length - 1) {
+                chunks.push({
+                    id: `section-${chunks.length}`,
+                    content: currentChunk.join('\n\n'),
+                    isGenerated: true,
+                });
+                currentChunk = [];
+            }
+        });
+
+        setSections(chunks);
+        setCurrentSectionIndex(0);
+    }, [contentToDisplay]);
+
+    // Calculate read progress percentage
+    const readProgress = useMemo(() => {
+        if (sections.length === 0) return 0;
+        const generatedCount = sections.filter(s => s.isGenerated).length;
+        return Math.round((generatedCount / sections.length) * 100);
+    }, [sections]);
+
+
+    // Remaining time estimation
+    const remainingTime = useMemo(() => {
+        if (sections.length === 0) return 0;
+        const generatedCount = sections.filter(s => s.isGenerated).length;
+        const remainingRatio = 1 - (generatedCount / sections.length);
+        return Math.max(1, Math.ceil(readingTime * remainingRatio));
+    }, [sections, readingTime]);
+
+    // Progressive Auto-Scroll (Parallel with generation)
+    useEffect(() => {
+        if (!isGenerating) return;
+
+        let animationFrameId: number;
+
+        const smoothScrollToBottom = () => {
+            if (wasAtBottomRef.current && contentEndRef.current) {
+                // Scroll to keep bottom in view, but gently
+                contentEndRef.current.scrollIntoView({
+                    behavior: 'auto', // Auto is better for continuous updates than smooth
+                    block: 'end'
+                });
+            }
+            animationFrameId = requestAnimationFrame(smoothScrollToBottom);
+        };
+
+        // Start scrolling loop
+        animationFrameId = requestAnimationFrame(smoothScrollToBottom);
+
+        return () => {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        };
+    }, [isGenerating]);
+
+    // Handle section complete
+    const handleSectionComplete = useCallback(() => {
+        setIsGenerating(false);
+    }, []);
+
+    // Handle continue reading
+    const handleContinueReading = useCallback(() => {
+        if (isGenerating) return;
+
+        // Smart Scroll Logic: Check if user is near bottom BEFORE generating
+        const scrollThreshold = 100; // px
+        const isNearBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - scrollThreshold);
+        wasAtBottomRef.current = isNearBottom;
+
+        const nextIndex = sections.findIndex(s => !s.isGenerated);
+        if (nextIndex === -1) return;
+
+        setIsGenerating(true);
+        setCurrentSectionIndex(nextIndex);
+
+        setSections(prev => prev.map((s, i) =>
+            i === nextIndex ? { ...s, isGenerated: true } : s
+        ));
+    }, [sections, isGenerating]);
+
+    // Handle read full story
+    const handleReadFull = useCallback(() => {
+        if (articleUrl) {
+            window.open(articleUrl, '_blank');
+        }
+    }, [articleUrl]);
+
+    // Handle copy link - Uses updated window.location.href
+    const handleCopyLink = useCallback(() => {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            setLinkCopied(true);
+            setTimeout(() => setLinkCopied(false), 2000);
+        });
+    }, []);
+
+    // Text-to-Speech
+    const toggleSpeech = useCallback(() => {
+        if (!('speechSynthesis' in window)) return;
+
+        if (isSpeaking) {
+            window.speechSynthesis.cancel();
+            setIsSpeaking(false);
+        } else {
+            const textToSpeak = sections
+                .filter(s => s.isGenerated)
+                .map(s => s.content)
+                .join('. ');
+
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
+            utterance.onend = () => setIsSpeaking(false);
+
+            speechRef.current = utterance;
+            window.speechSynthesis.speak(utterance);
+            setIsSpeaking(true);
+        }
+    }, [isSpeaking, sections]);
+
+    // Cleanup speech on unmount
+    useEffect(() => {
+        return () => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        };
+    }, []);
+
+    // Font size controls
+    const increaseFontSize = () => setFontSize(prev => Math.min(prev + 2, 28));
+    const decreaseFontSize = () => setFontSize(prev => Math.max(prev - 2, 14));
+
+    // Handle text selection for quote saving
+    const handleTextSelection = useCallback(() => {
+        const selection = window.getSelection();
+        if (selection && selection.toString().trim().length > 10) {
+            setSelectedQuote(selection.toString().trim());
+        } else {
+            setSelectedQuote(null);
+        }
+    }, []);
+
+    const handleSaveQuote = useCallback(() => {
+        if (selectedQuote && onHighlightSave) {
+            onHighlightSave(selectedQuote);
+            setSelectedQuote(null);
+        }
+    }, [selectedQuote, onHighlightSave]);
+
+    const remainingSections = sections.filter(s => !s.isGenerated).length;
+    const hasMoreContent = remainingSections > 0;
+
+    // Notify PostView of continue state changes
+    useEffect(() => {
+        onContinueStateChange?.(hasMoreContent, isGenerating, remainingSections);
+    }, [hasMoreContent, isGenerating, remainingSections, onContinueStateChange]);
+
+    // Expose continue handler to PostView
+    useEffect(() => {
+        if (onContinueRequest) {
+            // Store the ref for PostView to call
+            (window as any).__expandedReaderContinue = handleContinueReading;
+        }
+        return () => {
+            delete (window as any).__expandedReaderContinue;
+        };
+    }, [handleContinueReading, onContinueRequest]);
+
+    return (
+        <div
+            ref={containerRef}
+            // ... (keep attributes)
+            className={cn(
+                "relative w-full min-h-screen transition-colors duration-300",
+                isDarkMode ? "bg-zinc-950 text-zinc-200" : "bg-zinc-50 text-zinc-900"
+            )}
+            onMouseUp={handleTextSelection}
+            onTouchEnd={handleTextSelection}
+        >
+
+            {/* Sticky Reader Controls Header */}
+            <div
+                ref={stickyHeaderRef}
+                className={cn(
+                    "sticky top-0 z-40 border-b transition-all duration-300",
+                    isDarkMode
+                        ? "bg-zinc-950/95 border-white/5"
+                        : "bg-white/95 border-zinc-200"
+                )}>
+                <div className="max-w-4xl mx-auto px-4 py-2.5 flex items-center justify-between">
+                    {/* Reading Stats */}
+                    <div className="flex items-center gap-4 text-[10px] font-bold tracking-[0.2em] uppercase opacity-40">
+                        <span>{readProgress}% READ</span>
+                        {hasMoreContent && (
+                            <span className="hidden sm:inline-block">/ {remainingTime} MIN LEFT</span>
+                        )}
+                    </div>
+
+                    {/* Controls */}
+                    <div className="flex items-center gap-1">
+                        {/* Desktop: Expanded Controls */}
+                        <div className="hidden md:flex items-center gap-1">
+                            {/* Font Size */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 rounded-full"
+                                onClick={decreaseFontSize}
+                            >
+                                <Minus className="w-3.5 h-3.5" />
+                            </Button>
+                            <span className="text-xs w-8 text-center font-mono">{fontSize}</span>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 rounded-full"
+                                onClick={increaseFontSize}
+                            >
+                                <Plus className="w-3.5 h-3.5" />
+                            </Button>
+
+                            <div className="w-px h-4 bg-white/10 mx-1" />
+
+                            {/* Highlight Toggle */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className={cn(
+                                    "h-8 w-8 rounded-full",
+                                    highlightsEnabled && "bg-blue-500/20 text-blue-400"
+                                )}
+                                onClick={() => setHighlightsEnabled(!highlightsEnabled)}
+                                title={highlightsEnabled ? "Hide highlights" : "Show highlights"}
+                            >
+                                <Highlighter className="w-4 h-4" />
+                            </Button>
+
+                            {/* TTS */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className={cn(
+                                    "h-8 w-8 rounded-full",
+                                    isSpeaking && "bg-emerald-500/20 text-emerald-400"
+                                )}
+                                onClick={toggleSpeech}
+                            >
+                                {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                            </Button>
+
+                            {/* Dark Mode Toggle */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 rounded-full"
+                                onClick={() => {
+                                    const newMode = !isDarkMode;
+                                    setIsDarkMode(newMode);
+                                    onThemeChange?.(newMode);
+                                }}
+                            >
+                                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                            </Button>
+                        </div>
+
+                        {/* Mobile & Tablet: Grouped Settings Menu + Close Morph */}
+                        <div className="md:hidden flex items-center gap-2">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className={cn(
+                                            "h-8 px-4 rounded-full font-serif italic text-base font-medium border flex items-center gap-2 transition-all",
+                                            isDarkMode
+                                                ? "bg-white/5 border-white/10 text-zinc-100 hover:bg-white/10"
+                                                : "bg-zinc-50 border-zinc-200 text-zinc-800 hover:bg-zinc-100"
+                                        )}
+                                    >
+                                        Font
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    align="end"
+                                    sideOffset={8}
+                                    className={cn(
+                                        "min-w-[220px] p-4 backdrop-blur-xl border rounded-2xl shadow-xl z-[150]",
+                                        isDarkMode
+                                            ? "bg-[#121212]/95 border-white/[0.08]"
+                                            : "bg-white/95 border-zinc-200"
+                                    )}
+                                >
+                                    <div className="space-y-4">
+                                        {/* Font Size Control */}
+                                        <div className="flex items-center justify-between">
+                                            <span className={cn("text-xs font-medium uppercase tracking-wider", isDarkMode ? "text-zinc-400" : "text-zinc-500")}>
+                                                Font Size
+                                            </span>
+                                            <div className={cn(
+                                                "flex items-center gap-2 rounded-full p-0.5 border",
+                                                isDarkMode ? "bg-white/5 border-white/10" : "bg-zinc-100 border-zinc-200"
+                                            )}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className={cn("h-7 w-7 rounded-full", isDarkMode ? "text-zinc-300 hover:text-white hover:bg-white/10" : "text-zinc-600 hover:text-zinc-900 hover:bg-white")}
+                                                    onClick={decreaseFontSize}
+                                                >
+                                                    <Minus className="w-4 h-4" />
+                                                </Button>
+                                                <span className={cn("text-sm w-8 text-center font-bold font-mono", isDarkMode ? "text-white" : "text-zinc-900")}>
+                                                    {fontSize}
+                                                </span>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className={cn("h-7 w-7 rounded-full", isDarkMode ? "text-zinc-300 hover:text-white hover:bg-white/10" : "text-zinc-600 hover:text-zinc-900 hover:bg-white")}
+                                                    onClick={increaseFontSize}
+                                                >
+                                                    <Plus className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                        <DropdownMenuSeparator className={cn("my-2", isDarkMode ? "bg-white/10" : "bg-zinc-200")} />
+
+                                        {/* Toggles */}
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {/* Highlight */}
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className={cn(
+                                                    "h-auto py-2 flex flex-col gap-2 rounded-xl border transition-all duration-300",
+                                                    highlightsEnabled
+                                                        ? (isDarkMode ? "bg-blue-500/20 border-blue-500/30 text-blue-400" : "bg-blue-50 border-blue-200 text-blue-600")
+                                                        : (isDarkMode ? "bg-zinc-800/50 border-white/5 text-zinc-400 hover:bg-zinc-800" : "bg-zinc-100 border-zinc-200 text-zinc-500")
+                                                )}
+                                                onClick={() => setHighlightsEnabled(!highlightsEnabled)}
+                                            >
+                                                <Highlighter className="w-4 h-4" />
+                                                <span className="text-[10px] font-medium">Highlight</span>
+                                            </Button>
+
+                                            {/* Audio */}
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className={cn(
+                                                    "h-auto py-2 flex flex-col gap-2 rounded-xl border transition-all duration-300",
+                                                    isSpeaking
+                                                        ? (isDarkMode ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400" : "bg-emerald-50 border-emerald-200 text-emerald-600")
+                                                        : (isDarkMode ? "bg-zinc-800/50 border-white/5 text-zinc-400 hover:bg-zinc-800" : "bg-zinc-100 border-zinc-200 text-zinc-500")
+                                                )}
+                                                onClick={toggleSpeech}
+                                            >
+                                                {isSpeaking ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                                                <span className="text-[10px] font-medium">Read</span>
+                                            </Button>
+
+                                            {/* Theme */}
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className={cn(
+                                                    "h-auto py-2 flex flex-col gap-2 rounded-xl border transition-all duration-300",
+                                                    isDarkMode
+                                                        ? "bg-white/10 border-white/10 text-zinc-100"
+                                                        : "bg-amber-100 border-amber-200 text-amber-700"
+                                                )}
+                                                onClick={() => {
+                                                    const newMode = !isDarkMode;
+                                                    setIsDarkMode(newMode);
+                                                    onThemeChange?.(newMode);
+                                                }}
+                                            >
+                                                {isDarkMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+                                                <span className="text-[10px] font-medium">{isDarkMode ? 'Dark' : 'Light'}</span>
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+
+                            {/* Local Close Button (appears when sticky) */}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={onClose}
+                                className={cn(
+                                    "rounded-full shadow-sm border transition-all duration-300",
+                                    isDarkMode
+                                        ? "bg-white/10 border-white/10 text-zinc-100 hover:bg-white/20 hover:text-white"
+                                        : "bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200 hover:text-black",
+                                    isHeaderSticky
+                                        ? "w-9 h-9 p-0 opacity-100 scale-100 ml-2"
+                                        : "w-0 h-0 p-0 opacity-0 scale-0 ml-0 overflow-hidden border-none"
+                                )}
+                            >
+                                <X className="w-5 h-5" />
+                            </Button>
+                        </div>
+
+                        {/* Desktop-only Sticky Close button */}
+                        <div className="hidden md:block">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={onClose}
+                                className={cn(
+                                    "rounded-full shadow-sm border transition-all duration-300",
+                                    isDarkMode
+                                        ? "bg-white/10 border-white/10 text-zinc-100 hover:bg-white/20 hover:text-white"
+                                        : "bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200 hover:text-black",
+                                    isHeaderSticky
+                                        ? "w-9 h-9 p-0 opacity-100 scale-100 ml-2"
+                                        : "w-0 h-0 p-0 opacity-0 scale-0 ml-0 overflow-hidden border-none"
+                                )}
+                            >
+                                <X className="w-5 h-5" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Content Area - with generous bottom padding for floating bar */}
+            <div className="max-w-3xl mx-auto px-6 py-8 pb-40">
+                {!hideHeader && (
+                    <header className="mb-16">
+                        <div className="h-px w-full bg-gradient-to-r from-zinc-200 via-transparent to-transparent dark:from-white/10 mb-12" />
+                        <h1 className={cn(
+                            "text-5xl md:text-6xl lg:text-7xl font-serif font-medium leading-[1.05] tracking-tight mb-8 text-balance",
+                            isDarkMode ? "text-white" : "text-zinc-900"
+                        )}>
+                            {title || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                        </h1>
+                        <div className="flex items-center gap-6 text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">
+                            <span>{date ? new Date(date).toLocaleDateString() : 'LATEST'}</span>
+                            <span className="w-1 h-1 rounded-full bg-current" />
+                            <span>{category || 'TOPIC'}</span>
+                        </div>
+                    </header>
+                )}
+
+                <div className="prose prose-zinc prose-lg max-w-none">
+                    {description && (
+                        <div className={cn(
+                            "text-xl leading-relaxed font-medium mb-12 border-l-4 pl-6 italic transition-colors",
+                            isDarkMode ? "text-zinc-400 border-primary/40" : "text-zinc-600 border-primary/20"
+                        )}>
+                            {description}
+                        </div>
+                    )}
+
+                    <div
+                        className={cn(
+                            "article-content space-y-10 leading-[1.7] transition-all duration-500",
+                            isDarkMode ? "text-zinc-400" : "text-zinc-700"
+                        )}
+                        style={{ fontSize: `${fontSize}px`, fontFamily: 'var(--font-serif), serif' }}
+                    >
+                        {sections.map((section, index) => {
+                            const isLast = index === sections.length - 1;
+                            const injectionType = index % 2 === 0 ? 'ad' : 'cta';
+                            const showInjection = !isPremium;
+
+                            return (
+                                <React.Fragment key={section.id}>
+                                    <ReactMarkdown
+                                        remarkPlugins={[remarkGfm]}
+                                        components={{
+                                            h2: ({ node, ...props }) => <h2 className={cn("text-3xl font-bold mt-16 mb-8 scroll-mt-24", isDarkMode ? "text-white" : "text-zinc-900")} {...props} />,
+                                            h3: ({ node, ...props }) => <h3 className={cn("text-2xl font-bold mt-12 mb-6", isDarkMode ? "text-white" : "text-zinc-900")} {...props} />,
+                                            p: ({ node, children, ...props }) => (
+                                                <p className="mb-6 last:mb-0" {...props}>
+                                                    {React.Children.map(children, child => {
+                                                        if (typeof child === 'string') {
+                                                            return highlightsEnabled ? highlightKeywords(child, keywords) : child;
+                                                        }
+                                                        return child;
+                                                    })}
+                                                </p>
+                                            ),
+                                            ul: ({ node, ...props }) => <ul className={cn("space-y-3 my-8 list-none pl-6 border-l-2", isDarkMode ? "border-zinc-800" : "border-zinc-100")} {...props} />,
+                                            li: ({ node, ...props }) => (
+                                                <li className="relative" {...props}>
+                                                    <span className="absolute -left-6 top-3 w-1.5 h-1.5 rounded-full bg-primary/40" />
+                                                    {props.children}
+                                                </li>
+                                            ),
+                                            a: ({ node, ...props }) => <a className="text-primary font-semibold underline decoration-primary/30 underline-offset-4 hover:decoration-primary transition-all" {...props} />,
+                                            blockquote: ({ node, ...props }) => <blockquote className={cn("border-l-4 border-primary px-8 py-6 rounded-r-xl italic my-10", isDarkMode ? "bg-white/5 text-zinc-400" : "bg-zinc-50 text-zinc-700")} {...props} />,
+                                            table: ({ node, ...props }) => (
+                                                <div className={cn("my-10 overflow-x-auto rounded-xl border shadow-sm", isDarkMode ? "border-zinc-800" : "border-zinc-100")}>
+                                                    <table className="w-full text-sm text-left" {...props} />
+                                                </div>
+                                            ),
+                                            thead: ({ node, ...props }) => <thead className={cn("border-b", isDarkMode ? "bg-white/5 border-zinc-800" : "bg-zinc-50 border-zinc-100")} {...props} />,
+                                            th: ({ node, ...props }) => <th className={cn("px-6 py-4 font-bold uppercase tracking-wider", isDarkMode ? "text-white" : "text-zinc-900")} {...props} />,
+                                            td: ({ node, ...props }) => <td className={cn("px-6 py-4 border-b last:border-0", isDarkMode ? "text-zinc-400 border-zinc-800" : "text-zinc-600 border-zinc-50")} {...props} />,
+                                            tr: ({ node, ...props }) => <tr className={cn("transition-colors", isDarkMode ? "hover:bg-white/5" : "hover:bg-zinc-50/50")} {...props} />,
+                                        }}
+                                    >
+                                        {section.content}
+                                    </ReactMarkdown>
+
+                                    {!isLast && showInjection && (
+                                        <div className="my-12">
+                                            {injectionType === 'ad' ? (
+                                                <AdSlot index={index} />
+                                            ) : (
+                                                <ArticleCTA
+                                                    category={category || 'topics'}
+                                                    subcategory={subcategory || (category || 'general')}
+                                                />
+                                            )}
+                                        </div>
+                                    )}
+                                </React.Fragment>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Spacer to prevent content from scrolling behind floating dock */}
+                <div className="h-24" aria-hidden="true" />
+
+                {/* Scroll anchor for auto-scroll */}
+                <div ref={contentEndRef} />
+
+                {/* Reading Complete Message */}
+                {!hasMoreContent && sections.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className={cn(
+                            "text-center py-10 px-6 rounded-2xl",
+                            isDarkMode
+                                ? "bg-white/5 border border-white/10"
+                                : "bg-zinc-100 border border-zinc-200"
+                        )}
+                    >
+                        <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-zinc-700 flex items-center justify-center">
+                            <Sparkles className="w-7 h-7 text-zinc-300" />
+                        </div>
+                        <h3 className="text-lg font-semibold mb-2">Reading Complete</h3>
+                        <p className={cn(
+                            "text-sm",
+                            isDarkMode ? "text-zinc-500" : "text-zinc-500"
+                        )}>
+                            You've finished this article
+                        </p>
+                    </motion.div>
+                )}
+            </div>
+
+            {/* Floating bar moved to PostView */}
+
+            {/* Quote Save Popover */}
+            <AnimatePresence>
+                {selectedQuote && onHighlightSave && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50"
+                    >
+                        <div className={cn(
+                            "flex items-center gap-2 px-4 py-2 rounded-full shadow-2xl backdrop-blur-xl border",
+                            isDarkMode
+                                ? "bg-zinc-900/90 border-white/10"
+                                : "bg-white/90 border-zinc-200"
+                        )}>
+                            <Button
+                                size="sm"
+                                className="h-8 rounded-full"
+                                onClick={handleSaveQuote}
+                            >
+                                <BookmarkPlus className="w-4 h-4 mr-1" />
+                                Save Quote
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 rounded-full"
+                                onClick={() => {
+                                    if (navigator.share) {
+                                        navigator.share({ text: selectedQuote });
+                                    }
+                                }}
+                            >
+                                <Share2 className="w-4 h-4" />
+                            </Button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            <style jsx global>{`
+                .article-content {
+                    font-size: 1.125rem;
+                }
+                @media (min-width: 768px) {
+                    .article-content {
+                        font-size: 1.25rem;
+                    }
+                }
+            `}</style>
+        </div>
+    );
+};
+
+export default ExpandedReader;

@@ -1,0 +1,38 @@
+[
+  {
+    "slug": "the-ai-boom-is-heralding-a-new-gold-rush-in-the-american-wes",
+    "title": "The AI boom is heralding a new gold rush in the American west",
+    "description": "Once home to gold and prospectors, the Nevada desert is now the site of a new kind of expansion: tech datacenters\nDriving down the interstate through the dry Nevada desert, there are few signs that a vast expanse of new construction is hiding behind the sagebrush-covered hills. But just beyond a massive power plant and transmission towers that march up into the dusty brown mountains lies one of the world’s biggest buildouts of datacenters – miles of new concrete buildings that house millions of computer servers.\nThis business park, called the Tahoe-Reno Industrial Center, has a sprawling landmass greater than the city of Denver. It is home to the largest datacenter in the US, built by the company Switch, and tech giants like Google and Microsoft have also bought land here and are constructing enormous facilities. A separate Apple datacenter complex is just down the road.",
+    "link": "https://www.theguardian.com/technology/2025/dec/04/nevada-ai-data-centers",
+    "thumbnail_url": "https://i.guim.co.uk/img/media/98b1dc3ef8182910c8dc25f71f49cdb364619a90/426_0_3750_3000/master/3750.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&precrop=40:21,offset-x50,offset-y0&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdGctZGVmYXVsdC5wbmc&enable=upscale&s=c3038117c30becf03294ba8e66858bb5",
+    "created_at": "2025-12-05T03:42:43.517Z",
+    "topic": "tech"
+  },
+  {
+    "slug": "goodbye-cement-this-ecofriendly-alternative-could-revolution",
+    "title": "Goodbye Cement: This Eco-Friendly Alternative Could Revolutionize Construction",
+    "description": "A special material is replacing cement while slashing emissions and transforming how we build. From floors to walls, here's how it can be used in construction.",
+    "link": "https://www.yahoo.com/news/articles/goodbye-cement-eco-friendly-alternative-093000639.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/5R_VLjKmt26Hcx0Lnjs.Jw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/house_digest_articles_842/8218141c47a1485a14c03e53f619d53b",
+    "created_at": "2025-12-01T04:16:28.711Z",
+    "topic": "news"
+  },
+  {
+    "slug": "world-bank-lifts-kenyas-growth-forecast-on-construction-sect",
+    "title": "World Bank lifts Kenya’s growth forecast on construction sector optimism",
+    "description": null,
+    "link": "https://www.investing.com/news/economy-news/world-bank-lifts-kenyas-growth-forecast-on-construction-sector-optimism-4374177",
+    "thumbnail_url": "https://i-invdn-com.investing.com/trkd-images/LYNXMPELAN03G_L.jpg",
+    "created_at": "2025-11-24T03:48:39.017Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "bild-ai-yc-w25-is-hiring-make-housing-affordable",
+    "title": "Bild AI (YC W25) is hiring – Make housing affordable",
+    "description": "Puneet and I (Roop) founded Bild AI to tackle the mess that is blueprint reading, cost estimation, and permit applications in construction. It's a tough technical problem that requires the newest CV and AI approaches, and we’re impact-driven to make it more efficient to build more houses, hospitals, and schools. Featured on Business Insider (https://www.businessinsider.com/ai-startup-bild-3-million-seed-affordable-housing-2025-6).",
+    "link": "https://www.ycombinator.com/companies/bild-ai/jobs/m2ilR5L-founding-engineer-applied-ai",
+    "thumbnail_url": "https://bookface-images.s3.amazonaws.com/logos/85f165bf52e787a3301c4f5c5600c4e10c9f0063.png?1745436151",
+    "created_at": "2025-11-21T16:48:04.531Z",
+    "topic": "jobs"
+  }
+]

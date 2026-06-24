@@ -1,0 +1,186 @@
+[
+  {
+    "slug": "strategy-and-bitcoinbuying-firms-face-wider-exclusion-from-stock-indexes",
+    "title": "Strategy and bitcoin-buying firms face wider exclusion from stock indexes",
+    "description": null,
+    "fullText": null,
+    "readingTime": 0,
+    "keywords": [],
+    "qualityScore": 0,
+    "link": "https://www.investing.com/news/stock-market-news/strategy-and-bitcoinbuying-firms-face-wider-exclusion-from-stock-indexes-4418413",
+    "thumbnail_url": "https://i-invdn-com.investing.com/trkd-images/LYNXMPELBI12J_L.jpg",
+    "created_at": "2025-12-22T06:20:23.899Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "coinshares-rebrands-bitcoin-and-ethereum-etps-updates-redemption-terms",
+    "title": "CoinShares rebrands bitcoin and ethereum ETPs, updates redemption terms",
+    "description": null,
+    "fullText": null,
+    "readingTime": 0,
+    "keywords": [],
+    "qualityScore": 0,
+    "link": "https://www.investing.com/news/company-news/coinshares-rebrands-bitcoin-and-ethereum-etps-updates-redemption-terms-93CH-4417801",
+    "thumbnail_url": "https://i-invdn-com.investing.com/news/world_news_2_108x81.jpg",
+    "created_at": "2025-12-19T18:17:18.175Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "2026-crypto-exchange-architecture-explained-get-expert-insights",
+    "title": "2026 Crypto Exchange Architecture Explained – Get Expert Insights",
+    "description": "Cryptocurrency Exchange Architecture is the framework of a crypto platform, ensuring efficient trade matching, secure wallets, liquidity handling, and smooth user interaction for reliable trading",
+    "fullText": "Cryptocurrency exchange architecture forms the foundation of every trading platform, determining how trades are executed, funds are secured, and users interact. In 2026, with over 200 active exchanges globally and centralized platforms like Binance handling nearly 40% of the world’s spot trading volume, having a secure, scalable, and high-performance architecture is more important than ever.\n\nAs the crypto ecosystem evolves, exchange platforms are adopting new technologies, from hybrid and decentralized models to advanced security protocols and automated liquidity management. These innovations ensure faster transactions, enhanced user experience, and regulatory compliance, positioning modern exchanges to meet the demands of both retail and institutional traders.\n\nIn this blog, we’ll explore the latest trends, core components, and architectural advancements shaping cryptocurrency exchanges today.\n\nCryptocurrency exchange architecture is the technical blueprint of an exchange, defining how the trading engine matches orders, how funds are stored, and how users interact. Leveraging scalable engines, real-time order books, and intuitive frontends, a well-designed architecture ensures fast, secure, and compliant operations, supporting both high-volume traders and everyday users in a reliable, seamless environment.\n\nWhen built well, this architecture makes the exchange fast, secure, and dependable. Conversely, poorly designed architecture can lead to downtime, security vulnerabilities, or slow, frustrating user experiences, issues that can quickly harm an exchange’s reputation in today’s competitive market.\n\nTo understand how exchanges are built, here are the primary building blocks:\n\nAny exchange revolves around the trading or matching engine. It pairs buy and sell orders according to the rules such as price-time priority. The engine also needs to be able to process millions of orders in a second with a small latency in the high-performance systems. As an example, the matching engine of Binance can handle very large throughput\n\nLiquidity is the capacity to sell or purchase assets very easily without any major alterations in prices. Trades employ various liquidity designs: centralized order books with designated market makers, on-chain liquidity books (in the case of DEXs), or hybrid. The architecture should facilitate effective access to liquidity, potentially with a combination of several sources.\n\nThe manner in which an exchange manages user money is of the essence. Other exchanges are custodial (they custody user wallets), non-custodial (the user retains control with private keys). Hybrid models may allow both. The wallet architecture also determines the nature of handling deposits, withdrawals, and cold/ hot storage in a secure way.\n\nOrder book records outstanding buys/sell orders. Exchanges can be on-chain (occasionally deployed on pure DEX), off-chain or in-memory. The structure of the order book has an impact on performance, transparency and security.\n\nIt has no compromise on security: It includes authentication (KYC, 2FA), fund security (Multi-sig, cold storage), smart contract audits (DEX), and resistance to trading risks, such as front-running, MEV, or DDoS. These security layers should be in-built in the architecture.\n\nTrade is made easy, responsive and trustworthy with the good front end. The UX should receive order placement, charting, account and wallet connections, and give real-time feedback.\n\nA robust admin panel allows operators to monitor trades, manage liquidity, configure markets, and handle risk. Modern exchanges also include crypto exchange APIs for automated tools, third-party integrations, and liquidity management, essential for scalability in turnkey deployments.\n\nIn particular, the fiat on-ramps and off-ramps (banks, payment processors) come in handy, especially when it comes to centralized exchanges. The architecture should be equipped with trustworthy and secure payment systems to exchange crypto and fiat.\n\nThere are various types of cryptocurrency exchange that have their own architecture, features, advantages, and trade-offs. Knowing such types assists the user, the developer and investors to assess performance, security and usability.\n\nCentralized exchanges operate on a traditional client-server model, where the platform manages user accounts, wallets, and order matching. Trades are executed through a central server, which allows for high-speed transactions, deep liquidity, and fiat integration. Such are Binance, Coinbase, and Kraken. As convenient and quick to trade, CEXs force the user to leave their money in the hands of the platform to be hacked.\n\nDEXs run on blockchain networks and smart contracts, enabling peer-to-peer trading without a central authority. Users keep control over their money decreasing counterparty risk. Liquidity is dealt with by order books or automated market makers (AMMs). These are Uniswap and dYdX. DEXs are more transparent, secure, and decentralized, although they can be slower in their transactions and have more expensive network charges than CEXs.\n\nHybrid exchanges are built on the combination of CEXs and DEXs features to provide both speed and liquidity with the added non-custodial security. Ordinarily, the way an order matching is conducted is off-chain and then settled on-chain. This is the most optimal solution because it offers the speed of trading, lower charges and enables users to have greater control over funds. The hybrid models are becoming popular to bridge between centralized convenience and decentralized trust.\n\nP2P exchanges connect buyers and sellers directly, allowing them to trade crypto using local currencies or payment methods. The platform usually serves as an escrow service to brush off transactions and fraud. They are Paxful and LocalBitcoins. P2P exchanges offer more options in payment, privacy, and accessibility particularly where banking infrastructure is least developed but might lack liquidity compared to the CEXs.\n\nThe exchange is driven by the backend which deals with trades, liquidity and wallet security, and the front end is to be used to provide the user with a clean, user-friendly interface. The two provide a combination of fast, reliable and safe trading.\n\nCryptocurrency exchange architecture shapes how modern trading platforms operate, from order matching and liquidity flow to wallets, user dashboards, and backend systems. As centralized, decentralized, hybrid, and P2P models grow, the right architectural approach helps ensure smooth trades, consistent performance, and a better trading experience for users.\n\nWith emerging trends like AI-driven trading, Layer 2 networks, cross-chain functionality, and enhanced UX/UI, exchanges are evolving to meet the expectations of both retail and institutional traders. When platforms prioritize strong design, dependable performance, and regulatory alignment, they establish trust and remain competitive in a rapidly evolving market.\n\nIn this landscape, cryptocurrency exchange development is about building a foundation that can adapt to new technologies and industry demands. A well-structured architecture doesn’t just run a platform , it supports long-term growth and shapes the future of your exchange .just run a platform , it supports long-term growth and shapes the future of your exchange.",
+    "readingTime": 6,
+    "keywords": [
+      "supports long-term",
+      "long-term growth",
+      "p2p exchanges",
+      "institutional traders",
+      "market makers",
+      "users interact",
+      "fast secure",
+      "matching engine",
+      "manages user",
+      "hybrid models"
+    ],
+    "qualityScore": 1,
+    "link": "https://cryptiecraft.com/cryptocurrency-exchange-architecture/",
+    "thumbnail_url": "https://cryptiecraft.com/cryptieblogcraft/wp-content/uploads/2025/11/Cryptocurrency-Exchange-Architecturewebp-1024x576.webp",
+    "created_at": "2025-12-19T09:39:42.245Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "george-osborne-has-a-new-job-in-tech-and-it-doesnt-bode-well-for-britain-chris-stokelwalker",
+    "title": "George Osborne has a new job in tech, and it doesn’t bode well for Britain | Chris Stokel-Walker",
+    "description": "OpenAI is the latest to make a political hire as big tech spreads its tentacles around the world. So what’s the attraction?\nGeorge Osborne getting a new job isn’t exactly news. Since leaving frontline politics, the former chancellor has served as the chair of the Northern Powerhouse Partnership, edited (not entirely successfully) the Evening Standard, advised asset manager BlackRock, joined boutique advisory firm Robey Warshaw, been appointed as the chair of the British Museum and taken on roles including advising crypto firm Coinbase. Oh, and like any white man of a particular age, he co-hosts a political podcast.",
+    "fullText": "OpenAI is the latest to make a political hire as big tech spreads its tentacles around the world. So what’s the attraction?\n\nGeorge Osborne getting a new job isn’t exactly news. Since leaving frontline politics, the former chancellor has served as the chair of the Northern Powerhouse Partnership, edited (not entirely successfully) the Evening Standard, advised asset manager BlackRock, joined boutique advisory firm Robey Warshaw, been appointed as the chair of the British Museum and taken on roles including advising crypto firm Coinbase. Oh, and like any white man of a particular age, he co-hosts a political podcast.\n\nBut Osborne’s latest job is the most eye-opening – and is an alarming augur of what is to come. OpenAI, the maker of ChatGPT, has become the latest organisation to employ Osborne. He will run OpenAI for Countries, a unit tasked with working directly with governments while expanding the company’s Stargate datacentre programme beyond the US. At least it was announced with a tweet, rather than a LinkedIn post.\n\nThe tweet prompted jokes, as did Osborne’s single-handed attempt to boost laggard employment figures brought about by his policies as the chancellor of austerity. But it’s a serious moment, because it’s another sign that the biggest AI firms are starting to behave less like normal companies and more like quasi-governments. They’re negotiating “national” partnerships, pitching a values-led vision of “democratic AI” and hiring former senior politicians as their diplomatic corps. It’s a similar path we have seen from other industries, including oil, pharma and defence, in previous decades – which is why it’s important to try to recognise the risks and head them off before AI companies can repeat the same trick.\n\nThe initiative Osborne is heading up, OpenAI for Countries, does what it says on the tin. It’s designed to embed OpenAI’s models and infrastructure inside the machinery of states, becoming an invaluable, indefatigable part of the running of our lives. OpenAI is in talks with about 50 countries to provide them with critical national infrastructure. Whether you welcome Osborne being put in that role rather than a tech executive is a little like Hobson’s choice: who do you distrust the least? But it’s an indication of how tech companies see their position in society that they are hiring such high-powered people for these roles.\n\nOsborne is not the first to don the branded hoodie and Silicon Valley lifestyle. His fellow coalition government bod Nick Clegg blazed the trail as head of global affairs for Meta. At the time of his initial hiring as a vice-president at Facebook in 2018, his appointment was treated as a PR move – a big name to help the company navigate scandal and scrutiny. But it hinted that platforms had become political actors, whether they liked it or not. The industry’s outsized spending on lobbyists (€151m in Europe alone at the last count) to support the political beasts is an indication of what is at stake. The numbers involved also hint at the scale of the prize that tech companies see: the 10 largest big tech firms now outspend the biggest 10 companies in the pharma, finance and automotive industries combined.\n\nThe former chancellor isn’t even the first former controller of the UK public purse to be handy to big tech. In October of this year, Rishi Sunak took advisory roles with Microsoft and the AI firm Anthropic, less than two years after he convened the AI safety summit at Bletchley Park. Sunak, at least, already had the regulation hoodie in his wardrobe.\n\nYou can read these moves in two ways. The generous interpretation is that these companies are hedging: trying to anticipate tech regulation and ensure they understand it. The more cynical interpretation is that they are attempting to shape the geopolitical story around AI from inside the machine, hiring former leaders less for their technical insight than their institutional muscle memory and networks.\n\nEither way, it leaves democracies with a problem. Governments are supposed to set the rules of the road. But the tech companies they are meant to regulate are on a different scale, planting their feet in different countries. When Sunak convened the Bletchley Park summit, it was notable that he turned interviewer to quiz Elon Musk, sitting starry-eyed on stage as Musk dominated the discourse.\n\nIt’s time to recognise these companies are acting like political actors. That means it’s time to treat them like political actors, too. We need more transparency: governments signing up to OpenAI for Countries agreements should publish the details of their partnerships by default. We should also ask more questions about infrastructure dependence. Governments love Stargate-style investments in their countries, and want to be able to don a hard hat, cut a ribbon and issue a press release. But if they are in effect a new layer of national backbone, they should be studied more closely – as if they are utilities, rather than receive the good grace of a startup-style mystique.\n\nThe more tech companies start to act like politicians and global leaders, the more we need to treat them like it. That doesn’t mean deference; it means more scepticism and journalistic interrogation.\n\nChris Stokel-Walker is the author of TikTok Boom: The Inside Story of the World’s Favourite App",
+    "readingTime": 5,
+    "keywords": [
+      "political actors",
+      "tech",
+      "it’s",
+      "openai",
+      "governments",
+      "hiring",
+      "latest",
+      "chancellor",
+      "firm",
+      "roles"
+    ],
+    "qualityScore": 1,
+    "link": "https://www.theguardian.com/commentisfree/2025/dec/18/george-osborne-openai-big-tech-political-hires",
+    "thumbnail_url": "https://i.guim.co.uk/img/media/5fb605fc41a61cdeac7f4867922d02718b1d481f/158_0_2501_2001/master/2501.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&precrop=40:21,offset-x50,offset-y0&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdGctb3BpbmlvbnMucG5n&enable=upscale&s=dfe0c6a163f6b6ec74daf0b629f0de44",
+    "created_at": "2025-12-19T09:39:38.028Z",
+    "topic": "politic"
+  },
+  {
+    "slug": "erebor-bank-palmer-luckeys-cryptooriented-finance-startup-just-got-one-step-closer-to-launching",
+    "title": "Erebor Bank, Palmer Luckey's crypto-oriented finance startup, just got one step closer to launching",
+    "description": "The FDIC approved the bank's application on Dec 16. It still requires final approval from the Office of the Comptroller of the Currency.",
+    "fullText": "Erebor Bank, Palmer Luckey's finance startup backed by some of the biggest names in tech, got one step closer to launching after it cleared another key federal hurdle this week.\n\nThe Federal Deposit Insurance Corp. approved Erebor on December 16 with conditions: The bank is subject to a strict capitalization requirement and must have investors ready to provide more funding if called upon.\n\nThe bank still requires final approval from the Office of the Comptroller of the Currency. It received preliminary approval from the OCC in October.\n\nTodd Baker, a senior fellow at Columbia University and a consultant to fintech companies who isn't involved with Erebor, said in an email that he would expect Erebor to get approval to open in early 2026.\n\nBaker said in an email that one of the FDIC's requirements — that the bank invoke a capital-call agreement that would require unnamed parties to chip in more cash if certain triggers occur — is \"highly unusual\" but \"entirely appropriate given the expectation that the bank will be taking on significant risks associated with its tech and crypto-focused business plan.\"\n\nA lawyer listed in regulatory documents as an Erebor spokesperson didn't reply to a comment request.\n\nWith funding from Joe Lonsdale and Peter Thiel, Erebor's valuation was reported to be about $2 billion earlier this year. Regulatory documents showed that the bank has brought on talent from both Luckey's tech circles as well as bank and bank-regulatory circles; earlier this month, a cryptocurrency event featured remarks by Erebor's Suzanne Dannheim, a former Goldman Sachs employee.\n\nErebor's founding team set out an ambitious timeline in its pitch to investors. The bank stressed founder Palmer Luckey's \"political network\" — he has contributed large sums to President Donald Trump and other Republican organizations — as a key asset.\n\nWith this recent round of regulatory approval, it may come close to meeting its proposed timeline.\n\nThe FDIC approval process kicked off on July 28, which means it received a green light in roughly 5 months. The median application processed last year took over eight months.\n\nSeveral other new bank applications emphasizing digital services are pending with the OCC and other regulators.\n\nMichele Alt, a bank-licensing consultant, said Erebor's quick turnaround at the FDIC is cause for celebration.\n\n\"The prior average was indicative of an unnecessarily slow-moving process and highly risk averse bureaucracy,\" she said in an email to Business Insider. \"I'm delighted to see more efficient processing of bank charter applications.\"",
+    "readingTime": 3,
+    "keywords": [
+      "regulatory documents",
+      "approval",
+      "bank",
+      "tech",
+      "email",
+      "federal",
+      "investors",
+      "funding",
+      "received",
+      "consultant"
+    ],
+    "qualityScore": 0.9,
+    "link": "https://www.businessinsider.com/palmer-luckey-bank-erebor-fdic-approval-2025-12",
+    "thumbnail_url": "https://i.insider.com/69447c3b832e0ef1ead686b9?width=1200&format=jpeg",
+    "created_at": "2025-12-19T00:56:18.056Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "take-a-peek-inside-invescos-etf-playbook",
+    "title": "Take a Peek Inside Invesco’s ETF Playbook",
+    "description": "In this episode of Trillions, we talk to the company’s global head of exchange-traded funds about Bitcoin, smart-beta and much more.",
+    "fullText": "MarketsTrillionsBy Eric Balchunas and Joel WeberSaveListen and Competing in the marketplace for exchange-traded funds (or as Eric Balchunas calls it, “the terrordome”) is not for the faint of heart. It’s like fighting a multifront war where issuers have to market existing funds, engage in fee wars with the likes of Vanguard and BlackRock and innovate in a rapidly changing industry that includes more than 300 firms. Only the strong thrive (or survive, for that matter).",
+    "readingTime": 1,
+    "keywords": [
+      "funds",
+      "eric",
+      "balchunas"
+    ],
+    "qualityScore": 0.2,
+    "link": "https://www.bloomberg.com/news/articles/2025-12-18/podcast-take-a-peek-inside-invesco-s-etf-playbook",
+    "thumbnail_url": "https://assets.bwbx.io/images/users/iqjWHBFdfxIU/irIhYkt_sFVY/v1/1200x799.jpg",
+    "created_at": "2025-12-18T18:18:27.551Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "nyse-owner-is-said-in-talks-to-invest-in-crypto-firm-moonpay",
+    "title": "NYSE Owner Is Said in Talks to Invest in Crypto Firm MoonPay",
+    "description": "Intercontinental Exchange Inc., owner of the New York Stock Exchange, is in talks to invest in crypto payments firm MoonPay Inc. as part of a funding round, people familiar with the matter said.",
+    "fullText": "MarketsCryptocurrenciesBy Emily Nicolle and Katherine DohertySaveIntercontinental Exchange Inc., owner of the New York Stock Exchange, is in talks to invest in crypto payments firm MoonPay Inc. as part of a funding round, people familiar with the matter said.New York-based MoonPay is close to completing the fundraising and is targeting a valuation of about $5 billion, said one of the people, who asked not to be named discussing private deliberations.",
+    "readingTime": 1,
+    "keywords": [
+      "exchange",
+      "moonpay"
+    ],
+    "qualityScore": 0.2,
+    "link": "https://www.bloomberg.com/news/articles/2025-12-18/nyse-owner-is-said-in-talks-to-invest-in-crypto-firm-moonpay",
+    "thumbnail_url": "https://assets.bwbx.io/images/users/iqjWHBFdfxIU/isGuCcCheMN8/v1/1200x800.jpg",
+    "created_at": "2025-12-18T18:18:27.176Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "bitcoin-volatility-rises-ahead-of-23-billion-options-expiration",
+    "title": "Bitcoin Volatility Rises Ahead of $23 Billion Options Expiration",
+    "description": "Options are showing that Bitcoin is heading into the final weeks of 2025 under intense pressure, with around $23 billion in contracts set to expire next Friday that threaten to amplify already-elevated volatility.",
+    "fullText": "CryptoCryptocurrenciesBy Sidhartha ShuklaSaveOptions are showing that Bitcoin is heading into the final weeks of 2025 under intense pressure, with around $23 billion in contracts set to expire next Friday that threaten to amplify already-elevated volatility.The amount accounts for more than half of all the open interest on Deribit, the largest Bitcoin options venue. The looming buildup shows traders are pricing in continued downside risk in what’s become an even more perilous market. Bitcoin saw price swings of over $130 billion within an hour during US trading on Wednesday, triggering a cascade of both long and short liquidations. The broader crypto market has fluctuated around the $3 trillion threshold.",
+    "readingTime": 1,
+    "keywords": [
+      "bitcoin",
+      "market"
+    ],
+    "qualityScore": 0.45,
+    "link": "https://www.bloomberg.com/news/articles/2025-12-18/bitcoin-volatility-rises-ahead-of-23-billion-options-expiration",
+    "thumbnail_url": "https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iAPXZKRHWIfU/v1/1200x800.jpg",
+    "created_at": "2025-12-18T18:18:26.443Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "peter-schiff-says-bitcoin-will-drop-much-lower-than-50k-claims-michael-saylor-doesnt-care-about-shareholder-value",
+    "title": "Peter Schiff Says Bitcoin Will Drop ‘Much Lower’ Than $50K, Claims Michael Saylor ‘Doesn’t Care’ About Shareholder Value",
+    "description": "Peter Schiff warned that Bitcoin is unlikely to find a durable bottom at $50,000. Schiff argued that Strategy’s valuation is vulnerable to further declines. Michael ...",
+    "fullText": "Peter Schiff warned that Bitcoin is unlikely to find a durable bottom at $50,000.\n\nSchiff argued that Strategy’s valuation is vulnerable to further declines.\n\nMichael Saylor and Strategy have downplayed downside risks and continue to add to their Bitcoin holdings.\n\nBitcoin critic Peter Schiff on Wednesday issued a renewed warning about BTC, arguing that prices will fall well below $50,000 over the long term.\n\nIn the same outburst, Schiff also accused Michael Saylor of disregarding shareholder value as Strategy continues one of the largest corporate Bitcoin accumulation campaigns on record, despite prices falling steeply in recent weeks.\n\nIn a reply on X, Schiff said Bitcoin would not establish a lasting bottom at $50,000, describing that level as merely a short-term reference point.\n\n“No, that’s just a very short-term price target based on MSTR. Long-term Bitcoin will go much lower than $50,000,” Schiff wrote, responding to a user who asked whether prices would rebound after reaching that level.\n\nIn a separate post, Schiff added that Bitcoin would be trading well below $50,000 by the time Strategy’s executive chairman ultimately exits his holdings.\n\n“Bitcoin will be much lower than $50,000 when that happens,” Schiff wrote in response to a user who said they planned to buy once Saylor sells his Bitcoin.\n\nSchiff also targeted Strategy’s stock, arguing that its valuation remains exposed to further downside and is closely linked to Bitcoin’s performance.\n\n“It’s hard to find a chart that looks worse than $MSTR,” Schiff wrote on X. “At a minimum, the stock should drop to about $80, which is half its current price.”\n\nHe added that such a decline in Strategy’s shares would likely coincide with another sharp drop in Bitcoin.\n\n“It’s hard to imagine MSTR dropping that much without a significant decline in Bitcoin as well,” Schiff said. “I’d say a minimum target for BTC is about $50K.”\n\nSchiff has repeatedly argued that Saylor’s Bitcoin-focused strategy prioritizes cryptocurrency exposure over the interests of equity investors.\n\nSaylor and Strategy have consistently minimized perceived risk during periods of Bitcoin volatility.\n\nAfter Bitcoin fell last month, Strategy stated on X that even if BTC declined to its average purchase price of roughly $74,000, the company’s holdings would still cover its outstanding convertible debt multiple times over.\n\nIn November, Strategy CEO Phong Le suggested the company could be forced to sell Bitcoin if its shares traded below the value of its underlying holdings.",
+    "readingTime": 2,
+    "keywords": [
+      "holdings bitcoin",
+      "peter schiff",
+      "strategy’s",
+      "bottom",
+      "argued",
+      "valuation",
+      "further",
+      "downside",
+      "arguing",
+      "short-term"
+    ],
+    "qualityScore": 1,
+    "link": "https://finance.yahoo.com/news/peter-schiff-says-bitcoin-drop-094721576.html",
+    "thumbnail_url": "https://s.yimg.com/ny/api/res/1.2/9YNrFSv35yAM8aLwSVDaog--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://media.zenfs.com/en/ccn_928/70c9e8e7909eeaabaa75ee0a73232cc2",
+    "created_at": "2025-12-18T18:18:13.763Z",
+    "topic": "finance"
+  },
+  {
+    "slug": "bitcoins-silent-exodus-hits-crypto-as-longtime-buyers-cash-out",
+    "title": "Bitcoin’s Silent Exodus Hits Crypto as Long-Time Buyers Cash Out",
+    "description": "Bitcoin’s most entrenched investors are still cashing out — and the pressure is starting to show.",
+    "fullText": "MarketsCryptocurrenciesBy David PanSaveBitcoin’s most entrenched investors are still cashing out — and the pressure is starting to show.More than two months after the token hit a record high above $126,000, Bitcoin has fallen nearly 30% and is struggling to find support. One reason: its long-time holders haven’t stopped selling. New blockchain data shows that coins held for years are being divested at some of the fastest rates in recent memory, just as the market’s ability to absorb them is fading.",
+    "readingTime": 1,
+    "keywords": [],
+    "qualityScore": 0.35,
+    "link": "https://www.bloomberg.com/news/articles/2025-12-17/bitcoin-s-silent-exodus-hits-crypto-as-long-time-buyers-cash-out",
+    "thumbnail_url": "https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iNXEj5rPC9LU/v0/1200x800.jpg",
+    "created_at": "2025-12-18T06:19:09.807Z",
+    "topic": "finance"
+  }
+]

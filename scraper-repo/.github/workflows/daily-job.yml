@@ -1,0 +1,87 @@
+name: Daily Job Update
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Runs every 6 hours
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # Continue other batches if one fails
+      matrix:
+        # Max 8 batches - job.ts will auto-skip if not needed
+        batch: [0, 1, 2, 3, 4, 5, 6, 7]
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run scraper (batch ${{ matrix.batch }})
+        run: node dist/job.js --batch=${{ matrix.batch }} --total-batches=8
+
+      - name: Upload batch output
+        uses: actions/upload-artifact@v4
+        with:
+          name: output-${{ matrix.batch }}
+          path: |
+            output/*.json
+          retention-days: 1
+
+  merge:
+    needs: scrape
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download all batch artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Merge outputs
+        run: ARTIFACTS_DIR=./artifacts node dist/merge-outputs.js
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add output/
+          git commit -m "Update $(date +'%Y-%m-%d %H:%M')" || exit 0
+          git push
+
+      - name: Purge jsDelivr Cache
+        run: |
+          # Purge the specific daily file to force update
+          DATE=$(date +'%Y-%m-%d')
+          echo "Purging cache for output/$DATE.json..."
+          curl -I "https://purge.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-/output/$DATE.json"
+
+      - name: Run Google Indexing
+        env:
+          GOOGLE_JSON_KEY: ${{ secrets.GOOGLE_JSON_KEY }}
+        run: npm run index
+

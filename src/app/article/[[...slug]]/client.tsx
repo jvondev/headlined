@@ -1,0 +1,640 @@
+'use client';
+
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Post } from '@/types';
+import { fetchArticleByDateAndSlug, fetchPostsByDate, getRelatedArticles } from '@/lib/article-utils';
+import { ExpandedReader } from '@/components/expanded-reader';
+import { FloatingActionDock } from '@/components/floating-action-dock';
+import { X, Loader2, AlertCircle, Home, Newspaper, Clock, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { PostExportTemplate } from '@/components/post-export-template';
+import { useArticleModal } from '@/context/article-modal-context';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
+
+type LoadingState = 'loading' | 'success' | 'error' | 'not-article';
+
+// ... imports
+
+interface ArticleClientPageProps {
+    overrideSlug?: string;
+    overrideDate?: string;
+    fallbackTopicHint?: string;
+}
+
+export default function ArticleClientPage({ overrideSlug, overrideDate, fallbackTopicHint }: ArticleClientPageProps) {
+    const router = useRouter();
+    const pathname = usePathname();
+    const modalContext = useArticleModal();
+
+    const [post, setPost] = useState<Post | null>(null);
+    const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
+    const [loadingState, setLoadingState] = useState<LoadingState>('loading');
+    const [readerDarkMode, setReaderDarkMode] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Floating Action Dock state
+    const [hasMoreContent, setHasMoreContent] = useState(false);
+    const [isGeneratingContent, setIsGeneratingContent] = useState(false);
+    const [remainingSections, setRemainingSections] = useState(0);
+    const [isHeaderSticky, setIsHeaderSticky] = useState(false);
+
+    // Export state
+    const [isExporting, setIsExporting] = useState(false);
+    const [exportPlatform, setExportPlatform] = useState<'tiktok' | 'instagram'>('tiktok');
+    const [base64Thumbnail, setBase64Thumbnail] = useState<string | null>(null);
+    const exportRef = useRef<HTMLDivElement>(null);
+
+    // Parse date/slug from pathname OR props
+    const articleInfo = useMemo(() => {
+        // If we have data in the modal context, use it immediately
+        if (modalContext?.articleData && (modalContext.articleData.slug === overrideSlug || modalContext.articleData.slug === (overrideSlug as any)?.internalSlug)) {
+            return { date: modalContext.currentDate, slug: modalContext.currentSlug, isArticle: true, preLoaded: true, topicHint: fallbackTopicHint };
+        }
+
+        if (overrideDate && overrideSlug) {
+            return { date: overrideDate, slug: overrideSlug, isArticle: true, topicHint: fallbackTopicHint };
+        }
+
+        if (!pathname) return { date: null, slug: null, isArticle: false, topicHint: undefined };
+
+        // Regex helper for cleaning path segments
+        const cleanPathname = pathname?.replace(/\/+$/, '') || '';
+
+        // 1. Match /news/[category]/[topic]/YYYY/MM/DD/slug
+        // Pattern: /news/category/subcategory/year/month/day/slug
+        const newsMatch = pathname.match(/\/news\/[^\/]+\/[^\/]+\/(\d{4})\/(\d{1,2})\/(\d{1,2})\/([^\/\?\#]+)/);
+        if (newsMatch) {
+            const year = newsMatch[1];
+            const month = newsMatch[2].padStart(2, '0');
+            const day = newsMatch[3].padStart(2, '0');
+            return { date: `${year}-${month}-${day}`, slug: newsMatch[4].replace(/\/$/, ''), isArticle: true, topicHint: undefined };
+        }
+
+        // 2. Match /article/[category]/[subcategory]/[slug] (Internal)
+        // Ensure we don't match the root Hub or legacy date paths here
+        const internalMatch = pathname.match(/\/article\/([^\/]+)\/([^\/]+)\/([^\/\?\#]+)/);
+        if (internalMatch && !pathname.match(/\/article\/\d{4}-\d{2}-\d{2}\//)) {
+            // Check if it's actually 3 segments after /article/
+            const segments = pathname.split('/').filter(Boolean);
+            if (segments.length >= 4 && segments[0] === 'article') {
+                return {
+                    date: 'internal',
+                    slug: internalMatch[3].replace(/\/$/, ''),
+                    isArticle: true,
+                    isInternal: true,
+                    internalSlug: internalMatch[3].replace(/\/$/, '')
+                };
+            }
+        }
+
+        // 3. Match legacy /article/YYYY-MM-DD/slug
+        const legacyMatch = pathname.match(/\/article\/(\d{4}-\d{2}-\d{2})\/([^\/\?\#]+)/);
+        if (legacyMatch) {
+            return { date: legacyMatch[1], slug: legacyMatch[2].replace(/\/$/, ''), isArticle: true };
+        }
+
+        return { date: null, slug: null, isArticle: false };
+    }, [pathname, overrideDate, overrideSlug, modalContext?.articleData, modalContext?.currentDate, modalContext?.currentSlug]);
+
+    // ... useEffect for fetching logic needs update to skip if initialPost is provided AND matches
+
+
+    // Fetch article data
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadArticle() {
+            if (!articleInfo.isArticle) {
+                const cleanPath = pathname?.replace(/\/+$/, '') || '';
+                const pathSegments = cleanPath.split('/').filter(Boolean);
+
+                // Determine if we should show knowledge base or error
+                const isArticleRoot = cleanPath === '/article';
+                const isNewsRoot = cleanPath.startsWith('/news/') && pathSegments.length <= 3;
+
+                if (isArticleRoot && mounted) {
+                    setLoadingState('not-article'); // Show Knowledge Hub list
+                } else if (isNewsRoot) {
+                    setLoadingState('not-article'); // Show News Hub feed
+                } else if (mounted) {
+                    // It's a deep path but article parsing failed
+                    // Wait a bit to ensure it's not a slow hydration
+                    setLoadingState('error');
+                }
+                return;
+            }
+
+            setLoadingState('loading');
+
+            try {
+                let article: Post | null = null;
+
+                // Priority 1: Check modal context data (fixes "Not Found" when opening from hub)
+                if (modalContext?.articleData && (modalContext.articleData.slug === articleInfo.slug || modalContext.articleData.slug === (articleInfo as any).internalSlug)) {
+                    article = modalContext.articleData;
+                }
+                // Priority 2: Fetch internal article
+                else if ((articleInfo as any).isInternal) {
+                    const res = await fetch('/api/articles');
+                    const data = await res.json();
+                    const articles: any[] = data.articles || [];
+                    article = articles.find(a => a.slug === (articleInfo as any).internalSlug) || null;
+                }
+                // Priority 3: Fetch news article from CDN
+                else if (articleInfo.date && articleInfo.slug) {
+                    // Add minimum loading time to prevent flicker
+                    const minLoadTime = new Promise(resolve => setTimeout(resolve, 300));
+
+                    const [data] = await Promise.all([
+                        fetchArticleByDateAndSlug(articleInfo.date!, articleInfo.slug!, articleInfo.topicHint),
+                        minLoadTime
+                    ]);
+
+                    if (data) {
+                        article = data;
+                    }
+                }
+
+                if (cancelled) return;
+
+                if (!article) {
+                    setLoadingState('error');
+                    return;
+                }
+
+                setPost(article);
+                setLoadingState('success');
+                document.title = `${article.title} | Headlined`;
+
+                // Fetch related articles
+                if (article.date) {
+                    const allPosts = await fetchPostsByDate(article.date);
+                    if (!cancelled) {
+                        const related = getRelatedArticles(article, allPosts, 10);
+                        setRelatedPosts(related);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load article:', error);
+                if (!cancelled) {
+                    setLoadingState('error');
+                }
+            }
+        }
+
+        loadArticle();
+        return () => { cancelled = true; };
+    }, [articleInfo, pathname, router, modalContext?.articleData]);
+
+    // Construct JSON-LD for SEO
+    const jsonLd = useMemo(() => {
+        if (!post) return null;
+
+        const { getSeoMetadata } = require('@/lib/seo-templates');
+        const seoData = getSeoMetadata(post);
+        // Fallback for attribution if not found
+        const sourceName = seoData?.sourceName || 'Headlined';
+
+        return {
+            '@context': 'https://schema.org',
+            '@type': 'NewsArticle',
+            headline: seoData?.headline || post.title,
+            datePublished: post.date,
+            description: seoData?.description || post.description || '',
+            articleBody: post.fullText || '',
+            image: post.thumbnail_url ? [post.thumbnail_url] : [],
+            author: {
+                '@type': 'Organization',
+                name: 'Headlined',
+                url: 'https://headlined.app'
+            },
+            publisher: {
+                '@type': 'Organization',
+                name: 'Headlined',
+                logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://headlined.app/icon.png'
+                }
+            },
+            isBasedOn: post.link,
+            copyrightHolder: {
+                '@type': 'Organization',
+                name: sourceName
+            },
+            mainEntityOfPage: {
+                '@type': 'WebPage',
+                '@id': `https://headlined.app${pathname}`
+            }
+        };
+    }, [post, pathname]);
+
+    const handleClose = useCallback(() => {
+        if (modalContext?.isOpen) {
+            modalContext.closeArticle();
+            return;
+        }
+
+        // Smart Close logic:
+
+        // If we were passed explicit overrides (Article Overlay mode), 
+        // we might want to go back to the list view beneath it for News.
+        if (overrideSlug) {
+            // For news overlay deep links, the "background" is effectively the hub. 
+            // If we just clicked a link to get here, history might be stale or empty.
+            // If we entered via deep link, "back" might leave the site.
+            // Better to push to the hub if we are deep linked.
+            if (pathname?.startsWith('/news/')) {
+                const hubMatch = pathname.match(/^(\/news\/[^\/]+\/[^\/]+)/);
+                if (hubMatch) {
+                    router.push(hubMatch[1]);
+                    return;
+                }
+            }
+        }
+
+        // 1. If we are on a news path, try to go back to the Hub
+        if (pathname?.startsWith('/news/')) {
+            const hubMatch = pathname.match(/^(\/news\/[^\/]+\/[^\/]+)/);
+            if (hubMatch) {
+                router.push(hubMatch[1]);
+                return;
+            }
+        }
+
+        // 2. If we are on an internal article path, go to article list
+        if (pathname?.startsWith('/article/')) {
+            // Check if it was a legacy date path
+            if (pathname.match(/\/article\/\d{4}-\d{2}-\d{2}\//)) {
+                router.push('/today');
+                return;
+            }
+            router.push('/article');
+            return;
+        }
+
+        // 3. Fallback
+        if (window.history.length > 2) {
+            router.back();
+        } else {
+            router.push('/today');
+        }
+    }, [router, pathname, modalContext, overrideSlug]);
+
+    // Handle download/export
+    const handleDownload = async (platform: 'tiktok' | 'instagram') => {
+        if (isExporting || !post) return;
+        setExportPlatform(platform);
+        setIsExporting(true);
+
+        try {
+            if (post.thumbnail_url) {
+                try {
+                    const response = await fetch(post.thumbnail_url);
+                    const blob = await response.blob();
+                    await new Promise<void>((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                            if (reader.result) setBase64Thumbnail(reader.result as string);
+                            resolve();
+                        };
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (e) {
+                    // Fallback to proxy if direct fetch fails (CORS)
+                    const proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(post.thumbnail_url!)}&output=jpg`;
+                    const response = await fetch(proxyUrl);
+                    const blob = await response.blob();
+                    await new Promise<void>((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                            if (reader.result) setBase64Thumbnail(reader.result as string);
+                            resolve();
+                        };
+                        reader.readAsDataURL(blob);
+                    });
+                }
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 100));
+            const html2canvas = (await import('html2canvas')).default;
+
+            if (exportRef.current) {
+                const canvas = await html2canvas(exportRef.current, {
+                    scale: 2, useCORS: true, allowTaint: true, backgroundColor: null, logging: false,
+                });
+                const link = document.createElement('a');
+                link.download = `headlined-${post.slug}-${platform}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+        } catch (error) {
+            console.error('Export failed:', error);
+        } finally {
+            setIsExporting(false);
+            setBase64Thumbnail(null);
+        }
+    };
+
+    const readingTime = useMemo(() => {
+        if (!post) return 1;
+        if (post.readingTime && post.readingTime > 0) return post.readingTime;
+        const words = (post.fullText || post.description || '').split(/\s+/).length;
+        return Math.max(1, Math.ceil(words / 200));
+    }, [post]);
+
+    // Loading state
+    if (loadingState === 'loading') {
+        const isNews = pathname?.startsWith('/news/');
+        return (
+            <div className="fixed inset-0 z-[100] bg-white overflow-hidden">
+                <div className="h-full w-full flex flex-col">
+                    {/* Hero Skeleton (mimics [45vh] image) */}
+                    <div className="w-full h-[45vh] bg-zinc-100 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-10" />
+                        <div className="absolute bottom-12 left-6 right-6 z-20 space-y-4">
+                            <div className="flex gap-2">
+                                <Skeleton className="h-5 w-16 rounded-full bg-zinc-200" />
+                                <Skeleton className="h-5 w-24 rounded-full bg-zinc-200" />
+                            </div>
+                            <Skeleton className="h-10 md:h-16 w-3/4 bg-zinc-200" />
+                            <Skeleton className="h-10 md:h-16 w-1/2 bg-zinc-200" />
+                        </div>
+                    </div>
+
+                    {/* Simple Content Skeleton */}
+                    <div className="flex-1 bg-white p-8 space-y-6">
+                        <div className="max-w-3xl mx-auto space-y-8">
+                            <Skeleton className="h-4 w-1/4 bg-zinc-100" />
+                            <div className="space-y-3">
+                                <Skeleton className="h-8 w-full bg-zinc-100" />
+                                <Skeleton className="h-8 w-1/2 bg-zinc-100" />
+                            </div>
+                            <div className="space-y-4 pt-4">
+                                <Skeleton className="h-4 w-full bg-zinc-50" />
+                                <Skeleton className="h-4 w-full bg-zinc-50" />
+                                <Skeleton className="h-4 w-full bg-zinc-50" />
+                                <Skeleton className="h-4 w-3/4 bg-zinc-50" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Non-article state (Hub landing)
+    if (loadingState === 'not-article') {
+        return null;
+    }
+
+    // Error state
+    if (loadingState === 'error' || !post) {
+        return (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-4 text-center px-6">
+                    <div className="p-4 rounded-full bg-red-500/10"><AlertCircle className="w-8 h-8 text-red-400" /></div>
+                    <h1 className="text-xl font-bold text-white">Article Not Found</h1>
+                    <p className="text-white/60 text-sm max-w-sm">This article may have been removed or the link is invalid.</p>
+                    <Link href="/today" className="mt-4 inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg font-medium">
+                        <Home className="w-4 h-4" /> Go to Headlines
+                    </Link>
+                </motion.div>
+            </div>
+        );
+    }
+
+    // Success - render article
+    return (
+        <AnimatePresence>
+            <motion.div
+                className="fixed inset-0 z-[100] flex flex-col bg-zinc-950 overscroll-none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+            >
+                {/* Hidden Export Template */}
+                <div style={{ position: 'fixed', left: '-9999px', top: 0, zIndex: -1 }}>
+                    <PostExportTemplate ref={exportRef} post={post} isLocked={false} variant={exportPlatform} thumbnailOverride={base64Thumbnail} />
+                </div>
+
+                {/* Close Button */}
+                <AnimatePresence>
+                    {!isHeaderSticky && (
+                        <motion.button
+                            onClick={handleClose}
+                            className="fixed top-4 right-4 md:top-6 md:right-6 z-[60] p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all shadow-lg active:scale-90"
+                            initial={{ opacity: 0, scale: 0.8, x: 20 }}
+                            animate={{ opacity: 1, scale: 1, x: 0 }}
+                            exit={{ opacity: 0, scale: 0.8, x: 20 }}
+                        >
+                            <X className="w-5 h-5" />
+                        </motion.button>
+                    )}
+                </AnimatePresence>
+
+                {/* Scrollable Content */}
+                <div id="article-scroll-container" className="flex-1 overflow-y-auto no-scrollbar overscroll-contain pb-32">
+                    {/* Hero Section - Clean Editorial Design */}
+                    <div className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden bg-zinc-900">
+                        {post.thumbnail_url ? (
+                            <img
+                                src={post.thumbnail_url}
+                                alt=""
+                                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-950" />
+                        )}
+
+                        {/* Dramatic Sophisticated Scrim */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+
+                        {/* Content Overlay */}
+                        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-16">
+                            <div className="max-w-4xl mx-auto w-full space-y-8">
+                                <div className="flex flex-wrap items-center gap-4">
+                                    <span className="px-3 py-1 rounded-sm bg-white text-zinc-950 text-[10px] font-bold uppercase tracking-[0.2em]">
+                                        {post.topic || 'News'}
+                                    </span>
+                                    <span className="text-white/60 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+                                        <Clock className="w-3.5 h-3.5" />
+                                        {readingTime} MIN READ
+                                    </span>
+                                    <div className="h-px flex-1 bg-white/20" />
+                                </div>
+
+                                <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-white leading-[1.1] tracking-tight text-balance">
+                                    {post.title}
+                                </h1>
+
+                                <div className="text-white/50 text-xs font-medium uppercase tracking-[0.3em]">
+                                    {articleInfo.date && new Date(articleInfo.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Content Body */}
+                    <div className="relative z-10 bg-white dark:bg-zinc-950">
+                        <div className="h-1.5 w-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-20" />
+
+                        {/* Expanded Reader */}
+                        <ExpandedReader
+                            fullText={post.fullText ?? null}
+                            description={post.description}
+                            keywords={post.keywords || []}
+                            title={post.title}
+                            category={(Array.isArray(post.topic) ? post.topic[0] : post.topic) || 'News'}
+                            subcategory={undefined}
+                            slug={post.slug}
+                            date={post.date || undefined}
+                            readingTime={readingTime}
+                            isPremium={false}
+                            articleUrl={post.link}
+                            onHighlightSave={(quote) => console.log('Quote saved:', quote)}
+                            onContinueStateChange={(hasMore, isGen, remaining) => {
+                                setHasMoreContent(hasMore);
+                                setIsGeneratingContent(isGen);
+                                setRemainingSections(remaining);
+                            }}
+                            onContinueRequest={() => (window as any).__expandedReaderContinue?.()}
+                            onDownload={handleDownload}
+                            isExporting={isExporting}
+                            onThemeChange={setReaderDarkMode}
+                            onClose={handleClose}
+                            onStickyChange={setIsHeaderSticky}
+                            hideHeader={pathname?.startsWith('/news/')}
+                        />
+
+                        {/* Related Articles */}
+                        {relatedPosts.length > 0 && articleInfo.date && (
+                            <section className={cn(
+                                "px-6 pb-12 mt-8 pt-8 border-t transition-colors",
+                                readerDarkMode ? "border-white/10 bg-zinc-950" : "border-zinc-200 bg-white"
+                            )}>
+                                <div className="flex items-center justify-between mb-8">
+                                    <div className="flex items-center gap-4">
+                                        <div className={cn(
+                                            "w-10 h-10 rounded-2xl border flex items-center justify-center shadow-inner",
+                                            readerDarkMode ? "bg-white/5 border-white/10" : "bg-zinc-50 border-zinc-200"
+                                        )}>
+                                            <Newspaper className={cn("w-5 h-5", readerDarkMode ? "text-white/70" : "text-zinc-500")} />
+                                        </div>
+                                        <div>
+                                            <h2 className={cn("text-xl font-black tracking-tight", readerDarkMode ? "text-white" : "text-zinc-900")}>More Stories</h2>
+                                            <p className={cn("text-[10px] font-bold uppercase tracking-widest", readerDarkMode ? "text-white/40" : "text-zinc-400")}>
+                                                {new Date(articleInfo.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <nav className="grid gap-3" aria-label="Related articles">
+                                    {relatedPosts.map((relatedPost) => {
+                                        const { getArticleCanonicalPath } = require('@/lib/category-utils');
+                                        const canonicalUrl = getArticleCanonicalPath(relatedPost);
+                                        return (
+                                            <Link
+                                                key={relatedPost.slug}
+                                                href={canonicalUrl}
+                                                className={cn(
+                                                    "flex items-center gap-5 p-4 rounded-[24px] border transition-all group active:scale-[0.98] outline-none",
+                                                    readerDarkMode
+                                                        ? "bg-white/[0.03] border-white/5 hover:bg-white/[0.07] hover:border-white/10"
+                                                        : "bg-zinc-50 border-zinc-100 hover:bg-zinc-100/80 hover:border-zinc-200"
+                                                )}
+                                            >
+                                                <div className={cn(
+                                                    "w-24 h-24 rounded-[18px] overflow-hidden flex-shrink-0 shadow-2xl ring-1",
+                                                    readerDarkMode ? "ring-white/10" : "ring-zinc-200"
+                                                )}>
+                                                    {relatedPost.thumbnail_url ? (
+                                                        <img
+                                                            src={relatedPost.thumbnail_url}
+                                                            alt=""
+                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                            loading="lazy"
+                                                        />
+                                                    ) : (
+                                                        <div className={cn(
+                                                            "w-full h-full bg-gradient-to-br",
+                                                            readerDarkMode ? "from-zinc-800 to-zinc-900" : "from-zinc-200 to-zinc-300"
+                                                        )} />
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
+                                                            {relatedPost.topic || 'News'}
+                                                        </span>
+                                                        <span className={cn("w-1 h-1 rounded-full", readerDarkMode ? "bg-white/20" : "bg-zinc-300")} />
+                                                        <span className={cn("text-[10px] font-bold uppercase tracking-widest", readerDarkMode ? "text-white/40" : "text-zinc-400")}>
+                                                            {relatedPost.readingTime || 1} min read
+                                                        </span>
+                                                    </div>
+                                                    <h3 className={cn(
+                                                        "text-[15px] font-bold leading-tight mb-3 line-clamp-2 group-hover:text-primary transition-colors",
+                                                        readerDarkMode ? "text-white" : "text-zinc-900"
+                                                    )}>
+                                                        {relatedPost.title}
+                                                    </h3>
+                                                    <div className={cn(
+                                                        "flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider",
+                                                        readerDarkMode ? "text-white/30" : "text-zinc-400"
+                                                    )}>
+                                                        <span>Read Story</span>
+                                                        <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        );
+                                    })}
+                                </nav>
+
+                                <Link
+                                    href="/today"
+                                    className={cn(
+                                        "flex items-center justify-center gap-2 mt-6 py-3 rounded-xl border transition-all text-sm font-medium",
+                                        readerDarkMode
+                                            ? "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+                                            : "bg-zinc-100 border-zinc-200 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900"
+                                    )}
+                                >
+                                    View All Headlines
+                                    <ArrowRight className="w-4 h-4" />
+                                </Link>
+                            </section>
+                        )}
+                    </div>
+                </div>
+
+                {/* Structured Data for SEO */}
+                {jsonLd && (
+                    <script
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                    />
+                )}
+
+                <FloatingActionDock
+                    post={post}
+                    hasMoreContent={hasMoreContent}
+                    isGeneratingContent={isGeneratingContent}
+                    remainingSections={remainingSections}
+                    onContinue={() => (window as any).__expandedReaderContinue?.()}
+                    onDownload={handleDownload}
+                    isExporting={isExporting}
+                    visible={!isGeneratingContent}
+                    isDarkMode={readerDarkMode}
+                />
+            </motion.div>
+        </AnimatePresence >
+    );
+}
