@@ -73,7 +73,8 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
 
         // Construct the URL for today's data
         const today = new Date().toISOString().split('T')[0];
-        const url = `https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-/output/${today}.json`;
+        const todayYear = today.split('-')[0];
+        const url = `https://github.com/jvondev/headlined/releases/download/rss-data-${todayYear}/${today}.json`;
 
         const response = await fetch(url);
         let networkPosts: Post[] = [];
@@ -83,7 +84,8 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
           // If today's file isn't ready yet, try yesterday's
           if (response.status === 404) {
             const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-            const yesterdayUrl = `https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-/output/${yesterday}.json`;
+            const yesterdayYear = yesterday.split('-')[0];
+            const yesterdayUrl = `https://github.com/jvondev/headlined/releases/download/rss-data-${yesterdayYear}/${yesterday}.json`;
             const yesterdayResponse = await fetch(yesterdayUrl);
             if (!yesterdayResponse.ok) {
               throw new Error(`HTTP error! status: ${yesterdayResponse.status}`);
@@ -159,7 +161,8 @@ export const fetchArchivePosts = async (date: string): Promise<Post[]> => {
 
   // 2. Fetch from network
   try {
-    const url = `https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-/output/${date}.json`;
+    const year = date.split('-')[0];
+    const url = `https://github.com/jvondev/headlined/releases/download/rss-data-${year}/${date}.json`;
     const response = await fetch(url);
     if (!response.ok) {
       if (response.status === 404) return []; // No data for this date

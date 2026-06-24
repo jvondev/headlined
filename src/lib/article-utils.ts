@@ -2,7 +2,10 @@
 
 import { Post } from '@/types';
 
-const CDN_BASE_URL = 'https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-/output';
+const getReleaseUrl = (dateString: string) => {
+    const year = dateString.split('-')[0];
+    return `https://github.com/jvondev/headlined/releases/download/rss-data-${year}/${dateString}.json`;
+};
 
 /**
  * Fetch a single article by date and slug from the jsDelivr CDN.
@@ -20,7 +23,7 @@ export async function fetchArticleByDateAndSlug(date: string, slug: string, topi
     for (const checkDate of datesToCheck) {
         try {
             // Add cache buster to bypass stale CDN/Browser cache
-            const url = `${CDN_BASE_URL}/${checkDate}.json?t=${Date.now()}`;
+            const url = `${getReleaseUrl(checkDate)}?t=${Date.now()}`;
             const response = await fetch(url, {
                 next: { revalidate: 0 }, // Force Next.js to not cache this
                 cache: 'no-store' // Force browser to not cache this
@@ -55,7 +58,9 @@ export async function fetchArticleByDateAndSlug(date: string, slug: string, topi
 export async function fetchArticleBySlugAndTopic(slug: string, topicPath: string): Promise<Post | null> {
     try {
         // topicPath is expected to be "category/subcategory"
-        const url = `${CDN_BASE_URL}/data/${topicPath}.json?t=${Date.now()}`;
+        // Topics endpoint is not supported in the yearly release system currently.
+        // It relies entirely on the daily feed. This function is kept for fallback compatibility.
+        const url = `https://github.com/jvondev/headlined/releases/download/rss-data-topics/${topicPath}.json?t=${Date.now()}`;
         const response = await fetch(url, { next: { revalidate: 60 } });
         if (!response.ok) return null;
 
@@ -72,7 +77,7 @@ export async function fetchArticleBySlugAndTopic(slug: string, topicPath: string
  */
 export async function fetchPostsByDate(date: string): Promise<Post[]> {
     try {
-        const url = `${CDN_BASE_URL}/${date}.json`;
+        const url = getReleaseUrl(date);
         const response = await fetch(url);
 
         if (!response.ok) {
