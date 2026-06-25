@@ -1,11 +1,21 @@
 import fs from 'fs';
 import path from 'path';
+import zlib from 'zlib';
 
 const OLD_REPO = 'xupgudxup/BUg-7d8-diua-sdadh89-';
-const NEW_REPO = 'jvondev/Headlined';
-
-// You must set GITHUB_TOKEN in your environment or .env.local
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+
+function stripHTMLAndKeep3Paragraphs(htmlOrText: string | null): string {
+    if (!htmlOrText) return '';
+    // Strip HTML tags roughly
+    let text = htmlOrText.replace(/<[^>]*>?/gm, '\n');
+    // Split by newlines, clean up empty ones
+    const paragraphs = text.split('\n').map(p => p.trim()).filter(p => p.length > 0);
+    // Keep only first 3 paragraphs and encode them for TSV using <br><br>
+    const kept = paragraphs.slice(0, 3).join('<br><br>');
+    // Remove actual tabs and newlines so it doesn't break TSV rows
+    return kept.replace(/\t/g, ' ').replace(/\n/g, ' ');
+}
 
 async function runMigration() {
     if (!GITHUB_TOKEN) {
@@ -13,9 +23,8 @@ async function runMigration() {
         process.exit(1);
     }
 
-    console.log(`Starting migration from ${OLD_REPO} to ${NEW_REPO} releases...`);
+    console.log(`Starting migration from ${OLD_REPO} to local TSV.GZ files...`);
 
-    // 1. Fetch list of files from old repo output/ directory
     const contentsUrl = `https://api.github.com/repos/${OLD_REPO}/contents/output`;
     const res = await fetch(contentsUrl, {
         headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
@@ -31,88 +40,57 @@ async function runMigration() {
 
     console.log(`Found ${jsonFiles.length} daily JSON files to migrate.`);
 
-    // Group by year
-    const filesByYear: Record<string, any[]> = {};
+    const outputDir = path.join(process.cwd(), 'data-migration-output');
+    if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+
     for (const file of jsonFiles) {
+        console.log(`📥 Downloading ${file.name}...`);
+        const fileRes = await fetch(file.download_url);
+        const posts = await fileRes.json();
+        
+        if (!Array.isArray(posts) || posts.length === 0) continue;
+
         const year = file.name.substring(0, 4);
-        if (!filesByYear[year]) filesByYear[year] = [];
-        filesByYear[year].push(file);
-    }
+        const yearDir = path.join(outputDir, `rss-data-${year}`);
+        if (!fs.existsSync(yearDir)) fs.mkdirSync(yearDir, { recursive: true });
 
-    // 2. Download and upload for each year
-    for (const [year, files] of Object.entries(filesByYear)) {
-        const releaseTag = `rss-data-${year}`;
-        console.log(`\n📦 Processing Year ${year} (${files.length} files) -> Release: ${releaseTag}`);
-
-        // Check if release exists, if not create it
-        let releaseId = null;
-        let uploadUrl = null;
-
-        const relRes = await fetch(`https://api.github.com/repos/${NEW_REPO}/releases/tags/${releaseTag}`, {
-            headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
+        // 1. Process posts
+        const processedPosts = posts.map(post => {
+            return {
+                ...post,
+                description: stripHTMLAndKeep3Paragraphs(post.fullText || post.content || post.description || ''),
+                // Ensure no tabs or newlines in any field
+                title: (post.title || '').replace(/\t|\n/g, ' '),
+                url: (post.url || post.link || '').replace(/\t|\n/g, ''),
+                image: (post.image || post.thumbnail_url || '').replace(/\t|\n/g, ''),
+                topic: (post.topic || '').replace(/\t|\n/g, '')
+            };
         });
 
-        if (relRes.ok) {
-            const release = await relRes.json();
-            releaseId = release.id;
-            uploadUrl = release.upload_url.split('{')[0];
-            console.log(`Release ${releaseTag} exists. ID: ${releaseId}`);
-        } else {
-            console.log(`Creating release ${releaseTag}...`);
-            const createRes = await fetch(`https://api.github.com/repos/${NEW_REPO}/releases`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    tag_name: releaseTag,
-                    name: `RSS Data Archive ${year}`,
-                    body: `Historical RSS chunks for ${year}.`,
-                    draft: false,
-                    prerelease: false
-                })
-            });
-            if (!createRes.ok) {
-                console.error(`❌ Failed to create release ${releaseTag}:`, await createRes.text());
-                continue;
-            }
-            const release = await createRes.json();
-            releaseId = release.id;
-            uploadUrl = release.upload_url.split('{')[0];
-            console.log(`✅ Created release ${releaseTag}.`);
+        // 2. Convert to TSV
+        const headers = ['title', 'description', 'url', 'image', 'topic'];
+        const tsvLines = [headers.join('\t')];
+        for (const post of processedPosts) {
+            const row = headers.map(h => post[h] || '');
+            tsvLines.push(row.join('\t'));
         }
+        const tsvText = tsvLines.join('\n');
 
-        // Process files
-        for (const file of files) {
-            console.log(`  Downloading ${file.name}...`);
-            const fileRes = await fetch(file.download_url);
-            const fileData = await fileRes.arrayBuffer();
+        // 3. GZIP it
+        const gzipped = zlib.gzipSync(tsvText);
 
-            console.log(`  Uploading ${file.name}...`);
-            const uploadReqUrl = `${uploadUrl}?name=${file.name}`;
-            
-            const upRes = await fetch(uploadReqUrl, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                    'Content-Type': 'application/json',
-                    'Content-Length': fileData.byteLength.toString()
-                },
-                body: fileData
-            });
-
-            if (upRes.ok) {
-                console.log(`  ✅ Uploaded ${file.name} to ${releaseTag}`);
-            } else {
-                const errText = await upRes.text();
-                if (errText.includes('already_exists')) {
-                    console.log(`  ⚠️ File ${file.name} already exists in release. Skipping.`);
-                } else {
-                    console.error(`  ❌ Failed to upload ${file.name}:`, errText);
-                }
-            }
-        }
+        // 4. Save file
+        const outName = file.name.replace('.json', '.tsv.gz');
+        const outPath = path.join(yearDir, outName);
+        fs.writeFileSync(outPath, gzipped);
+        
+        const origSize = JSON.stringify(posts).length;
+        const newSize = gzipped.length;
+        console.log(`   ✅ Saved ${outName} | ${Math.round(origSize/1024)}KB -> ${Math.round(newSize/1024)}KB (${Math.round(newSize/origSize * 100)}% size)`);
     }
 
-    console.log("\n🎉 Migration Complete!");
+    console.log(`\n🎉 Migration complete! Files saved to ./data-migration-output/`);
+    console.log(`To deploy these: copy the folders inside data-migration-output into your 'data' branch and push!`);
 }
 
 runMigration().catch(console.error);

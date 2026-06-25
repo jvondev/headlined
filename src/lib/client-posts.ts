@@ -25,6 +25,71 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
+// Native binary decompression for .gz files (JSON or TSV)
+export async function fetchAndDecompressJSON(url: string): Promise<any> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    if (response.status === 404) return null;
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  
+  if (url.endsWith('.gz')) {
+    const ds = new DecompressionStream('gzip');
+    const decompressedStream = response.body!.pipeThrough(ds);
+    const text = await new Response(decompressedStream).text();
+    
+    // If it's a TSV file, parse it manually
+    if (url.includes('.tsv.')) {
+      const lines = text.trim().split('\n');
+      if (lines.length === 0 || lines[0] === '') return [];
+      
+      const headers = lines[0].split('\t');
+      const posts: any[] = [];
+      
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split('\t');
+        const post: any = {};
+        for (let j = 0; j < headers.length; j++) {
+           post[headers[j]] = values[j] || '';
+        }
+        
+        // Map TSV fields back to Post interface
+        if (post.url && !post.link) post.link = post.url;
+        if (post.image && !post.thumbnail_url) post.thumbnail_url = post.image;
+        
+        // Decode the <br><br> paragraph separators that TSV uses to avoid breaking rows
+        if (post.description) {
+            const decodedText = post.description.replace(/<br><br>/g, '\n\n');
+            post.description = decodedText;
+            post.fullText = decodedText; // Assign to fullText so ExpandedReader renders it properly
+        }
+        
+        // Generate missing slug for IndexedDB
+        if (post.title && !post.slug) {
+            post.slug = post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        } else if (!post.slug && post.link) {
+            // fallback to a hash of the link
+            let hash = 0;
+            for (let i = 0; i < post.link.length; i++) {
+                hash = ((hash << 5) - hash) + post.link.charCodeAt(i);
+                hash |= 0; 
+            }
+            post.slug = 'article-' + Math.abs(hash).toString(36);
+        } else if (!post.slug) {
+            post.slug = 'unknown-' + Math.random().toString(36).substring(7);
+        }
+        
+        posts.push(post);
+      }
+      return posts;
+    }
+
+    return JSON.parse(text);
+  }
+  
+  return response.json();
+}
+
 // Note: Archive access is ONLY for premium users
 // The app usage check (in use-archive-access.ts) should only control UI visibility
 // (showing/hiding History nav item) but should NOT grant data access to historical posts
@@ -74,29 +139,30 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
         // Construct the URL for today's data
         const today = new Date().toISOString().split('T')[0];
         const todayYear = today.split('-')[0];
-        const url = `https://github.com/jvondev/headlined/releases/download/rss-data-${todayYear}/${today}.json`;
+        const url = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${todayYear}/${today}.tsv.gz`;
 
-        const response = await fetch(url);
         let networkPosts: Post[] = [];
         let dateToSave = today;
-
-        if (!response.ok) {
-          // If today's file isn't ready yet, try yesterday's
-          if (response.status === 404) {
+        
+        try {
+          const todayData = await fetchAndDecompressJSON(url);
+          if (todayData === null) {
+            // If today's file isn't ready yet, try yesterday's
             const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
             const yesterdayYear = yesterday.split('-')[0];
-            const yesterdayUrl = `https://github.com/jvondev/headlined/releases/download/rss-data-${yesterdayYear}/${yesterday}.json`;
-            const yesterdayResponse = await fetch(yesterdayUrl);
-            if (!yesterdayResponse.ok) {
-              throw new Error(`HTTP error! status: ${yesterdayResponse.status}`);
+            const yesterdayUrl = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${yesterdayYear}/${yesterday}.tsv.gz`;
+            
+            const yesterdayData = await fetchAndDecompressJSON(yesterdayUrl);
+            if (yesterdayData !== null) {
+              networkPosts = yesterdayData;
+              dateToSave = yesterday;
             }
-            networkPosts = await yesterdayResponse.json();
-            dateToSave = yesterday;
           } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            networkPosts = todayData;
           }
-        } else {
-          networkPosts = await response.json();
+        } catch (e) {
+          console.error("Failed to fetch or decompress JSON binary:", e);
+          networkPosts = [];
         }
 
         // Attach date to posts
@@ -162,13 +228,11 @@ export const fetchArchivePosts = async (date: string): Promise<Post[]> => {
   // 2. Fetch from network
   try {
     const year = date.split('-')[0];
-    const url = `https://github.com/jvondev/headlined/releases/download/rss-data-${year}/${date}.json`;
-    const response = await fetch(url);
-    if (!response.ok) {
-      if (response.status === 404) return []; // No data for this date
-      throw new Error(`Failed to fetch archive for ${date}`);
-    }
-    let posts: Post[] = await response.json();
+    const url = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${year}/${date}.tsv.gz`;
+    const postsData = await fetchAndDecompressJSON(url);
+    if (!postsData) return []; // No data for this date
+    
+    let posts: Post[] = postsData;
 
     // Attach date
     posts = posts.map(p => ({ ...p, date }));

@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
 import { FullScreenContext } from '@/context/full-screen-context';
 import { BackgroundSyncProvider } from '@/components/background-sync-provider';
-import { FooterWrapper } from '@/components/common/FooterWrapper';
 import { ArticleModalProvider } from "@/context/article-modal-context";
 import { ArticleModal } from "@/components/article-modal";
 
@@ -33,7 +32,6 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
             <div className="flex-1">
               {children}
             </div>
-            <FooterWrapper />
           </div>
           <Toaster />
           <ArticleModal />

@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Classifier } from './classifier';
 import { BucketManager } from './bucket-manager';
+import zlib from 'zlib';
 
 // ============================================================================
 // MERGE OUTPUTS - Combines batch artifacts and runs classification ONCE
@@ -60,19 +61,39 @@ async function mergeOutputs() {
 
     let mergedPosts: Post[] = [];
 
-    // Load existing daily data if any (from previous runs today)
-    if (fs.existsSync(dailyFile)) {
-        try {
-            mergedPosts = JSON.parse(fs.readFileSync(dailyFile, 'utf-8'));
-            for (const post of mergedPosts) {
-                if (post.fullText) {
-                    fingerprints.add(post.fullText.substring(0, 100));
+    // Fetch existing daily TSV.GZ from the CDN for UPSERTING (so we don't overwrite earlier today's news)
+    try {
+        const cdnUrl = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${today.split('-')[0]}/${today}.tsv.gz`;
+        console.log(`Checking CDN for existing today data: ${cdnUrl}`);
+        const res = await fetch(cdnUrl);
+        if (res.ok) {
+            const buffer = await res.arrayBuffer();
+            const decompressed = zlib.gunzipSync(Buffer.from(buffer)).toString('utf-8');
+            const lines = decompressed.trim().split('\n');
+            if (lines.length > 1) {
+                const headers = lines[0].split('\t');
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split('\t');
+                    const post: any = {};
+                    for (let j = 0; j < headers.length; j++) {
+                        post[headers[j]] = values[j] || '';
+                    }
+                    mergedPosts.push(post as Post);
+                    
+                    if (post.description) {
+                        fingerprints.add(post.description.substring(0, 100));
+                    }
+                    if (post.link) {
+                        indexSet.add(post.link);
+                    }
                 }
+                console.log(`Loaded ${mergedPosts.length} existing posts from CDN for upserting.`);
             }
-            console.log(`Loaded ${mergedPosts.length} existing posts from today.`);
-        } catch {
-            console.log('Could not read daily file, starting fresh.');
+        } else {
+            console.log('No existing data for today on CDN yet. Starting fresh.');
         }
+    } catch (e) {
+        console.log('Error fetching from CDN:', e);
     }
 
     // Find all artifact directories
@@ -142,8 +163,31 @@ async function mergeOutputs() {
     // Sort by created_at (newest first)
     mergedPosts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-    // Write merged daily file
-    fs.writeFileSync(dailyFile, JSON.stringify(mergedPosts, null, 2), 'utf-8');
+    // Write merged daily TSV.GZ file
+    const headers = ['title', 'description', 'url', 'image', 'topic'];
+    const tsvLines = [headers.join('\t')];
+    
+    for (const post of mergedPosts) {
+        // Strip full HTML/text to 3 paragraphs max
+        const rawText = (post.description || post.fullText || '').replace(/<[^>]*>?/gm, '\n');
+        const paragraphs = rawText.split('\n').map(p => p.trim()).filter(p => p.length > 0);
+        const desc = paragraphs.slice(0, 3).join(' ').replace(/\t|\n/g, ' ');
+        
+        const row = [
+            (post.title || '').replace(/\t|\n/g, ' '),
+            desc,
+            (post.link || '').replace(/\t|\n/g, ''),
+            (post.thumbnail_url || '').replace(/\t|\n/g, ''),
+            (post.topic || '').replace(/\t|\n/g, '')
+        ];
+        tsvLines.push(row.join('\t'));
+    }
+    
+    const tsvText = tsvLines.join('\n');
+    const gzipped = zlib.gzipSync(tsvText);
+    const dailyFileTsvGz = dailyFile.replace('.json', '.tsv.gz');
+    fs.writeFileSync(dailyFileTsvGz, gzipped);
+    
     fs.writeFileSync(INDEX_FILE, JSON.stringify(Array.from(indexSet), null, 2), 'utf-8');
 
     // ========================================
