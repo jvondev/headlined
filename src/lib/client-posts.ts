@@ -25,6 +25,24 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
+// Native binary decompression for .json.gz files
+async function fetchAndDecompressJSON(url: string): Promise<any> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    if (response.status === 404) return null;
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  
+  if (url.endsWith('.gz')) {
+    const ds = new DecompressionStream('gzip');
+    const decompressedStream = response.body!.pipeThrough(ds);
+    const text = await new Response(decompressedStream).text();
+    return JSON.parse(text);
+  }
+  
+  return response.json();
+}
+
 // Note: Archive access is ONLY for premium users
 // The app usage check (in use-archive-access.ts) should only control UI visibility
 // (showing/hiding History nav item) but should NOT grant data access to historical posts
@@ -74,29 +92,30 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
         // Construct the URL for today's data
         const today = new Date().toISOString().split('T')[0];
         const todayYear = today.split('-')[0];
-        const url = `https://github.com/jvondev/headlined/releases/download/rss-data-${todayYear}/${today}.json`;
+        const url = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${todayYear}/${today}.json.gz`;
 
-        const response = await fetch(url);
         let networkPosts: Post[] = [];
         let dateToSave = today;
-
-        if (!response.ok) {
-          // If today's file isn't ready yet, try yesterday's
-          if (response.status === 404) {
+        
+        try {
+          const todayData = await fetchAndDecompressJSON(url);
+          if (todayData === null) {
+            // If today's file isn't ready yet, try yesterday's
             const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
             const yesterdayYear = yesterday.split('-')[0];
-            const yesterdayUrl = `https://github.com/jvondev/headlined/releases/download/rss-data-${yesterdayYear}/${yesterday}.json`;
-            const yesterdayResponse = await fetch(yesterdayUrl);
-            if (!yesterdayResponse.ok) {
-              throw new Error(`HTTP error! status: ${yesterdayResponse.status}`);
+            const yesterdayUrl = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${yesterdayYear}/${yesterday}.json.gz`;
+            
+            const yesterdayData = await fetchAndDecompressJSON(yesterdayUrl);
+            if (yesterdayData !== null) {
+              networkPosts = yesterdayData;
+              dateToSave = yesterday;
             }
-            networkPosts = await yesterdayResponse.json();
-            dateToSave = yesterday;
           } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            networkPosts = todayData;
           }
-        } else {
-          networkPosts = await response.json();
+        } catch (e) {
+          console.error("Failed to fetch or decompress JSON binary:", e);
+          networkPosts = [];
         }
 
         // Attach date to posts
@@ -162,13 +181,11 @@ export const fetchArchivePosts = async (date: string): Promise<Post[]> => {
   // 2. Fetch from network
   try {
     const year = date.split('-')[0];
-    const url = `https://github.com/jvondev/headlined/releases/download/rss-data-${year}/${date}.json`;
-    const response = await fetch(url);
-    if (!response.ok) {
-      if (response.status === 404) return []; // No data for this date
-      throw new Error(`Failed to fetch archive for ${date}`);
-    }
-    let posts: Post[] = await response.json();
+    const url = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${year}/${date}.json.gz`;
+    const postsData = await fetchAndDecompressJSON(url);
+    if (!postsData) return []; // No data for this date
+    
+    let posts: Post[] = postsData;
 
     // Attach date
     posts = posts.map(p => ({ ...p, date }));
