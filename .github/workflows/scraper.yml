@@ -33,26 +33,17 @@ jobs:
           echo "today=$TODAY" >> $GITHUB_OUTPUT
           echo "year=$YEAR" >> $GITHUB_OUTPUT
 
-      - name: Restore Previous State (Upsert Prep)
-        run: |
-          mkdir -p scripts/output
-          # Try to download today's existing JSON so we don't overwrite it
-          wget -q https://github.com/${{ github.repository }}/releases/download/rss-data-${{ steps.date_info.outputs.year }}/${{ steps.date_info.outputs.today }}.json -O scripts/output/${{ steps.date_info.outputs.today }}.json || echo "No existing data for today."
-          # Try to download the global index to prevent cross-day duplicates
-          wget -q https://github.com/${{ github.repository }}/releases/download/rss-data-${{ steps.date_info.outputs.year }}/index.json -O scripts/output/index.json || echo "No existing index found."
-
       - name: Run Scraper
         run: npm run scrape
 
-      - name: Publish to Yearly Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: rss-data-${{ steps.date_info.outputs.year }}
-          name: RSS Data Archive ${{ steps.date_info.outputs.year }}
-          files: |
-            scripts/output/${{ steps.date_info.outputs.today }}.json
-            scripts/output/index.json
-          fail_on_unmatched_files: true
-          make_latest: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to Data Branch
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin data
+          git checkout data
+          mkdir -p rss-data-${{ steps.date_info.outputs.year }}
+          cp scripts/output/${{ steps.date_info.outputs.today }}.tsv.gz rss-data-${{ steps.date_info.outputs.year }}/
+          git add rss-data-${{ steps.date_info.outputs.year }}/${{ steps.date_info.outputs.today }}.tsv.gz
+          git commit -m "chore: add daily news for ${{ steps.date_info.outputs.today }}" || echo "No changes to commit"
+          git push origin data

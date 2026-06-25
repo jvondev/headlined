@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Classifier } from './classifier';
 import { BucketManager } from './bucket-manager';
+import zlib from 'zlib';
 
 // ============================================================================
 // MERGE OUTPUTS - Combines batch artifacts and runs classification ONCE
@@ -142,8 +143,31 @@ async function mergeOutputs() {
     // Sort by created_at (newest first)
     mergedPosts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-    // Write merged daily file
-    fs.writeFileSync(dailyFile, JSON.stringify(mergedPosts, null, 2), 'utf-8');
+    // Write merged daily TSV.GZ file
+    const headers = ['title', 'description', 'url', 'image', 'topic'];
+    const tsvLines = [headers.join('\t')];
+    
+    for (const post of mergedPosts) {
+        // Strip full HTML/text to 3 paragraphs max
+        const rawText = (post.description || post.fullText || '').replace(/<[^>]*>?/gm, '\n');
+        const paragraphs = rawText.split('\n').map(p => p.trim()).filter(p => p.length > 0);
+        const desc = paragraphs.slice(0, 3).join(' ').replace(/\t|\n/g, ' ');
+        
+        const row = [
+            (post.title || '').replace(/\t|\n/g, ' '),
+            desc,
+            (post.link || '').replace(/\t|\n/g, ''),
+            (post.thumbnail_url || '').replace(/\t|\n/g, ''),
+            (post.topic || '').replace(/\t|\n/g, '')
+        ];
+        tsvLines.push(row.join('\t'));
+    }
+    
+    const tsvText = tsvLines.join('\n');
+    const gzipped = zlib.gzipSync(tsvText);
+    const dailyFileTsvGz = dailyFile.replace('.json', '.tsv.gz');
+    fs.writeFileSync(dailyFileTsvGz, gzipped);
+    
     fs.writeFileSync(INDEX_FILE, JSON.stringify(Array.from(indexSet), null, 2), 'utf-8');
 
     // ========================================
