@@ -52,6 +52,26 @@ async function fetchAndDecompressJSON(url: string): Promise<any> {
         for (let j = 0; j < headers.length; j++) {
            post[headers[j]] = values[j] || '';
         }
+        
+        // Map TSV fields back to Post interface
+        if (post.url && !post.link) post.link = post.url;
+        if (post.image && !post.thumbnail_url) post.thumbnail_url = post.image;
+        
+        // Generate missing slug for IndexedDB
+        if (post.title && !post.slug) {
+            post.slug = post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        } else if (!post.slug && post.link) {
+            // fallback to a hash of the link
+            let hash = 0;
+            for (let i = 0; i < post.link.length; i++) {
+                hash = ((hash << 5) - hash) + post.link.charCodeAt(i);
+                hash |= 0; 
+            }
+            post.slug = 'article-' + Math.abs(hash).toString(36);
+        } else if (!post.slug) {
+            post.slug = 'unknown-' + Math.random().toString(36).substring(7);
+        }
+        
         posts.push(post);
       }
       return posts;
