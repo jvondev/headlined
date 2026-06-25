@@ -25,9 +25,6 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Run Scraper
-        run: npm run scrape
-
       - name: Determine Year and File
         id: date_info
         run: |
@@ -36,12 +33,25 @@ jobs:
           echo "today=$TODAY" >> $GITHUB_OUTPUT
           echo "year=$YEAR" >> $GITHUB_OUTPUT
 
+      - name: Restore Previous State (Upsert Prep)
+        run: |
+          mkdir -p scripts/output
+          # Try to download today's existing JSON so we don't overwrite it
+          wget -q https://github.com/${{ github.repository }}/releases/download/rss-data-${{ steps.date_info.outputs.year }}/${{ steps.date_info.outputs.today }}.json -O scripts/output/${{ steps.date_info.outputs.today }}.json || echo "No existing data for today."
+          # Try to download the global index to prevent cross-day duplicates
+          wget -q https://github.com/${{ github.repository }}/releases/download/rss-data-${{ steps.date_info.outputs.year }}/index.json -O scripts/output/index.json || echo "No existing index found."
+
+      - name: Run Scraper
+        run: npm run scrape
+
       - name: Publish to Yearly Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: rss-data-${{ steps.date_info.outputs.year }}
           name: RSS Data Archive ${{ steps.date_info.outputs.year }}
-          files: scripts/output/${{ steps.date_info.outputs.today }}.json
+          files: |
+            scripts/output/${{ steps.date_info.outputs.today }}.json
+            scripts/output/index.json
           fail_on_unmatched_files: true
           make_latest: false
         env:
