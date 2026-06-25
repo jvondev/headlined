@@ -2,9 +2,11 @@
 
 import { Post } from '@/types';
 
+import { fetchAndDecompressJSON } from './client-posts';
+
 const getReleaseUrl = (dateString: string) => {
     const year = dateString.split('-')[0];
-    return `https://github.com/jvondev/headlined/releases/download/rss-data-${year}/${dateString}.json`;
+    return `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${year}/${dateString}.tsv.gz`;
 };
 
 /**
@@ -24,14 +26,10 @@ export async function fetchArticleByDateAndSlug(date: string, slug: string, topi
         try {
             // Add cache buster to bypass stale CDN/Browser cache
             const url = `${getReleaseUrl(checkDate)}?t=${Date.now()}`;
-            const response = await fetch(url, {
-                next: { revalidate: 0 }, // Force Next.js to not cache this
-                cache: 'no-store' // Force browser to not cache this
-            });
+            const posts: Post[] | null = await fetchAndDecompressJSON(url);
 
-            if (!response.ok) continue;
+            if (!posts) continue;
 
-            const posts: Post[] = await response.json();
             const post = posts.find(p => p.slug === slug);
 
             if (post) {
@@ -78,13 +76,12 @@ export async function fetchArticleBySlugAndTopic(slug: string, topicPath: string
 export async function fetchPostsByDate(date: string): Promise<Post[]> {
     try {
         const url = getReleaseUrl(date);
-        const response = await fetch(url);
+        const posts: Post[] | null = await fetchAndDecompressJSON(url);
 
-        if (!response.ok) {
+        if (!posts) {
             return [];
         }
 
-        const posts: Post[] = await response.json();
         return posts.map(p => ({ ...p, date }));
     } catch (error) {
         console.error(`Error fetching posts for ${date}:`, error);

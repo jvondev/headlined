@@ -26,7 +26,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 // Native binary decompression for .gz files (JSON or TSV)
-async function fetchAndDecompressJSON(url: string): Promise<any> {
+export async function fetchAndDecompressJSON(url: string): Promise<any> {
   const response = await fetch(url);
   if (!response.ok) {
     if (response.status === 404) return null;
