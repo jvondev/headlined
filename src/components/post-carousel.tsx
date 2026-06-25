@@ -29,7 +29,7 @@ import { Post, SavedItem } from "@/types";
 
 
 type PostCarouselProps = {
-  shouldFetchPaginatedPosts?: boolean,
+  shouldFetchPaginatedPosts?: boolean;
   topicName?: string;
   searchQuery?: string;
   posts?: Post[];

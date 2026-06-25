@@ -17,6 +17,7 @@ interface PostViewProps {
     post: Post;
     emblaApi?: UseEmblaCarouselType[1];
     isLocked?: boolean;
+    isActive?: boolean;
     onUnlockRequest?: () => void;
 }
 

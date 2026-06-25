@@ -201,7 +201,6 @@ export function SeoFeed({ category, subcategory, initialPosts }: SeoFeedProps) {
                 <PostCarousel
                     posts={postsWithAds}
                     topicName={`${category}/${subcategory}`}
-                    isPremium={isPremium}
                     topComponent={seoCoverSlide}
                     topComponentPadding={false}
                 />

@@ -17,6 +17,8 @@ type CarouselItem = {
   href: string;
   icon?: string;
   isIconOnly?: boolean;
+  showOnlyFilter?: boolean;
+  emblaApi?: any;
 };
 
 import { usePathname } from "next/navigation";

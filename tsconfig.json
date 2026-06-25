@@ -27,7 +27,7 @@
         "./src/*"
       ],
       "@scraper/*": [
-        "./scraper-repo/src/*"
+        "./scripts/scraper/*"
       ]
     }
   },

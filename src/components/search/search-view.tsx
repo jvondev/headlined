@@ -73,8 +73,7 @@ export function SearchView() {
                             posts={posts}
                             searchQuery={q}
                             topicName={topic}
-                            shouldFetchPaginatedPosts={!posts}
-                            isPremium={true}
+                            shouldFetchPaginatedPosts={false}
                         />
                     )}
                 </div>
