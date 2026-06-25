@@ -11,9 +11,9 @@ function stripHTMLAndKeep3Paragraphs(htmlOrText: string | null): string {
     let text = htmlOrText.replace(/<[^>]*>?/gm, '\n');
     // Split by newlines, clean up empty ones
     const paragraphs = text.split('\n').map(p => p.trim()).filter(p => p.length > 0);
-    // Keep only first 3 paragraphs
-    const kept = paragraphs.slice(0, 3).join(' ');
-    // Remove tabs and newlines so it doesn't break TSV
+    // Keep only first 3 paragraphs and encode them for TSV using <br><br>
+    const kept = paragraphs.slice(0, 3).join('<br><br>');
+    // Remove actual tabs and newlines so it doesn't break TSV rows
     return kept.replace(/\t/g, ' ').replace(/\n/g, ' ');
 }
 
@@ -58,7 +58,7 @@ async function runMigration() {
         const processedPosts = posts.map(post => {
             return {
                 ...post,
-                description: stripHTMLAndKeep3Paragraphs(post.description || post.content || ''),
+                description: stripHTMLAndKeep3Paragraphs(post.fullText || post.content || post.description || ''),
                 // Ensure no tabs or newlines in any field
                 title: (post.title || '').replace(/\t|\n/g, ' '),
                 url: (post.url || post.link || '').replace(/\t|\n/g, ''),

@@ -57,6 +57,13 @@ export async function fetchAndDecompressJSON(url: string): Promise<any> {
         if (post.url && !post.link) post.link = post.url;
         if (post.image && !post.thumbnail_url) post.thumbnail_url = post.image;
         
+        // Decode the <br><br> paragraph separators that TSV uses to avoid breaking rows
+        if (post.description) {
+            const decodedText = post.description.replace(/<br><br>/g, '\n\n');
+            post.description = decodedText;
+            post.fullText = decodedText; // Assign to fullText so ExpandedReader renders it properly
+        }
+        
         // Generate missing slug for IndexedDB
         if (post.title && !post.slug) {
             post.slug = post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
