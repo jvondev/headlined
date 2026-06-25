@@ -61,19 +61,39 @@ async function mergeOutputs() {
 
     let mergedPosts: Post[] = [];
 
-    // Load existing daily data if any (from previous runs today)
-    if (fs.existsSync(dailyFile)) {
-        try {
-            mergedPosts = JSON.parse(fs.readFileSync(dailyFile, 'utf-8'));
-            for (const post of mergedPosts) {
-                if (post.fullText) {
-                    fingerprints.add(post.fullText.substring(0, 100));
+    // Fetch existing daily TSV.GZ from the CDN for UPSERTING (so we don't overwrite earlier today's news)
+    try {
+        const cdnUrl = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${today.split('-')[0]}/${today}.tsv.gz`;
+        console.log(`Checking CDN for existing today data: ${cdnUrl}`);
+        const res = await fetch(cdnUrl);
+        if (res.ok) {
+            const buffer = await res.arrayBuffer();
+            const decompressed = zlib.gunzipSync(Buffer.from(buffer)).toString('utf-8');
+            const lines = decompressed.trim().split('\n');
+            if (lines.length > 1) {
+                const headers = lines[0].split('\t');
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split('\t');
+                    const post: any = {};
+                    for (let j = 0; j < headers.length; j++) {
+                        post[headers[j]] = values[j] || '';
+                    }
+                    mergedPosts.push(post as Post);
+                    
+                    if (post.description) {
+                        fingerprints.add(post.description.substring(0, 100));
+                    }
+                    if (post.link) {
+                        indexSet.add(post.link);
+                    }
                 }
+                console.log(`Loaded ${mergedPosts.length} existing posts from CDN for upserting.`);
             }
-            console.log(`Loaded ${mergedPosts.length} existing posts from today.`);
-        } catch {
-            console.log('Could not read daily file, starting fresh.');
+        } else {
+            console.log('No existing data for today on CDN yet. Starting fresh.');
         }
+    } catch (e) {
+        console.log('Error fetching from CDN:', e);
     }
 
     // Find all artifact directories
