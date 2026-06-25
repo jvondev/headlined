@@ -40,24 +40,24 @@ A curated, ad-free news aggregator built for the modern attention span. Headline
 
 ---
 
-## 🛠️ The Engineering: $0 Cost Serverless Architecture
+## 🛠️ The Engineering: $0 Cost High-Performance Data Pipeline
 
-As a Product Engineer, the goal was to build a highly scalable app with **sustainable business constraints**. Instead of paying for expensive database hosting (e.g., Supabase/Firebase) to store thousands of daily articles, Headlined uses a custom "Serverless Static Pipeline".
+As a Product Engineer, the goal was to build a highly scalable app with **sustainable business constraints**. Instead of paying for expensive database hosting (e.g., Supabase/Firebase) to store thousands of daily articles, Headlined uses an insanely optimized **Binary TSV Streaming Architecture**.
 
 1. **The Scraper (GitHub Actions):** A cron job spins up every 6 hours to fetch fresh RSS feeds.
-2. **Smart Deduplication:** The Node.js engine reads the previous state, generates content fingerprints, and skips duplicate stories across syndications.
-3. **The "Database" (GitHub Releases):** Instead of Postgres, the newly appended JSON chunks are uploaded directly to a version-controlled GitHub Release (`rss-data-YYYY`).
-4. **The Frontend (Next.js):** Fetches the static JSON payload at the Edge. The result? Near-instant load times with **$0 database costs** and infinite scalability.
+2. **TSV Binary Compression:** The Node.js engine truncates full articles to semantic summaries, maps fields to a compact TSV format, and compresses them using GZIP (`.tsv.gz`). This achieves an astonishing **96% data reduction** compared to raw JSON.
+3. **The "Database" (GitHub CDN):** The newly appended binary chunks are pushed directly to an orphaned `data` branch, entirely avoiding GitHub Release limits or blob history bloat.
+4. **The Client Engine (Next.js & IndexedDB):** The browser natively unzips the `tsv.gz` stream using the Web Streams API (`DecompressionStream(gzip)`). The lightweight data is instantly parsed and permanently synced into the user's local **IndexedDB**, guaranteeing zero latency offline reading.
 
 ## 🏗️ Architecture & Technical Details
 
 Headlined is designed to operate completely independently with zero recurring infrastructure costs.
 
-- **Serverless Data Pipeline:** The backend operates entirely via GitHub Actions. A cron job executes every 6 hours, downloading the current state (`index.json` and `today.json`) from GitHub Releases, performing deduplication, and upserting the new payload.
-- **Static API & Edge Delivery:** Data is served as static JSON files hosted on GitHub Releases. This provides global CDN distribution out-of-the-box, allowing the Next.js frontend to fetch data in O(1) time without database cold starts.
+- **Serverless Upserting Pipeline:** The backend operates via GitHub Actions. A cron job executes every 6 hours, downloading the *existing* daily `.tsv.gz` from the GitHub CDN, performing deduplication, upserting the new payload, and force-pushing it back to the `data` branch.
+- **Microscopic Delivery:** By ditching JSON arrays for Tab-Separated Values, the client avoids massive JSON parsing overhead. Line-by-line streaming allows the app to render content while the network payload is still arriving.
 - **Client-Side Optimization:** The vertical scrolling UI utilizes Intersection Observers to lazily load DOM nodes and media. This keeps memory usage low and ensures 60fps scrolling on mobile devices.
+- **Offline Local-First Caching:** Using IndexedDB, historic reads are cached permanently on the device, meaning users can swipe through yesterday's news instantly in Airplane mode.
 - **Content Syndication:** Implements dynamic canonical tags pointing to original publisher URLs, ensuring proper SEO attribution and preventing duplicate content penalties.
-- **Decoupled Clients:** Because the data is exposed as raw JSON endpoints, the backend pipeline can power any number of clients (web, iOS, Android, CLI) simultaneously.
 
 ---
 
@@ -66,16 +66,17 @@ Headlined is designed to operate completely independently with zero recurring in
 1. **Fork & Setup**
    Fork this repository. Create a `GITHUB_TOKEN` (with `repo` scope) in your GitHub Developer Settings, and add it to your repo's Actions Secrets.
 2. **Initialize the Pipeline**
-   Go to the Actions tab and manually run the **Daily RSS Scraper** workflow. This creates your first database release.
+   Go to the Actions tab and manually run the **Daily RSS Scraper** workflow. This will automatically create the `data` branch and push your first `.tsv.gz` payload.
 3. **Deploy the Frontend**
-   Deploy your fork to Vercel (Next.js preset). It will automatically point to your newly generated data.
+   Deploy your fork to Vercel (Next.js preset). It will instantly point to your custom data branch.
 
-## 🔌 Public JSON API
+## 🔌 Public TSV Stream API
 
-Headlined automatically serves as an open API. You can build mobile apps or alternate clients by fetching the raw JSON directly from your releases:
+Headlined automatically serves as an open, lightning-fast TSV API. You can build mobile apps or alternate clients by fetching the raw binary `.tsv.gz` directly from the raw data branch:
+```text
+https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-YYYY/YYYY-MM-DD.tsv.gz
 ```
-https://github.com/YOUR_NAME/Headlined/releases/download/rss-data-YYYY/YYYY-MM-DD.json
-```
+*(Simply pipe it through a DecompressionStream and split by tabs to consume!)*
 
 ## 📜 License
 GNU AGPLv3 License. Built for the open-source community.
