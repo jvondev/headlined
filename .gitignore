@@ -8,6 +8,10 @@
 # testing
 /coverage
 
+# Scraper Output
+scripts/output/
+output/
+
 # next.js
 /.next/
 /out/
