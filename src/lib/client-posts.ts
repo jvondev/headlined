@@ -25,7 +25,7 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
-// Native binary decompression for .json.gz files
+// Native binary decompression for .gz files (JSON or TSV)
 async function fetchAndDecompressJSON(url: string): Promise<any> {
   const response = await fetch(url);
   if (!response.ok) {
@@ -37,6 +37,26 @@ async function fetchAndDecompressJSON(url: string): Promise<any> {
     const ds = new DecompressionStream('gzip');
     const decompressedStream = response.body!.pipeThrough(ds);
     const text = await new Response(decompressedStream).text();
+    
+    // If it's a TSV file, parse it manually
+    if (url.includes('.tsv.')) {
+      const lines = text.trim().split('\n');
+      if (lines.length === 0 || lines[0] === '') return [];
+      
+      const headers = lines[0].split('\t');
+      const posts: any[] = [];
+      
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split('\t');
+        const post: any = {};
+        for (let j = 0; j < headers.length; j++) {
+           post[headers[j]] = values[j] || '';
+        }
+        posts.push(post);
+      }
+      return posts;
+    }
+
     return JSON.parse(text);
   }
   
@@ -92,7 +112,7 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
         // Construct the URL for today's data
         const today = new Date().toISOString().split('T')[0];
         const todayYear = today.split('-')[0];
-        const url = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${todayYear}/${today}.json.gz`;
+        const url = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${todayYear}/${today}.tsv.gz`;
 
         let networkPosts: Post[] = [];
         let dateToSave = today;
@@ -103,7 +123,7 @@ const synchronizePostsInBackground = async (): Promise<Post[]> => {
             // If today's file isn't ready yet, try yesterday's
             const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
             const yesterdayYear = yesterday.split('-')[0];
-            const yesterdayUrl = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${yesterdayYear}/${yesterday}.json.gz`;
+            const yesterdayUrl = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${yesterdayYear}/${yesterday}.tsv.gz`;
             
             const yesterdayData = await fetchAndDecompressJSON(yesterdayUrl);
             if (yesterdayData !== null) {
@@ -181,7 +201,7 @@ export const fetchArchivePosts = async (date: string): Promise<Post[]> => {
   // 2. Fetch from network
   try {
     const year = date.split('-')[0];
-    const url = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${year}/${date}.json.gz`;
+    const url = `https://raw.githubusercontent.com/jvondev/headlined/data/rss-data-${year}/${date}.tsv.gz`;
     const postsData = await fetchAndDecompressJSON(url);
     if (!postsData) return []; // No data for this date
     
