@@ -560,7 +560,7 @@ export const SEO_CONFIG: Record<CategoryId, SeoTemplateFull> = {
     }
 };
 
-export const SEO_DATA_URL = 'https://cdn.jsdelivr.net/gh/xupgudxup/BUg-7d8-diua-sdadh89-@main/output';
+export const SEO_DATA_URL = 'https://github.com/jvondev/Headlined/releases/download/rss-data-topics';
 
 // Dynamic Text Generator
 const FAQ_POOLS: Record<string, { qV: string[], aV: string[] }[]> = {
