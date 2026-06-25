@@ -6,27 +6,25 @@
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
-![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?logo=vercel)
 ![GitHub stars](https://img.shields.io/github/stars/jvondev/Headlined?style=social)
 
 A curated, ad-free news aggregator built for the modern attention span. Headlined transforms traditional, cluttered news reading into a seamless, immersive TikTok-style swiping experience.
 
 <div align="center">
-  <br>
-  <b><a href="https://www.jvon.dev/videos/portfolio/headlined-demo-part2.webm">🎥 Watch: Immersive TikTok-Style Swiping Interface</a></b>
-  <br>
+  <img src="./public/videos/headlined-demo-part2.gif" width="100%" alt="TikTok-style swiping interface">
+  <p><em>Immersive TikTok-style swiping interface built with Embla Carousel.</em></p>
 </div>
 
 ### 🌟 Feature Showcase
 
 | Topic Intelligence | AI-Enhanced Detail View |
 | :---: | :---: |
-| [🎥 Watch Video](https://www.jvon.dev/videos/portfolio/headlined-demo-part1.webm) | [🎥 Watch Video](https://www.jvon.dev/videos/portfolio/headlined-demo-part3.webm) |
+| <img src="./public/videos/headlined-demo-part1.gif" width="100%"> | <img src="./public/videos/headlined-demo-part3.gif" width="100%"> |
 | *Filters raw streams into personalized interest vectors.* | *AI-generated highlights and dynamic typography scaling.* |
 
 | Discovery Dashboard |
 | :---: |
-| [🎥 Watch Video](https://www.jvon.dev/videos/portfolio/headlined-demo-part4.webm) |
+| <img src="./public/videos/headlined-demo-part4.gif" width="100%"> |
 | *Local-first search hub using FlexSearch and IndexedDB.* |
 
 ## 💡 The Product Philosophy
