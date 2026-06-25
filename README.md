@@ -1,4 +1,4 @@
-# <img src="public/headlined-logo.svg" height="40" align="top"> Headlined 🗞️
+# <img src="public/headlined-logo.svg" height="40" align="top"> Headlined
 
 ![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)
 ![GitHub Actions](https://img.shields.io/github/actions/workflow/status/jvondev/Headlined/scraper.yml?label=Scraper%20Cron)
@@ -12,20 +12,21 @@
 A curated, ad-free news aggregator built for the modern attention span. Headlined transforms traditional, cluttered news reading into a seamless, immersive TikTok-style swiping experience.
 
 <div align="center">
-  <video src="https://www.jvon.dev/videos/portfolio/headlined-demo-part2.webm" width="100%" autoplay loop muted playsinline></video>
-  <p><em>Immersive TikTok-style swiping interface built with Embla Carousel.</em></p>
+  <br>
+  <b><a href="https://www.jvon.dev/videos/portfolio/headlined-demo-part2.webm">🎥 Watch: Immersive TikTok-Style Swiping Interface</a></b>
+  <br>
 </div>
 
 ### 🌟 Feature Showcase
 
 | Topic Intelligence | AI-Enhanced Detail View |
 | :---: | :---: |
-| <video src="https://www.jvon.dev/videos/portfolio/headlined-demo-part1.webm" width="100%" autoplay loop muted playsinline></video> | <video src="https://www.jvon.dev/videos/portfolio/headlined-demo-part3.webm" width="100%" autoplay loop muted playsinline></video> |
+| [🎥 Watch Video](https://www.jvon.dev/videos/portfolio/headlined-demo-part1.webm) | [🎥 Watch Video](https://www.jvon.dev/videos/portfolio/headlined-demo-part3.webm) |
 | *Filters raw streams into personalized interest vectors.* | *AI-generated highlights and dynamic typography scaling.* |
 
 | Discovery Dashboard |
 | :---: |
-| <video src="https://www.jvon.dev/videos/portfolio/headlined-demo-part4.webm" width="100%" autoplay loop muted playsinline></video> |
+| [🎥 Watch Video](https://www.jvon.dev/videos/portfolio/headlined-demo-part4.webm) |
 | *Local-first search hub using FlexSearch and IndexedDB.* |
 
 ## 💡 The Product Philosophy
