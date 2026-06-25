@@ -1,5 +1,14 @@
 # Headlined 🗞️
 
+![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)
+![GitHub Actions](https://img.shields.io/github/actions/workflow/status/jvondev/Headlined/scraper.yml?label=Scraper%20Cron)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
+![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?logo=vercel)
+![GitHub stars](https://img.shields.io/github/stars/jvondev/Headlined?style=social)
+
 A curated, ad-free news aggregator built for the modern attention span. Headlined transforms traditional, cluttered news reading into a seamless, immersive TikTok-style swiping experience.
 
 ![Headlined Preview](https://via.placeholder.com/1200x600.png?text=Headlined+News+Aggregator)
@@ -55,4 +64,4 @@ https://github.com/YOUR_NAME/Headlined/releases/download/rss-data-YYYY/YYYY-MM-D
 ```
 
 ## 📜 License
-MIT License. Built for the open-source community.
+GNU AGPLv3 License. Built for the open-source community.
