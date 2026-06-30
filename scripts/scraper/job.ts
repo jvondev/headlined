@@ -6,6 +6,7 @@ import { sourcesData, resolveTopicFromUrl } from './sources';
 import { extractArticle, fetchAndExtract, ExtractedArticle } from './article-extractor';
 import { Classifier } from './classifier';
 import { BucketManager } from './bucket-manager';
+import zlib from 'zlib';
 
 // ============================================================================
 // DAILY JOB - RSS Scraper with Full Text Extraction and Batching Support
@@ -758,6 +759,30 @@ async function run() {
     fs.writeFileSync(dailyFile, JSON.stringify(dailyData, null, 2), 'utf-8');
     fs.writeFileSync(INDEX_FILE, JSON.stringify(Array.from(indexSet), null, 2), 'utf-8');
     saveErrorLog();
+
+    // Generate TSV.GZ for GitHub Actions
+    const headers = ['title', 'description', 'url', 'image', 'topic'];
+    const tsvLines = [headers.join('\t')];
+    
+    for (const post of dailyData) {
+        const rawText = (post.description || post.fullText || '').replace(/<[^>]*>?/gm, '\n');
+        const paragraphs = rawText.split('\n').map(p => p.trim()).filter(p => p.length > 0);
+        const desc = paragraphs.slice(0, 3).join(' ').replace(/\t|\n/g, ' ');
+        
+        const row = [
+            (post.title || '').replace(/\t|\n/g, ' '),
+            desc,
+            (post.link || '').replace(/\t|\n/g, ''),
+            (post.thumbnail_url || '').replace(/\t|\n/g, ''),
+            (post.topic || '').replace(/\t|\n/g, '')
+        ];
+        tsvLines.push(row.join('\t'));
+    }
+    
+    const tsvText = tsvLines.join('\n');
+    const gzipped = zlib.gzipSync(tsvText);
+    const dailyFileTsvGz = dailyFile.replace('.json', '.tsv.gz');
+    fs.writeFileSync(dailyFileTsvGz, gzipped);
 
     console.log(`Scrape finished. Added ${newItemsCount} items.`);
 
